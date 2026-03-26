@@ -1,0 +1,27 @@
+{
+  "name": "fungivora-dev",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "npm install --prefix frontend && npm install --prefix backend",
+    "frontend": "npm run dev --prefix frontend",
+    "backend": "npm start --prefix backend",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AztlanConsulting/Fungivora-Dev.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/AztlanConsulting/Fungivora-Dev/issues"
+  },
+  "homepage": "https://github.com/AztlanConsulting/Fungivora-Dev#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
