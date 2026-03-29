@@ -23,5 +23,9 @@
   "homepage": "https://github.com/AztlanConsulting/Fungivora-Dev#readme",
   "devDependencies": {
     "concurrently": "^9.2.1"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "vite": "^8.0.3"
   }
 }
