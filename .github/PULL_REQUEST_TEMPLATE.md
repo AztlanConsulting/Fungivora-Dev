@@ -1,25 +1,26 @@
-# Pull Request: [TIPO] (área) Descripción breve
+# Pull Request: [TYPE] (area) Brief description
 
-## Descripción
-*Describe brevemente qué cambios introduce este PR y por qué son necesarios.*
+## Description
+*Briefly describe what changes this PR introduces and why they are necessary.*
 
-## Pruebas realizadas
-- [ ] ¿Se probó `npm run dev` desde la raíz?
-- [ ] ¿Los cambios en el Backend conectan con MariaDB localmente?
-- [ ] ¿Se verificó que no hay errores en la consola del navegador?
+## Tests Performed
+- [ ] Tested `npm run dev` from the root directory?
+- [ ] Backend changes connected to MariaDB locally?
+- [ ] Verified no errors in the browser console?
 
-##🛠️ Tipo de Cambio
-- [ ] `[ADD]` Nueva funcionalidad
-- [ ] `[FIX]` Corrección de error
-- [ ] `[UPDATE]` Mejora de código existente
-- [ ] `[DB]` Cambio en esquema de Base de Datos
-- [ ] `[ENV]` Cambio en variables de entorno
+## Change Type
+- [ ] `[ADD]` New functionality
+- [ ] `[FIX]` Bug fix
+- [ ] `[UPDATE]` Improvement of existing code
+- [ ] `[DB]` Database schema change
+- [ ] `[ENV]` Environment variables change
+- [ ] `[DOC]` Documentation changes
 
-## Capturas de pantalla (Opcional)
-*Si el cambio es visual (Frontend), pega una captura aquí.*
+## Screenshots (Optional)
+*If the change is visual (Frontend), paste a screenshot here.*
 
-## Tareas o US relacionadas
-- Fixes # (ID del issue si existe)
+## Related Tasks
+- Fixes # (Issue ID if applicable)
 
 ---
-**Recuerda:** Este PR debe ser revisado por al menos un compañero antes de ser aprobado.
+**Remember:** This PR must be reviewed by at least one teammate before approval.
