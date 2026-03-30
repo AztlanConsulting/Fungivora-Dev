@@ -1,9 +1,8 @@
 function App() {
   return (
-    <main>
-      <h1>Frontend Conectado</h1>
-      <p>Este es mi esqueleto minimalista.</p>
-    </main>
+    <div className="flex flex-col items-center p-10">
+      <h1 className="text-4xl font-bold text-blue-500">Hola mundo</h1>
+    </div>
   )
 }
 
