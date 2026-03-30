@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 const PORT = 5000;
+const cors = require('cors');
+
+app.use(cors());
 
 app.get('/api', (req, res) => {
     res.json({ mensaje: "Respuesta del backend" });
