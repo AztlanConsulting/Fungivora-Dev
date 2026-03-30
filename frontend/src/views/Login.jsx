@@ -13,7 +13,9 @@ function Login() {
   return (
     <div>
       <h1>Login</h1>
-      <p>blah blah blah</p>
+
+      <p>Millis was here</p>
+      <p>Escucher a STRAY KIDS para una mejor vida</p>
     </div>
   );
 }
