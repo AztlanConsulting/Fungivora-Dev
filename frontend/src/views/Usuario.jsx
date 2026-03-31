@@ -24,6 +24,8 @@ function User() {
         onChange={(e) => setTexto(e.target.value)}
       />
 
+      <br></br>
+        {/*<Botton para guardar la contraseña*/}
         <button
         onClick={() => {
             fetch("http://localhost:5000/hash", {
@@ -31,14 +33,29 @@ function User() {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ password: texto }),
-            })
-            .then(res => res.json())
-            .then(data => console.log("Hash:", data.hash))
-            .catch(err => console.error(err));
+            body: JSON.stringify({ contrasena: texto }),
+            });
         }}
         >
-        Enviar
+        Guardar contraseña
+        </button>
+
+        <br></br>
+        {/*<Botton para comparar la contraseña guardada*/}
+        <button
+        onClick={() => {
+            fetch("http://localhost:5000/compare", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ contrasena: texto }),
+            })
+            .then(res => res.json())
+            .then(data => console.log(data));
+        }}
+        >
+        Comparar contraseña
         </button>
     </div>
   );

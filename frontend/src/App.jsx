@@ -1,13 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./views/Login";
-import User from "./views/User";
+import Usuario from "./views/Usuario";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/user" element={<User />} />
+        <Route path="/usuario" element={<Usuario />} />
       </Routes>
     </BrowserRouter>
   );
