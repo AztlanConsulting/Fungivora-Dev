@@ -1,0 +1,158 @@
+/* src/styles/Login.css */
+
+.login-screen {
+  background-color: #ffffff; /* Fondo blanco como en el diseño */
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column; /* Alineación vertical */
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+}
+
+/* --- TÍTULO (Ahora fuera del flujo central para que no empuje) --- */
+.header-title {
+  position: absolute;
+  top: 8%; /* Lo fijamos arriba */
+  text-align: center;
+  z-index: 10;
+  color: #000000; /* Texto negro para que se vea sobre fondo blanco */
+}
+
+/* --- FORMA VERDE --- */
+.bg-shape-green {
+  position: absolute;
+  top: -5%;
+  left: -5%;
+  width: 25vw;
+  height: 40vh;
+  background-color: #1a764d;
+  border-radius: 30% 70% 52% 48% / 30% 33% 67% 70%;
+  z-index: 1;
+}
+
+/* --- CONTENEDOR DE GRUPO Rojo --- */
+.bottom-right-group {
+  position: absolute;
+  bottom: 0; /* Anclado a la esquina inferior */
+  right: 0;  /* Anclado a la esquina derecha */
+  
+  /* Definimos un área de trabajo para este grupo */
+  width: 40vw; /* El 40% del ancho de la pantalla */
+  height: 50vh; /* El 50% del alto de la pantalla */
+  
+  /* Aseguramos que este grupo esté detrás del formulario central */
+  z-index: 1;
+}
+
+/* --- Figura ROJO (Unión de dos piezas) --- */
+.red-group-wrapper {
+  position: absolute;
+  bottom: -5%;
+  right: -5%;
+  width: 45vw;
+  height: 50vh;
+  z-index: 1;
+  filter: 
+    drop-shadow(4px 0px 0px black) 
+    drop-shadow(-4px 0px 0px black) 
+    drop-shadow(0px 4px 0px black) 
+    drop-shadow(0px -4px 0px black);
+}
+
+.shape-part {
+  position: absolute;
+  background-color: #e33737;
+}
+
+.part-1 {
+  width: 0%; height: 0%;
+  bottom: 0; right: 80;
+  border-radius: 30% 70% 52% 48% / 30% 33% 67% 70%;
+   transform: rotate(90deg);
+}
+
+.part-2 {
+  width: 120%; height: 100%;
+  top: 30%; left: 25%;
+  border-radius: 40% 40% 40% 65% / 40% 40% 60% 60%;
+  transform: rotate(-295deg);
+}
+
+.part-3 {
+  width: 80%; height: 80%;
+  top: 30%; left: 25%;
+  border-radius: 40% 60% 90% 30% / 40% 40% 60% 60%;
+  transform: rotate(165deg);
+}
+
+/* --- EL PERSONAJE  --- */
+.character-mariarosa {
+  position: absolute;
+  bottom: 105%; 
+  right: 38%;  
+  /* Tamaño del personaje ¿Porque no se gira?*/
+  width: 10vw; 
+  height: auto; 
+  z-index: 2;
+  transform: rotate(-10deg); 
+}
+
+/* --- CAJA AZUL (Centro absoluto) --- */
+.form-box {
+  background-color: #3a45c7;
+  width: 90%;
+  max-width: 450px;
+  border-radius: 3rem;
+  padding: 3.5rem;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  z-index: 10;
+  margin-top: 5rem; /* Espacio para que el título no la toque */
+}
+
+.input-field {
+  width: 100%;
+  background-color: #9bb1ef;
+  color: #3a45c7;
+  border-radius: 1.2rem;
+  padding: 1rem;
+  border: none;
+  outline: none;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.input-field::placeholder {
+  color: #3a45c7;
+  opacity: 0.6;
+}
+.btn-entrar {
+  background-color: #fdbd1f;
+  color: #ffffff;
+  width: 60%;
+  padding: 0.8rem;
+  border-radius: 9999px;
+  font-size: 1.8rem;
+  font-weight: 900;
+  border: none;
+  cursor: pointer;
+  margin-top: 2rem;
+  box-shadow: 0 8px 0px #d49a15;
+  
+  animation: float 1.8s ease-in-out infinite;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.btn-entrar:active {
+  transform: translateY(6px);
+  box-shadow: 0 2px 0px #d49a15;
+  animation: none;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0);    box-shadow: 0 8px 0px #d49a15; }
+  50%       { transform: translateY(-8px); box-shadow: 0 16px 0px #d49a15; }
+}
