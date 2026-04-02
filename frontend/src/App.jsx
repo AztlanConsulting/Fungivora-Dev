@@ -1,10 +1,16 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./views/Login";
+import Usuario from "./views/Usuario";
+
 function App() {
   return (
-    <main>
-      <h1>Frontend Conectado</h1>
-      <p>Este es mi esqueleto minimalista.</p>
-    </main>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/usuario" element={<Usuario />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
