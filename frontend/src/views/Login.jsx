@@ -1,21 +1,40 @@
 import { useEffect, useState } from "react";
 
 function Login() {
-  const [mensaje, setMensaje] = useState("");
+  const [usuario, setUsuario] = useState("");
+  const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api")
-      .then(res => res.json())
-      .then(data => setMensaje(data.mensaje))
-      .catch(err => console.error(err));
-  }, []);
+    const handleLogin = async () => {
+    const res = await fetch("http://localhost:5000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nombre_usuario: usuario,
+        contrasena: password,
+      }),
+    });
+
+    const data = await res.json();
+
+    localStorage.setItem("rol", data.rol);
+
+    // 🔥 REDIRECCIÓN
+    navigate("/first");
+  };
 
   return (
     <div>
       <h1>Login</h1>
 
-      <p>Millis was here</p>
-      <p>Escucher a STRAY KIDS para una mejor vida</p>
+      <p>Usuario</p>
+      <input onChange={(e) => setUsuario(e.target.value)} />
+
+      <p>Contraseña</p>
+      <input type="password" onChange={(e) => setPassword(e.target.value)} />
+
+      <button onClick={handleLogin}>Entrar</button>
     </div>
   );
 }

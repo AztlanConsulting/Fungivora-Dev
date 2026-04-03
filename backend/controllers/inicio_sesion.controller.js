@@ -1,7 +1,34 @@
 const bcrypt = require('bcrypt');
 
-exports.get_login = (request, response, next) => {
-    response.render('login');
+exports.get_login = (req, res) => {
+    res.render('login');
+};
+
+
+exports.post_login = async (req, res) => {
+    try {
+        const { nombre_usuario, contrasena } = req.body;
+
+        const user = await Usuario.fetchOne(nombre_usuario);
+
+        if (!user) {
+            return res.status(404).json({ msg: "Usuario no encontrado" });
+        }
+
+        if (user.contrasena_usuario !== contrasena) {
+            return res.status(401).json({ msg: "Contraseña incorrecta" });
+        }
+
+        res.json({
+            id_usuario: user.id_usuario,
+            nombre: user.nombre_usuario,
+            rol: user.nombre_rol
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error en login" });
+    }
 };
 
 /*
