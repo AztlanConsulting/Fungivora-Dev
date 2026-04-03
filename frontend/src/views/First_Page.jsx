@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
-
 function First_Page() {
   const navigate = useNavigate();
-
   const token = localStorage.getItem("token");
 
   const handleLogout = () => {
@@ -14,7 +12,6 @@ function First_Page() {
   };
 
   let rol = null;
-
   if (token) {
     try {
       const decoded = jwtDecode(token);
@@ -23,9 +20,6 @@ function First_Page() {
       console.error("Token inválido");
     }
   }
-
-  console.log("TOKEN:", token);
-  console.log("DECODE:", jwtDecode(token));
 
   return (
     <div>
@@ -44,6 +38,7 @@ function First_Page() {
         </button>
       )}
       <br></br>
+      {/* Boton para cerrar sesión y destruir el token */}
       <button onClick={handleLogout}>
         Cerrar sesión
       </button>

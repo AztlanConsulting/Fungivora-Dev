@@ -1,10 +1,16 @@
 const jwt = require('jsonwebtoken');
 
+/*
+* auth
+Tener un token de autenticación para entrar al sistema
+Metodo que decodifica y encuntre el token para dar acceso con un rol
+@param token, decoded
+*/
 module.exports = (req, res, next) => {
     const token = req.headers['authorization'];
 
     if (!token) {
-        return res.status(401).json({ msg: "No autorizado" });
+        return res.json({ msg: "No autorizado" });
     }
 
     try {
@@ -14,6 +20,6 @@ module.exports = (req, res, next) => {
 
         next();
     } catch (error) {
-        return res.status(401).json({ msg: "Token inválido" });
+        return res.json({ msg: "Token inválido" });
     }
 };

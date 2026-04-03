@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import First_Page from "./views/First_Page";
 import Login from "./views/Login";
 import Usuario from "./views/Usuario";
-import ProtectedRoute from "../components/ProtectedRoute";
+import Ruta_protegida from "../components/ruta_protegida";
 
 function App() {
   return (
@@ -13,17 +13,17 @@ function App() {
         <Route
           path="/usuario"
           element={
-            <ProtectedRoute rolPermitido="Administrador">
+            <Ruta_protegida rolPermitido="Administrador">
               <Usuario />
-            </ProtectedRoute>
+            </Ruta_protegida>
           }
         />
         <Route
           path="/first"
           element={
-            <ProtectedRoute>
+            <Ruta_protegida>
               <First_Page />
-            </ProtectedRoute>
+            </Ruta_protegida>
           }
         />
       </Routes>

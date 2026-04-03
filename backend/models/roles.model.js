@@ -7,3 +7,6 @@ class Roles{
         this.descripcion_rol = descripcion_rol; 
     } 
 }
+
+
+module.exports = Roles;

@@ -10,7 +10,6 @@ exports.get_login = (req, res) => {
 /*
 * post_login
 Hacer un login basico para tener permisos
-TODO: limitar movimento de url por el acceso
 Metodo que toma la información del usuario y su rol para poder acceder
 @param id_usuario, nombre_usuario, nombre_rol
 */
@@ -21,11 +20,11 @@ exports.post_login = async (req, res) => {
         const user = await Usuario.fetchOne(nombre_usuario);
 
         if (!user) {
-            return res.status(404).json({ msg: "Usuario no encontrado" });
+            return res.json({ msg: "Usuario no encontrado" });
         }
 
         if (user.contrasena_usuario !== contrasena) {
-            return res.status(401).json({ msg: "Contraseña incorrecta" });
+            return res.json({ msg: "Contraseña incorrecta" });
         }
 
         const token = jwt.sign(

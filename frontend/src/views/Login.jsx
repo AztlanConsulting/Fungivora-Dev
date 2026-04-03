@@ -19,10 +19,8 @@ function Login() {
     });
 
     const data = await res.json();
-    console.log("DATA LOGIN:", data);
 
     localStorage.setItem("token", data.token);
-
     navigate("/first");
 
     useEffect(() => {
