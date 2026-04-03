@@ -12,12 +12,17 @@ class Usuario {
 
     static fetchOne = async (nombre_usuario) => {
     const [filas] = await db.execute(
-        `SELECT u.*, r.nombre_rol 
+        `SELECT u.*, r.nombre_rol
         FROM usuarios u
         JOIN roles r ON u.id_rol = r.id_rol
-        WHERE u.nombre_usuario = ?`,
+        WHERE LOWER(TRIM(u.nombre_usuario)) = LOWER(TRIM(?))`,
         [nombre_usuario]
     );
+
+    console.log("FILAS:", filas);
+
     return filas[0];
     };
 }
+
+module.exports = Usuario;

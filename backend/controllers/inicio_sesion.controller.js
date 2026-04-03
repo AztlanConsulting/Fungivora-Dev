@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const Usuario = require('../models/usuario.model');
 
 exports.get_login = (req, res) => {
     res.render('login');
@@ -7,9 +8,13 @@ exports.get_login = (req, res) => {
 
 exports.post_login = async (req, res) => {
     try {
+        console.log("BODY:", req.body);
+
         const { nombre_usuario, contrasena } = req.body;
 
         const user = await Usuario.fetchOne(nombre_usuario);
+
+        console.log("USER:", user);
 
         if (!user) {
             return res.status(404).json({ msg: "Usuario no encontrado" });
@@ -26,7 +31,7 @@ exports.post_login = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error);
+        console.error("ERROR LOGIN:", error); // 🔥 CLAVE
         res.status(500).json({ msg: "Error en login" });
     }
 };

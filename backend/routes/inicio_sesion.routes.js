@@ -5,7 +5,7 @@ const controller = require('../controllers/inicio_sesion.controller');
 const verificarRol = require('../middleware/rbac');
 
 router.get('/', controller.get_login);
-router.post('/login', controller.post_login);
+router.post('/', controller.post_login);
 
 router.get('/usuario', verificarRol("Administrador"), controller.get_usuario);
 
