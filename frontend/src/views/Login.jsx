@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 function Login() {
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
     const handleLogin = async () => {
     const res = await fetch("http://localhost:5000/login", {
@@ -20,8 +21,6 @@ function Login() {
     const data = await res.json();
 
     localStorage.setItem("rol", data.rol);
-
-    // 🔥 REDIRECCIÓN
     navigate("/first");
   };
 

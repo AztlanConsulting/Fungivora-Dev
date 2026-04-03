@@ -5,16 +5,18 @@ exports.get_login = (req, res) => {
     res.render('login');
 };
 
-
+/*
+* post_login
+Hacer un login basico para tener permisos
+TODO: limitar movimento de url por el acceso
+Metodo que toma la información del usuario y su rol para poder acceder
+@param id_usuario, nombre_usuario, nombre_rol
+*/
 exports.post_login = async (req, res) => {
     try {
-        console.log("BODY:", req.body);
 
         const { nombre_usuario, contrasena } = req.body;
-
         const user = await Usuario.fetchOne(nombre_usuario);
-
-        console.log("USER:", user);
 
         if (!user) {
             return res.status(404).json({ msg: "Usuario no encontrado" });
@@ -31,7 +33,7 @@ exports.post_login = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("ERROR LOGIN:", error); // 🔥 CLAVE
+        console.error("Error en login:", error); //! Alerta de error en la consola
         res.status(500).json({ msg: "Error en login" });
     }
 };
@@ -42,8 +44,8 @@ Obtener el usuario
 TODO: obtener usuario de la base de datos
 @param 
 */
-exports.get_usuario = (request, response, next) => {
-    response.render('usuario');
+exports.get_usuario = (req, res) => {
+    res.json({ msg: "Acceso autorizado" });
 };
 
 /*

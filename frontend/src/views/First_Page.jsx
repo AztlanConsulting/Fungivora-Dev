@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function First_Page() {
   const rol = localStorage.getItem("rol");
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -9,16 +11,11 @@ function First_Page() {
 
       <p>Bienvenidx</p>
 
-      {/* SOLO ADMIN */}
+      {/* Boton permitido solo para el Administrador */}
       {rol === "Administrador" && (
         <button
           onClick={() => {
-            fetch("http://localhost:5000/usuario", {
-              method: "GET",
-              headers: {
-                "rol": rol,
-              },
-            });
+            navigate("/usuario"); 
           }}
         >
           Registro de Usuarios

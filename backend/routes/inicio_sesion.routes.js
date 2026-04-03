@@ -4,9 +4,11 @@ const router = express.Router();
 const controller = require('../controllers/inicio_sesion.controller');
 const verificarRol = require('../middleware/rbac');
 
+//Rutas para el login
 router.get('/', controller.get_login);
 router.post('/', controller.post_login);
 
+//Acceder como usuario y verificar su rol
 router.get('/usuario', verificarRol("Administrador"), controller.get_usuario);
 
 //Hashing de contraseñas
