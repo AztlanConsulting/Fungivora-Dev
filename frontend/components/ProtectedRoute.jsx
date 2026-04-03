@@ -1,13 +1,25 @@
 import { Navigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 function ProtectedRoute({ children, rolPermitido }) {
-  const rol = localStorage.getItem("rol");
+  const token = localStorage.getItem("token");
 
-  if (rol !== rolPermitido) {
-    return <Navigate to="/first" />;
+  if (!token) {
+    return <Navigate to="/" />;
   }
 
-  return children;
+  try {
+    const decoded = jwtDecode(token);
+
+    if (decoded.rol !== rolPermitido) {
+      return <Navigate to="/first" />;
+    }
+
+    return children;
+
+  } catch (error) {
+    return <Navigate to="/" />;
+  }
 }
 
 export default ProtectedRoute;

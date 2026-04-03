@@ -19,8 +19,6 @@ class Usuario {
         [nombre_usuario]
     );
 
-    console.log("FILAS:", filas);
-
     return filas[0];
     };
 }

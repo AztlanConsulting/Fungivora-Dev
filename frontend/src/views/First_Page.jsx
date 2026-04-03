@@ -1,9 +1,26 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+
 
 function First_Page() {
-  const rol = localStorage.getItem("rol");
   const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+
+  let rol = null;
+
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      rol = decoded.rol; 
+    } catch (error) {
+      console.error("Token inválido");
+    }
+  }
+
+  console.log("TOKEN:", token);
+  console.log("DECODE:", jwtDecode(token));
 
   return (
     <div>

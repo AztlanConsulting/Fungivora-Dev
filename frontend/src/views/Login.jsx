@@ -19,8 +19,10 @@ function Login() {
     });
 
     const data = await res.json();
+    console.log("DATA LOGIN:", data);
 
-    localStorage.setItem("rol", data.rol);
+    localStorage.setItem("token", data.token);
+
     navigate("/first");
   };
 
