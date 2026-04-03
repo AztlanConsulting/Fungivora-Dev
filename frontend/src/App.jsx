@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./views/Login";
+import First_Page from "./views/First_Page";
 import Usuario from "./views/Usuario";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/first" element={<First_Page />} />
         <Route path="/usuario" element={<Usuario />} />
       </Routes>
     </BrowserRouter>

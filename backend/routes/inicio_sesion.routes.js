@@ -5,6 +5,8 @@ const controller = require('../controllers/inicio_sesion.controller');
 
 router.get('/', controller.get_login);
 
+//RBAC
+router.get('/first', controller.get_first);
 //Hashing de contraseñas
 router.get('/usuario', controller.get_usuario);
 router.post('/hash', controller.post_hash);

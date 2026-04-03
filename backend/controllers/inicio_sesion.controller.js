@@ -4,6 +4,10 @@ exports.get_login = (request, response, next) => {
     response.render('login');
 };
 
+exports.get_first = (request, response, next) => {
+    response.render('first_page');
+};
+
 /*
 * get_usuario 
 Obtener el usuario
