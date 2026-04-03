@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
-function ProtectedRoute({ children, rolPermitido }) {
+function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -10,14 +10,16 @@ function ProtectedRoute({ children, rolPermitido }) {
 
   try {
     const decoded = jwtDecode(token);
-
-    if (decoded.rol !== rolPermitido) {
-      return <Navigate to="/first" />;
+    
+    if (decoded.exp * 1000 < Date.now()) {
+      localStorage.removeItem("token");
+      return <Navigate to="/" />;
     }
 
     return children;
 
   } catch (error) {
+    localStorage.removeItem("token");
     return <Navigate to="/" />;
   }
 }

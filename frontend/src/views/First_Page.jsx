@@ -8,6 +8,11 @@ function First_Page() {
 
   const token = localStorage.getItem("token");
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/"); 
+  };
+
   let rol = null;
 
   if (token) {
@@ -38,6 +43,10 @@ function First_Page() {
           Registro de Usuarios
         </button>
       )}
+      <br></br>
+      <button onClick={handleLogout}>
+        Cerrar sesión
+      </button>
     </div>
   );
 }

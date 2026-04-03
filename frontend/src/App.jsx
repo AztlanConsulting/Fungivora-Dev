@@ -8,16 +8,21 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* 🔥 Ruta base */}
         <Route path="/" element={<Login />} />
-
-        <Route path="/first" element={<First_Page />} />
 
         <Route
           path="/usuario"
           element={
             <ProtectedRoute rolPermitido="Administrador">
               <Usuario />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/first"
+          element={
+            <ProtectedRoute>
+              <First_Page />
             </ProtectedRoute>
           }
         />

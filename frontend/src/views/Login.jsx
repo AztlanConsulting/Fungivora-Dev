@@ -24,6 +24,14 @@ function Login() {
     localStorage.setItem("token", data.token);
 
     navigate("/first");
+
+    useEffect(() => {
+     const token = localStorage.getItem("token");
+
+    if (token) {
+        navigate("/first");
+    }
+    }, []);
   };
 
   return (
