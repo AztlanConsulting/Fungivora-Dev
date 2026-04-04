@@ -25,4 +25,3 @@ register.registerMetric(httpRequestDurationMicroseconds);
 register.registerMetric(httpRequestCounter);
 
 module.exports = { register, httpRequestCounter, httpRequestDurationMicroseconds };
-
