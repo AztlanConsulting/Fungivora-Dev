@@ -23,10 +23,5 @@
   "homepage": "https://github.com/AztlanConsulting/Fungivora-Dev#readme",
   "devDependencies": {
     "concurrently": "^9.2.1"
-  },
-  "dependencies": {
-    "bcrypt": "^6.0.0",
-    "jsonwebtoken": "^9.0.3",
-    "jwt-decode": "^4.0.0"
   }
 }
