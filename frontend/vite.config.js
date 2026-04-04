@@ -2,12 +2,6 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// DOTENV para cargar allowedHosts
-const dotenv = require('dotenv')
-dotenv.config({ path: require('path').join(__dirname, '../.env') });
-
-const ALLOWED_HOSTS = process.env.ALLOWED_HOSTS?.split(',') || [];
-
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -46,6 +40,6 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-    allowedHosts: ALLOWED_HOSTS
+    allowedHosts: ['localhost']
   }
 })
