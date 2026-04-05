@@ -41,12 +41,22 @@ We will use tags in brackets followed by a description.
 
 ## 3. Workflow
 
+### 3.1 Basic Workflow
 1.  **Sync:** `git checkout develop` -> `git pull origin develop`.
 2.  **New Branch:** `git checkout -b feature/task-name`.
 3.  **Development:** Perform atomic commits (one logical change per commit).
 4.  **Testing:** Verify that `npm run dev` works correctly from the root directory.
 5.  **Push:** `git push origin feature/task-name`.
 6.  **Pull Request (PR):** Open a PR on GitHub targeting the `develop` branch.
+
+### 3.2 Advanced Workflow Steps
+* **Early Visibility:** Once you create your local branch, push it to the remote repository immediately (`git push -u origin feature/your-task`), even if you haven't written any code yet. This lets the team know someone is already working on that feature.
+* **Handling Merge Conflicts:**
+    1.  Switch to your target branch: `git checkout develop` and `git pull origin develop`.
+    2.  Go back to your feature branch: `git checkout feature/your-task`.
+    3.  Merge develop into your branch: `git merge develop`.
+    4.  If conflicts arise, VS Code will highlight them. Choose the correct changes, save the files.
+    5.  Finalize the merge: `git add .` and `git commit -m "[FIX] resolve merge conflicts with develop"`.
 
 ---
 
@@ -62,6 +72,8 @@ We will use tags in brackets followed by a description.
 # Estándar de Desarrollo: Fungivora-Dev (Español)
 
 Este documento define los lineamientos para el desarrollo del proyecto, con el fin de mantener un código consistente, claro y fácil de colaborar.
+
+Esta traducción está destinada como un apoyo de lectura para los miembros del equipo. El acuerdo es trabajar commits, ramas y PRs en inglés.
 
 ## 1. Estándares del Repositorio
 
@@ -79,17 +91,33 @@ Este documento define los lineamientos para el desarrollo del proyecto, con el f
 * Usar minúsculas y guiones (sin acentos ni ñ): `tipo-de-rama/descripcion-corta`.
 
 ## 2. Estándares de Commits
+Usaremos etiquetas entre corchetes seguidas de una descripción breve.
+
 **Formato:** `[TIPO] (área) descripción breve`
 * **`[ADD]`**: Nueva funcionalidad/archivo.
 * **`[FIX]`**: Corrección de bug.
 * **`[UPDATE]`**: Mejora de algo existente.
+* **`[DELETE]`**: Eliminación de código o archivos.
 * **`[ENV]`**: Ajustes de configuración/servidor.
+* **`[DOC]`**: Cambios en la documentación.
 
 ## 3. Flujo de Trabajo
-1. **Sincronizar:** `git pull origin develop`.
+### 3.1 Flujo básico
+
+1. **Sincronizar:** `git checkout develop` -> `git pull origin develop`.
 2. **Nueva Rama:** `git checkout -b feature/nombre-tarea`.
-3. **Prueba:** Verificar `npm run dev` desde la raíz.
-4. **Push & PR:** Subir rama y abrir PR hacia `develop`.
+3. **Visibilidad Temprana:** En cuanto crees tu rama local, súbela al repositorio `git push -u origin feature/tu-tarea`.
+4.  **Desarrollo:** Realiza commits atómicos (un cambio lógico por commit).
+5. **Prueba:** Verificar `npm run dev` desde la raíz.
+6. **Push:** `git push origin feature/task-name`.
+7. **Pull Request (PR):** Abre un PR en GitHub hacia la rama `develop`.
+
+### 3.2 Resolución de Conflictos (Merge conflicts)
+1.  Ve a la rama base: `git checkout develop` y haz `git pull origin develop`.
+2.  Regresa a tu rama: `git checkout feature/tu-tarea`.
+3.  Integra los cambios: `git merge develop`.
+4.  Si hay conflictos, VS Code los marcará. Elige los cambios correctos y guarda los archivos.
+5.  Finaliza el merge: `git add .` y `git commit -m "[FIX] resolve merge conflicts with develop"`.
 
 ## 4. Reglas de Oro
 * **Variables de Entorno:** NUNCA subas el contenido de tu `.env`.
