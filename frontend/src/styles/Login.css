@@ -1,13 +1,13 @@
 /* src/styles/Login.css */
 
 .login-screen {
-  background-color: #ffffff; /* Fondo blanco como en el diseño */
+  background-color: #ffffff;
   min-height: 100vh;
   width: 100vw;
   position: relative;
   overflow: hidden;
   display: flex;
-  flex-direction: column; /* Alineación vertical */
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-family: sans-serif;
@@ -16,35 +16,86 @@
 /* --- TÍTULO (Ahora fuera del flujo central para que no empuje) --- */
 .header-title {
   position: absolute;
-  top: 8%; /* Lo fijamos arriba */
+  top: 5%;
   text-align: center;
   z-index: 10;
-  color: #000000; /* Texto negro para que se vea sobre fondo blanco */
+  color: #000000;
+  font-size: clamp(1.4rem, 5vw, 3.5rem);
+  line-height: 1.2;
+  padding: 0 2rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* --- FORMA VERDE --- */
-.bg-shape-green {
+/* ---CONTENEDOR DE GRUPO Verde --- */
+.top-left-group {
   position: absolute;
-  top: -5%;
-  left: -5%;
-  width: 25vw;
-  height: 40vh;
-  background-color: #1a764d;
-  border-radius: 30% 70% 52% 48% / 30% 33% 67% 70%;
+  top: 0%;
+  left: 0%;
+  width: 40vw;
+  height: 50vw;
   z-index: 1;
+}
+
+/* --- Figura Verde (Unión de dos piezas) --- */
+.green-group-wrapper {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 45vw;
+  height: 27vw;
+  z-index: 1;
+  filter: 
+    drop-shadow(4px 0px 0px black) 
+    drop-shadow(-4px 0px 0px black) 
+    drop-shadow(0px 4px 0px black) 
+    drop-shadow(0px -4px 0px black);
+}
+
+.green-group-wrapper .shape-part {
+  position: absolute;
+  background-color: #008755;
+}
+
+.green-group-wrapper .part-1 {
+  width: 200%; height: 100%;
+  top: 5%; left: -100%;
+  border-radius: 30% 50% 52% 48% / 30% 3% 67% 70%;
+  transform: rotate(-35deg);
+}
+
+.green-group-wrapper .part-2 {
+  width: 60%; height: 80%;
+  top: 15%; left: 5%;
+  border-radius: 40% 40% 40% 65% / 40% 40% 60% 60%;
+  transform: rotate(25deg);
+}
+
+.green-group-wrapper .part-3 {
+  width: 0%; height: 0%;
+  top: 40%; left: 15%;
+  border-radius: 40% 60% 90% 30% / 40% 40% 60% 60%;
+  transform: rotate(-95deg);
+}
+
+/* --- EL PERSONAJE  --- */
+.green-group-wrapper .character-melenas {
+  position: absolute;
+  bottom: -42%; 
+  right: 22%;  
+  width: 12vw; 
+  height: auto; 
+  z-index: 5;
+  transform: rotate(140deg);
 }
 
 /* --- CONTENEDOR DE GRUPO Rojo --- */
 .bottom-right-group {
   position: absolute;
-  bottom: 0; /* Anclado a la esquina inferior */
-  right: 0;  /* Anclado a la esquina derecha */
-  
-  /* Definimos un área de trabajo para este grupo */
-  width: 40vw; /* El 40% del ancho de la pantalla */
-  height: 50vh; /* El 50% del alto de la pantalla */
-  
-  /* Aseguramos que este grupo esté detrás del formulario central */
+  bottom: 0;
+  right: 0;
+  width: 40vw;
+  height: 50vw;
   z-index: 1;
 }
 
@@ -54,7 +105,7 @@
   bottom: -5%;
   right: -5%;
   width: 45vw;
-  height: 50vh;
+  height: 27vw;
   z-index: 1;
   filter: 
     drop-shadow(4px 0px 0px black) 
@@ -63,26 +114,26 @@
     drop-shadow(0px -4px 0px black);
 }
 
-.shape-part {
+.red-group-wrapper .shape-part {
   position: absolute;
-  background-color: #e33737;
+  background-color: #ed2025;
 }
 
-.part-1 {
+.red-group-wrapper .part-1 {
   width: 0%; height: 0%;
-  bottom: 0; right: 80;
+  bottom: 0; right: 80px;
   border-radius: 30% 70% 52% 48% / 30% 33% 67% 70%;
-   transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 
-.part-2 {
+.red-group-wrapper .part-2 {
   width: 120%; height: 100%;
   top: 30%; left: 25%;
   border-radius: 40% 40% 40% 65% / 40% 40% 60% 60%;
   transform: rotate(-295deg);
 }
 
-.part-3 {
+.red-group-wrapper .part-3 {
   width: 80%; height: 80%;
   top: 30%; left: 25%;
   border-radius: 40% 60% 90% 30% / 40% 40% 60% 60%;
@@ -90,11 +141,10 @@
 }
 
 /* --- EL PERSONAJE  --- */
-.character-mariarosa {
+.red-group-wrapper .character-mariarosa {
   position: absolute;
   bottom: 105%; 
   right: 38%;  
-  /* Tamaño del personaje ¿Porque no se gira?*/
   width: 10vw; 
   height: auto; 
   z-index: 2;
@@ -103,34 +153,36 @@
 
 /* --- CAJA AZUL (Centro absoluto) --- */
 .form-box {
-  background-color: #3a45c7;
+  background-color: #3b3fb6;
   width: 90%;
   max-width: 450px;
   border-radius: 3rem;
   padding: 3.5rem;
   box-shadow: 0 20px 40px rgba(0,0,0,0.2);
   z-index: 10;
-  margin-top: 5rem; /* Espacio para que el título no la toque */
+  margin-top: 5rem;
 }
 
 .input-field {
   width: 100%;
   background-color: #9bb1ef;
-  color: #3a45c7;
+  color: #3b3fb6;
   border-radius: 1.2rem;
   padding: 1rem;
   border: none;
   outline: none;
   margin-top: 0.5rem;
   font-weight: 600;
+  box-sizing: border-box;
 }
 
 .input-field::placeholder {
-  color: #3a45c7;
+  color: #3b3fb6;
   opacity: 0.6;
 }
+
 .btn-entrar {
-  background-color: #fdbd1f;
+  background-color: #ffb81c;
   color: #ffffff;
   width: 60%;
   padding: 0.8rem;
@@ -141,7 +193,6 @@
   cursor: pointer;
   margin-top: 2rem;
   box-shadow: 0 8px 0px #d49a15;
-  
   animation: float 1.8s ease-in-out infinite;
   transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
@@ -155,4 +206,195 @@
 @keyframes float {
   0%, 100% { transform: translateY(0);    box-shadow: 0 8px 0px #d49a15; }
   50%       { transform: translateY(-8px); box-shadow: 0 16px 0px #d49a15; }
+}
+
+/* --- TABLET ANCHA (max-width: 1024px) --- */
+@media (max-width: 1024px) {
+  .green-group-wrapper {
+    width: 38vw;
+    height: 19vw;
+  }
+
+  .green-group-wrapper .character-melenas {
+    width: 16vw;
+    bottom: -35%;
+    right: 5%;
+  }
+
+  .red-group-wrapper {
+    width: 42vw;
+    height: 19vw;
+  }
+
+  .red-group-wrapper .character-mariarosa {
+    width: 13vw;
+    bottom: 95%;
+    right: 25%;
+  }
+
+  .form-box {
+    max-width: 400px;
+    padding: 2.5rem;
+  }
+}
+
+/* --- TABLET (max-width: 768px) --- */
+@media (max-width: 768px) {
+  .header-title {
+    top: 2%;
+    font-size: clamp(1.2rem, 6vw, 2.2rem);
+  }
+
+  .form-box {
+    padding: 2rem 1.5rem;
+    border-radius: 2rem;
+    margin-top: 9rem;
+    max-width: 360px;
+  }
+
+  .btn-entrar {
+    font-size: 1.3rem;
+    width: 80%;
+  }
+
+  /* Figuras más pequeñas para no tapar el form */
+  .green-group-wrapper {
+    width: 32vw;
+    height: 15vw;
+  }
+
+  .green-group-wrapper .character-melenas {
+    width: 20vw;
+    bottom: -25%;
+    right: 0%;
+  }
+
+  .red-group-wrapper {
+    width: 38vw;
+    height: 18vw;
+  }
+
+  .red-group-wrapper .character-mariarosa {
+    width: 16vw;
+    bottom: 88%;
+    right: 15%;
+  }
+}
+
+/* --- MÓVIL (max-width: 480px) --- */
+@media (max-width: 480px) {
+  .login-screen {
+    justify-content: flex-start;
+    padding-top: 16rem;
+     min-height: 300vw; 
+  }
+
+  .header-title {
+    position: relative;
+    top: auto;
+    font-size: 1.4rem;   /* Tamaño fijo más pequeño */
+    line-height: 1.3;
+    margin-bottom: 1rem;
+    padding: 0 1rem;
+    text-align: center;
+    z-index: 10;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .form-box {
+    position: relative;
+    margin-top: 2.5rem;
+    width: 88%;
+    padding: 1.8rem 1.2rem;
+    border-radius: 1.8rem;
+    z-index: 10;
+  }
+
+  .btn-entrar {
+    font-size: 1.2rem;
+    width: 85%;
+    padding: 0.7rem;
+  }
+
+  /* --- Figura verde más pequeña para no tapar el título --- */
+  .top-left-group {
+    width: 35vw;
+    height: 22vw;
+  }
+
+  .green-group-wrapper {
+    width: 40vw;
+    height: 22vw;
+    filter:
+      drop-shadow(3px 0px 0px black)
+      drop-shadow(-3px 0px 0px black)
+      drop-shadow(0px 3px 0px black)
+      drop-shadow(0px -3px 0px black);
+  }
+
+  .green-group-wrapper .character-melenas {
+    width: 35vw;
+    bottom: -70%;
+    right: -15%;
+    transform: rotate(140deg);
+  }
+
+  /* --- Figura roja más grande para llenar el espacio de abajo --- */
+  .bottom-right-group {
+    width: 65vw;
+    height: 45vw;
+  }
+
+  .red-group-wrapper {
+    width: 70vw;
+    height: 55vw;
+    filter:
+      drop-shadow(3px 0px 0px black)
+      drop-shadow(-3px 0px 0px black)
+      drop-shadow(0px 3px 0px black)
+      drop-shadow(0px -3px 0px black);
+  }
+
+  .red-group-wrapper .character-mariarosa {
+    width: 32vw;
+    bottom: 45%;
+    right: 55%;
+  }
+}
+
+/* --- MÓVIL PEQUEÑO (max-width: 360px) --- */
+@media (max-width: 360px) {
+  .header-title {
+    font-size: 1.2rem;
+  }
+
+  .form-box {
+    width: 92%;
+    padding: 1.4rem 1rem;
+    margin-top: 2rem;
+  }
+
+  .btn-entrar {
+    font-size: 1rem;
+    width: 90%;
+  }
+
+  .green-group-wrapper {
+    width: 35vw;
+    height: 40vw;
+  }
+
+  .green-group-wrapper .character-melenas {
+    width: 28vw;
+  }
+
+  .red-group-wrapper {
+    width: 60vw;
+    height: 38vw;
+  }
+
+  .red-group-wrapper .character-mariarosa {
+    width: 26vw;
+  }
 }

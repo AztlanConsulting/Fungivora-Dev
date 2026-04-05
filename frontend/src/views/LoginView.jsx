@@ -1,6 +1,8 @@
 import React from 'react';
 import '../styles/Login.css';
 import mariarosaImg from '../assets/mariarosaoutline.png';
+import melenasImg from '../assets/melenascontorno.png';
+
 
 const LoginView = () => {
   return (
@@ -33,11 +35,24 @@ const LoginView = () => {
       </div>
       </div>
 
+      <div className="top-left-group">
+      <div className="green-group-wrapper">
+        <div className="shape-part part-1"></div>
+        <div className="shape-part part-2"></div>
+        <div className="shape-part part-3"></div>
+        <img 
+          src={melenasImg} 
+          alt="Personaje Fungivora Melenas" 
+          className="character-melenas"
+        />
+      </div>
+      </div>
+
       {/* Formulario centrado */}
       <div className="form-box">
         <div className="w-full mb-8">
           <label className="text-white text-2xl font-bold flex items-center gap-2 ml-2">
-            👤 Usuario
+             Usuario
           </label>
           <input type="text" placeholder="Escribe tu entrada..." className="input-field" />
         </div>
