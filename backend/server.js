@@ -7,12 +7,19 @@ const generalRoutes = require('./routes/general.routes');
 dotenv.config({ path: require('path').join(__dirname, '../.env') });
 
 const PORT = process.env.BACKEND_PORT;
+const { register } = require('./config/metrics');
 
 app.use(cors());
 app.use(express.json());
 
 app.get('/api', (req, res) => {
     res.json({ mensaje: "Respuesta del backend" });
+});
+
+// * Metricas de grafana
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', register.contentType);
+    res.end(await register.metrics());
 });
 
 app.use('/', generalRoutes);
