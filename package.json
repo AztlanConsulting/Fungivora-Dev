@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "install-all": "npm install --prefix frontend && npm install --prefix backend",
+    "install-all": "npm install --prefix frontend --legacy-peer-deps && npm install --prefix backend",
     "frontend": "npm run dev --prefix frontend",
     "backend": "npm start --prefix backend",
     "dev": "concurrently \"npm run frontend\" \"npm run backend\""
@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/AztlanConsulting/Fungivora-Dev#readme",
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "dotenv": "^17.4.0"
   }
 }
