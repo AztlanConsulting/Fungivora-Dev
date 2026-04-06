@@ -9,12 +9,12 @@ const LoginView = () => {
 
       {/* Título */}
       <div className="header-title">
-        <h1 className="text-5xl md:text-6xl font-black text-black">
+        <h1 className="text-5xl md:text-6xl font-black font-titulo">
           Bienvenidxs a
         </h1>
-        <h2 className="text-5xl md:text-6xl font-black text-black">
+        <h1 className="text-5xl md:text-6xl font-black font-titulo">
           "Fungivora"
-        </h2>
+        </h1>
       </div>
 
       {/* Figuras decorativas */}
