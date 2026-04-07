@@ -1,36 +1,49 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 function First_Page() {
-  const [mensaje, setMensaje] = useState("");
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api")
-      .then(res => res.json())
-      .then(data => setMensaje(data.mensaje))
-      .catch(err => console.error(err));
-  }, []);
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/"); 
+  };
+
+  let rol = null;
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      rol = decoded.rol; 
+    } catch (error) {
+      console.error("Token inválido");
+    }
+  }
 
   return (
     <div>
       <h1>Pagina principal</h1>
 
-      <p>Bienvenidx a fungivora sin nombre "aun"</p>
-      
-      <br></br>
-        {/*<Botton para ir a usuarios*/}
+      <p>Bienvenidx</p>
+
+      {/* Boton permitido solo para el Administrador */}
+      {rol === "Administrador" && (
         <button
-        onClick={() => {
-            fetch("http://localhost:5000/usuario", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            }});
-        }}
+          onClick={() => {
+            navigate("/usuario"); 
+          }}
         >
-        Registro de Usuarios
+          Registro de Usuarios
         </button>
+      )}
+      <br></br>
+      {/* Boton para cerrar sesión y destruir el token */}
+      <button onClick={handleLogout}>
+        Cerrar sesión
+      </button>
     </div>
   );
 }
 
-export default Login;
+export default First_Page;

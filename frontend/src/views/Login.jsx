@@ -1,44 +1,50 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const [mensaje, setMensaje] = useState("");
-  const [texto, setTexto] = useState("");
+  const [usuario, setUsuario] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api")
-      .then(res => res.json())
-      .then(data => setMensaje(data.mensaje))
-      .catch(err => console.error(err));
-  }, []);
-    return (
-        <div>
-        <h1>Login</h1>
+    const handleLogin = async () => {
+    const res = await fetch("http://localhost:5000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nombre_usuario: usuario,
+        contrasena: password,
+      }),
+    });
 
-        <p>Usuario</p>
-        <input
-        type="text"
-        value={texto}
-        onChange={(e) => setTexto(e.target.value)}
-      />
-        <p>Contraseña</p>
-        <input
-        type="text"
-        value={texto}
-        onChange={(e) => setTexto(e.target.value)}
-      />
-      <br></br>
-        {/*<Botton para entrar al sistema*/}
-        <button
-        onClick={() => {
-            fetch("http://localhost:5000/first", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            }});
-        }}
-        >
-        Enviar
-        </button>
-        </div>
-    );
+    const data = await res.json();
+
+    localStorage.setItem("token", data.token);
+    navigate("/first");
+
+    useEffect(() => {
+     const token = localStorage.getItem("token");
+
+    if (token) {
+        navigate("/first");
+    }
+    }, []);
+  };
+
+  return (
+    <div>
+      <h1>Login</h1>
+
+      <p>Usuario</p>
+      <input onChange={(e) => setUsuario(e.target.value)} />
+
+      <p>Contraseña</p>
+      <input type="password" onChange={(e) => setPassword(e.target.value)} />
+
+      <button onClick={handleLogin}>Entrar</button>
+    </div>
+  );
 }
+
+export default Login;

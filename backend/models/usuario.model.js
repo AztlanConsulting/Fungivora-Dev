@@ -10,18 +10,17 @@ class Usuario {
     this.id_rol = id_rol;
   }
 
-  static fetchOne = async (nombre_usuario) => {
-    try {
-      const [filas] = await db.execute('SELECT * FROM usuarios WHERE usuario = ?', [nombre_usuario]);
+    static fetchOne = async (nombre_usuario) => {
+    const [filas] = await db.execute(
+        `SELECT u.*, r.nombre_rol
+        FROM usuarios u
+        JOIN roles r ON u.id_rol = r.id_rol
+        WHERE LOWER(TRIM(u.nombre_usuario)) = LOWER(TRIM(?))`,
+        [nombre_usuario]
+    );
 
-      if (filas.length === 0) {
-        console.log('Usuario no encontrado en la base de datos.');
-      }
-      
-      return filas;
-    } catch (error) {
-      console.error('Error en fetchOne:', error);
-      throw error;
-    }
-  };
+    return filas[0];
+    };
 }
+
+module.exports = Usuario;

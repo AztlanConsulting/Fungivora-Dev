@@ -1,7 +1,49 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-exports.get_login = (request, response, next) => {
-    response.render('login');
+const Usuario = require('../models/usuario.model');
+
+exports.get_login = (req, res) => {
+    res.render('login');
+};
+
+/*
+* post_login
+Hacer un login basico para tener permisos
+Metodo que toma la información del usuario y su rol para poder acceder
+@param id_usuario, nombre_usuario, nombre_rol
+*/
+exports.post_login = async (req, res) => {
+    try {
+        const { nombre_usuario, contrasena } = req.body;
+
+        const user = await Usuario.fetchOne(nombre_usuario);
+
+        if (!user) {
+            return res.json({ msg: "Usuario no encontrado" });
+        }
+
+        if (user.contrasena_usuario !== contrasena) {
+            return res.json({ msg: "Contraseña incorrecta" });
+        }
+
+        const token = jwt.sign(
+            {
+                id: user.id_usuario,
+                rol: user.nombre_rol
+            },
+            "secreto_super_seguro",
+            { expiresIn: "1h" }
+        );
+
+        res.json({
+            token
+        });
+
+    } catch (error) {
+        console.error(error); //! Alerta de error en la consola
+        res.status(500).json({ msg: "Error en login" });
+    }
 };
 
 exports.get_first = (request, response, next) => {
@@ -14,8 +56,8 @@ Obtener el usuario
 TODO: obtener usuario de la base de datos
 @param 
 */
-exports.get_usuario = (request, response, next) => {
-    response.render('usuario');
+exports.get_usuario = (req, res) => {
+    res.json({ msg: "Acceso autorizado" });
 };
 
 /*
