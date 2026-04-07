@@ -1,14 +1,58 @@
-import React from 'react';
-import '../styles/Login.css';
-import mariarosaImg from '../assets/mariarosaoutline.png';
-import melenasImg from '../assets/melenascontorno.png';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/Login.css";
+
+import mariarosaImg from "../assets/mariarosaoutline.png";
+import melenasImg from "../assets/melenascontorno.png";
+
+import InputField from "../componentes/entrada_texto_inicio";
+import Button from "../componentes/boton_amarillo";
 
 const LoginView = () => {
+  const [usuario, setUsuario] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/first");
+    }
+  }, []);
+
+  const handleLogin = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nombre_usuario: usuario,
+          contrasena: password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!data.token) {
+        alert(data.msg || "Error al iniciar sesión");
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+      navigate("/first");
+
+    } catch (error) {
+      console.error(error);
+      alert("Error de conexión");
+    }
+  };
+
   return (
-    // Contenedor principal: flex column en móvil, centrado siempre
     <div className="login-screen min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-4">
 
-      {/* Título: texto más pequeño en móvil, crece en pantallas medianas */}
+      {/* Título */}
       <div className="header-title text-center mb-8 z-10">
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-black font-titulo">
           Bienvenidxs a
@@ -18,62 +62,49 @@ const LoginView = () => {
         </h1>
       </div>
 
-      {/* Figuras decorativas — se ocultan en pantallas muy pequeñas */}
+      {/* Figuras */}
       <div className="top-left-group hidden sm:block">
         <div className="green-group-wrapper">
           <div className="shape-part part-1"></div>
           <div className="shape-part part-2"></div>
-          <div className="shape-part part-3"></div>
         </div>
       </div>
 
       <div className="bottom-right-group hidden sm:block">
         <div className="red-group-wrapper">
-          <div className="shape-part part-1"></div>
           <div className="shape-part part-2"></div>
           <div className="shape-part part-3"></div>
         </div>
       </div>
 
-      {/* Personajes: se ocultan en móvil, aparecen desde sm */}
-      <img
-        src={melenasImg}
-        alt="Personaje Fungivora Melenas"
-        className="character-melenas hidden sm:block"
-      />
-      <img
-        src={mariarosaImg}
-        alt="Personaje Fungivora Maria Rosa"
-        className="character-mariarosa hidden sm:block"
-      />
+      {/* Personajes */}
+      <img src={melenasImg} className="character-melenas hidden sm:block" />
+      <img src={mariarosaImg} className="character-mariarosa hidden sm:block" />
 
-      {/* Formulario: ancho completo en móvil, fijo en pantallas grandes */}
+      {/* Formulario */}
       <div className="form-box w-full sm:w-96 md:w-[420px] z-10">
-        <div className="w-full mb-6 md:mb-8">
-          <label className="text-white text-xl md:text-2xl font-bold flex items-center gap-2 ml-2">
-            Usuario
-          </label>
-          <input
-            type="text"
-            placeholder="Escribe tu entrada..."
-            className="input-field"
-          />
-        </div>
 
-        <div className="w-full mb-6 md:mb-8">
-          <label className="text-white text-xl md:text-2xl font-bold flex items-center gap-2 ml-2">
-            Contraseña
-          </label>
-          <input
-            type="password"
-            placeholder="Escribe tu entrada..."
-            className="input-field"
-          />
-        </div>
+        <InputField
+          label="Usuario"
+          value={usuario}
+          onChange={(e) => setUsuario(e.target.value)}
+          placeholder="Escribe tu usuario..."
+        />
+
+        <InputField
+          label="Contraseña"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Escribe tu contraseña..."
+        />
 
         <div className="w-full flex justify-center">
-          <button className="btn-entrar">Entrar</button>
+          <Button onClick={handleLogin}>
+            Entrar
+          </Button>
         </div>
+
       </div>
     </div>
   );
