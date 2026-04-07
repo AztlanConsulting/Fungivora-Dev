@@ -17,7 +17,7 @@ exports.post_login = async (req, res) => {
     try {
         const { nombre_usuario, contrasena } = req.body;
 
-        const user = await Usuario.fetchOne(nombre_usuario);
+        const user = await Usuario.fetch_one(nombre_usuario);
 
         if (!user) {
             return res.json({ msg: "Usuario no encontrado" });
