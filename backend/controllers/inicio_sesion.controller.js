@@ -19,12 +19,20 @@ exports.post_login = async (req, res) => {
 
         const user = await Usuario.fetchOne(nombre_usuario);
 
+        //! Usuario no existe
         if (!user) {
-            return res.json({ msg: "Usuario no encontrado" });
+            return res.status(404).json({ 
+                error: "usuario",
+                msg: "Usuario incorrecto, intente de nuevo"
+            });
         }
 
+        //! Contraseña incorrecta
         if (user.contrasena_usuario !== contrasena) {
-            return res.json({ msg: "Contraseña incorrecta" });
+            return res.status(401).json({ 
+                error: "password",
+                msg: "Contraseña incorrecta, intente de nuevo"
+            });
         }
 
         const token = jwt.sign(
@@ -36,12 +44,10 @@ exports.post_login = async (req, res) => {
             { expiresIn: "1h" }
         );
 
-        res.json({
-            token
-        });
+        res.json({ token });
 
     } catch (error) {
-        console.error(error); //! Alerta de error en la consola
+        console.error(error);
         res.status(500).json({ msg: "Error en login" });
     }
 };

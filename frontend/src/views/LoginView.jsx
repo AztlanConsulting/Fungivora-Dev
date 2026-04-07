@@ -11,6 +11,7 @@ import Button from "../componentes/boton_amarillo";
 const LoginView = () => {
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,17 +36,25 @@ const LoginView = () => {
 
       const data = await res.json();
 
-      if (!data.token) {
-        alert(data.msg || "Error al iniciar sesión");
+      if (!res.ok) {
+        if (data.error === "usuario") {
+          setErrorMsg("Usuario incorrecto, intente de nuevo");
+        } else if (data.error === "password") {
+          setErrorMsg("Contraseña incorrecta, intente de nuevo");
+        } else {
+          setErrorMsg("Error al iniciar sesión");
+        }
         return;
       }
+
+      setErrorMsg("");
 
       localStorage.setItem("token", data.token);
       navigate("/first");
 
     } catch (error) {
       console.error(error);
-      alert("Error de conexión");
+      setErrorMsg("Error de conexión");
     }
   };
 
@@ -84,7 +93,11 @@ const LoginView = () => {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Escribe tu contraseña..."
         />
-
+        {errorMsg && (
+         <div className="bg-red-50 border border-red-200 text-red-500 px-4 py-2 rounded-xl mt-3 text-center text-[clamp(0.7rem,1.6vw,0.9rem)]">
+            {errorMsg}
+          </div>
+        )}
         <div className="w-full flex justify-center">
           <Button onClick={handleLogin}>
             Entrar
