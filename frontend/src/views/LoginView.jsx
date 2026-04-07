@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 
-import mariarosaImg from "../assets/mariarosaoutline.png";
-import melenasImg from "../assets/melenascontorno.png";
+import figuraVerde from "../assets/figura_verde.png";
+import figuraRoja from "../assets/figura_roja.png";
 
 import InputField from "../componentes/entrada_texto_inicio";
 import Button from "../componentes/boton_amarillo";
@@ -54,32 +54,18 @@ const LoginView = () => {
 
       {/* Título */}
       <div className="header-title text-center mb-8 z-10">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black font-titulo">
+        <h1 className="font-black font-titulo text-[clamp(1.5rem,5vw,3.5rem)]">
           Bienvenidxs a
         </h1>
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black font-titulo">
+        <h1 className="font-black font-titulo text-[clamp(1.5rem,5vw,3.5rem)]">
           "Fungivora"
         </h1>
       </div>
 
       {/* Figuras */}
-      <div className="top-left-group hidden sm:block">
-        <div className="green-group-wrapper">
-          <div className="shape-part part-1"></div>
-          <div className="shape-part part-2"></div>
-        </div>
-      </div>
+      <img src={figuraVerde} className="figura-verde" />
+      <img src={figuraRoja} className="figura-roja" />
 
-      <div className="bottom-right-group hidden sm:block">
-        <div className="red-group-wrapper">
-          <div className="shape-part part-2"></div>
-          <div className="shape-part part-3"></div>
-        </div>
-      </div>
-
-      {/* Personajes */}
-      <img src={melenasImg} className="character-melenas hidden sm:block" />
-      <img src={mariarosaImg} className="character-mariarosa hidden sm:block" />
 
       {/* Formulario */}
       <div className="form-box w-full sm:w-96 md:w-[420px] z-10">
