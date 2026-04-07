@@ -1,8 +1,11 @@
 #!/bin/bash
-# update_repo.sh
+# update_repo.sh - Script de autodespliegue
 
-echo "- Bajando cambios de Git..."
-git pull origin
+# Detectar la rama actual
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+echo "- Bajando cambios de Git (origen $BRANCH)..."
+git pull origin "$BRANCH"
 
 echo "- Instalando dependencias nuevas..."
 npm run install-all
