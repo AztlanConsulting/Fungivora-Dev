@@ -6,12 +6,14 @@ const auth = require('../middleware/auth');
 const verificarRol = require('../middleware/rbac');
 
 //Rutas para el login
-router.get('/', controller.get_login);
 router.post('/', controller.post_login);
+router.get('/', controller.get_login);
 
 //Acceder como usuario y verificar su rol
 router.get('/usuario', auth, verificarRol("Administrador"), controller.get_usuario);
 
+//RBAC
+router.get('/first', controller.get_first);
 //Hashing de contraseñas
 router.post('/hash', controller.post_hash);
 router.post('/compare', controller.post_comparacion);

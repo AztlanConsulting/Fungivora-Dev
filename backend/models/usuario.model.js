@@ -10,7 +10,7 @@ class Usuario {
     this.id_rol = id_rol;
   }
 
-    static fetchOne = async (nombre_usuario) => {
+    static fetch_one = async (nombre_usuario) => {
     const [filas] = await db.execute(
         `SELECT u.*, r.nombre_rol
         FROM usuarios u

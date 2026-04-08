@@ -1,0 +1,57 @@
+@startuml
+actor Cliente
+
+participant "Frontend (React)" as React
+participant "inicio_sesion.controller" as Controller
+participant "usuario.model" as Model
+participant "Base de Datos" as DB
+participant "jwtUtils" as JWT
+
+Cliente -> React : Ingresa credenciales\n(usuario, contraseña)
+activate React
+
+React -> Controller : POST /login\n{ nombre_usuario , contrasena }
+activate Controller
+
+alt Faltan datos
+    Controller --> React : Bad Request\n{ mensaje: "Usuario y contraseña requeridos" }
+    React --> Cliente : Mostrar error
+else Datos completos
+    Controller -> Model : fetch_one(nombre_usuario)
+    activate Model
+
+    Model -> DB : SELECT u.*, r.nombre_rol FROM usuarios u JOIN roles r ON u.id_rol = r.id_rol
+    activate DB
+    DB --> Model : usuario o null
+    deactivate DB
+
+    Model --> Controller : usuario o null
+    deactivate Model
+
+    alt Usuario no existe
+        Controller --> React : Unauthorized\n{ mensaje: "Credenciales inválidas" }
+        React --> Cliente : Mostrar error
+    else Usuario existe
+        alt Contraseña incorrecta
+            Controller --> React : Unauthorized\n{ mensaje: "Credenciales inválidas" }
+            React --> Cliente : Mostrar error
+        else Contraseña correcta
+            Controller -> JWT : generarAccessToken({ id, rol })
+            activate JWT
+            JWT --> Controller : accessToken
+
+            Controller -> JWT : generarRefreshToken({ id })
+            JWT --> Controller : refreshToken
+            deactivate JWT
+
+            Controller --> React : { usuario, accessToken, refreshToken }
+
+            React -> React : Guardar tokens
+            React --> Cliente : Acceso concedido
+        end
+    end
+end
+
+deactivate Controller
+deactivate React
+@enduml

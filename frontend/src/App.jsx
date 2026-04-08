@@ -1,9 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import First_Page from "./views/First_Page";
-import Login from "./views/Login";
 import LoginView from './views/LoginView';
 import Usuario from "./views/Usuario";
-import Ruta_protegida from "../components/ruta_protegida";
+import Ruta_protegida from "../componentes_internos/ruta_protegida";
 
 function App() {
   return (
