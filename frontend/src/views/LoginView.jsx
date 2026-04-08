@@ -40,9 +40,9 @@ const LoginView = () => {
 
       if (!res.ok) {
         if (data.error === "usuario") {
-          setErrorMsg("Usuario incorrecto, intente de nuevo");
+          setErrorMsg("Usuario o contraseña incorrecto, intente de nuevo");
         } else if (data.error === "password") {
-          setErrorMsg("Contraseña incorrecta, intente de nuevo");
+          setErrorMsg("Usuario o contraseña incorrecta, intente de nuevo");
         } else {
           setErrorMsg("Error al iniciar sesión");
         }
