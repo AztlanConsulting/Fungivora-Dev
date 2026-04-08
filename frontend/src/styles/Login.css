@@ -1,0 +1,212 @@
+/* src/styles/Login.css */
+
+/* ============================================================
+   ESTRATEGIA:
+   - .login-screen ocupa exactamente 100vh / 100vw
+   - Las figuras decorativas usan position: fixed ancladas a
+     esquinas, así NO dependen del scroll ni del contenido
+   - Los personajes PNG se posicionan dentro de sus grupos con
+     coordenadas % relativas al grupo, no al viewport
+   - Tamaños con clamp() para escalar suavemente sin breakpoints
+     agresivos
+    - Ayudaaa no me sale
+   ============================================================ */
+
+/* ── RESET MÍNIMO ─────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── PANTALLA BASE ────────────────────────────────────────── */
+.login-screen {
+  background-color: #FFFBF2;
+  width: 100vw;
+  height: 100dvh;         
+  min-height: 100vh;       
+  position: relative;
+  overflow: hidden;        /* nada debe salirse de la pantalla           */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+}
+
+/* ── TÍTULO ───────────────────────────────────────────────── */
+.header-title {
+  position: relative;
+  margin-top: clamp(2rem, 6vh, 5rem);
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+  z-index: 20;
+  color: #000000;
+  font-size: clamp(2.2rem, 6vw, 5.1rem);
+  line-height: 1.25;
+  pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════════════════
+   FORMULARIO CENTRAL
+   ══════════════════════════════════════════════════════════ */
+.form-box {
+  background-color: #3b3fb6;
+  width: clamp(300px, 88%, 500px);
+  border-radius: clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(1.5rem, 5vw, 3.5rem);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  position: relative;       /* z-index funciona sobre los fixed          */
+  margin-top: clamp(1rem, 2vh, 2rem); /* empuja el form bajo el título   */
+}
+
+.input-field {
+  width: 100%;
+  background-color: #c0cbea;
+  color: #3b3fb6;
+  border-radius: 1.2rem;
+  padding: clamp(0.9rem, 2.5vw, 1.2rem);
+  border: none;
+  outline: none;
+  margin-top: 0.5rem;
+  font-weight: 600;
+  font-size: clamp(1rem, 2.5vw, 1.2rem); 
+}
+
+.input-field::placeholder {
+  color: #4d51bd;
+  opacity: 0.6;
+}
+
+.btn {
+  background-color: var(--btn-color, #ffb81c);
+  color: #ffffff;
+  width: 65%;
+  padding: 0.8rem;
+  border-radius: 9999px;
+  font-size: clamp(1rem, 3vw, 1.8rem);
+  font-weight: 900;
+  border: none;
+  cursor: pointer;
+  margin-top: 2rem;
+  box-shadow: none;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn:active {
+  transform: translateY(6px);
+  box-shadow: 0 2px 0px var(--btn-shadow, #d49a15);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0);     box-shadow: 0 8px  0px #d49a15; }
+  50%       { transform: translateY(-8px);  box-shadow: 0 16px 0px #d49a15; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE  — solo ajustes puntuales, la base ya es fluida
+   ══════════════════════════════════════════════════════════ */
+
+/* Tablet (≤ 768 px) */
+@media (max-width: 768px) {
+  .header-title {
+    position: absolute;
+    top: clamp(2rem, 6vh, 5rem);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .form-box {
+    margin-top: clamp(4rem, 12vh, 7rem);
+  }
+
+  /* Los grupos se achican un poco para no tapar el form */
+  .top-left-group,
+  .bottom-right-group {
+    width:  clamp(140px, 32vw, 300px);
+    max-height: 80vh;
+    overflow-y: auto;
+    height: clamp(140px, 32vw, 300px);
+  }
+}
+
+/* Móvil (≤ 480 px) */
+@media (max-width: 480px) {
+  .header-title {
+    top: clamp(3rem, 8vh, 6rem);
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    width: 75%;            /* deja espacio para que no choque con figuras */
+  }
+
+  .form-box {
+    margin-top: clamp(5rem, 15vh, 8rem);
+  }
+
+  .top-left-group,
+  .bottom-right-group {
+    width:  clamp(110px, 28vw, 200px);
+    height: clamp(110px, 28vw, 200px);
+  }
+
+  .character-melenas,
+  .character-mariarosa {
+    width: clamp(60px, 35%, 100px);
+  }
+
+  .btn-entrar {
+    width: 80%;
+  }
+}
+
+@media (max-width: 480px) {
+  .input-field {
+    font-size: 1rem;
+    padding: 1rem;
+  }
+}
+
+/* Móvil pequeño (≤ 360 px) */
+@media (max-width: 360px) {
+  .top-left-group,
+  .bottom-right-group {
+    width:  100px;
+    height: 100px;
+  }
+
+  .form-box {
+    padding: 1.2rem 1rem;
+  }
+}
+
+.figura-verde {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: clamp(210px, 25vw, 300px);
+
+  transform: rotate(-45deg) translate(-120px, 60px);
+  transform-origin: top left;
+
+  z-index: 1;
+  pointer-events: none;
+}
+
+.figura-roja {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+
+  width: clamp(200px, 25vw, 300px);
+
+  transform: rotate(-25deg) translate(30%, -5%);
+  transform-origin: bottom right;
+
+  z-index: 1;
+  pointer-events: none;
+}

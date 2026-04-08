@@ -22,7 +22,7 @@ app.get('/metrics', async (req, res) => {
     res.end(await register.metrics());
 });
 
-app.use('/api', generalRoutes);
+app.use('/', generalRoutes);
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
