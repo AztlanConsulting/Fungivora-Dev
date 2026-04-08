@@ -1,78 +1,110 @@
-import React from 'react';
-import '../styles/Login.css';
-import mariarosaImg from '../assets/mariarosaoutline.png';
-import melenasImg from '../assets/melenascontorno.png';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/Login.css";
+
+import figuraRoja from "../assets/mariarosaoutline.png";
+import figuraVerde from "../assets/melenascontorno.png";
+
+import InputField from "../componentes/entrada_texto_inicio";
+import Button from "../componentes/botones";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Key01Icon, User03Icon } from '@hugeicons/core-free-icons';
 
 const LoginView = () => {
+  const [usuario, setUsuario] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/first");
+    }
+  }, []);
+
+  const handleLogin = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nombre_usuario: usuario,
+          contrasena: password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (data.error === "usuario") {
+          setErrorMsg("Usuario o contraseña incorrecto, intente de nuevo");
+        } else if (data.error === "password") {
+          setErrorMsg("Usuario o contraseña incorrecta, intente de nuevo");
+        } else {
+          setErrorMsg("Error al iniciar sesión");
+        }
+        return;
+      }
+
+      setErrorMsg("");
+
+      localStorage.setItem("token", data.token);
+      navigate("/first");
+
+    } catch (error) {
+      console.error(error);
+      setErrorMsg("Error de conexión");
+    }
+  };
+
   return (
-    // Contenedor principal: flex column en móvil, centrado siempre
     <div className="login-screen min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-4">
 
-      {/* Título: texto más pequeño en móvil, crece en pantallas medianas */}
+      {/* Título */}
       <div className="header-title text-center mb-8 z-10">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black font-titulo">
+        <h1 className="font-black font-titulo text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
           Bienvenidxs a
         </h1>
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black font-titulo">
-          "Fungivora"
+        <h1 className="font-black font-titulo text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
+          "Cultivos Fungivora"
         </h1>
       </div>
 
-      {/* Figuras decorativas — se ocultan en pantallas muy pequeñas */}
-      <div className="top-left-group hidden sm:block">
-        <div className="green-group-wrapper">
-          <div className="shape-part part-1"></div>
-          <div className="shape-part part-2"></div>
-          <div className="shape-part part-3"></div>
-        </div>
-      </div>
+      {/* Figuras */}
+      <img src={figuraVerde} className="figura-verde" />
+      <img src={figuraRoja} className="figura-roja" />
 
-      <div className="bottom-right-group hidden sm:block">
-        <div className="red-group-wrapper">
-          <div className="shape-part part-1"></div>
-          <div className="shape-part part-2"></div>
-          <div className="shape-part part-3"></div>
-        </div>
-      </div>
 
-      {/* Personajes: se ocultan en móvil, aparecen desde sm */}
-      <img
-        src={melenasImg}
-        alt="Personaje Fungivora Melenas"
-        className="character-melenas hidden sm:block"
-      />
-      <img
-        src={mariarosaImg}
-        alt="Personaje Fungivora Maria Rosa"
-        className="character-mariarosa hidden sm:block"
-      />
-
-      {/* Formulario: ancho completo en móvil, fijo en pantallas grandes */}
+      {/* Formulario */}
       <div className="form-box w-full sm:w-96 md:w-[420px] z-10">
-        <div className="w-full mb-6 md:mb-8">
-          <label className="text-white text-xl md:text-2xl font-bold flex items-center gap-2 ml-2">
-            Usuario
-          </label>
-          <input
-            type="text"
-            placeholder="Escribe tu entrada..."
-            className="input-field"
-          />
-        </div>
+        <InputField
+          label="Usuario"
+          value={usuario}
+          onChange={(e) => setUsuario(e.target.value)}
+          placeholder="Escribe tu nombre de usuario..."
+          icon={<HugeiconsIcon icon={User03Icon} size={28} className="text-white" />}
+        />
 
-        <div className="w-full mb-6 md:mb-8">
-          <label className="text-white text-xl md:text-2xl font-bold flex items-center gap-2 ml-2">
-            Contraseña
-          </label>
-          <input
-            type="password"
-            placeholder="Escribe tu entrada..."
-            className="input-field"
-          />
-        </div>
-
+        <InputField
+          label="Contraseña"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Escribe tu contraseña..."
+          icon={<HugeiconsIcon icon={Key01Icon} size={28} className="text-white" />}
+        />
+        {errorMsg && (
+         <div className="bg-red-50 border border-red-200 text-red-500 px-4 py-2 rounded-xl mt-3 text-center text-[clamp(0.7rem,1.6vw,0.9rem)]">
+            {errorMsg}
+          </div>
+        )}
         <div className="w-full flex justify-center">
-          <button className="btn-entrar">Entrar</button>
+          <Button variant="editar" onClick={handleLogin}>
+            Entrar
+          </Button>
         </div>
       </div>
     </div>

@@ -21,7 +21,7 @@
 
 /* ── PANTALLA BASE ────────────────────────────────────────── */
 .login-screen {
-  background-color: #ffffff;
+  background-color: #FFFBF2;
   width: 100vw;
   height: 100dvh;         
   min-height: 100vh;       
@@ -36,140 +36,16 @@
 
 /* ── TÍTULO ───────────────────────────────────────────────── */
 .header-title {
-  position: absolute;
-  top: 5%;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
+  margin-top: clamp(2rem, 6vh, 5rem);
   width: 90%;
   max-width: 600px;
   text-align: center;
   z-index: 20;
   color: #000000;
-  font-size: clamp(1.2rem, 3.5vw, 3rem);
+  font-size: clamp(2.2rem, 6vw, 5.1rem);
   line-height: 1.25;
   pointer-events: none;
-}
-
-/* ══════════════════════════════════════════════════════════
-   GRUPO VERDE  (esquina superior-izquierda)
-   ══════════════════════════════════════════════════════════ */
-.top-left-group {
-  position: fixed;          /* fijo al viewport, ignora el scroll */
-  top: 0;
-  left: 0;
-  /* Celda cuadrada escalable: 38 % del ancho, máx 420 px */
-  width:  clamp(180px, 38vw, 420px);
-  height: clamp(180px, 38vw, 420px);
-  z-index: 5;
-  pointer-events: none;
-}
-
-/* Figura verde: las piezas se posicionan dentro del grupo */
-.green-group-wrapper {
-  position: absolute;
-  top: -15%;
-  left: -15%;
-  width: 150%;
-  height: 100%;
-  filter:
-    drop-shadow( 3px  0px 0px black)
-    drop-shadow(-3px  0px 0px black)
-    drop-shadow( 0px  3px 0px black)
-    drop-shadow( 0px -3px 0px black);
-}
-
-.green-group-wrapper .shape-part {
-  position: absolute;
-  background-color: #008755;
-}
-
-.green-group-wrapper .part-1 {
-  width: 200%; height: 100%;
-  top: 5%; left: -100%;
-  border-radius: 30% 50% 52% 48% / 30% 3% 67% 70%;
-  transform: rotate(-35deg);
-}
-
-.green-group-wrapper .part-2 {
-  width: 60%; height: 80%;
-  top: 15%; left: 5%;
-  border-radius: 40% 40% 40% 65% / 40% 40% 60% 60%;
-  transform: rotate(25deg);
-}
-
-/* Personaje verde: posicionado dentro de .top-left-group */
-.character-melenas {
-  position: fixed;
-  top: 28%;
-  left: 16%;
-  width: clamp(100px, 98%, 220px);
-  height: auto;
-  z-index: 0;
-  transform: rotate(138deg);
-}
-
-/* ══════════════════════════════════════════════════════════
-   GRUPO ROJO  (esquina inferior-derecha)
-   ══════════════════════════════════════════════════════════ */
-.bottom-right-group {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width:  clamp(180px, 42vw, 480px);
-  height: clamp(180px, 42vw, 480px);
-  z-index: 6;
-  pointer-events: none;
-}
-
-/* Figura roja */
-.red-group-wrapper {
-  position: absolute;
-  bottom: -15%;
-  right: -15%;
-  width: 155%;
-  height: 100%;
-  filter:
-    drop-shadow( 2px  0px 0px black)
-    drop-shadow(-2px  0px 0px black)
-    drop-shadow( 0px  2px 0px black)
-    drop-shadow( 0px -2px 0px black);
-}
-
-.red-group-wrapper .shape-part {
-  position: absolute;
-  background-color: #ed2025;
-}
-
-.red-group-wrapper .part-1 {
-  width: 0%; height: 0%;   
-  bottom: 0; right: 80px;
-  border-radius: 30% 70% 52% 48% / 30% 33% 67% 70%;
-  transform: rotate(90deg);
-}
-
-.red-group-wrapper .part-2 {
-  width: 120%; height: 100%;
-  top: 30%; left: 25%;
-  border-radius: 40% 40% 40% 65% / 40% 40% 60% 60%;
-  transform: rotate(-295deg);
-}
-
-.red-group-wrapper .part-3 {
-  width: 80%; height: 80%;
-  top: 30%; left: 25%;
-  border-radius: 40% 60% 90% 30% / 40% 40% 60% 60%;
-  transform: rotate(165deg);
-}
-
-/* Personaje rojo: posicionado dentro de .bottom-right-group */
-.character-mariarosa {
-  position: fixed;
-  bottom: 49%;
-  right: 8%;
-  width: clamp(100px, 98%, 180px);
-  height: auto;
-  z-index: 0;
-  transform: rotate(-20deg);
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -177,35 +53,35 @@
    ══════════════════════════════════════════════════════════ */
 .form-box {
   background-color: #3b3fb6;
-  width: clamp(280px, 88%, 450px);
+  width: clamp(300px, 88%, 500px);
   border-radius: clamp(1.5rem, 4vw, 3rem);
   padding: clamp(1.5rem, 5vw, 3.5rem);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   z-index: 10;
   position: relative;       /* z-index funciona sobre los fixed          */
-  margin-top: clamp(3rem, 8vh, 6rem); /* empuja el form bajo el título   */
+  margin-top: clamp(1rem, 2vh, 2rem); /* empuja el form bajo el título   */
 }
 
 .input-field {
   width: 100%;
-  background-color: #9bb1ef;
+  background-color: #c0cbea;
   color: #3b3fb6;
   border-radius: 1.2rem;
-  padding: 0.9rem 1rem;
+  padding: clamp(0.9rem, 2.5vw, 1.2rem);
   border: none;
   outline: none;
   margin-top: 0.5rem;
   font-weight: 600;
-  font-size: clamp(0.85rem, 2vw, 1rem);
+  font-size: clamp(1rem, 2.5vw, 1.2rem); 
 }
 
 .input-field::placeholder {
-  color: #3b3fb6;
+  color: #4d51bd;
   opacity: 0.6;
 }
 
-.btn-entrar {
-  background-color: #ffb81c;
+.btn {
+  background-color: var(--btn-color, #ffb81c);
   color: #ffffff;
   width: 65%;
   padding: 0.8rem;
@@ -215,18 +91,16 @@
   border: none;
   cursor: pointer;
   margin-top: 2rem;
-  box-shadow: 0 8px 0px #d49a15;
-  animation: float 1.8s ease-in-out infinite;
+  box-shadow: none;
   transition: transform 0.1s ease, box-shadow 0.1s ease;
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
 
-.btn-entrar:active {
+.btn:active {
   transform: translateY(6px);
-  box-shadow: 0 2px 0px #d49a15;
-  animation: none;
+  box-shadow: 0 2px 0px var(--btn-shadow, #d49a15);
 }
 
 @keyframes float {
@@ -241,8 +115,10 @@
 /* Tablet (≤ 768 px) */
 @media (max-width: 768px) {
   .header-title {
-    top: 3%;
-    width: 80%;
+    position: absolute;
+    top: clamp(2rem, 6vh, 5rem);
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .form-box {
@@ -253,6 +129,8 @@
   .top-left-group,
   .bottom-right-group {
     width:  clamp(140px, 32vw, 300px);
+    max-height: 80vh;
+    overflow-y: auto;
     height: clamp(140px, 32vw, 300px);
   }
 }
@@ -260,8 +138,8 @@
 /* Móvil (≤ 480 px) */
 @media (max-width: 480px) {
   .header-title {
-    top: 2%;
-    font-size: clamp(1rem, 5vw, 1.4rem);
+    top: clamp(3rem, 8vh, 6rem);
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
     width: 75%;            /* deja espacio para que no choque con figuras */
   }
 
@@ -285,6 +163,13 @@
   }
 }
 
+@media (max-width: 480px) {
+  .input-field {
+    font-size: 1rem;
+    padding: 1rem;
+  }
+}
+
 /* Móvil pequeño (≤ 360 px) */
 @media (max-width: 360px) {
   .top-left-group,
@@ -296,4 +181,32 @@
   .form-box {
     padding: 1.2rem 1rem;
   }
+}
+
+.figura-verde {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: clamp(210px, 25vw, 300px);
+
+  transform: rotate(-45deg) translate(-120px, 60px);
+  transform-origin: top left;
+
+  z-index: 1;
+  pointer-events: none;
+}
+
+.figura-roja {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+
+  width: clamp(200px, 25vw, 300px);
+
+  transform: rotate(-25deg) translate(30%, -5%);
+  transform-origin: bottom right;
+
+  z-index: 1;
+  pointer-events: none;
 }
