@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 
-import figuraVerde from "../assets/figura_verde.png";
-import figuraRoja from "../assets/figura_roja.png";
+import figuraRoja from "../assets/mariarosaoutline.png";
+import figuraVerde from "../assets/melenascontorno.png";
 
 import InputField from "../componentes/entrada_texto_inicio";
 import Button from "../componentes/boton_amarillo";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Key01Icon, User03Icon } from '@hugeicons/core-free-icons';
 
 const LoginView = () => {
   const [usuario, setUsuario] = useState("");
@@ -63,10 +65,10 @@ const LoginView = () => {
 
       {/* Título */}
       <div className="header-title text-center mb-8 z-10">
-        <h1 className="font-black font-titulo text-[clamp(1.5rem,5vw,3.5rem)]">
+        <h1 className="font-black font-titulo text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
           Bienvenidxs a
         </h1>
-        <h1 className="font-black font-titulo text-[clamp(1.5rem,5vw,3.5rem)]">
+        <h1 className="font-black font-titulo text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
           "Fungivora"
         </h1>
       </div>
@@ -78,12 +80,12 @@ const LoginView = () => {
 
       {/* Formulario */}
       <div className="form-box w-full sm:w-96 md:w-[420px] z-10">
-
         <InputField
           label="Usuario"
           value={usuario}
           onChange={(e) => setUsuario(e.target.value)}
-          placeholder="Escribe tu usuario..."
+          placeholder="Escribe tu nombre de usuario..."
+          icon={<HugeiconsIcon icon={User03Icon} size={28} className="text-white" />}
         />
 
         <InputField
@@ -92,6 +94,7 @@ const LoginView = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Escribe tu contraseña..."
+          icon={<HugeiconsIcon icon={Key01Icon} size={28} className="text-white" />}
         />
         {errorMsg && (
          <div className="bg-red-50 border border-red-200 text-red-500 px-4 py-2 rounded-xl mt-3 text-center text-[clamp(0.7rem,1.6vw,0.9rem)]">

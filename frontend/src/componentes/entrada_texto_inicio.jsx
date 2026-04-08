@@ -1,11 +1,16 @@
 import React from "react";
 
-const InputField = ({ label, type = "text", value, onChange, placeholder }) => {
+const InputField = ({ label, type = "text", value, onChange, placeholder, icon }) => {
   return (
     <div className="w-full mb-6 md:mb-8">
-      <label className="text-white text-xl md:text-2xl font-bold text-[clamp(0.8rem,2.5vw,1.1rem)]">
-        {label}
-      </label>
+
+      <div className="flex items-center gap-2 text-white mb-1">
+        {icon && <span className="flex items-center">{icon}</span>}
+        <label className="font-bold text-[clamp(1rem,3vw,1.4rem)]">
+          {label}
+        </label>
+      </div>
+
       <input
         type={type}
         value={value}
@@ -13,6 +18,7 @@ const InputField = ({ label, type = "text", value, onChange, placeholder }) => {
         placeholder={placeholder}
         className="input-field text-[clamp(0.8rem,2.5vw,1rem)]"
       />
+
     </div>
   );
 };
