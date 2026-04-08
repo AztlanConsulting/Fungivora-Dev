@@ -21,7 +21,7 @@
 
 /* ── PANTALLA BASE ────────────────────────────────────────── */
 .login-screen {
-  background-color: #ffffff;
+  background-color: #FFFBF2;
   width: 100vw;
   height: 100dvh;         
   min-height: 100vh;       
@@ -80,8 +80,8 @@
   opacity: 0.6;
 }
 
-.btn-entrar {
-  background-color: #ffb81c;
+.btn {
+  background-color: var(--btn-color, #ffb81c);
   color: #ffffff;
   width: 65%;
   padding: 0.8rem;
@@ -98,10 +98,9 @@
   margin-right: auto;
 }
 
-.btn-entrar:active {
+.btn:active {
   transform: translateY(6px);
-  box-shadow: 0 2px 0px #d49a15;
-  animation: none;
+  box-shadow: 0 2px 0px var(--btn-shadow, #d49a15);
 }
 
 @keyframes float {

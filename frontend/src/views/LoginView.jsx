@@ -6,7 +6,7 @@ import figuraRoja from "../assets/mariarosaoutline.png";
 import figuraVerde from "../assets/melenascontorno.png";
 
 import InputField from "../componentes/entrada_texto_inicio";
-import Button from "../componentes/boton_amarillo";
+import Button from "../componentes/botones";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Key01Icon, User03Icon } from '@hugeicons/core-free-icons';
 
@@ -69,7 +69,7 @@ const LoginView = () => {
           Bienvenidxs a
         </h1>
         <h1 className="font-black font-titulo text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
-          "Fungivora"
+          "Cultivos Fungivora"
         </h1>
       </div>
 
@@ -102,11 +102,10 @@ const LoginView = () => {
           </div>
         )}
         <div className="w-full flex justify-center">
-          <Button onClick={handleLogin}>
+          <Button variant="editar" onClick={handleLogin}>
             Entrar
           </Button>
         </div>
-
       </div>
     </div>
   );
