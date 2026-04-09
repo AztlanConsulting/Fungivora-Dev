@@ -6,20 +6,20 @@ skinparam shadowing false
 actor "Usuario" as User #F5F5F5
 
 box "Frontend (React)" #E3F2FD
-    participant "VistaInventario.jsx" as Page0 <<Vista>>
-    participant "RegistrarInsumo.jsx" as Page <<Vista>>
-    participant "Título.jsx" as Txt <<Vista>>
-    participant "InputCard.jsx" as Card <<Vista>>
-    participant "Botón.jsx" as Btn <<Vista>>
+    participant "vista_inventario.jsx" as Page0 <<Vista>>
+    participant "registrar_insumo.jsx" as Page <<Vista>>
+    participant "titulo.jsx" as Txt <<Vista>>
+    participant "input_card.jsx" as Card <<Vista>>
+    participant "boton.jsx" as Btn <<Vista>>
 end box
 
 box "Backend (Lógica)" #FFF3E0
-    participant "insumos.Routes.js" as Rts <<Routes>>
-    participant "insumos.Controller.js" as Ctrl <<Controller>>
+    participant "insumos.routes.js" as Rts <<Routes>>
+    participant "insumos.controller.js" as Ctrl <<Controller>>
 end box
 
 box Querys #E8F5E9
-    participant "InsumosModel.js" as Ml <<Model>>
+    participant "insumos.model.js" as Ml <<Model>>
     participant "SQL" as DB <<Service>>
 end box
 
