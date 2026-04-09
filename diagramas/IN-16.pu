@@ -1,0 +1,129 @@
+@startuml Crear insumo
+!theme plain
+skinparam sequenceMessageAlign center
+skinparam shadowing false
+
+actor "Usuario" as User #F5F5F5
+
+box "Frontend (React)" #E3F2FD
+    participant "VistaInventario.jsx" as Page0 <<Vista>>
+    participant "RegistrarInsumo.jsx" as Page <<Vista>>
+    participant "Título.jsx" as Txt <<Vista>>
+    participant "InputCard.jsx" as Card <<Vista>>
+    participant "Botón.jsx" as Btn <<Vista>>
+end box
+
+box "Backend (Lógica)" #FFF3E0
+    participant "insumos.Routes.js" as Rts <<Routes>>
+    participant "insumos.Controller.js" as Ctrl <<Controller>>
+end box
+
+box Querys #E8F5E9
+    participant "InsumosModel.js" as Ml <<Model>>
+    participant "SQL" as DB <<Service>>
+end box
+
+User -> Page0 : Clic "Agregar insumo"
+activate Page0
+
+' React pide los datos al API
+Page0 -> Rts : GET /api/categorias
+activate Rts
+Rts -> Ctrl : getCategorias()
+activate Ctrl
+Ctrl -> Ml : fetchCategorias()
+activate Ml
+Ml -> DB : SELECT * FROM categorias
+activate DB
+DB -->> Ml : data[]
+deactivate DB
+Ml -->> Ctrl : data[]
+deactivate Ml
+Ctrl -->> Rts : JSON [Categorías]
+deactivate Ctrl
+Rts -->> Page0 : Response 200 OK
+deactivate Rts
+
+' React cambia de página internamente
+Page0 -> Page : Push state / Navigate to "/registrarInsumo"
+deactivate Page0
+activate Page
+
+' La página "pinta" a sus hijos pasándoles las categorías por Props
+Page -> Txt : Render("Titulo", {text: "Registrar Insumo"})
+activate Txt
+deactivate Txt
+
+Page -> Card : Render ("InputCard", {categorias: data[]}) 
+activate Card
+Page -> Btn : Render("Botón", {text: "Registrar"})
+activate Btn
+deactivate Btn
+
+User -> Card : Ingresa nombre, cantidad inicial, stock mínimo, unidad de medida y selecciona categoría
+deactivate Card
+activate User
+User -> Btn : Clic en "Registrar"
+deactivate User
+activate Btn
+Btn -> Page : onSave(datosInsumo)
+deactivate Btn
+== Flujo Alterno 1: Datos Incompletos ==
+
+alt#Gold #FFEBEE Datos Incompletos (Frontend)
+    Page -> Page : validarCampos(datosInsumo)
+    Page -->> User : Mostrar mensaje: "Por favor llena todos los campos"
+else #E3F2FD Datos Completos
+    Page -> Rts : POST /api/crearInsumo {datos}
+    activate Rts
+    Rts -> Ctrl : postCrearInsumo(datosInsumo)
+    deactivate Rts
+    activate Ctrl
+
+    == Flujo Alterno 2: Verificar Duplicados (Backend) ==    
+    Ctrl -> Ml : crearInsumo(datosInsumo)
+    deactivate Ctrl
+    
+        activate Ml
+        Ml -> DB : SELECT * FROM inventario WHERE nombre = {nombre}
+        alt#Gold #FFEBEE Existe Insumo Duplicado
+        activate DB
+        DB -->> Ml : Success (Existe)
+        deactivate DB
+
+        Ml -->> Ctrl : { exists: true }
+        deactivate Ml
+        Ctrl -->> Rts : JSON { status: 'error', message: 'El insumo ya existe' }
+        Rts -->> Page : HTTP 400 Bad Request
+        Page -->> User : Mostrar alerta: "Este nombre ya está registrado"
+    else #E8F5E9 Nombre Disponible
+        activate DB
+        DB -->> Ml : Failed (No existe)
+        deactivate DB
+        Ml -> DB : INSERT INTO inventario (...) VALUES (...)
+        activate DB
+        DB -->> Ml : Success / ID generado
+        deactivate DB
+        activate Ml
+        Ml -->> Ctrl : Success (Confirmación)
+        deactivate Ml
+
+        activate Ctrl
+        Ctrl -->> Rts : JSON { status: 'success', data: newInsumo }
+        deactivate Ctrl
+
+        activate Rts
+        Rts -->> Page : HTTP 201 Created (JSON)
+        deactivate Rts
+
+
+        Page -> Page : navigate("/inventario")
+        Page -> Page0 : Render("VistaInventario.jsx")
+
+        activate Page0
+
+        Page0 -->> User : Muestra lista actualizada con el nuevo insumo 
+        deactivate Page0
+    end
+end
+@enduml
