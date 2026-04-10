@@ -1,0 +1,110 @@
+@startuml
+actor Usuario
+boundary inventario.routes as Routes
+boundary inventario.jsx as inventarioView
+boundary anadir_agar.jsx as View
+boundary componente_agar.jsx as ViewComponent
+control inventario.controller as Controller
+entity inventario.model as Model
+database Database
+    Usuario -> Routes: GET /inventario/anadir_agar
+    activate Routes
+    Routes -> Controller: get_anadir_agar\n(request, response, next)
+    deactivate Routes
+    activate Controller
+    Controller ->> Model: inventario.fetchAll
+    activate Model
+    Model ->> Database: SELECT * FROM inventario
+    activate Database
+    Database -->> Model: DATA[]
+    deactivate Database
+    Model -->> Controller: PROMESA
+    deactivate Model
+    Controller -> View: response.render("anadir_agar",\n{ agars })
+    activate View
+    View -->> Usuario: HTTP 200 OK
+    deactivate View
+    activate Usuario
+    Usuario -> ViewComponent: selecciona agar
+    deactivate Usuario
+    activate ViewComponent
+    ViewComponent -> Routes: GET /inventario/anadir_agar\n/:agar
+    deactivate ViewComponent
+    activate Routes
+    Routes -> Controller: get_anadir_agar\n(request, response, next)
+    deactivate Routes
+    activate Controller
+    Controller ->> Model: inventario.fetchAllGranos
+    activate Model
+    Model ->> Database: SELECT * FROM inventario\nWHERE id_categoria = 'grano'
+    activate Database
+    Database -->> Model: DATA[]
+    deactivate Database
+    Model -->> Controller: PROMESA
+    deactivate Model
+    alt Error al obtener datos
+        Controller -> View: response.render('404')
+        activate View
+        View -->> Usuario: HTTP 404
+        deactivate View
+    else Datos obtenidos
+        Controller -> View: response.render("anadir_agar",\n{ granos, agars })
+        deactivate Controller
+        activate View
+        View -> ViewComponent: <ComponenteAgar\n granos={granos}\n agars={agars} />
+        activate ViewComponent
+        ViewComponent --> View: JSX compilado (Tailwind CSS)
+        deactivate ViewComponent
+        View -->> Usuario: HTTP 200 OK
+        deactivate View
+        activate Usuario
+    end
+    Usuario -> ViewComponent: click "Añadir"
+    deactivate Usuario
+    activate ViewComponent
+    ViewComponent -> ViewComponent: validarCampos(datosAgar)
+    alt Datos Incompletos
+        ViewComponent -->> Usuario: Mostrar mensaje:\n"Por favor llena todos los campos"
+    else Datos Completos
+        ViewComponent -> Routes: POST /inventario/anadir\n{ nombre, cantidad, unidad, foto }
+        deactivate ViewComponent
+        activate Routes
+        Routes -> Controller: post_anadir_agar(request, response, next)
+        deactivate Routes
+        activate Controller
+        Controller ->> Model: inventario.anadir\n({agar})
+        activate Model
+        Model ->> Database: INSERT INTO inventario\n(id_inventario, ...)
+        activate Database
+        Database -->> Model: SUCCESS / ID GENERADO
+        deactivate Database
+        Model ->> Database: INSERT INTO in_out\n(id_in_out, ...)
+        activate Database
+        Database -->> Model: SUCCESS / ID GENERADO
+        deactivate Database
+        Model ->> Database: INSERT INTO producto\n(id_producto, ...)
+        activate Database
+        Database -->> Model: SUCCESS / ID GENERADO
+        deactivate Database
+        Model -->> Controller: PROMESA
+        deactivate Model
+        alt Error al anadir
+            Controller -> Routes: response.redirect(/inventario)
+            activate Routes
+            Routes -->> Usuario: HTTP 500 Internal Server Error
+            deactivate Routes
+        else Anadido exitoso
+            Controller -> Routes: response.redirect(/inventario)
+            deactivate Controller
+            activate Routes
+            Routes -> Controller: get_inventario(request, response, next)
+            deactivate Routes
+            activate Controller
+            Controller -> inventarioView: response.render('inventario')
+            deactivate Controller
+            activate inventarioView
+            inventarioView -->> Usuario: HTTP 201 Created
+            deactivate inventarioView
+        end
+    end
+@enduml
