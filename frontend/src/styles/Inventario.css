@@ -1,0 +1,32 @@
+/* ── PANTALLA BASE ──── */
+.inventary-screen {
+  background-color: #FFFBF2;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;  
+  padding: 2rem;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* CONTENEDOR */
+.contenido {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── TÍTULO ──── */
+.titulo {
+  color: #3B3FB6;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: bold;
+  margin: 0;
+}
+
+/* ── BARRA ──── */
+.barra-container {
+  width: clamp(250px, 65%, 700px);
+}
