@@ -13,12 +13,22 @@ class Inventario {
   }
 
     static fetch_all = async () => {
-    const [filas] = await db.execute(
-        `SELECT * FROM inventario`,
-        []
-    );
+        const [filas] = await db.execute(`
+            SELECT 
+            i.id_inventario,
+            i.nombre_inventario,
+            i.fecha_inventario,
+            i.cantidad_inventario,
+            i.unidad_medida,
+            i.stock_recomendado,
+            i.es_manufacturado,
+            c.nombre_categoria
+            FROM inventario i
+            INNER JOIN categorias c 
+            ON i.id_categoria = c.id_categoria
+        `);
 
-    return filas;
+        return filas;
     };
 }
 

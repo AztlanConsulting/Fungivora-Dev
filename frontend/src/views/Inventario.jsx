@@ -10,53 +10,84 @@ const Inventario = () => {
   const navigate = useNavigate();
   const [busqueda, setBusqueda] = useState("");
   const [datos, setDatos] = useState([]);
+  const [filaSeleccionada, setFilaSeleccionada] = useState(null);
 
-  useEffect(() => {
-    fetch("http://localhost:5000/inventario")
+    useEffect(() => {
+    const obtenerDatos = () => {
+        fetch("http://localhost:5000/inventario")
         .then(res => res.json())
-        .then(data => {
-        console.log("Datos del backend:", data);
-        setDatos(data);
-        })
+        .then(data => setDatos(data))
         .catch(err => console.error(err));
+    };
+
+    obtenerDatos();
+
+    const intervalo = setInterval(obtenerDatos, 5000);
+
+    return () => clearInterval(intervalo);
     }, []);
 
   return (
-    <div className="inventary-screen">
-        
-        <div className="contenido">
-        
-        {/* Título */}
-        <h1 className="titulo">
-            Inventario
-        </h1>
+<div className="inventary-screen">
+  <div className="contenido">
+    
+    {/* Título */}
+    <h1 className="titulo">Inventario</h1>
 
-        {/* Área de busqueda, filtro y añadir */}
-        <div className="barra-container">
+    {/* Barra */}
+    <div className="barra-container">
+      <div className="flex-1">
+        <BarraBusqueda
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          placeholder="Buscar producto..."
+          icon={<HugeiconsIcon icon={Search02Icon} size={24} className="text-[#3B3FB6]" />}
+        />
+      </div>
 
-            <div className="flex-1">
-                <BarraBusqueda
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-                placeholder="Buscar producto..."
-                icon={<HugeiconsIcon icon={Search02Icon} size={24} className="text-[#3B3FB6]" />}
-                />
-            </div>
+      <HugeiconsIcon 
+        icon={FilterMailIcon} 
+        size={45} 
+        className="text-[#FE5000] icono"
+      />
 
-            <HugeiconsIcon 
-                icon={FilterMailIcon} 
-                size={45} 
-                className="text-[#FE5000] icono"
-            />
-
-            <div className="btn-add">
-                <HugeiconsIcon icon={PlusSignIcon} size={30} className="text-white" />
-            </div>
-
-            </div>
-        </div>
-
+      <div className="btn-add">
+        <HugeiconsIcon icon={PlusSignIcon} size={30} className="text-white" />
+      </div>
     </div>
+
+    <div className="tabla-container">
+      <table className="tabla-inventario">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Cantidad</th>
+            <th>Recomendado</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+
+        <tbody>
+        {datos.map((item, index) => (
+            <tr 
+            key={item.id_inventario}
+            onClick={() => setFilaSeleccionada(item.id_inventario)}
+            className={filaSeleccionada === item.id_inventario ? "seleccionada" : ""}
+            >
+            <td>{item.nombre_inventario}</td>
+            <td>{item.nombre_categoria}</td>
+            <td>{item.cantidad_inventario} {item.unidad_medida}</td>
+            <td>{item.stock_recomendado} {item.unidad_medida}</td>
+            <td>{new Date(item.fecha_inventario).toLocaleDateString()}</td>
+            </tr>
+        ))}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
     );
 };
 

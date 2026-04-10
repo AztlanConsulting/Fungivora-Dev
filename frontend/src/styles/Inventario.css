@@ -54,3 +54,123 @@
 
   transition: all 0.2s ease;
 }
+
+/* CONTENEDOR */
+.tabla-container {
+  width: 100%;
+  margin-top: 0px;
+  overflow-x: auto; 
+}
+
+/* TABLA */
+.tabla-inventario {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 12px;
+  font-size: clamp(0.90rem, 1vw, 1.5rem);
+}
+
+/* FILA */
+.tabla-inventario tbody tr {
+  background-color: #f1f8fc;
+  transition: all 0.2s ease;
+}
+
+/* CELDAS */
+.tabla-inventario td {
+  padding: 14px;
+  border-top: 3px solid #dff2fc;
+  border-bottom: 3px solid #dff2fc;
+}
+
+.tabla-inventario td:first-child {
+  border-left: 3px solid #dff2fc;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+
+.tabla-inventario td:last-child {
+  border-right: 3px solid #dff2fc;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+/* HEADER */
+.tabla-inventario thead th {
+  background-color: #3B3FB6;
+  color: white;
+  font-weight: 600;
+  padding: 14px;
+  text-align: left;
+  border-top: 1px solid #3B3FB6;
+  border-bottom: 1px solid #3B3FB6;
+}
+
+.tabla-inventario thead th:first-child {
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+
+.tabla-inventario thead th:last-child {
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.tabla-inventario tbody tr.seleccionada {
+  background-color: #c9edfd; 
+}
+
+.tabla-inventario tbody tr.seleccionada td {
+  border-color: #7ed6fc;
+}
+
+@media (max-width: 768px) {
+
+  .tabla-inventario thead {
+    display: none;
+  }
+
+  .tabla-inventario td:first-child,
+  .tabla-inventario td:last-child {
+    border-left: none;
+    border-right: none;
+  }
+
+  .tabla-inventario,
+  .tabla-inventario tbody,
+  .tabla-inventario tr,
+  .tabla-inventario td {
+    display: block;
+    width: 100%;
+  }
+
+  .tabla-inventario tbody tr {
+    margin-bottom: 16px;
+    padding: 14px;
+    border-radius: 12px;
+    background: #f1f8fc;
+    border: 3px solid #dff2fc;
+  }
+
+  .tabla-inventario td {
+    border: none;
+    padding: 4px 0;
+  }
+
+  .tabla-inventario td:first-child {
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .tabla-inventario td:not(:first-child) {
+    display: inline;
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-right: 30px;
+  }
+
+  .tabla-inventario tbody tr.seleccionada {
+    background: #c9edfd;
+    border: 3px solid #7ed6fc;
+  }
+}
