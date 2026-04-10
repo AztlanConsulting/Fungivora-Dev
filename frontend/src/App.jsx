@@ -3,6 +3,7 @@ import First_Page from "./views/First_Page";
 import LoginView from './views/LoginView';
 import Usuario from "./views/Usuario";
 import Ruta_protegida from "../componentes_internos/ruta_protegida";
+import MainLayout from "./layouts/MainLayout";
 
 function App() {
   return (
@@ -18,14 +19,16 @@ function App() {
             </Ruta_protegida>
           }
         />
-        <Route
-          path="/first"
-          element={
-            <Ruta_protegida>
-              <First_Page />
-            </Ruta_protegida>
-          }
-        />
+        <Route path = "/first" element={<MainLayout/>}>
+          <Route
+            index
+            element = {
+              <Ruta_protegida>
+                <First_Page />
+              </Ruta_protegida>
+            }
+          />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
