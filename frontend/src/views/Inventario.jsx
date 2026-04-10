@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Inventario.css";
 
@@ -9,6 +9,17 @@ import BarraBusqueda from "../componentes/barra_busqueda";
 const Inventario = () => {
   const navigate = useNavigate();
   const [busqueda, setBusqueda] = useState("");
+  const [datos, setDatos] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/inventario")
+        .then(res => res.json())
+        .then(data => {
+        console.log("Datos del backend:", data);
+        setDatos(data);
+        })
+        .catch(err => console.error(err));
+    }, []);
 
   return (
     <div className="inventary-screen">
