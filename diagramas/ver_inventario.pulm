@@ -23,7 +23,18 @@ React -> InventarioView : render()
 
 InventarioView -> Controller : GET /inventario
 Controller -> Model : obtener_inventario() (inventario)
-Model -> DB : SELECT * FROM inventario
+Model -> DB : SELECT 
+            i.id_inventario,
+            i.nombre_inventario,
+            i.fecha_inventario,
+            i.cantidad_inventario,
+            i.unidad_medida,
+            i.stock_recomendado,
+            i.es_manufacturado,
+            c.nombre_categoria
+            FROM inventario i
+            INNER JOIN categorias c 
+            ON i.id_categoria = c.id_categoria
 
 alt Error al obtener datos
     DB --> Model : error en obtener datos

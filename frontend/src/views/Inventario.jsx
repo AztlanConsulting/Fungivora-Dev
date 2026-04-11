@@ -22,8 +22,8 @@ const Inventario = () => {
 
     obtenerDatos();
 
+    //! Para que se actualicen los datos sin tener que refrescar la pagina
     const intervalo = setInterval(obtenerDatos, 5000);
-
     return () => clearInterval(intervalo);
     }, []);
 
@@ -34,7 +34,7 @@ const Inventario = () => {
     {/* Título */}
     <h1 className="titulo">Inventario</h1>
 
-    {/* Barra */}
+    {/* Barra de busqueda (no funcional) */}
     <div className="barra-container">
       <div className="flex-1">
         <BarraBusqueda
@@ -45,19 +45,23 @@ const Inventario = () => {
         />
       </div>
 
+    {/* Icono de filtro (no funcional) */}
       <HugeiconsIcon 
         icon={FilterMailIcon} 
         size={45} 
         className="text-[#FE5000] icono"
       />
 
+    {/* Circulo de agregar (no funcional) */}
       <div className="btn-add">
         <HugeiconsIcon icon={PlusSignIcon} size={30} className="text-white" />
       </div>
     </div>
 
+    {/* Tabla de informacion del inventario */}
     <div className="tabla-container">
       <table className="tabla-inventario">
+        {/* Encabezado de la tabla */}
         <thead>
           <tr>
             <th>Nombre</th>
@@ -68,17 +72,18 @@ const Inventario = () => {
           </tr>
         </thead>
 
+        {/* Cuerpo de la tabla */}
         <tbody>
         {datos.map((item, index) => (
             <tr 
             key={item.id_inventario}
             onClick={() => setFilaSeleccionada(item.id_inventario)}
-            className={filaSeleccionada === item.id_inventario ? "seleccionada" : ""}
+            className={filaSeleccionada === item.id_inventario ? "seleccionada" : ""} //! Cambia el color al seleccionar la fila
             >
             <td>{item.nombre_inventario}</td>
             <td>{item.nombre_categoria}</td>
-            <td>{item.cantidad_inventario} {item.unidad_medida}</td>
-            <td>{item.stock_recomendado} {item.unidad_medida}</td>
+            <td>{item.cantidad_inventario} {item.unidad_medida}</td> {/* Une la cantidad y la unidad de medida (2 kg) */}
+            <td>{item.stock_recomendado} {item.unidad_medida}</td> {/* Une el stock recomendado y la unidad de medida (2 kg) */}
             <td>{new Date(item.fecha_inventario).toLocaleDateString()}</td>
             </tr>
         ))}

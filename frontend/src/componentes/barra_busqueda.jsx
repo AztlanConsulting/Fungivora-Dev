@@ -19,11 +19,11 @@ const BarraBusqueda = ({
           className="w-full pr-10 pl-4 py-2 rounded-xl border-2 border-[#3B3FB6] bg-[#F9FDFF]
                      text-sm outline-none
                      focus:border-[#3B3FB6] focus:ring-2 focus:ring-[#3B3FB6]/30
-                     transition-all duration-200"
+                     transition-all duration-200"  /* Ya incluye los colores establecidos*/
         />
 
         {icon && (
-          <span className="absolute right-3 text-gray-400">
+          <span className="absolute right-3 text-gray-400"> {/* No importa el color del icono, eso se cambia en la vista */}
             {icon}
           </span>
         )}
@@ -35,7 +35,7 @@ const BarraBusqueda = ({
 
 export default BarraBusqueda;
 
-      /* Ejemplo:
+      /* Hacer copy paste para utilizarlo en la vista:
     import { HugeiconsIcon } from '@hugeicons/react';
     import { Search02Icon } from '@hugeicons/core-free-icons';
     import BarraBusqueda from "../componentes/barra_busqueda";
