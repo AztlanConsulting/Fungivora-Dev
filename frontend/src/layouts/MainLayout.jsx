@@ -1,26 +1,61 @@
-import { Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Home07FreeIcons, BookOpenTextFreeIcons, PackageIcon, MushroomIcon, Notification01Icon, Logout02Icon, NaturalFoodIcon, } from '@hugeicons/core-free-icons';
-import fungivora from "../../public/icons/icon-512x512.png?url"
+import fungivora from "/icons/icon-512x512.png?url"
+import '../styles/navbar.css'
 
 export default function MainLayout () {
     return (
-        <div className="flex flex-col-reverse md:flex-row min-h-screen">
+        <div className="layout">
             <aside>
-                <nav className="flex flex-row gap-2 p-2 justify-between bg-FFFFFF text-center w-full h-18 md:flex-col md:w-20 md:h-screen">
-                    <button className="flex flex-row md:flex-col p-2"><img src={fungivora} className="w-12 h-12" /> </button>
+                <nav className="barra-lateral">
+                    <div className="logo-div"><img src={fungivora} className="fungivora" /> </div>
                         
-                    <div className="flex flex-1 flex-row md:flex-col gap-10 justify-center p-2">
-                        <button> <HugeiconsIcon icon={Home07FreeIcons} size={40} color="#3b3fb6" strokeWidth={1.5} /> </button>
-                        <button> <HugeiconsIcon icon={BookOpenTextFreeIcons} size={40} color="#3b3fb6" strokeWidth={1.5} /> </button>
-                        <button> <HugeiconsIcon icon={PackageIcon} size={40} color="#3b3fb6" strokeWidth={1.5} /> </button>
-                        <button> <HugeiconsIcon icon={MushroomIcon} size={40} color="#3b3fb6" strokeWidth={1.5} /> </button>
-                        <button> <HugeiconsIcon icon={NaturalFoodIcon} size={40} color="#3b3fb6" strokeWidth={1.5} /> </button>
+                    <div className="contenedor-principal-nav">
+                        <NavLink
+                            to="/second"
+                            className={({ isActive }) => 
+                                `p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                            }
+                        > <HugeiconsIcon icon={Home07FreeIcons} size={40} color="#3b3fb6" strokeWidth={1.5} /> </NavLink>
+                        <NavLink 
+                            to="/second"
+                            className={({ isActive }) => 
+                                `p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                            }
+                        > <HugeiconsIcon icon={BookOpenTextFreeIcons} size={40} color="#3b3fb6" strokeWidth={1.5} />
+                        </NavLink>
+                        <NavLink 
+                            to="/second"
+                            className={({ isActive }) => 
+                                `p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                            }
+                        > <HugeiconsIcon icon={PackageIcon} size={40} color="#3b3fb6" strokeWidth={1.5} /> </NavLink>
+                        <NavLink
+                            to="/second"
+                            className={({ isActive }) => 
+                                `p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                            }
+                        > <HugeiconsIcon icon={MushroomIcon} size={40} color="#3b3fb6" strokeWidth={1.5} /></NavLink>
+                        <NavLink
+                            to="/second"
+                            className={({ isActive }) => 
+                                `p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                            }
+                        > <HugeiconsIcon icon={NaturalFoodIcon} size={40} color="#3b3fb6" strokeWidth={1.5} /></NavLink>
                     </div>
 
-                    <div className="flex flex-row md:flex-col gap-10 p-2">
-                        <button> <HugeiconsIcon icon={Notification01Icon} size={40} color="#3b3fb6" strokeWidth={1.5} /></button>
-                        <button> <HugeiconsIcon icon={Logout02Icon} size={40} color="#3b3fb6" strokeWidth={1.5} /> </button>
+                    <div className="contenedor-inferior-nav">
+                        <NavLink 
+                            to="/second"
+                            className={({ isActive }) => 
+                                `p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                            }
+                        > <HugeiconsIcon icon={Notification01Icon} size={40} color="#3b3fb6" strokeWidth={1.5} /></NavLink>
+                        <button 
+                            className="p-2 self-center rounded-lg transition-colors hover:bg-gray-100">
+                            <HugeiconsIcon icon={Logout02Icon} size={40} color="#3b3fb6" strokeWidth={1.5} />
+                        </button>
                     </div>
                 </nav> 
             </aside>
