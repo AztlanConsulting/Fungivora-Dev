@@ -10,6 +10,6 @@ router.get('/', controller.get_inventory);
 router.get('/categorias', controller.get_categorias);
 
 //Crear un nuevo
-// router.post('/crear-insumo', controller.post_crear_insumo);
+router.post('/crear-insumo', controller.post_crear_insumo);
 
 module.exports = router;

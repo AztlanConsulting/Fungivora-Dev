@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/Inventario.css";
+import { Link } from "react-router-dom";
+import "../../styles/Inventario.css";
 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Search02Icon , FilterMailIcon , PlusSignIcon} from '@hugeicons/core-free-icons';
-import BarraBusqueda from "../componentes/barra_busqueda";
+import BarraBusqueda from "../../componentes/barra_busqueda";
 
 const Inventario = () => {
   const navigate = useNavigate();
@@ -53,9 +54,9 @@ const Inventario = () => {
       />
 
     {/* Circulo de agregar (no funcional) */}
-      <div className="btn-add">
+      <Link to="/inventario/crearInsumo" className="btn-add">
         <HugeiconsIcon icon={PlusSignIcon} size={30} className="text-white" />
-      </div>
+      </Link>
     </div>
 
     {/* Tabla de informacion del inventario */}

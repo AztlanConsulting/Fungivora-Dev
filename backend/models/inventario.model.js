@@ -29,12 +29,38 @@ class Inventario {
         `);
 
         return filas;
-    };
+    }
 
     static fetch_categorias = async () => {
         const [filas] = await db.execute('SELECT * FROM categorias');
         return filas;
     }
+
+    static crear_insumo = async (id_inventario,nombre_insumo, cantidad_inicial, stock_minimo, unidad_medida, id_categoria) => {
+    // Usamos db.execute siguiendo tu estándar
+    const [resultado] = await db.execute(`
+        INSERT INTO inventario (
+            id_inventario,
+            id_categoria,
+            nombre_inventario, 
+            cantidad_inventario, 
+            unidad_medida, 
+            stock_recomendado, 
+            es_manufacturado
+        ) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `, [
+        id_inventario,
+        id_categoria,
+        nombre_insumo, 
+        cantidad_inicial, 
+        unidad_medida, 
+        stock_minimo, 
+        0 // no es manufacturado
+    ]);
+
+    return resultado;
+  };
 }
 
 module.exports = Inventario;
