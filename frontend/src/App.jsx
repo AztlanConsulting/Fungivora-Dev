@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import First_Page from "./views/First_Page";
 import LoginView from './views/LoginView';
 import Usuario from "./views/Usuario";
+import RegistrarMedioLiquido from "./views/NewMedio"; 
 import Inventario from "./views/Inventario";
 import Ruta_protegida from "../componentes_internos/ruta_protegida";
 
@@ -25,6 +26,14 @@ function App() {
           element={
             <Ruta_protegida>
               <First_Page />
+            </Ruta_protegida>
+          }
+        />
+        <Route
+          path="/inventario/micelio/crear"
+          element={
+            <Ruta_protegida>
+              <RegistrarMedioLiquido />
             </Ruta_protegida>
           }
         />
