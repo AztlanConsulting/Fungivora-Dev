@@ -1,0 +1,51 @@
+@startuml
+actor Cliente
+
+participant "login.jsx" as React
+participant "inicio_sesion.controller" as InicioController
+participant "usuario.model" as UsuarioModel
+participant "inventario.jsx" as InventarioView
+participant "inventario.controller" as Controller
+participant "inventario.model" as Model
+participant "Base de Datos" as DB
+
+Cliente -> React : Ingresa credenciales
+React -> InicioController : POST /login
+InicioController -> UsuarioModel : validarUsuario() (inicio_sesion / usuario)
+UsuarioModel -> DB : SELECT * FROM usuarios WHERE nombre_usuario
+DB --> UsuarioModel : datos usuario
+UsuarioModel --> InicioController : acceso correcto
+InicioController --> React : acceso concedido
+React --> Cliente : Redirección
+
+Cliente -> React : Click en "Inventario" en Navbar
+React -> InventarioView : render()
+
+InventarioView -> Controller : GET /inventario
+Controller -> Model : obtener_inventario() (inventario)
+Model -> DB : SELECT 
+            i.id_inventario,
+            i.nombre_inventario,
+            i.fecha_inventario,
+            i.cantidad_inventario,
+            i.unidad_medida,
+            i.stock_recomendado,
+            i.es_manufacturado,
+            c.nombre_categoria
+            FROM inventario i
+            INNER JOIN categorias c 
+            ON i.id_categoria = c.id_categoria
+
+alt Error al obtener datos
+    DB --> Model : error en obtener datos
+    Model --> Controller : error en obtener datos
+    Controller --> InventarioView : error en presentar datos
+    InventarioView -> Cliente : Mostrar mensaje de error
+else Datos obtenidos correctamente
+    DB --> Model : datos inventario
+    Model --> Controller : resultados
+    Controller --> InventarioView : JSON
+    InventarioView -> Cliente : Mostrar tablas
+end
+
+@enduml
