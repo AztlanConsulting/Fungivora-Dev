@@ -17,7 +17,12 @@
     background-color: #ffffff;
     text-align: center;
     width: 100%;
-    height: 5rem;
+    height: 4.5rem;
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 50;
 }
 
 /* Ajustes de pantalla mediana en adelante barra de navegacion*/
@@ -27,6 +32,10 @@
         width: 5rem;
         height: 100vh; /* * Viewport Height: 1vh = 1% de la pantalla */
         text-align: left;
+
+        position: sticky;
+        top: 0;
+        left: 0;
     }
 }
 
@@ -46,31 +55,37 @@
 
 /* Div Fungivora pantalla chica */
 .logo-div {
-    display: flex;
-    flex-direction: row;
-    padding: 0.5rem;
+    display: none;
 }
 
 /* Div Fungivora pantalla mediana en adelante */
 @media (min-width: 768px) {
     .logo-div {
         flex-direction: column;
+        display: flex;
+        flex-direction: row;
+        padding: 0.5rem;
     }
 }
 
-/* Img logo Fungivora */
+/* Img logo Fungivora en vista chica*/
 .fungivora {
-    width: 3rem;
-    height: 3rem;
+    display: none;
+}
+
+@media (min-width: 768px){
+    .fungivora {
+        display:block
+    }
 }
 
 /* Contenedor principal barra de navegacion pantalla chica */
 .contenedor-principal-nav {
     display: flex;
-    flex: 1 1 0%;
+    flex: 1;
     flex-direction: row;
-    gap: 1.25rem;
-    justify-content: center;
+    gap: 0.25rem;
+    justify-content: space-evenly;
     padding: 0.5rem;
 }
 
@@ -78,22 +93,8 @@
 @media (min-width: 768px) {
     .contenedor-principal-nav {
         flex-direction: column;
-    }
-}
-
-/* Contenedor inferior barra de navegacion pantalla chica */
-.contenedor-inferior-nav {
-    display: flex;
-    flex-direction: row;
-    gap: 1.25rem;
-    justify-content: center;
-    padding: 0.5rem;
-}
-
-/* Contenedor inferior barra de navegacion pantalla chica */
-@media (min-width: 768px) {
-    .contenedor-inferior-nav {
-        flex-direction: column;
+        gap: 1.25rem;
+        justify-content: center;
     }
 }
 
