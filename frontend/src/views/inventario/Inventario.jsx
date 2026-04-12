@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 import "../../styles/Inventario.css";
 
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -54,9 +53,9 @@ const Inventario = () => {
       />
 
     {/* Circulo de agregar (no funcional) */}
-      <Link to="/inventario/crearInsumo" className="btn-add">
+      <div className="btn-add" onClick={() => navigate("/inventario/crearInsumo")}>
         <HugeiconsIcon icon={PlusSignIcon} size={30} className="text-white" />
-      </Link>
+      </div>
     </div>
 
     {/* Tabla de informacion del inventario */}

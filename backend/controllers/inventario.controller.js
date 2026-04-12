@@ -20,7 +20,7 @@ exports.get_inventory = async (req, res) => {
 
 exports.get_categorias = async (req, res) => {
     try {
-        const [rows] = await Inventario.fetch_categorias();
+        const rows = await Inventario.fetch_categorias();
         res.status(200).json({
             status: 'success',
             categorias: rows,
