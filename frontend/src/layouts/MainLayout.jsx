@@ -43,7 +43,7 @@ export default function MainLayout () {
                         </NavLink>
 
                         <NavLink 
-                            to="/first"
+                            to="/experimentos"
                             className={({ isActive }) => 
                                 `botones p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
                             }> 
@@ -65,7 +65,7 @@ export default function MainLayout () {
                         </NavLink>
 
                         <NavLink
-                            to="/first"
+                            to="/recetario"
                             className={({ isActive }) => 
                                 `botones p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
                             }> 
@@ -76,7 +76,7 @@ export default function MainLayout () {
                         </NavLink>
 
                         <NavLink
-                            to="/first"
+                            to="/lotes"
                             className={({ isActive }) => 
                                 `botones p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
                             }> 
@@ -89,7 +89,7 @@ export default function MainLayout () {
                 </nav> 
             </aside>
 
-            <main className="flex-1 bg-yellow-500">
+            <main className="flex-1">
                 <Outlet />
             </main>
         </div>
