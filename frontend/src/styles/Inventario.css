@@ -1,0 +1,182 @@
+/* ── PANTALLA BASE ──── */
+.inventary-screen {
+  background-color: #FFFBF2;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;  
+  padding: 2rem;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* ── CONTENEDOR ──── */
+.contenido {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── TÍTULO ──── */
+.titulo {
+  color: #3B3FB6;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: bold;
+  margin: 0;
+}
+
+/* ── BARRA ──── */
+.barra-container {
+  width: clamp(300px, 75vw, 1100px);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.icono {
+  flex-shrink: 0;
+}
+
+/* ── Botón circular ──── */
+.btn-add {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;  
+  min-height: 42px;  
+  background-color: #FFB81C;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0; 
+
+  transition: all 0.2s ease;
+}
+
+/* ── CONTENEDOR DE TABLA ──── */
+.tabla-container {
+  width: 100%;
+  margin-top: 0px;
+  overflow-x: auto; 
+}
+
+/* ── TABLA ──── */
+.tabla-inventario {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 12px;
+  font-size: clamp(0.90rem, 1vw, 1.5rem);
+}
+
+/* ── FILAS TABLA ──── */
+.tabla-inventario tbody tr {
+  background-color: #f1f8fc;
+  transition: all 0.2s ease;
+}
+
+/* ── CELDAS TABLA ──── */
+.tabla-inventario td {
+  padding: 14px;
+  border-top: 3px solid #dff2fc;
+  border-bottom: 3px solid #dff2fc;
+}
+
+.tabla-inventario td:first-child {
+  border-left: 3px solid #dff2fc;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+
+.tabla-inventario td:last-child {
+  border-right: 3px solid #dff2fc;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+/* ── TITULO TABLA ──── */
+.tabla-inventario thead th {
+  background-color: #3B3FB6;
+  color: white;
+  font-weight: 600;
+  padding: 14px;
+  text-align: left;
+  border-top: 1px solid #3B3FB6;
+  border-bottom: 1px solid #3B3FB6;
+}
+
+.tabla-inventario thead th:first-child {
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+
+.tabla-inventario thead th:last-child {
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+/* ── SELECCION DE CELDAS TABLA ──── */
+.tabla-inventario tbody tr.seleccionada {
+  background-color: #c9d8fd; 
+}
+
+.tabla-inventario tbody tr.seleccionada td {
+  border-color: #7eaefc;
+}
+
+/* ── TABLA FORMATO PARA CELULAR ──── */
+@media (max-width: 768px) {
+
+    /* ── TITULO TABLA (SE QUITA) ──── */
+  .tabla-inventario thead {
+    display: none;
+  }
+
+  .tabla-inventario td:first-child,
+  .tabla-inventario td:last-child {
+    border-left: none;
+    border-right: none;
+  }
+
+  .tabla-inventario,
+  .tabla-inventario tbody,
+  .tabla-inventario tr,
+  .tabla-inventario td {
+    display: block;
+    width: 100%;
+  }
+  
+    /* ── FILAS TABLA ──── */
+  .tabla-inventario tbody tr {
+    margin-bottom: 16px;
+    padding: 14px;
+    border-radius: 12px;
+    background: #f1f8fc;
+    border: 3px solid #dff2fc;
+  }
+
+  /* ── CELDAS TABLA ──── */
+  .tabla-inventario td {
+    border: none;
+    padding: 4px 0;
+  }
+
+  .tabla-inventario td:first-child {
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .tabla-inventario td:not(:first-child) {
+    display: inline;
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-right: 30px;
+  }
+
+  /* ── SELECCION DE CELDAS TABLA ──── */
+  .tabla-inventario tbody tr.seleccionada {
+    background: #c9d8fd;
+    border: 3px solid #7eaefc;
+  }
+}
