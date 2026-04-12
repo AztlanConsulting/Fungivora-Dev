@@ -15,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginView />} />
 
+        {/* Wrapper principal, permite que exista la sidebar y proteger rutas*/}
         <Route
           element={
             <Ruta_protegida>
@@ -22,13 +23,14 @@ function App() {
             </Ruta_protegida>
           }
         >
+          {/* //! Rutas hijas, estas son renderizadas por <Outlet /> en MainLayout para que tengan sidebar */}
           <Route path="/first" element={<First_Page />} />
           <Route path="/inventario" element={<Inventario />} />
           <Route path="/experimentos" element={<Experimentos />} />
           <Route path="/recetario" element={<Recetario />} />
           <Route path="/lotes" element={<Lotes />} />
           
-
+          {/* Rutas protegidas hijas */}
           <Route
             path="/usuario"
             element= {

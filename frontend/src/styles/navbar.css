@@ -9,7 +9,7 @@
 .barra-lateral {
     display: flex;
     flex-direction: row;
-    gap: 0.5rem; /* * Root em, medida de fuente del elemento raiz del doc*/
+    gap: 0.5rem; /* * Root em, medida de fuente del elemento raiz del doc */
     padding: 0.5rem; 
     justify-content: space-between;
     align-items: center;
@@ -25,7 +25,7 @@
     z-index: 50;
 }
 
-/* Ajustes de pantalla mediana en adelante barra de navegacion*/
+/* Ajustes de pantalla mediana en adelante barra de navegacion */
 @media (min-width: 768px) {
     .barra-lateral {
         flex-direction: column;
@@ -46,7 +46,7 @@
     min-height: 100dvh;
 }
 
-/* Main layout pantallas medianas en adelante*/
+/* Main layout pantallas medianas en adelante */
 @media (min-width: 768px) {
     .layout {
         flex-direction: row;
@@ -113,7 +113,7 @@
     transition: 0.2s ease;
 }
 
-/*Configuracion de tooltip para comportamiento hoover */
+/*Configuracion de tooltip para comportamiento hover */
 .botones:hover .nav-tooltip {
     opacity: 0;
 }

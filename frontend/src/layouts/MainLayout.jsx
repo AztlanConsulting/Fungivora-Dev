@@ -1,11 +1,12 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Home07FreeIcons, BookOpenTextFreeIcons, PackageIcon, MushroomIcon, Notification01Icon, Logout02Icon, NaturalFoodIcon, } from '@hugeicons/core-free-icons';
+import { Home07FreeIcons, BookOpenTextFreeIcons, PackageIcon, MushroomIcon, NaturalFoodIcon, } from '@hugeicons/core-free-icons';
 import fungivora from "/icons/icon-512x512.png?url"
 import '../styles/navbar.css'
 
 export default function MainLayout () {
+    /* Esto se encarga de actualizar el tamanio de los iconos al cambiar a vista chica */
     const [iconSize, setIconSize] = useState(window.innerWidth < 768 ? 28 : 40);
 
     useEffect(() => {
@@ -28,9 +29,14 @@ export default function MainLayout () {
         <div className="layout">
             <aside>
                 <nav className="barra-lateral">
+
+                    {/* Logo Fungivora */}
                     <div className="logo-div"><img src={fungivora} className="fungivora" /> </div>
-                        
+                    
+                    {/* Este contenedor lleva los iconos de toda la navbar*/}
                     <div className="contenedor-principal-nav">
+
+                        {/* Home */}
                         <NavLink
                             to="/first"
                             className={({ isActive }) => 
@@ -42,6 +48,7 @@ export default function MainLayout () {
                             </span>
                         </NavLink>
 
+                        {/* Experimentos */}
                         <NavLink 
                             to="/experimentos"
                             className={({ isActive }) => 
@@ -53,6 +60,7 @@ export default function MainLayout () {
                             </span>
                         </NavLink>
 
+                        {/* Inventario */}
                         <NavLink 
                             to="/inventario"
                             className={({ isActive }) => 
@@ -64,6 +72,7 @@ export default function MainLayout () {
                             </span>
                         </NavLink>
 
+                        {/* Recetario */}
                         <NavLink
                             to="/recetario"
                             className={({ isActive }) => 
@@ -75,6 +84,7 @@ export default function MainLayout () {
                             </span>
                         </NavLink>
 
+                        {/* Lotes */}
                         <NavLink
                             to="/lotes"
                             className={({ isActive }) => 
@@ -89,6 +99,7 @@ export default function MainLayout () {
                 </nav> 
             </aside>
 
+            {/* //! Outlet se encarga de renderizar la vista sin desaparecer la barra de navegacion */}
             <main className="flex-1">
                 <Outlet />
             </main>
