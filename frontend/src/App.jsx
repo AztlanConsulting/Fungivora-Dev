@@ -2,17 +2,39 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import First_Page from "./views/First_Page";
 import LoginView from './views/LoginView';
 import Usuario from "./views/Usuario";
-import RegistrarMedioLiquido from "./views/NewMedio"; 
+import RegistrarMedioLiquido from "./views/NewMedio";
 import Inventario from "./views/Inventario";
 import Ruta_protegida from "../componentes_internos/ruta_protegida";
+import MainLayout from "./layouts/MainLayout";
+import Experimentos from "./views/ExperimentosView";
+import Recetario from "./views/RecetarioView"
+import Lotes from "./views/LotesView"
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Ruta principal */}
         <Route path="/" element={<LoginView />} />
-        <Route path="/inventario" element={<Inventario />} />
 
+        {/* Wrapper principal, permite que exista la sidebar y proteger rutas*/}
+        <Route
+          element={
+            <Ruta_protegida>
+              <MainLayout />
+            </Ruta_protegida>
+          }
+        />
+
+        {/* //! Rutas hijas, estas son renderizadas por <Outlet /> en MainLayout para que tengan sidebar */}
+        <Route path="/first" element={<First_Page />} />
+        <Route path="/inventario" element={<Inventario />} />
+        <Route path="/inventario/micelio/crear" element={<RegistrarMedioLiquido />} />
+        <Route path="/experimentos" element={<Experimentos />} />
+        <Route path="/recetario" element={<Recetario />} />
+        <Route path="/lotes" element={<Lotes />} />
+
+        {/* Rutas protegidas hijas */}
         <Route
           path="/usuario"
           element={
@@ -21,22 +43,7 @@ function App() {
             </Ruta_protegida>
           }
         />
-        <Route
-          path="/first"
-          element={
-            <Ruta_protegida>
-              <First_Page />
-            </Ruta_protegida>
-          }
-        />
-        <Route
-          path="/inventario/micelio/crear"
-          element={
-            <Ruta_protegida>
-              <RegistrarMedioLiquido />
-            </Ruta_protegida>
-          }
-        />
+
       </Routes>
     </BrowserRouter>
   );
