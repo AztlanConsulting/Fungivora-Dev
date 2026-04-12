@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import First_Page from "./views/First_Page";
 import LoginView from './views/LoginView';
 import Usuario from "./views/Usuario";
+import Inventario from "./views/Inventario";
 import Ruta_protegida from "../componentes_internos/ruta_protegida";
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LoginView />} />
+        <Route path="/inventario" element={<Inventario />} />
 
         <Route
           path="/usuario"
