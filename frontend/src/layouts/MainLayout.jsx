@@ -15,50 +15,81 @@ export default function MainLayout () {
                         <NavLink
                             to="/second"
                             className={({ isActive }) => 
-                                `p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
-                            }
-                        > <HugeiconsIcon icon={Home07FreeIcons} size={40} color="#3b3fb6" strokeWidth={1.5} /> </NavLink>
-                        <NavLink 
-                            to="/second"
-                            className={({ isActive }) => 
-                                `p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
-                            }
-                        > <HugeiconsIcon icon={BookOpenTextFreeIcons} size={40} color="#3b3fb6" strokeWidth={1.5} />
+                                `botones p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                            }>
+                            <HugeiconsIcon icon={Home07FreeIcons} size={40} color="#3b3fb6" strokeWidth={1.5} />
+                            <span className="nav-tooltip">
+                                Inicio
+                            </span>
                         </NavLink>
+
                         <NavLink 
                             to="/second"
                             className={({ isActive }) => 
-                                `p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
-                            }
-                        > <HugeiconsIcon icon={PackageIcon} size={40} color="#3b3fb6" strokeWidth={1.5} /> </NavLink>
+                                `botones p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                            }> 
+                            <HugeiconsIcon icon={BookOpenTextFreeIcons} size={40} color="#3b3fb6" strokeWidth={1.5} />
+                            <span className="nav-tooltip">
+                                Experimentos
+                            </span>
+                        </NavLink>
+
+                        <NavLink 
+                            to="/second"
+                            className={({ isActive }) => 
+                                `botones p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                            }> 
+                            <HugeiconsIcon icon={PackageIcon} size={40} color="#3b3fb6" strokeWidth={1.5} />
+                            <span className="nav-tooltip">
+                                Invetario
+                            </span>
+                        </NavLink>
+
                         <NavLink
                             to="/second"
                             className={({ isActive }) => 
-                                `p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
-                            }
-                        > <HugeiconsIcon icon={MushroomIcon} size={40} color="#3b3fb6" strokeWidth={1.5} /></NavLink>
+                                `botones p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                            }> 
+                            <HugeiconsIcon icon={MushroomIcon} size={40} color="#3b3fb6" strokeWidth={1.5} />
+                            <span className="nav-tooltip">
+                                Recetario
+                            </span>
+                        </NavLink>
+
                         <NavLink
                             to="/second"
                             className={({ isActive }) => 
-                                `p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
-                            }
-                        > <HugeiconsIcon icon={NaturalFoodIcon} size={40} color="#3b3fb6" strokeWidth={1.5} /></NavLink>
+                                `botones p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                            }> 
+                            <HugeiconsIcon icon={NaturalFoodIcon} size={40} color="#3b3fb6" strokeWidth={1.5} />
+                            <span className="nav-tooltip">
+                                Lotes
+                            </span>
+                        </NavLink>
                     </div>
 
                     <div className="contenedor-inferior-nav">
                         <NavLink 
                             to="/second"
                             className={({ isActive }) => 
-                                `p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
-                            }
-                        > <HugeiconsIcon icon={Notification01Icon} size={40} color="#3b3fb6" strokeWidth={1.5} /></NavLink>
-                        <button 
-                            className="p-2 self-center rounded-lg transition-colors hover:bg-gray-100">
+                                `botones p-2 self-center rounded-lg transition-colors ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                            }>
+                            <HugeiconsIcon icon={Notification01Icon} size={40} color="#3b3fb6" strokeWidth={1.5} />
+                            <span className="nav-tooltip">
+                                Notificaciones
+                            </span>
+                        </NavLink>
+
+                        <button className="botones flex p-2 self-center rounded-lg transition-colors hover:bg-gray-100">
                             <HugeiconsIcon icon={Logout02Icon} size={40} color="#3b3fb6" strokeWidth={1.5} />
+                            <span className="nav-tooltip">
+                                Cerrar sesión
+                            </span>
                         </button>
                     </div>
                 </nav> 
             </aside>
+
             <main className="flex-1 bg-yellow-500">
                 <Outlet />
             </main>
