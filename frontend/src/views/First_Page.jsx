@@ -58,6 +58,7 @@ function First_Page() {
         />
       </button>
 
+      {/* Modal para confirmar si se cierra o no sesión */}
       {showModal && (
       <div className="modal-overlay">
         <div className="modal">

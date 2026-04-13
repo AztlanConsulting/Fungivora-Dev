@@ -1,3 +1,4 @@
+/* Quitar el color de una barra blanca */
 html, body, #root {
   margin: 0;
   padding: 0;
@@ -5,7 +6,7 @@ html, body, #root {
   background-color: #FFFBF2;
 }
 
-
+/* Contenedor de color y tamaño */
 .container {
   position: relative;
   padding-top: 60px; 
@@ -16,6 +17,7 @@ html, body, #root {
   min-height: 100vh;  
 }
 
+/* Boton de Cerrar Sesión */
 .logout-btn {
   position: fixed;
   top: 35px;
@@ -23,7 +25,7 @@ html, body, #root {
   z-index: 1000;
 }
 
-
+/* Icono de Cerrar Sesión */
 .logout-icon {
   width: 40px;
   height: 40px;
@@ -36,6 +38,7 @@ html, body, #root {
   }
 }
 
+/* Modal para confirmar cerrado de sesión */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -85,6 +88,7 @@ html, body, #root {
   box-shadow: 0 2px 0 var(--btn-shadow);
 }
 
+/* Modal para confirmar cerrado de sesión en celular */
 @media (max-width: 768px) {
   .modal {
     width: 300px;    
@@ -101,10 +105,8 @@ html, body, #root {
   justify-content: center;
   gap: 15px;
  }
-}
 
-@media (max-width: 768px) {
-  .btn {
+ .btn {
     padding: 8px 14px;
     font-size: 14px;
   }
