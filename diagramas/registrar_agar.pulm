@@ -82,7 +82,11 @@ database Database
         activate Database
         Database -->> Model: SUCCESS / ID GENERADO
         deactivate Database
-        Model ->> Database: INSERT INTO producto\n(id_producto, ...)
+        Model ->> Database: INSERT INTO micelio_sustrato\n(id_micelio_sustrato, ...)
+        activate Database
+        Database -->> Model: SUCCESS / ID GENERADO
+        deactivate Database
+        Model ->> Database: INSERT INTO incredientes\n(id_incredientes, ...)
         activate Database
         Database -->> Model: SUCCESS / ID GENERADO
         deactivate Database

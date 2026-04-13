@@ -21,6 +21,7 @@ database Database
     Model -->> Controller: PROMESA
     deactivate Model
     Controller -> View: response.render("anadir_semilla",\n{ semillas })
+    deactivate Controller
     activate View
     View -->> Usuario: HTTP 200 OK
     deactivate View
@@ -90,11 +91,11 @@ database Database
         activate Database
         Database -->> Model: SUCCESS / ID GENERADO
         deactivate Database
-        Model ->> Database: INSERT INTO micelio\n(id_micelio, ...)
+        Model ->> Database: INSERT INTO micelio_sustrato\n(id_micelio_sustrato, ...)
         activate Database
         Database -->> Model: SUCCESS / ID GENERADO
         deactivate Database
-        Model ->> Database: INSERT INTO producto\n(id_producto, ...)
+        Model ->> Database: INSERT INTO incredientes\n(id_incredientes, ...)
         activate Database
         Database -->> Model: SUCCESS / ID GENERADO
         deactivate Database
