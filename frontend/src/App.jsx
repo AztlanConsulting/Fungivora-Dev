@@ -14,6 +14,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LoginView />} />
+        <Route path="*" element={<Navigate to="/" />} />
 
         {/* Wrapper principal, permite que exista la sidebar y proteger rutas*/}
         <Route
@@ -39,7 +40,7 @@ function App() {
               </Ruta_protegida>
             }
           />
-          
+           <Route path="*" element={<Navigate to="/first" />} />
         </Route>
       </Routes>
     </BrowserRouter>
