@@ -6,13 +6,20 @@ import "../styles/First_Page.css";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Logout02Icon } from "@hugeicons/core-free-icons";
 
+import Button from "../componentes/botones"; 
+
 function First_Page() {
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
   const token = localStorage.getItem("token");
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/"); 
+    const confirmacion = window.confirm("¿Estas segurx de querer cerrar sesión?");
+    
+    if (confirmacion) {
+      localStorage.removeItem("token");
+      navigate("/");
+    }
   };
 
   let rol = null;
@@ -43,13 +50,40 @@ function First_Page() {
       )}
 
       {/* Boton para cerrar sesión y destruir el token */}
-      <button onClick={handleLogout} className="logout-btn">
+      <button onClick={() => setShowModal(true)} className="logout-btn">
         <HugeiconsIcon 
           icon={Logout02Icon} 
           className="logout-icon"
           color="#3b3fb6" 
         />
       </button>
+
+      {showModal && (
+      <div className="modal-overlay">
+        <div className="modal">
+          <p>¿Estas segurx de querer cerrar sesión?</p>
+
+          <div className="modal-buttons">
+            <Button
+              variant="confirmar"
+              onClick={() => {
+                localStorage.removeItem("token");
+                navigate("/");
+              }}
+            >
+              Confirmar
+            </Button>
+
+            <Button
+              variant="eliminar"
+              onClick={() => setShowModal(false)}
+            >
+              Cancelar
+            </Button>
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   );
 }
