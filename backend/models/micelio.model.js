@@ -3,7 +3,7 @@ const db = require('../util/database');
 module.exports = class Micelio {
     
     // Método para crear el nuevo registro (Trazabilidad)
-    static async anadir(datos, connection) {
+    static async registrar(datos, connection) {
         const { id_base, id_usuario, tipo, notas, cantidad_o_rendimiento, foto } = datos;
         
         // El id_resultado se genera automáticamente por la DB
