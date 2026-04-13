@@ -55,7 +55,7 @@ const PruebaInsumo = () => {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      res.ok ? setMensaje("✅ ¡Guardado con éxito!") : setMensaje(`❌ Error: ${data.error}`);
+      res.ok ? setMensaje(" ¡Guardado con éxito!") : setMensaje(` Error: ${data.error}`);
     } catch (error) {
       setMensaje("❌ Error de conexión");
     }

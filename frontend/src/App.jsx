@@ -5,6 +5,10 @@ import Usuario from "./views/Usuario";
 import Inventario from "./views/inventario/Inventario";
 import PruebaInsumo from "./views/inventario/RegistrarInsumo";
 import Ruta_protegida from "../componentes_internos/ruta_protegida";
+import MainLayout from "./layouts/MainLayout";
+import Experimentos from "./views/ExperimentosView";
+import Recetario from "./views/RecetarioView"
+import Lotes from "./views/LotesView"
 
 function App() {
   return (
@@ -15,22 +19,32 @@ function App() {
         <Route path="/inventario/crearInsumo" element={<PruebaInsumo />} />
         <Route path="/inventario" element={<Inventario />} />
 
+        {/* Wrapper principal, permite que exista la sidebar y proteger rutas*/}
         <Route
-          path="/usuario"
-          element={
-            <Ruta_protegida rolPermitido="Administrador">
-              <Usuario />
-            </Ruta_protegida>
-          }
-        />
-        <Route
-          path="/first"
           element={
             <Ruta_protegida>
-              <First_Page />
+              <MainLayout />
             </Ruta_protegida>
           }
-        />
+        >
+          {/* //! Rutas hijas, estas son renderizadas por <Outlet /> en MainLayout para que tengan sidebar */}
+          <Route path="/first" element={<First_Page />} />
+          <Route path="/inventario" element={<Inventario />} />
+          <Route path="/experimentos" element={<Experimentos />} />
+          <Route path="/recetario" element={<Recetario />} />
+          <Route path="/lotes" element={<Lotes />} />
+          
+          {/* Rutas protegidas hijas */}
+          <Route
+            path="/usuario"
+            element= {
+              <Ruta_protegida rolPermitido="Administrador">
+                <Usuario />
+              </Ruta_protegida>
+            }
+          />
+          
+        </Route>
       </Routes>
     </BrowserRouter>
   );
