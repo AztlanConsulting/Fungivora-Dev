@@ -14,6 +14,9 @@ const RegistrarSemilla = () => {
   const [granos,   setGranos]   = useState([]);
   const [micelios, setMicelios] = useState([]);
 
+  const [errorMsg, setErrorMsg] = useState("");
+
+   //formulario base
   const [form, setForm] = useState({
     rendimiento:     "",
     notas:           "",
@@ -24,21 +27,22 @@ const RegistrarSemilla = () => {
     fotos:           [],
   });
 
-  useEffect(() => {
-    const obtenerDatos = () => {
-      fetch("http://localhost:5000/inventario/registrarsemilla")
-        .then(res => res.json())
-        .then(data => {
-          if (data.granos   && data.granos.length   > 0) setGranos(data.granos);
-          if (data.micelios && data.micelios.length > 0) setMicelios(data.micelios);
-        })
-        .catch(err => console.error(err));
-    };
-    obtenerDatos();
-    const intervalo = setInterval(obtenerDatos, 5000);
-    return () => clearInterval(intervalo);
-  }, []);
+ useEffect(() => {
+  const obtenerDatos = () => {
+    fetch("http://localhost:5000/inventario/registrarsemilla")
+      .then(res => res.json())
+      .then(data => {
+        if (data.granos && data.granos.length > 0) setGranos(data.granos);
+        if (data.micelios && data.micelios.length > 0) setMicelios(data.micelios);
+      })
+      .catch(err => console.error(err));
+  };
+  obtenerDatos();
+  const intervalo = setInterval(obtenerDatos, 5000);
+  return () => clearInterval(intervalo);
+}, []);
 
+  //Creacion de Funciones
   const set = (campo) => (e) =>
     setForm((prev) => ({ ...prev, [campo]: e.target.value }));
 
@@ -69,7 +73,12 @@ const RegistrarSemilla = () => {
 
   const handleRegistrar = async () => {
     if (!form.rendimiento || !form.tipoGrano || !form.cantidadGrano || !form.miselio || !form.cantidadMiselio) {
-      alert("Por favor llena todos los campos obligatorios");
+      setErrorMsg("Por favor llena todos los campos obligatorios");
+      return;
+    }
+
+    if (isNaN(form.cantidadGrano) || form.cantidadGrano <= 0) {
+      setErrorMsg("La cantidad de grano debe ser un número mayor a 0");
       return;
     }
 
@@ -98,19 +107,24 @@ const RegistrarSemilla = () => {
       if (!res.ok) throw new Error("Error al registrar");
       return res.json();
     })
-    .then(() => navigate("/inventario"))
-    .catch((err) => {
-      console.error("Error completo:", err);
-      alert("Error al registrar semilla, intente de nuevo");
-    });
+    .then(() => {
+    setErrorMsg("")
+    navigate("/inventario");
+    })
+    .catch(()=> setErrorMsg("Error al registrar semilla, intente de nuevo")); 
   };
-
+  //Creacion  de la Vista con CSS
   return (
     <div className="registro-screen">
       <div className="registro-contenido">
         <h1 className="registro-titulo">Registrar Semilla</h1>
         {semilla && (
           <span className="registro-seleccionada-tag">{semilla.label}</span>
+        )}
+        {errorMsg && (
+          <div className="registro-error">
+            {errorMsg}
+          </div>
         )}
         <div className="registro-grid">
           <div className="registro-campo">
@@ -129,7 +143,7 @@ const RegistrarSemilla = () => {
             />
           </div>
           <div className="registro-campo">
-            <CampoTexto label="Cantidad" value={form.cantidadGrano} onChange={set("cantidadGrano")} />
+            <CampoTexto label="Cantidad" value={form.cantidadGrano} onChange={set("cantidadGrano")} type="number" />
           </div>
           <div className="registro-campo">
             <label>Miselio</label>
@@ -141,7 +155,7 @@ const RegistrarSemilla = () => {
             />
           </div>
           <div className="registro-campo">
-            <CampoTexto label="Cantidad" value={form.cantidadMiselio} onChange={set("cantidadMiselio")} />
+            <CampoTexto label="Cantidad" value={form.cantidadMiselio} onChange={set("cantidadMiselio")} type="number" />
           </div>
         </div>
         <CampoFotos fotos={form.fotos} onChange={handleFotos} />

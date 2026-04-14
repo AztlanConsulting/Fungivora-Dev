@@ -1,15 +1,12 @@
-/* src/styles/registro.css */
-
 /* ── PANTALLA BASE ──── */
 .registro-screen {
   background-color: #FFFBF2;
   width: 100%;
   min-height: 100vh;
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: flex-start;
-  padding: 2rem;
-  margin-left: 70px;
+  padding: 2rem 2rem 2rem 70px;
   font-family: 'Montserrat', sans-serif;
 }
 
@@ -44,8 +41,9 @@
 /* ── GRID ──── */
 .registro-grid {
   display: grid;
-  grid-template-columns: minmax(120px, 220px) minmax(120px, 220px);
+  grid-template-columns: 1fr 1fr;
   gap: 1rem 1.5rem;
+  width: 100%;
 }
 
 /* ── CAMPO ──── */
@@ -95,9 +93,6 @@
 .registro-select {
   appearance: none;
   -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%233b3fb6' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.8rem center;
   padding-right: 2rem;
   cursor: pointer;
 }
@@ -141,6 +136,8 @@
 /* ── BOTÓN ──── */
 .registro-btn-registrar {
   margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
 }
 
 /* ── DISABLED ──── */
@@ -149,4 +146,44 @@
   cursor: not-allowed;
   transform: none !important;
   box-shadow: none !important;
+}
+
+/* ── INPUT NUMBER ──── */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* ── ERROR MSG ──── */
+.registro-error {
+  background-color: #fff0f0;
+  border: 1.5px solid #ed2025;
+  color: #ed2025;
+  padding: 0.5rem 1rem;
+  border-radius: 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+}
+
+@media (max-width: 768px) {
+  .registro-screen {
+    padding: 1.5rem 1rem 1.5rem 1rem;
+    padding: 1.5rem 1rem 6rem 1rem;
+  }
+
+  .registro-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .registro-btn-registrar {
+    display: flex;
+    justify-content: center;
+  }
 }

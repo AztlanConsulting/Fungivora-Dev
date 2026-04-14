@@ -1,7 +1,10 @@
-const CampoTexto = ({ label, value, onChange, placeholder = "Escribe tu entrada...", multiline = false }) => {
+//Campo de texto
+
+const CampoTexto = ({ label, value, onChange, placeholder = "Escribe tu entrada...", multiline = false, type = "text" }) => {
   const clase = "registro-input";
 
   return (
+    //creacion del componente con sus props de tailwind 
     <div className="registro-campo">
       <label>{label}</label>
       {multiline ? (
@@ -14,7 +17,7 @@ const CampoTexto = ({ label, value, onChange, placeholder = "Escribe tu entrada.
       ) : (
         <input
           className={clase}
-          type="text"
+          type={type}
           placeholder={placeholder}
           value={value}
           onChange={onChange}

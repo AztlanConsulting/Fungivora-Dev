@@ -1,7 +1,8 @@
 const { randomUUID } = require('crypto');
 const db = require('../util/db');
-
+//Creaccion del registro de la db via fetchs, constructores y inserciones
 class Semilla {
+    //Constructor que paso los datos de la db a la vista
     constructor(id_micelio_sustrato, id_resultado, id_herencia, id_usuario, foto_ms, notas_ms, rendimiento) {
         this.id_micelio_sustrato = id_micelio_sustrato;
         this.id_resultado        = id_resultado;
@@ -11,7 +12,7 @@ class Semilla {
         this.notas_ms            = notas_ms;
         this.rendimiento         = rendimiento;
     }
-
+    //metodos fetch pára armar los selects
     static fetch_all_semillas = async () => {
         const [filas] = await db.execute(`
             SELECT i.id_inventario, i.nombre_inventario, i.unidad_medida, i.id_categoria
@@ -44,7 +45,7 @@ class Semilla {
 
     /*
     * anadir
-    Registrar una nueva semilla en la base de datos
+    Registrar una nueva semilla en la base de datos con metodos de insercion
     Inserta en inventario, micelio_sustrato, in_outs e ingredientes
     @param id_herencia, nombre_inventario, rendimiento,
            unidad_medida, tipoGrano, cantidadGrano, micelio, cantidadMicelio, notas, foto
@@ -63,14 +64,14 @@ class Semilla {
     }) => {
         const new_id_inventario      = randomUUID();
         const new_id_micelio_sustrato = randomUUID();
-        const id_usuario_hardcoded   = 'u1-11111111-1111-1111-111111111111'; // TODO: req.user.id
+        const id_usuario_hardcoded   = 'u1-11111111-1111-1111-111111111111'; // TODO: req.user.id — reemplazar con el id del usuario autenticado,requiere implementar middeleware
 
         // Obtener id_categoria de semilla desde la DB
         const [[categoria]] = await db.execute(`
             SELECT id_categoria FROM categorias WHERE nombre_categoria = 'semilla'
         `);
 
-        // 1. INSERT inventario — el nuevo lote de semilla creado
+        //INSERT inventario — el nuevo lote de semilla creado
         await db.execute(`
             INSERT INTO inventario (id_inventario, id_categoria, nombre_inventario, cantidad_inventario, unidad_medida, es_manufacturado)
             VALUES (?, ?, ?, ?, ?, 1)
@@ -82,7 +83,7 @@ class Semilla {
             unidad_medida,
         ]);
 
-        // 2. INSERT micelio_sustrato — registro del proceso
+        //INSERT micelio_sustrato — registro del proceso
         await db.execute(`
             INSERT INTO micelio_sustrato (id_micelio_sustrato, id_resultado, id_herencia, id_usuario, foto_ms, notas_ms, rendimiento, tipo)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -97,7 +98,7 @@ class Semilla {
             'semilla',
         ]);
 
-        // 3. INSERT in_outs — salida del grano consumido
+        //INSERT in_outs — salida del grano consumido
         await db.execute(`
             INSERT INTO in_outs (id_in_outs, id_usuario, id_inventario, cantidad_in_outs, tipo_movimiento)
             VALUES (?, ?, ?, ?, 0)
@@ -108,7 +109,7 @@ class Semilla {
             parseFloat(cantidadGrano),
         ]);
 
-        // 4. INSERT ingredientes — grano como ingrediente del nuevo lote
+        //INSERT ingredientes — grano como ingrediente del nuevo lote
         await db.execute(`
             INSERT INTO ingredientes (id_micelio_sustrato, id_ingrediente, cantidad_usada)
             VALUES (?, ?, ?)
@@ -118,7 +119,7 @@ class Semilla {
             parseFloat(cantidadGrano),
         ]);
 
-        // 5. INSERT in_outs — salida del micelio consumido
+        //INSERT in_outs — salida del micelio consumido
         await db.execute(`
             INSERT INTO in_outs (id_in_outs, id_usuario, id_inventario, cantidad_in_outs, tipo_movimiento)
             VALUES (?, ?, ?, ?, 0)
@@ -129,7 +130,7 @@ class Semilla {
             parseFloat(cantidadMicelio),
         ]);
 
-        // 6. INSERT ingredientes — micelio como ingrediente del nuevo lote
+        //INSERT ingredientes — micelio como ingrediente del nuevo lote
         await db.execute(`
             INSERT INTO ingredientes (id_micelio_sustrato, id_ingrediente, cantidad_usada)
             VALUES (?, ?, ?)

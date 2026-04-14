@@ -1,0 +1,32 @@
+/* ── PANTALLA BASE ────────────────────────────────────────── */
+.screen-background {
+  background-color: #ffffff;
+  width: 100vw;
+  height: 100dvh;         
+  min-height: 100vh;       
+  position: relative;
+  overflow: hidden;        /* nada debe salirse de la pantalla           */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+}
+
+.btn-entrar {
+  background-color: #FFB81C;
+  color: #ffffff;
+  width: 65%;
+  padding: 0.8rem;
+  border-radius: 9999px;
+  font-size: clamp(1rem, 3vw, 1.8rem);
+  font-weight: 900;
+  border: none;
+  cursor: pointer;
+  margin-top: 2rem;
+  box-shadow: 0 6px 0px #c7931a;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+

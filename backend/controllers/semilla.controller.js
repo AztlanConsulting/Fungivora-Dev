@@ -1,6 +1,8 @@
-const { randomUUID } = require('crypto');
+//se encarga de resibir y renderisar los datos de la DB a la vista de semilla y sus estados como sus errores
+
 const Semilla        = require('../models/semilla.model');
 
+//LLena toda la lista de datos disponibles de semilla
 exports.get_seleccionar_semilla = async (req, res) => {
     try {
         const filas = await Semilla.fetch_all_semillas();
@@ -11,6 +13,7 @@ exports.get_seleccionar_semilla = async (req, res) => {
     }
 };
 
+//carga datos de la vista de semilla
 exports.get_semilla = async (req, res) => {
     try {
         const granos   = await Semilla.fetch_all_granos();
@@ -22,6 +25,7 @@ exports.get_semilla = async (req, res) => {
     }
 };
 
+//estructura completa de la db
 exports.post_anadir_semilla = async (req, res) => {
     try {
         const {

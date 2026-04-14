@@ -6,6 +6,7 @@ import SelectCampo from "../componentes/selectcampo";
 import CampoFotos from "../componentes/campofoto";
 import "../styles/registro.css";
 
+//contrucion de los componentes y items seleccionados
 const RegistrarAgar = () => {
   const { state } = useLocation();
   const navigate  = useNavigate();
@@ -13,6 +14,9 @@ const RegistrarAgar = () => {
 
   const [granos, setGranos] = useState([]);
 
+ const [errorMsg, setErrorMsg] = useState("");
+
+ //formulario base
   const [form, setForm] = useState({
     rendimiento:   "",
     notas:         "",
@@ -21,20 +25,22 @@ const RegistrarAgar = () => {
     fotos:         [],
   });
 
-  useEffect(() => {
-    const obtenerDatos = () => {
-      fetch("http://localhost:5000/inventario/registraragar")
-        .then(res => res.json())
-        .then(data => {
-          if (data.granos && data.granos.length > 0) setGranos(data.granos);
-        })
-        .catch(err => console.error(err));
-    };
-    obtenerDatos();
-    const intervalo = setInterval(obtenerDatos, 5000);
-    return () => clearInterval(intervalo);
-  }, []);
+useEffect(() => {
+  const obtenerDatos = () => {
+    fetch("http://localhost:5000/inventario/registraragar")
+      .then(res => res.json())
+      .then(data => {
+        if (data.granos && data.granos.length > 0) setGranos(data.granos);
+      })
+      .catch(err => console.error(err));
+  };
+  obtenerDatos();
+  const intervalo = setInterval(obtenerDatos, 5000);
+  return () => clearInterval(intervalo);
+}, []);
 
+
+  //Creacion de funciones
   const set = (campo) => (e) =>
     setForm((prev) => ({ ...prev, [campo]: e.target.value }));
 
@@ -65,9 +71,13 @@ const RegistrarAgar = () => {
 
   const handleRegistrar = async () => {
     if (!form.rendimiento || !form.tipoGrano || !form.cantidadGrano) {
-      alert("Por favor llena todos los campos obligatorios");
+      setErrorMsg("Por favor llena todos los campos obligatorios");
       return;
     }
+
+    if (isNaN(form.cantidadGrano) || form.cantidadGrano <= 0) {
+    setErrorMsg("La cantidad debe ser un número mayor a 0");
+    return;}
 
     let foto = null;
     if (form.fotos.length > 0) {
@@ -95,16 +105,21 @@ const RegistrarAgar = () => {
     .then(() => navigate("/inventario"))
     .catch((err) => {
       console.error("Error completo:", err);
-      alert("Error al registrar agar, intente de nuevo");
+      setErrorMsg("Error al registrar agar, intente de nuevo");
     });
   };
-
+ // Construcion de la vista con el CSS, selecionando sus elementos y su uso
   return (
     <div className="registro-screen">
       <div className="registro-contenido">
         <h1 className="registro-titulo">Registrar Agar</h1>
         {agar && (
           <span className="registro-seleccionada-tag">{agar.label}</span>
+        )}
+        {errorMsg && (
+          <div className="registro-error">
+            {errorMsg}
+          </div>
         )}
         <div className="registro-grid">
           <div className="registro-campo">
@@ -123,7 +138,7 @@ const RegistrarAgar = () => {
             />
           </div>
           <div className="registro-campo">
-            <CampoTexto label="Cantidad" value={form.cantidadGrano} onChange={set("cantidadGrano")} />
+            <CampoTexto label="Cantidad" value={form.cantidadGrano} onChange={set("cantidadGrano")}type="number"/>
           </div>
         </div>
         <CampoFotos fotos={form.fotos} onChange={handleFotos} />
