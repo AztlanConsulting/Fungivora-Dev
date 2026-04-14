@@ -1,6 +1,8 @@
 import React from "react";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowDown01Icon } from '@hugeicons/core-free-icons';
 
-const VALID_CHARS = /[^A-Za-zñÑáéíóúÁÉÍÓÚ\s]/g;
+const VALID_CHARS = /[^A-Za-z0-9."/_+,:;()ñÑáéíóúÁÉÍÓÚ\s]/g;
 
 const sanitize = (text) => text.replace(VALID_CHARS, "");
 
@@ -16,7 +18,7 @@ const CampoTexto = ({
   esSelect = false,
   opciones = []
 }) => {
-  const clase = "w-full border-2 border-[#3b3fb6] rounded-xl px-3 py-2 text-sm text-[#3b3fb6] bg-white outline-none placeholder-[#a0a8d9] placeholder:italic focus:border-[#ffb81c] appearance-none";
+  const clase = "w-full border-2 border-[#3b3fb6] rounded-xl px-3 py-2 text-sm text-[#3b3fb6] bg-[#F9FDFF] outline-none placeholder-[#a0a8d9] placeholder:italic focus:border-[#ffb81c] appearance-none";
 // Para que solaente acepte texto se hizo full con IA
   // Crea un onChange sanitizado que envuelve el original
   const handleChange = (e) => {
@@ -71,9 +73,12 @@ const CampoTexto = ({
             ))}
           </select>
           <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-[#3b3fb6]">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" />
-            </svg>
+            <HugeiconsIcon 
+              icon={ArrowDown01Icon}
+              size={20}
+              variant="stroke"
+              strokeWidth={3}
+            />      
           </div>
         </div>
       ) : multiline ? (
