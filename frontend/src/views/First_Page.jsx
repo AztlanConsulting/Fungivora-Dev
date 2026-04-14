@@ -14,7 +14,7 @@ function First_Page() {
   const token = localStorage.getItem("token");
 
   const handleLogout = () => {
-    const confirmacion = window.confirm("¿Estás segurx de querer cerrar sesión?");
+    const confirmacion = window.confirm("¿Confirmar cierre de sesión?");
     
     if (confirmacion) {
       localStorage.removeItem("token");
@@ -62,7 +62,7 @@ function First_Page() {
       {showModal && (
       <div className="modal-overlay">
         <div className="modal">
-          <p>¿Estás segurx de querer cerrar sesión?</p>
+          <p>¿Confirmar cierre de sesión?</p>
 
           <div className="modal-buttons">
             <Button
