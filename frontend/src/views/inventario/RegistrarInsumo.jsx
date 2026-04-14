@@ -76,7 +76,7 @@ const PruebaInsumo = () => {
 
   return (
     <Base margen_arriba="mt-8 md:mt-[vh]">
-      <Titulo>Nuevo Insumo</Titulo>
+      <Titulo>Crear Insumo</Titulo>
       <AlertaError 
         detalle={mensaje} 
         esExito={mensaje.includes("éxito")} 
