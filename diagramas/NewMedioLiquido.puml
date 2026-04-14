@@ -1,0 +1,76 @@
+@startuml
+skinparam style strictuml
+title Diagrama de Secuencia: In-07 Crear Medio Líquido (React + Node + Ingredientes)
+
+actor "Usuario\n(Granjero Auth)" as Usuario
+box "Frontend (React)" #LightBlue
+    participant "micelio_sustrato.jsx" as View
+    participant "crear_micelio.jsx" as Form
+end box
+box "Backend (Node.js API)" #LightGreen
+    participant "api.routes" as Routes
+    participant "micelio.controller" as Controller
+    participant "micelio.model" as Model
+end box
+database "Database (SQL)" as DB
+
+== Carga de Datos (Ingredientes y Base) ==
+
+Usuario -> View : Accede a "Nuevo Medio Líquido"
+View -> Routes : GET /api/inventario/recursos-preparacion
+note right: Busca Agar (base) + Agua, Miel, Peptona (ingredientes)
+
+Routes -> Controller : get_recursos_preparacion(req, res)
+Controller -> Model : fetchIngredientesYBases()
+Model -> DB : SELECT * FROM inventario WHERE nombre IN ('Agar', 'Agua destilada', 'Miel', 'Peptona')
+DB --> Model : lista de insumos
+Model --> Controller : data
+Controller --> View : JSON { agares, ingredientes }
+
+View -> Form : <ComponenteMicelio data={data} />
+Form --> Usuario : Muestra Formulario (Select Agar + Inputs Ingredientes)
+
+== Registro de Producción y Salidas de Inventario ==
+
+Usuario -> Form : Ingresa cantidades de Agua, Miel, Peptona y click "Guardar"
+Form -> Routes : POST /api/micelio-sustrato/crear\n{ id_usuario, id_base, materiales: [{id, cant}, ...] }
+
+Routes -> Controller : post_crear_medio_liquido(req, res)
+
+note over Controller, DB : **Inicio de Transacción SQL**
+
+Controller -> Model : micelio.anadir({id_base, tipo: 'Medio Líquido', ...})
+Model -> DB : INSERT INTO micelio_sustrato (id_base, id_usuario, tipo, fecha...)
+DB --> Model : OK (retorna id_resultado)
+
+loop por cada material (Agua, Miel, Peptona, Agar)
+    note right of Controller : Registro de Salida (OUT) por cada insumo usado
+    
+    Controller -> Model : inventario.registrarSalida({id_insumo, cantidad, id_usuario})
+    Model -> DB : INSERT INTO in_outs (id_inventario, cantidad, in_or_out, id_usuario)
+    DB --> Model : OK
+    
+    Controller -> Model : inventario.actualizarStock({id_insumo, cantidad})
+    Model -> DB : UPDATE inventario SET cantidad = cantidad - ? WHERE id_inventario = ?
+    DB --> Model : OK
+end
+
+|||
+note right of Controller : **Registro en Historial**
+Controller -> Model : historial.registrarAccion({id_usuario, id_resultado, accion: 'creación'})
+Model -> DB : INSERT INTO historial_acciones...
+DB --> Model : OK
+
+alt Éxito en la Operación
+    DB -> Model : commit
+    Controller --> Form : JSON { success: true, id_resultado }
+    
+    Form -> Form : navigate('/inventario')
+    Form -> View : Renderiza Inventario Actualizado
+    View --> Usuario : Toast: "Medio Líquido creado (Stock de ingredientes actualizado)"
+else Error en Transacción
+    DB -> Model : rollback
+    Controller --> Form : JSON { error: "Error al descontar insumos del inventario" }
+end
+
+@enduml
