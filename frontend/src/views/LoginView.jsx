@@ -80,32 +80,43 @@ const LoginView = () => {
 
       {/* Formulario */}
       <div className="form-box w-full sm:w-96 md:w-[420px] z-10">
-        <InputField
-          label="Usuario"
-          value={usuario}
-          onChange={(e) => setUsuario(e.target.value)}
-          placeholder="Escribe tu nombre de usuario..."
-          icon={<HugeiconsIcon icon={User03Icon} size={28} className="text-white" />}
-        />
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleLogin();
+          }}
+        >
 
-        <InputField
-          label="Contraseña"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Escribe tu contraseña..."
-          icon={<HugeiconsIcon icon={Key01Icon} size={28} className="text-white" />}
-        />
-        {errorMsg && (
-         <div className="bg-red-50 border border-red-200 text-red-500 px-4 py-2 rounded-xl mt-3 text-center text-[clamp(0.7rem,1.6vw,0.9rem)]">
-            {errorMsg}
+          <InputField
+            label="Usuario"
+            value={usuario}
+            onChange={(e) => setUsuario(e.target.value)}
+            placeholder="Escribe tu nombre de usuario..."
+            icon={<HugeiconsIcon icon={User03Icon} size={28} className="text-white" />}
+          />
+
+          <InputField
+            label="Contraseña"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Escribe tu contraseña..."
+            icon={<HugeiconsIcon icon={Key01Icon} size={28} className="text-white" />}
+          />
+
+          {errorMsg && (
+            <div className="bg-red-50 border border-red-200 text-red-500 px-4 py-2 rounded-xl mt-3 text-center text-[clamp(0.7rem,1.6vw,0.9rem)]">
+              {errorMsg}
+            </div>
+          )}
+
+          <div className="w-full flex justify-center">
+            <Button variant="editar" type="submit">
+              Entrar
+            </Button>
           </div>
-        )}
-        <div className="w-full flex justify-center">
-          <Button variant="editar" onClick={handleLogin}>
-            Entrar
-          </Button>
-        </div>
+
+        </form>
       </div>
     </div>
   );

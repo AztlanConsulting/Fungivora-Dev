@@ -1,0 +1,61 @@
+@startuml
+actor Cliente
+
+participant "Login.jsx" as React
+participant "MainLayout.jsx" as Principal
+participant "inicio_sesion.controller" as Controller
+participant "usuario.model" as Model
+participant "Base de Datos" as DB
+participant "jwtUtils" as JWT
+
+Cliente -> React : Ingresa credenciales\n(usuario, contraseña)
+activate React
+
+React -> Controller : POST /login\n{ nombre_usuario , contrasena }
+activate Controller
+
+alt Faltan datos
+    Controller --> React : Bad Request\n{ mensaje: "Usuario y contraseña requeridos" }
+    React --> Cliente : Mostrar error
+else Datos completos
+    Controller -> Model : fetch_one(nombre_usuario)
+    activate Model
+
+    Model -> DB : SELECT usuario + rol
+    activate DB
+    DB --> Model : usuario o null
+    deactivate DB
+            Controller -> JWT : generarAccessToken({ id, rol })
+            activate JWT
+            JWT --> Controller : accessToken
+
+            Controller -> JWT : generarRefreshToken({ id })
+            JWT --> Controller : refreshToken
+            deactivate JWT
+
+            Controller --> React : { usuario, tokens }
+            deactivate Model
+            React -> React : Guardar tokens
+            React --> Cliente : Acceso concedido
+
+deactivate Controller
+deactivate React
+
+Cliente -> Principal : Click en botón logout
+activate Principal
+
+Principal -> Cliente : Mostrar modal\n"¿Cerrar sesión?"
+
+alt Cancela
+    Cliente -> Principal : Click en "Cancelar"
+    Principal --> Cliente : Cerrar modal
+else Confirma
+    Cliente -> Principal : Click en "Confirmar"
+    Principal -> Principal : Eliminar tokens (localStorage)
+    Principal -> React : navigate("/")
+    React --> Cliente : Redirigir a login
+end
+
+deactivate Principal
+
+@enduml
