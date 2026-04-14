@@ -1,0 +1,17 @@
+import React from "react";
+
+const Base = ({ 
+    children,
+    margen_arriba = "mt-8 md:mt-12",
+    margen_abajo = "mb-16",
+ }) => {
+    return (
+        <div className={`flex flex-col p-4  md:p-16 bg-[#fdfaf5] min-h-screen items-center`}>
+            <div className={`w-full flex flex-col ${margen_arriba} ${margen_abajo} `}>
+                {children}
+            </div>
+        </div>
+    );
+};
+
+export default Base;
