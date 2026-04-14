@@ -90,7 +90,6 @@ const PruebaInsumo = () => {
               atributo={formData.nombre_insumo}
               onChange={handleChange} 
               texto_relleno="Nombre (ej: Agar)"
-              required
               />
           </div>
           
@@ -118,7 +117,6 @@ const PruebaInsumo = () => {
               atributo={formData.cantidad_inicial}
               onChange={handleChange} 
               tipo={"number"}
-              required
             />
           </div>
           <div className="md:w-3/4">
@@ -128,7 +126,6 @@ const PruebaInsumo = () => {
                 atributo={formData.stock_minimo}
                 onChange={handleChange} 
                 tipo={"number"}
-                required
               />
           </div>
           
@@ -142,7 +139,6 @@ const PruebaInsumo = () => {
               onChange={handleChange} 
               opciones={unidades}
               texto_relleno="Unidad (g, ml, piezas)"
-              required
             />
           </div>
   

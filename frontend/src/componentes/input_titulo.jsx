@@ -59,6 +59,7 @@ const CampoTexto = ({
           placeholder={texto_relleno}
           value={atributo}
           onChange={onChange}
+          required
         />
       )}
     </div>
