@@ -27,18 +27,11 @@ exports.get_semilla = async (req, res) => {
 
 //estructura completa de la db
 exports.post_anadir_semilla = async (req, res) => {
-    try {
+   try {
         const {
-            id_herencia,
-            nombre_inventario,
-            rendimiento,
-            unidad_medida,
-            tipoGrano,
-            cantidadGrano,
-            micelio,
-            cantidadMicelio,
-            notas,
-            foto
+            id_herencia, nombre_inventario, rendimiento, unidad_medida,
+            tipoGrano, cantidadGrano, micelio, cantidadMicelio, notas, foto,
+            id_usuario,
         } = req.body;
 
         const nuevo_id = await Semilla.anadir({
@@ -51,7 +44,8 @@ exports.post_anadir_semilla = async (req, res) => {
             micelio,
             cantidadMicelio,
             notas,
-            foto: foto || null // base64 directo a DB
+            foto:       foto || null, // base64 directo a DB
+            id_usuario,
         });
 
         res.status(201).json({ msg: "Semilla registrada", id: nuevo_id });

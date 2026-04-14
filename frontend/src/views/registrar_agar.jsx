@@ -14,7 +14,11 @@ const RegistrarAgar = () => {
 
   const [granos, setGranos] = useState([]);
 
- const [errorMsg, setErrorMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const token      = localStorage.getItem('token');
+  const payload    = token ? JSON.parse(atob(token.split('.')[1])) : null;
+  const id_usuario = payload?.id || null;
 
  //formulario base
   const [form, setForm] = useState({
@@ -96,6 +100,7 @@ useEffect(() => {
         cantidadGrano:     form.cantidadGrano,
         notas:             form.notas || null,
         foto,
+        id_usuario,
       })
     })
     .then(res => {

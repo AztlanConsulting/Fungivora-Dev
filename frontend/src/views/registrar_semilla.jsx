@@ -16,6 +16,11 @@ const RegistrarSemilla = () => {
 
   const [errorMsg, setErrorMsg] = useState("");
 
+  //Token del usario para su id
+  const token      = localStorage.getItem('token');
+  const payload    = token ? JSON.parse(atob(token.split('.')[1])) : null;
+  const id_usuario = payload?.id || null;
+
    //formulario base
   const [form, setForm] = useState({
     rendimiento:     "",
@@ -101,6 +106,7 @@ const RegistrarSemilla = () => {
         cantidadMicelio:   form.cantidadMiselio,
         notas:             form.notas || null,
         foto,
+        id_usuario,
       })
     })
     .then(res => {

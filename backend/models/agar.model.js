@@ -10,7 +10,6 @@ class Agar {
         this.id_usuario          = id_usuario;
         this.foto_ms             = foto_ms;
         this.notas_ms            = notas_ms;
-        this.rendimiento         = rendimiento;
     }
     //metodos fetch pára armar los selects 
     static fetch_all_agars = async () => {
@@ -18,7 +17,7 @@ class Agar {
             SELECT i.id_inventario, i.nombre_inventario, i.unidad_medida, i.id_categoria
             FROM inventario i
             INNER JOIN categorias c ON i.id_categoria = c.id_categoria
-            WHERE c.nombre_categoria = 'agar'
+            WHERE LOWER(c.nombre_categoria) = 'agar'
         `);
         return filas;
     };
@@ -28,7 +27,7 @@ class Agar {
             SELECT i.id_inventario, i.nombre_inventario, i.unidad_medida
             FROM inventario i
             INNER JOIN categorias c ON i.id_categoria = c.id_categoria
-            WHERE c.nombre_categoria = 'Grano'
+            WHERE LOWER(c.nombre_categoria) = 'grano'
         `);
         return filas;
     };
@@ -48,15 +47,15 @@ class Agar {
         tipoGrano,
         cantidadGrano,
         notas,
-        foto
+        foto,
+        id_usuario,
     }) => {
         const new_id_inventario      = randomUUID();
         const new_id_micelio_sustrato = randomUUID();
-        const id_usuario_hardcoded   = 'u1-11111111-1111-1111-111111111111'; // TODO: req.user.id — reemplazar con el id del usuario autenticado,requiere implementar middeleware
 
         // Obtener id_categoria de agar desde la db
         const [[categoria]] = await db.execute(`
-            SELECT id_categoria FROM categorias WHERE nombre_categoria = 'agar'
+            SELECT id_categoria FROM categorias WHERE LOWER(nombre_categoria) = 'agar'
         `);
 
         //INSERT inventario — el nuevo lote de agar creado
@@ -79,22 +78,34 @@ class Agar {
             new_id_micelio_sustrato,
             new_id_inventario,
             id_herencia,
-            id_usuario_hardcoded,
+            id_usuario,
             foto  || null,
-            notas || null,
+            notas || null,    
             parseFloat(rendimiento),
             'agar',
         ]);
 
+
         //INSERT in_outs — salida del grano consumido
         await db.execute(`
             INSERT INTO in_outs (id_in_outs, id_usuario, id_inventario, cantidad_in_outs, tipo_movimiento)
-            VALUES (?, ?, ?, ?, 0)
+            VALUES (?, ?, ?, ?, ?)
         `, [
             randomUUID(),
-            id_usuario_hardcoded,
+            id_usuario,
             tipoGrano,
             parseFloat(cantidadGrano),
+            0,
+        ]);
+
+        //Update para descontar del inventario lo consumido
+        await db.execute(`
+            UPDATE inventario
+            SET cantidad_inventario = cantidad_inventario - ?
+            WHERE id_inventario = ?
+        `, [
+            parseFloat(cantidadGrano),
+            tipoGrano,
         ]);
 
         //INSERT ingredientes — grano como ingrediente del nuevo lote

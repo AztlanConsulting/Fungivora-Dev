@@ -37,7 +37,8 @@ exports.post_anadir_agar = async (req, res) => {
             tipoGrano,
             cantidadGrano,
             notas,
-            foto
+            foto,
+            id_usuario,
         } = req.body;
 
         const nuevo_id = await Agar.anadir({
@@ -48,8 +49,10 @@ exports.post_anadir_agar = async (req, res) => {
             tipoGrano,
             cantidadGrano,
             notas,
-            foto: foto || null // base64 directo a DB
+            foto:       foto || null, // base64 directo a DB
+            id_usuario,
         });
+
         res.status(201).json({ msg: "Agar registrado", id: nuevo_id });
     } catch (error) {
         console.error("Error en post_anadir_agar:", error);
