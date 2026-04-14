@@ -1,8 +1,13 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import First_Page from "./views/First_Page";
 import LoginView from './views/LoginView';
 import Usuario from "./views/Usuario";
-import Inventario from "./views/Inventario";
+
+import Inventario from "./views/inventario/Inventario";
+import PruebaInsumo from "./views/inventario/RegistrarInsumo";
+
+import RegistrarMedioLiquido from "./views/NewMedio";
+
 import Ruta_protegida from "../componentes_internos/ruta_protegida";
 import MainLayout from "./layouts/MainLayout";
 import Experimentos from "./views/ExperimentosView";
@@ -18,8 +23,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LoginView />} />
+        <Route path="*" element={<Navigate to="/" />} />
 
-        {/* Wrapper principal, permite que exista la sidebar y proteger rutas */}
         <Route
           element={
             <Ruta_protegida>
@@ -27,18 +32,18 @@ function App() {
             </Ruta_protegida>
           }
         >
-          {/* Rutas hijas — renderizadas por <Outlet /> en MainLayout */}
+          {/* //! Rutas hijas, estas son renderizadas por <Outlet /> en MainLayout para que tengan sidebar */}
           <Route path="/first" element={<First_Page />} />
           <Route path="/inventario" element={<Inventario />} />
+          <Route path="/inventario/micelio/crear" element={<RegistrarMedioLiquido />} />
+          <Route path="/inventario/crearInsumo" element={<PruebaInsumo />} />
+          <Route path="/inventario/seleccionar-semilla" element={<SeleccionarSemilla />} />
+          <Route path="/inventario/registrarsemilla" element={<RegistrarSemilla />} />
+          <Route path="/inventario/seleccionar-agar" element={<SeleccionarAgar />} />
+          <Route path="/inventario/registraragar" element={<RegistrarAgar />} />
           <Route path="/experimentos" element={<Experimentos />} />
           <Route path="/recetario" element={<Recetario />} />
           <Route path="/lotes" element={<Lotes />} />
-
-          {/* Tus rutas de semilla y agar */}
-          <Route path="/inventario/seleccionar-semilla" element={<SeleccionarSemilla />} />
-          <Route path="/inventario/registrarsemilla"    element={<RegistrarSemilla />} />
-          <Route path="/inventario/seleccionar-agar"    element={<SeleccionarAgar />} />
-          <Route path="/inventario/registraragar"       element={<RegistrarAgar />} />
 
           {/* Rutas protegidas hijas */}
           <Route
@@ -49,8 +54,9 @@ function App() {
               </Ruta_protegida>
             }
           />
-        </Route>
 
+          <Route path="*" element={<Navigate to="/first" />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

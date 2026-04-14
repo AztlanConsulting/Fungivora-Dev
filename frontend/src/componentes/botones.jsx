@@ -6,10 +6,18 @@ const colors = {
   eliminar: "#ed2025"
 };
 
-const Button = ({ children, variant = "editar", onClick }) => {
+// Definimos escalas de tamaño
+const sizes = {
+  sm: "px-3 py-1 text-xs",
+  md: "px-10 py-4 text-base md:text-3xl w-1/4", 
+  lg: "px-10 py-4 text-xl w-full", // Grande y ancho total
+};
+
+const Button = ({ children, variant = "editar", size = "lg", onClick, type = "button" }) => {
   return (
     <button
-      className="btn"
+      type={type}
+      className={`btn flex items-center justify-center font-bold rounded-xl transition-all ${sizes[size]}`}
       onClick={onClick}
       style={{
         "--btn-color": colors[variant],
@@ -22,9 +30,3 @@ const Button = ({ children, variant = "editar", onClick }) => {
 };
 
 export default Button;
-
-{/*
-<Button variant="confirmar">Confirmar</Button>
-<Button variant="editar">Editar</Button>
-<Button variant="eliminar">Eliminar</Button>
-*/}

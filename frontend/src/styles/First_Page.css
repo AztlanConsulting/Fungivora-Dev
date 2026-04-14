@@ -1,0 +1,61 @@
+/* Quitar el color de una barra blanca */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #FFFBF2;
+}
+
+/* Contenedor de color y tamaño */
+.container {
+  position: relative;
+  padding-top: 60px; 
+  background-color: #FFFBF2;
+
+  width: 100%; 
+  height: 100dvh;         
+  min-height: 100vh;  
+}
+
+/* Boton de Cerrar Sesión */
+.logout-btn {
+  position: fixed;
+  top: 35px;
+  right: 35px;  
+  z-index: 1000;
+}
+
+/* Icono de Cerrar Sesión */
+.logout-icon {
+  width: 40px;
+  height: 40px;
+}
+
+@media (max-width: 768px) {
+  .logout-icon {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.btn {
+  background-color: var(--btn-color);
+  border: none;
+  color: white;
+  padding: 10px 20px; 
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--btn-shadow);
+  transition: all 0.2s ease;
+}
+
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--btn-shadow);
+}
+
+@media (max-width: 768px) {
+  .btn {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+}
