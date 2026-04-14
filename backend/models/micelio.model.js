@@ -1,23 +1,33 @@
-const db = require('../util/database');
+const db = require('../util/db');
 
 module.exports = class Micelio {
     
-    // Método para crear el nuevo registro (Trazabilidad)
-    static async registrar(datos, connection) {
-        const { id_base, id_usuario, tipo, notas, cantidad_o_rendimiento, foto } = datos;
-        
-        // El id_resultado se genera automáticamente por la DB
-        const query = `
-            INSERT INTO micelio_sustrato (id_base, id_usuario, tipo, notas, cantidad_o_rendimiento, foto, fecha)
-            VALUES (?, ?, ?, ?, ?, ?, NOW())
-        `;
-        
-        // Usamos la conexión de la transacción (conn) enviada desde el controller
-        const [result] = await connection.execute(query, [
-            id_base, id_usuario, tipo, notas, cantidad_o_rendimiento, foto
-        ]);
-        
-        return result;
+   static async registrar(datos, connection) {
+    const { 
+        id_base = null, 
+        id_usuario = null, 
+        tipo = 'Medio Líquido', 
+        notas = '', 
+        cantidad_o_rendimiento = 0, 
+        foto = 'No' 
+    } = datos;
+    
+    const query = `
+        INSERT INTO micelio_sustrato 
+        (id_herencia, id_usuario, tipo, foto_ms, notas_ms, rendimiento, fecha_de_actualizacion)
+        VALUES (?, ?, ?, ?, ?, ?, NOW())
+    `;
+    
+    const [result] = await connection.execute(query, [
+        id_base,                // Va a id_herencia
+        id_usuario,             // Va a id_usuario
+        tipo,                   // Va a tipo
+        foto,                   // Va a foto_ms
+        notas,                  // Va a notas_ms
+        cantidad_o_rendimiento  // Va a rendimiento
+    ]);
+    
+    return result;
     }
 
     // Método para registrar en el historial de acciones
@@ -35,9 +45,12 @@ module.exports = class Micelio {
     // Método para obtener los agares base (JOIN para el Select de la UI)
     static fetchAllAgares() {
         return db.execute(`
-            SELECT id_micelio_sustrato, tipo, fecha 
+            SELECT 
+                id_micelio_sustrato, 
+                tipo, 
+                fecha_de_actualizacion AS fecha 
             FROM micelio_sustrato 
-            WHERE tipo = 'Agar'
+            WHERE tipo = 'agar' OR tipo = 'Agar'
         `);
     }
 };

@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors');
 const dotenv = require('dotenv');
 const generalRoutes = require('./routes/general.routes');
+const micelioRoutes = require('./routes/micelio.routes');
 
 dotenv.config({ path: require('path').join(__dirname, '../.env') });
 
@@ -22,6 +23,8 @@ app.get('/metrics', async (req, res) => {
     res.end(await register.metrics());
 });
 
+
+app.use('/api/micelio', micelioRoutes);
 app.use('/', generalRoutes);
 
 app.listen(PORT, '0.0.0.0', () => {

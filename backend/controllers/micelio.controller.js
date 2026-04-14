@@ -1,19 +1,18 @@
 // backend/controllers/micelio.controller.js
 const Micelio = require('../models/micelio.model');
 const Inventario = require('../models/inventario.model');
-const db = require('../util/database'); // Tu conexión a la DB
+const db = require('../util/db'); // Tu conexión a la DB
 
 exports.post_crear_medio_liquido = async (req, res, next) => {
+    // Asegúrate de que estos nombres coincidan con el 'payload' del Frontend
     const { id_usuario, id_base, notas, cantidad_final, ingredientes, foto } = req.body;
 
-    // 1. Iniciar transacción para asegurar el "descuento automático" e integridad
     const conn = await db.getConnection();
     await conn.beginTransaction();
 
     try {
-        // 2. Crear el registro en micelio_sustrato (Tabla principal del MER)
-        // Se vincula con id_base para trazabilidad
-        const nuevoMicelio = await Micelio.anadir({
+        // Registro principal
+        const nuevoMicelio = await Micelio.registrar({
             id_base,
             id_usuario,
             tipo: 'Medio Líquido',
@@ -24,43 +23,44 @@ exports.post_crear_medio_liquido = async (req, res, next) => {
 
         const id_resultado = nuevoMicelio.insertId;
 
-        // 3. Loop de Descuento Automático para cada ingrediente (Agua, Miel, Peptona)
-        // Esto impacta las tablas in_outs e inventario
+        // El loop funcionará porque ahora 'ingredientes' es un Array
         for (const item of ingredientes) {
-            // Registrar la salida (OUT) [cite: 6]
-            await Inventario.registrarMovimiento({
-                id_inventario: item.id_insumo,
-                id_usuario: id_usuario,
-                cantidad: item.cantidad_usada,
-                in_or_out: 'OUT'
-            }, conn);
+            if (item.cantidad_usada > 0) { // Solo descontar si se usó algo
+                await Inventario.registrarMovimiento({
+                    id_inventario: item.id_insumo,
+                    id_usuario: id_usuario,
+                    cantidad: item.cantidad_usada,
+                    in_or_out: 'OUT'
+                }, conn);
 
-            // Actualizar el stock físico en la tabla inventario [cite: 6]
-            await Inventario.actualizarStock(item.id_insumo, item.cantidad_usada, conn);
+                await Inventario.actualizarStock(item.id_insumo, item.cantidad_usada, conn);
+            }
         }
 
-        // 4. Registrar la acción en el historial para auditoría
         await Micelio.registrarHistorial({
             id_usuario,
             id_resultado,
             accion: 'Creación de Medio Líquido'
         }, conn);
 
-        // Si todo sale bien, confirmamos los cambios
         await conn.commit();
-        
-        // Respuesta para que React realice el navigate('/inventario')
-        res.status(201).json({ 
-            success: true, 
-            message: 'Medio líquido creado y stock actualizado correctamente' 
-        });
+        res.status(201).json({ success: true, message: 'Registro exitoso' });
 
     } catch (error) {
-        // Si algo falla, se deshacen todos los cambios (Rollback)
         await conn.rollback();
-        console.error("Error en la creación:", error);
-        res.status(500).json({ success: false, message: 'Error en la transacción' });
+        console.error("Error detallado:", error); // Esto te dirá en la terminal qué falló
+        res.status(500).json({ success: false, message: error.message });
     } finally {
         conn.release();
+    }
+};
+
+exports.get_agares_base = async (req, res, next) => {
+    try {
+        const [rows] = await Micelio.fetchAllAgares();
+        res.status(200).json(rows); 
+    } catch (error) {
+        console.error("Error en controller:", error);
+        res.status(500).json({ message: "Error al obtener agares" });
     }
 };
