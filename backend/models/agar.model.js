@@ -58,7 +58,7 @@ class Agar {
             SELECT id_categoria FROM categorias WHERE LOWER(nombre_categoria) = 'agar'
         `);
 
-        //INSERT inventario — el nuevo lote de agar creado
+        //INSERT inventario — el nuevo agar creado en el inventario
         await db.execute(`
             INSERT INTO inventario (id_inventario, id_categoria, nombre_inventario, cantidad_inventario, unidad_medida, es_manufacturado)
             VALUES (?, ?, ?, ?, ?, 1)
@@ -72,19 +72,16 @@ class Agar {
 
         //INSERT micelio_sustrato — registro del proceso
         await db.execute(`
-            INSERT INTO micelio_sustrato (id_micelio_sustrato, id_resultado, id_herencia, id_usuario, foto_ms, notas_ms, rendimiento, tipo)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO micelio_sustrato (id_micelio_sustrato, id_resultado, id_herencia, id_usuario, foto_ms, notas_ms)
+            VALUES (?, ?, ?, ?, ?, ?)
         `, [
             new_id_micelio_sustrato,
             new_id_inventario,
             id_herencia,
             id_usuario,
             foto  || null,
-            notas || null,    
-            parseFloat(rendimiento),
-            'agar',
+            notas || null,
         ]);
-
 
         //INSERT in_outs — salida del grano consumido
         await db.execute(`
