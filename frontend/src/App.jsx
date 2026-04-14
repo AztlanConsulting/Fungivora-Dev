@@ -2,8 +2,12 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import First_Page from "./views/First_Page";
 import LoginView from './views/LoginView';
 import Usuario from "./views/Usuario";
+
 import Inventario from "./views/inventario/Inventario";
 import PruebaInsumo from "./views/inventario/RegistrarInsumo";
+
+import RegistrarMedioLiquido from "./views/NewMedio";
+
 import Ruta_protegida from "../componentes_internos/ruta_protegida";
 import MainLayout from "./layouts/MainLayout";
 import Experimentos from "./views/ExperimentosView";
@@ -14,7 +18,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Ruta principal */}
         <Route path="/" element={<LoginView />} />
+        <Route path="*" element={<Navigate to="/" />} />
 
         
 
@@ -26,26 +32,28 @@ function App() {
             </Ruta_protegida>
           }
         >
-          {/* //! Rutas hijas, estas son renderizadas por <Outlet /> en MainLayout para que tengan sidebar */}
-          <Route path="/first" element={<First_Page />} />
-          <Route path="/inventario" element={<Inventario />} />
-          <Route path="/experimentos" element={<Experimentos />} />
-          <Route path="/recetario" element={<Recetario />} />
-          <Route path="/lotes" element={<Lotes />} />
+          
+        {/* //! Rutas hijas, estas son renderizadas por <Outlet /> en MainLayout para que tengan sidebar */}
+        <Route path="/first" element={<First_Page />} />
+        <Route path="/inventario" element={<Inventario />} />
+        <Route path="/inventario/micelio/crear" element={<RegistrarMedioLiquido />} />
+        <Route path="/experimentos" element={<Experimentos />} />
+        <Route path="/recetario" element={<Recetario />} />
+        <Route path="/lotes" element={<Lotes />} />
 
-          <Route path="/inventario/crearInsumo" element={<PruebaInsumo />} />
-          
-          {/* Rutas protegidas hijas */}
-          <Route
-            path="/usuario"
-            element= {
-              <Ruta_protegida rolPermitido="Administrador">
-                <Usuario />
-              </Ruta_protegida>
-            }
-          />
-          
+        <Route path="/inventario/crearInsumo" element={<PruebaInsumo />} />
+
+        {/* Rutas protegidas hijas */}
+        <Route
+          path="/usuario"
+          element={
+            <Ruta_protegida rolPermitido="Administrador">
+              <Usuario />
+            </Ruta_protegida>
+          }
+        />
         </Route>
+
       </Routes>
     </BrowserRouter>
   );
