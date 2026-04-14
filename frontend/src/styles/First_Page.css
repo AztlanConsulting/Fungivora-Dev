@@ -38,41 +38,6 @@ html, body, #root {
   }
 }
 
-/* Modal para confirmar cerrado de sesión */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-.modal {
-  background: #3b3fb6;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  width: 700px;    
-  padding: 80px;
-}
-
-.modal p {
-  color: #ffffff;
-  font-size: 40px;
-}
-
-.modal-buttons {
-  margin-top: 25px;
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-}
-
 .btn {
   background-color: var(--btn-color);
   border: none;
@@ -88,25 +53,8 @@ html, body, #root {
   box-shadow: 0 2px 0 var(--btn-shadow);
 }
 
-/* Modal para confirmar cerrado de sesión en celular */
 @media (max-width: 768px) {
-  .modal {
-    width: 300px;    
-    padding: 30px;
-  }
-
-  .modal p {
-    font-size: 20px;
-    }
-
-  .modal-buttons {
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
- }
-
- .btn {
+  .btn {
     padding: 8px 14px;
     font-size: 14px;
   }

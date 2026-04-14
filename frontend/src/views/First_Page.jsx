@@ -7,6 +7,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Logout02Icon } from "@hugeicons/core-free-icons";
 
 import Button from "../componentes/botones"; 
+import ModalConfirmacion from "../componentes/modal_confirmacion";
 
 function First_Page() {
   const navigate = useNavigate();
@@ -58,33 +59,15 @@ function First_Page() {
         />
       </button>
 
-      {/* Modal para confirmar si se cierra o no sesión */}
-      {showModal && (
-      <div className="modal-overlay">
-        <div className="modal">
-          <p>¿Confirmar cierre de sesión?</p>
-
-          <div className="modal-buttons">
-            <Button
-              variant="confirmar"
-              onClick={() => {
-                localStorage.removeItem("token");
-                navigate("/");
-              }}
-            >
-              Confirmar
-            </Button>
-
-            <Button
-              variant="eliminar"
-              onClick={() => setShowModal(false)}
-            >
-              Cancelar
-            </Button>
-          </div>
-        </div>
-      </div>
-    )}
+      <ModalConfirmacion
+        visible={showModal}
+        mensaje="¿Confirmar cierre de sesión?"
+        onConfirm={() => {
+          localStorage.removeItem("token");
+          navigate("/");
+        }}
+        onCancel={() => setShowModal(false)}
+      />
     </div>
   );
 }
