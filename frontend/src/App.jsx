@@ -16,9 +16,8 @@ import Lotes from "./views/LotesView"
 
 function App() {
   return (
-    <BrowserRouter>
+ <BrowserRouter>
       <Routes>
-        {/* Ruta principal */}
         <Route path="/" element={<LoginView />} />
         <Route path="*" element={<Navigate to="/" />} />
 
@@ -52,8 +51,10 @@ function App() {
             </Ruta_protegida>
           }
         />
+       
+          
+           <Route path="*" element={<Navigate to="/first" />} />
         </Route>
-
       </Routes>
     </BrowserRouter>
   );
