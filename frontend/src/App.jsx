@@ -16,8 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginView />} />
 
-        <Route path="/inventario/crearInsumo" element={<PruebaInsumo />} />
-        <Route path="/inventario" element={<Inventario />} />
+        
 
         {/* Wrapper principal, permite que exista la sidebar y proteger rutas*/}
         <Route
@@ -33,6 +32,8 @@ function App() {
           <Route path="/experimentos" element={<Experimentos />} />
           <Route path="/recetario" element={<Recetario />} />
           <Route path="/lotes" element={<Lotes />} />
+
+          <Route path="/inventario/crearInsumo" element={<PruebaInsumo />} />
           
           {/* Rutas protegidas hijas */}
           <Route

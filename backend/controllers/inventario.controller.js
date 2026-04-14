@@ -38,7 +38,7 @@ exports.post_crear_insumo = async (req, res) => {
         const{nombre_insumo, cantidad_inicial, stock_minimo, unidad_medida, id_categoria} = req.body;
 
         const existe = rows.some(item => 
-          item.nombre_inventario.toLowerCase() === nombre_insumo.toLowerCase());
+          item.nombre_inventario?.toLowerCase() === nombre_insumo?.toLowerCase());
 
         if (existe) {
             return res.status(400).json({ status: 'error', error: 'El insumo ya existe' });

@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from "react";
+import Titulo from "../../componentes/titulo";
+import Base from "../../componentes/base";
+import CampoTexto from "../../componentes/input_titulo";
+import Button from "../../componentes/botones";
+import AlertaError from "../../componentes/error";
 
 const PruebaInsumo = () => {
   // ESTADO - Declarado una sola vez
@@ -57,43 +62,99 @@ const PruebaInsumo = () => {
       const data = await res.json();
       res.ok ? setMensaje(" ¡Guardado con éxito!") : setMensaje(` Error: ${data.error}`);
     } catch (error) {
-      setMensaje("❌ Error de conexión");
+      setMensaje("Error de conexión");
     }
   };
 
+  const unidades = [
+    { id: "g", nombre: "Gramos" },
+    { id: "ml", nombre: "Mililitros" },
+    { id: "pz", nombre: "Piezas" },
+    { id: "kg", nombre: "Kilogramos" },
+    { id: "l", nombre: "Litros" }
+  ];
+
   return (
-    <div style={{ padding: "20px", maxWidth: "400px", fontFamily: "sans-serif" }}>
-      <h2>Nuevo Insumo</h2>
+    <Base margen_arriba="mt-8 md:mt-[vh]">
+      <Titulo>Nuevo Insumo</Titulo>
+      <AlertaError 
+        detalle={mensaje} 
+        esExito={mensaje.includes("éxito")} 
+      />
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-        <input name="nombre_insumo" placeholder="Nombre (ej: Agar)" onChange={handleChange} required />
-        
-        <select 
-            name="id_categoria" // 1. Este nombre vincula el valor al formData
-            onChange={handleChange} 
-            required 
-            value={formData.id_categoria}
-            >
-            <option value="">-- Selecciona Categoría --</option>
-            {categorias.map((cat) => (
-                <option 
-                key={cat.id_categoria} 
-                value={cat.id_categoria} // 2. ESTO es lo que se envía al backend (el UUID/ID)
-                >
-                {cat.nombre_categoria}  
-                </option>
-            ))}
-        </select>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="md:w-3/4">
+            <CampoTexto 
+              texto_titulo="Nombre" 
+              id_campo="nombre_insumo"
+              atributo={formData.nombre_insumo}
+              onChange={handleChange} 
+              texto_relleno="Nombre (ej: Agar)"
+              required
+              />
+          </div>
+          
+          <div className="md:w-3/4">
+            {/* Campo de Selección (Categorías) */}
+            <CampoTexto 
+              esSelect={true}
+              texto_titulo="Categoría"
+              id_campo="id_categoria"
+              nombre_campo="nombre_categoria"
+              atributo={formData.id_categoria}
+              onChange={handleChange}
+              opciones={categorias} 
+              texto_relleno="-- Selecciona una categoría --"
+            />
+          </div>
+          
+        </div>
+        <br className="hidden md:block"/>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="md:w-3/4">
+            <CampoTexto 
+              texto_titulo="Cantidad Inicial"
+              id_campo="cantidad_inicial"
+              atributo={formData.cantidad_inicial}
+              onChange={handleChange} 
+              tipo={"number"}
+              required
+            />
+          </div>
+          <div className="md:w-3/4">
+              <CampoTexto 
+                texto_titulo="Stock Mínimo"
+                id_campo="stock_minimo"
+                atributo={formData.stock_minimo}
+                onChange={handleChange} 
+                tipo={"number"}
+                required
+              />
+          </div>
+          
+          <div className="md:w-3/4">
+            <CampoTexto 
+              esSelect={true}
+              texto_titulo="Unidad de Medida"
+              id_campo="id"
+              nombre_campo="nombre"
+              atributo={formData.id}
+              onChange={handleChange} 
+              opciones={unidades}
+              texto_relleno="Unidad (g, ml, piezas)"
+              required
+            />
+          </div>
+  
+        </div>
+        <br />
 
-        <input name="cantidad_inicial" type="number" placeholder="Cantidad Inicial" onChange={handleChange} required />
-        <input name="stock_minimo" type="number" placeholder="Stock Mínimo" onChange={handleChange} required />
-        <input name="unidad_medida" placeholder="Unidad (g, ml, piezas)" onChange={handleChange} required />
-
-        <button type="submit" style={{ padding: "10px", background: "#3B3FB6", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}>
-          Guardar Insumo
-        </button>
+        <Button type="submit" size="md">
+          Guardar
+        </Button>
       </form>
-      {mensaje && <p style={{ marginTop: "15px", fontWeight: "bold" }}>{mensaje}</p>}
-    </div>
+      
+    </Base>
   );
 };
 
