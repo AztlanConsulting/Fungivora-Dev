@@ -12,9 +12,8 @@ import Lotes from "./views/LotesView"
 
 function App() {
   return (
-    <BrowserRouter>
+ <BrowserRouter>
       <Routes>
-        {/* Ruta principal */}
         <Route path="/" element={<LoginView />} />
         <Route path="*" element={<Navigate to="/" />} />
 
@@ -25,26 +24,27 @@ function App() {
               <MainLayout />
             </Ruta_protegida>
           }
-        />
+        >
+          {/* //! Rutas hijas, estas son renderizadas por <Outlet /> en MainLayout para que tengan sidebar */}
+          <Route path="/first" element={<First_Page />} />
+          <Route path="/inventario" element={<Inventario />} />
+          <Route path="/inventario/micelio/crear" element={<RegistrarMedioLiquido />} />
+          <Route path="/experimentos" element={<Experimentos />} />
+          <Route path="/recetario" element={<Recetario />} />
+          <Route path="/lotes" element={<Lotes />} />
 
-        {/* //! Rutas hijas, estas son renderizadas por <Outlet /> en MainLayout para que tengan sidebar */}
-        <Route path="/first" element={<First_Page />} />
-        <Route path="/inventario" element={<Inventario />} />
-        <Route path="/inventario/micelio/crear" element={<RegistrarMedioLiquido />} />
-        <Route path="/experimentos" element={<Experimentos />} />
-        <Route path="/recetario" element={<Recetario />} />
-        <Route path="/lotes" element={<Lotes />} />
-
-        {/* Rutas protegidas hijas */}
-        <Route
-          path="/usuario"
-          element={
-            <Ruta_protegida rolPermitido="Administrador">
-              <Usuario />
-            </Ruta_protegida>
-          }
-        />
-
+          {/* Rutas protegidas hijas */}
+          <Route
+            path="/usuario"
+            element= {
+              <Ruta_protegida rolPermitido="Administrador">
+                <Usuario />
+              </Ruta_protegida>
+            }
+          />
+          
+           <Route path="*" element={<Navigate to="/first" />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
