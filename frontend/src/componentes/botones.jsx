@@ -17,7 +17,7 @@ const Button = ({ children, variant = "editar", size = "lg", onClick, type = "bu
   return (
     <button
       type={type}
-      className={`btn flex items-center justify-center font-bold rounded-xl transition-all ${sizes[size]}`}
+      className={`btn flex items-center justify-center font-bold rounded-xl shadow-lg hover:scale-105 active:scale-95 rounded-full transition-all ${sizes[size]} `}
       onClick={onClick}
       style={{
         "--btn-color": colors[variant],
