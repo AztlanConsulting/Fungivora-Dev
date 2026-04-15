@@ -1,56 +1,62 @@
+// micelio.model.js
 const db = require('../util/db');
+const crypto = require('crypto');
 
 module.exports = class Micelio {
-    
-   static async registrar(datos, connection) {
-    const { 
-        id_base = null, 
-        id_usuario = null, 
-        tipo = 'Medio Líquido', 
-        notas = '', 
-        cantidad_o_rendimiento = 0, 
-        foto = 'No' 
-    } = datos;
-    
-    const query = `
-        INSERT INTO micelio_sustrato 
-        (id_herencia, id_usuario, tipo, foto_ms, notas_ms, rendimiento, fecha_de_actualizacion)
-        VALUES (?, ?, ?, ?, ?, ?, NOW())
-    `;
-    
-    const [result] = await connection.execute(query, [
-        id_base,                // Va a id_herencia
-        id_usuario,             // Va a id_usuario
-        tipo,                   // Va a tipo
-        foto,                   // Va a foto_ms
-        notas,                  // Va a notas_ms
-        cantidad_o_rendimiento  // Va a rendimiento
-    ]);
-    
-    return result;
+
+    static async registrar(datos, connection) {
+        const {
+            id_base = null,
+            id_usuario,
+            nombre_base,
+            notas = '',
+            foto = 'No',
+            cantidad_final = 0
+        } = datos;
+
+        const id_micelio_uuid = crypto.randomUUID();
+        const id_resultado_uuid = crypto.randomUUID();
+        const nombreDinamico = `${nombre_base} - Medio Líquido`;
+
+        // ✅ PASO 1: INSERT en inventario primero para satisfacer el FK
+        await connection.execute(`
+            INSERT INTO inventario 
+            (id_inventario, id_categoria, nombre_inventario, fecha_inventario, cantidad_inventario, unidad_medida, es_manufacturado)
+            VALUES (?, 'a34de600-36bc-11f1-8d30-60e8d4bc1ce6', ?, NOW(), ?, 'ml', 1)
+        `, [id_resultado_uuid,nombreDinamico, cantidad_final]);
+
+        // ✅ PASO 2: INSERT en micelio_sustrato con id_resultado ya existente
+        console.log('Ejecutando INSERT micelio_sustrato...', {
+            id_micelio_uuid, id_resultado_uuid, id_usuario, foto, notas, id_base
+        });
+
+        await connection.execute(`
+            INSERT INTO micelio_sustrato 
+            (id_micelio_sustrato, id_resultado, id_usuario, foto_ms, notas_ms, fecha_de_actualizacion, id_herencia)
+            VALUES (?, ?, ?, ?, ?, NOW(), ?)
+        `, [
+            id_micelio_uuid,
+            id_resultado_uuid,
+            id_usuario,
+            foto,
+            notas,
+            id_base
+        ]);
+
+        return { insertId: id_micelio_uuid, id_resultado: id_resultado_uuid };
     }
 
-    // Método para registrar en el historial de acciones
-    static async registrarHistorial(datos, connection) {
-        const { id_usuario, id_resultado, accion } = datos;
-        
-        const query = `
-            INSERT INTO historial_acciones (id_usuario, id_resultado, accion, fecha)
-            VALUES (?, ?, ?, NOW())
-        `;
-        
-        return await connection.execute(query, [id_usuario, id_resultado, accion]);
-    }
-    
-    // Método para obtener los agares base (JOIN para el Select de la UI)
+
+
     static fetchAllAgares() {
         return db.execute(`
             SELECT 
-                id_micelio_sustrato, 
-                tipo, 
-                fecha_de_actualizacion AS fecha 
-            FROM micelio_sustrato 
-            WHERE tipo = 'agar' OR tipo = 'Agar'
+                i.id_inventario     AS id_micelio_sustrato,
+                i.nombre_inventario AS tipo,
+                i.fecha_inventario  AS fecha_de_actualizacion
+            FROM inventario i
+            WHERE i.id_categoria = 'a34cfb30-36bc-11f1-8d30-60e8d4bc1ce6'
+            ORDER BY i.fecha_inventario DESC
         `);
     }
 };
