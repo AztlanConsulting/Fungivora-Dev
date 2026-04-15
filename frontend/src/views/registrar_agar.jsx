@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../componentes/botones";
-import CampoTexto from "../componentes/campotexto";
+import CampoTexto from "../componentes/camp_txt";
 import SelectCampo from "../componentes/selectcampo";
 import CampoFotos from "../componentes/campofoto";
 import "../styles/registro.css";
@@ -16,6 +16,7 @@ const RegistrarAgar = () => {
 
   const [errorMsg, setErrorMsg] = useState("");
 
+  //Token del usario para su id
   const token      = localStorage.getItem('token');
   const payload    = token ? JSON.parse(atob(token.split('.')[1])) : null;
   const id_usuario = payload?.id || null;
@@ -82,6 +83,31 @@ useEffect(() => {
     if (isNaN(form.cantidadGrano) || form.cantidadGrano <= 0) {
     setErrorMsg("La cantidad debe ser un número mayor a 0");
     return;}
+    //Mensajes de errores de inputs 
+    const tieneEmoji = (str) => /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/u.test(str);
+    if (tieneEmoji(form.rendimiento) || tieneEmoji(form.notas || "")) {
+      setErrorMsg("No se permiten emojis");
+      return;
+    }
+
+    if (isNaN(form.cantidadGrano) || form.cantidadGrano <= 0) {
+      setErrorMsg("La cantidad debe ser un número mayor a 0");
+      return;
+    }
+
+    if (isNaN(form.rendimiento) || form.rendimiento <= 0) {
+      setErrorMsg("El rendimiento debe ser un número mayor a 0");
+      return;
+    }
+
+    if (parseFloat(form.rendimiento) > 99999999) {
+      setErrorMsg("El rendimiento es demasiado alto");
+    return;
+}
+    if (parseFloat(form.cantidadGrano) > 99999999) {
+      setErrorMsg("La cantidad es demasiado alta");
+    return;
+}
 
     let foto = null;
     if (form.fotos.length > 0) {
