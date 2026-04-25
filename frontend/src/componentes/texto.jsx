@@ -72,6 +72,17 @@ const variantes = {
   },
 };
 
+/*
+* Text
+Componente tipográfico reutilizable que aplica estilos según variantes
+definidas para mantener consistencia visual.
+Soporta diferentes tipos de texto como títulos, labels, botones, inputs, etc.
+
+@param variante Tipo de estilo de texto
+@param children Contenido textual
+@param style Estilos adicionales personalizados
+@param as Tipo de etiqueta HTML a renderizar 
+*/
 const Text = ({
   variante = "body",
   children,

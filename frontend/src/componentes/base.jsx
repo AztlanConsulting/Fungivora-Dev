@@ -1,5 +1,14 @@
 import React from "react";
 
+/*
+* Base
+Contenedor principal de layout que organiza el contenido de la vista.
+Aplica padding general, centrado y control de márgenes superior e inferior.
+
+@param children Contenido interno de la vista
+@param margen_arriba Margen superior
+@param margen_abajo Margen inferior del contenido
+*/
 const Base = ({ 
     children,
     margen_arriba = "mt-8 md:mt-12",

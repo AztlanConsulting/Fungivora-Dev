@@ -1,7 +1,14 @@
 import React from "react";
 import Text from "./texto";
 
-// Titulo anclado a la parte de arriba de la pantalla
+/*
+* Titulo
+Componente de encabezado fijo en la parte superior de la pantalla.
+Permanece visible durante el scroll y se utiliza como barra principal
+para mostrar títulos de vista.
+
+@param children Contenido del título
+*/
 const Titulo = ({ children }) => {
   return (
     <div className="

@@ -23,6 +23,19 @@ const roundings = {
   full: "rounded-full",
 };
 
+/*
+* Button
+Componente reutilizable para renderizar botones
+con variante, tamaño y redondeo definidos.
+Permite asignar colores  y tipografía uniforme.
+
+@param children Contenido del botón 
+@param variant Tipo de botón
+@param size Tamaño del botón
+@param rounded Tipo de redondeo de esquinas
+@param onClick Función que se ejecuta al hacer clic
+@param type Tipo de botón HTML
+*/
 const Button = ({
   children,
   variant = "editar",
