@@ -6,7 +6,7 @@ const Base = ({
     margen_abajo = "mb-16",
  }) => {
     return (
-        <div className={`flex flex-col p-4  md:p-16 bg-[#fdfaf5] min-h-screen items-center`}>
+        <div className={`flex flex-col p-4  md:p-16 bg-[#ffffff] min-h-screen items-center`}>
             <div className={`w-full flex flex-col ${margen_arriba} ${margen_abajo} `}>
                 {children}
             </div>
