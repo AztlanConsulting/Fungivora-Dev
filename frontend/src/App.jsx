@@ -12,13 +12,15 @@ import Ruta_protegida from "../componentes_internos/ruta_protegida";
 import MainLayout from "./layouts/MainLayout";
 import Experimentos from "./views/ExperimentosView";
 import Recetario from "./views/RecetarioView"
-import Lotes from "./views/LotesView"
+import Lotes from "./views/LotesView";
+import Pruebas from "./views/pruba_componentes";
 
 function App() {
   return (
  <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LoginView />} />
+        {/*<Route path="/" element={<LoginView />} />*/}
+        <Route path="/" element={<Pruebas />} />
         <Route path="*" element={<Navigate to="/" />} />
 
         

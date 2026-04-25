@@ -1,30 +1,72 @@
 import React from "react";
+import { colores } from "./colores";
+import Text from "./texto";
 
-const colors = {
-  confirmar: "#008755",
-  editar: "#ffb81c",
-  eliminar: "#ed2025"
+// Colores relacionados al tipo de boton
+const variants = {
+  entrar: "azulClaro",
+  cancelar: "azulMedio",
+  eliminar: "azulOscuro",
+  registrar: "verdeOscuro",
+  siguiente: "verdeClaro",
+  agregar: "verdeAccent",
+  confirmar: "verdeSoft",
 };
 
-// Definimos escalas de tamaño
+// Tamaño cambiante por el tamaño de pantalla
 const sizes = {
-  sm: "px-3 py-1 text-xs",
-  md: "px-10 py-4 text-base md:text-3xl w-1/4", 
-  lg: "px-10 py-4 text-xl w-full", // Grande y ancho total
+  lg: "w-40 h-9 md:w-60 md:h-14 text-base md:text-lg",
 };
 
-const Button = ({ children, variant = "editar", size = "lg", onClick, type = "button" }) => {
+// Redondeo de las esquinas
+const roundings = {
+  full: "rounded-full",
+};
+
+/*
+* Button
+Componente reutilizable para renderizar botones
+con variante, tamaño y redondeo definidos.
+Permite asignar colores  y tipografía uniforme.
+
+@param children Contenido del botón 
+@param variant Tipo de botón
+@param size Tamaño del botón
+@param rounded Tipo de redondeo de esquinas
+@param onClick Función que se ejecuta al hacer clic
+@param type Tipo de botón HTML
+*/
+const Button = ({
+  children,
+  variant = "editar",
+  size = "lg", 
+  rounded = "full", 
+  onClick,
+  type = "button",
+}) => {
+  const colorKey = variants[variant] || "azul";
+  const bgColor = colores[colorKey] || colores.azul;
+
   return (
     <button
       type={type}
-      className={`btn flex items-center justify-center font-bold rounded-xl transition-all ${sizes[size]}`}
       onClick={onClick}
+      className={`
+        flex items-center justify-center 
+        transition-all hover:opacity-90 active:scale-95
+        flex-shrink-0 
+        ${sizes[size]}
+        ${roundings[rounded]}
+      `}
       style={{
-        "--btn-color": colors[variant],
-        "--btn-shadow": colors[variant]
+        backgroundColor: bgColor,
       }}
     >
-      {children}
+      <div className="truncate px-1">
+        <Text variante="button">
+          {children}
+        </Text>
+      </div>
     </button>
   );
 };
