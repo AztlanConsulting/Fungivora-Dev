@@ -34,9 +34,9 @@ const variantes = {
     color: "#666",
   },
 
-  // Texto de botones: 24 mobile / 48 desktop
+  // Texto de botones: 18 mobile / 36 desktop
   button: {
-    fontSize: "clamp(24px, 3vw, 48px)",
+    fontSize: "clamp(18px, 3vw, 32px)",
     fontWeight: 600,
     color: "#fff",
   },

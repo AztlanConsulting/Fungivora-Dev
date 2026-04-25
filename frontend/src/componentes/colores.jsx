@@ -1,12 +1,12 @@
 import React from "react";
 
-const colores = {
+// Colores establecidos que se utilizaran en diferentes componentes
+export const colores = {
   blanco: "#fff",
   azul: "#3b3fb6",
   verde: "#148F62",
   gris: "#555555",
 
-  // escala o variantes
   azulClaro: "#777BEB",
   azulMedio: "#4C50C5",
   azulOscuro: "#01068B",
@@ -24,11 +24,7 @@ const Color = ({
 }) => {
   const color = colores[variante] || colores.blanco;
 
-  return (
-    <Tag style={{ color, ...style }}>
-      {children}
-    </Tag>
-  );
+  return <Tag style={{ color, ...style }}>{children}</Tag>;
 };
 
 export default Color;
