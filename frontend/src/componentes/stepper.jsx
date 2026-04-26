@@ -60,7 +60,7 @@ const Stepper = ({
                                         style={{ 
                                             color: textColor,
                                             fontWeight: isActive ? "700" : "400",
-                                            fontSize: "clamp(10px, 1.5vw, 16px)",
+                                            fontSize: "clamp(12px, 1.5vw, 16px)",
                                             whiteSpace: "normal" 
                                         }}
                                     >
