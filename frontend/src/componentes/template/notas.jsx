@@ -5,6 +5,7 @@ import Button from "../botones";
 import Input from "../input_texto";
 import Text from "../texto";
 import InputFecha from "../input_fecha";
+import TarjetaNota from "../area_notas"
 import { colores } from "../colores";
 
 function Notas() {
@@ -22,12 +23,12 @@ function Notas() {
       >
         <Titulo>Notas...</Titulo> 
 
-        <div className="flex-1 overflow-y-auto scrollbar-thin px-6 py-6">
-          <Base margen_arriba="mt-20 md:mt-16">
+        <div className="flex-1 overflow-y-auto scrollbar-thin px-4 md:px-12 py-6">
+          <Base margen_arriba="mt-20 md:mt-18">
             <div className="flex flex-col gap-4">
 
               {/* Área para que en movil funcione con un botón */}
-                <div className="md:hidden w-full mt-4">
+                <div className="md:hidden w-full px-3 mt-4">
                 <div className="flex items-start">
                     <div
                     onClick={() => setVerHistorial(!verHistorial)} // Al darle al botón se ve el historial (notas)
@@ -47,10 +48,34 @@ function Notas() {
                     </Text>
                     </div>
                 </div>
+                </div>    
+
+                 {/* Ejemplo de como son las notas vizualmente 
+                 (se elimina a futuro para añadirlas dinamicamente) */}
+              <div className="flex flex-col gap-8 items-center w-full">
+                    <TarjetaNota 
+                        fecha="08 - 04 - 2026" 
+                        preview="Esta es mi primera nota... 
+                        안녕, 내 이름은 freak (whoa, whoa)
+                        네 꿈에 나타나 break your head
+                        마지막인 듯 let's cry (whoa, whoa)
+                        One look, I'm hooked (괜찮아요?)" 
+                    />
+                    <TarjetaNota 
+                        fecha="09 - 04 - 2026" 
+                        preview="And my heart goes beep, beep, beep, beep, beep, beep
+                        And my heart goes beep, beep, beep, beep, beep, beep
+                        And my heart goes beep, beep, beep, beep, beep, beep
+                        And my heart goes beep, beep, beep, beep, beep, beep
+                        And my heart goes." 
+                    />
+                    <TarjetaNota 
+                        fecha="07 - 04 - 2026" 
+                        preview="안녕, 내 이름은 freak (and my heart goes beep)
+                        안녕, 내 이름은 freak (and my heart goes beep)
+                        안녕, 내 이름은 freak" 
+                    />
                 </div>
-
-              <Text variante="medium">Notas..</Text>
-
             </div>
           </Base>
         </div>
