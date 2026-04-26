@@ -4,13 +4,25 @@ import Titulo from "../componentes/titulo";
 import Button from "../componentes/botones";
 import Input from "../componentes/input_texto";
 import Text from "../componentes/texto";
+import { EntradaCantidadLista } from "../componentes/entrada_cantidad";
+import BarraBusqueda from "../componentes/barra_busqueda";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Search02Icon } from '@hugeicons/core-free-icons';
 
 function Pruebas() {
-  // Estados para controlar los inputs de prueba
   const [val, setVal] = useState("");
   const [val2, setVal2] = useState("");
   const [val3, setVal3] = useState("");
   const [val4, setVal4] = useState("");
+  const [busqueda, setBusqueda] = useState("");
+
+  const [cantidades, setCantidades] = useState({
+    agua: "0",
+    miel: "0",
+    peptona: "0",
+  });
+  const set = (key) => (e) =>
+    setCantidades((prev) => ({ ...prev, [key]: e.target.value }));
 
   return (
     <>
@@ -28,7 +40,6 @@ function Pruebas() {
           <Button variant="agregar">Agregar</Button>
           <Button variant="confirmar">Confirmar</Button>
 
-          {/** Inputs de prueba */}
           <Input
             variante="normal"
             placeholder="Escribe tu entrada..."
@@ -59,9 +70,32 @@ function Pruebas() {
             onChange={(e) => setVal4(e.target.value)}
           />
 
-          {/** Valor guardado en los inputs */}
           <Text variante="label">
             Valor 1: "{val}" Valor 2: "{val2}" Valor 3: "{val3}" Valor 4: "{val4}"
+          </Text>
+
+          <EntradaCantidadLista
+            items={[
+              { nombre: "Agua destilada", unidad: "ml", value: cantidades.agua,    onChange: set("agua") },
+              { nombre: "Miel",           unidad: "g",  value: cantidades.miel,    onChange: set("miel") },
+              { nombre: "Peptona",        unidad: "ml", value: cantidades.peptona, onChange: set("peptona") },
+            ]}
+          />
+
+          <Text variante="label">
+            Agua: "{cantidades.agua}" Miel: "{cantidades.miel}" Peptona: "{cantidades.peptona}"
+          </Text>
+
+          {/** Barra de búsqueda */}
+          <BarraBusqueda
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            placeholder="Buscar..."
+            icon={<HugeiconsIcon icon={Search02Icon} size={20} />}
+          />
+
+          <Text variante="label">
+            Búsqueda: "{busqueda}"
           </Text>
 
         </div>

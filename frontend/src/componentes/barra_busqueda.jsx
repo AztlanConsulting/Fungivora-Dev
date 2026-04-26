@@ -1,48 +1,58 @@
-import React from "react";
+import React, { useState } from "react";
+import { colores } from "./colores";
+import Text from "./texto";
+
+// Barra de Busqueda
 
 const BarraBusqueda = ({
   value,
   onChange,
   placeholder = "Buscar...",
   icon,
-  className = ""
+  className = "",
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
+  const ringColor = isFocused ? colores.verde : colores.azul;
+
   return (
-    <div className={`w-full ${className}`}>
-      <div className="relative flex items-center">
+    <div
+      className={`relative flex items-center w-80 md:w-96 h-7 md:h-10 rounded-full overflow-hidden transition-all bg-[#F9FDFF] ${className}`}
+      style={{ boxShadow: `0 0 0 ${isFocused ? "4px" : "2px"} ${ringColor}` }}
+    >
+      {/* Placeholder visual con tipografía del sistema */}
+      {!value && (
+        <div className="absolute inset-0 flex items-center px-5 pointer-events-none">
+          <Text variante="input">{placeholder}</Text>
+        </div>
+      )}
 
-        <input
-          type="text"
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          className="w-full pr-10 pl-4 py-2 rounded-xl border-2 border-[#3B3FB6] bg-[#F9FDFF]
-                     text-sm outline-none
-                     focus:border-[#3B3FB6] focus:ring-2 focus:ring-[#3B3FB6]/30
-                     transition-all duration-200"  /* Ya incluye los colores establecidos*/
-        />
+      {/* Input */}
+      <input
+        type="text"
+        value={value}
+        onChange={onChange}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        className="w-full h-full px-5 bg-transparent outline-none pr-10"
+        style={{
+          fontFamily: "Montserrat, sans-serif",
+          fontSize: "clamp(16px, 1.5vw, 20px)",
+          color: "#000",
+        }}
+      />
 
-        {icon && (
-          <span className="absolute right-3 text-gray-400"> {/* No importa el color del icono, eso se cambia en la vista */}
-            {icon}
-          </span>
-        )}
-
-      </div>
+      {/* Icono */}
+      {icon && (
+        <div
+          className="absolute right-4 flex items-center pointer-events-none"
+          style={{ color: ringColor, transition: "color 0.2s" }}
+        >
+          {icon}
+        </div>
+      )}
     </div>
   );
 };
 
 export default BarraBusqueda;
-
-      /* Hacer copy paste para utilizarlo en la vista:
-    import { HugeiconsIcon } from '@hugeicons/react';
-    import { Search02Icon } from '@hugeicons/core-free-icons';
-    import BarraBusqueda from "../componentes/barra_busqueda";
-
-      <BarraBusqueda
-        value={busqueda}
-        onChange={(e) => setBusqueda(e.target.value)}
-        placeholder="Buscar producto..."
-        icon={<HugeiconsIcon icon={Search02Icon} size={24} className="text-[#3B3FB6]" />}
-      />*/
