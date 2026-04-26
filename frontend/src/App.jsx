@@ -14,13 +14,14 @@ import Experimentos from "./views/ExperimentosView";
 import Recetario from "./views/RecetarioView"
 import Lotes from "./views/LotesView";
 import Pruebas from "./views/pruba_componentes";
+import Notas from "./componentes/template/notas";
 
 function App() {
   return (
  <BrowserRouter>
       <Routes>
         {/*<Route path="/" element={<LoginView />} />*/}
-        <Route path="/" element={<Pruebas />} />
+        <Route path="/" element={<Notas />} />
         <Route path="*" element={<Navigate to="/" />} />
 
         
