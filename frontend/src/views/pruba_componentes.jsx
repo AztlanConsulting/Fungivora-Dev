@@ -4,6 +4,7 @@ import Titulo from "../componentes/titulo";
 import Button from "../componentes/botones";
 import Input from "../componentes/input_texto";
 import Text from "../componentes/texto";
+import Select from "../componentes/seleccionar_texto"; 
 
 function Pruebas() {
   // Estados para controlar los inputs de prueba
@@ -11,7 +12,7 @@ function Pruebas() {
   const [val2, setVal2] = useState("");
   const [val3, setVal3] = useState("");
   const [val4, setVal4] = useState("");
-
+  const [seleccionado, setSeleccionado] = useState("")
   return (
     <>
       <Titulo>
@@ -63,6 +64,19 @@ function Pruebas() {
           <Text variante="label">
             Valor 1: "{val}" Valor 2: "{val2}" Valor 3: "{val3}" Valor 4: "{val4}"
           </Text>
+
+
+          {/* Selecionar y su logica basica */}
+          <Select
+            label="Seleciona"
+            value={seleccionado}
+            onChange={(e) => setSeleccionado(e.target.value)}
+            placeholder="Seleciona una opcion.."
+            options={[
+              {value: "1", label: "Opcion 1"},
+              {value: "2", label: "Opcion 2"}   
+            ]}
+            />
 
         </div>
       </Base>
