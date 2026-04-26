@@ -105,7 +105,7 @@ const Input = ({
         onBlur: () => setIsFocused(false),
         // Elimina el spinner nativo de inputs numéricos en Chrome/Safari y da el estilo inicial
         className: `
-            w-full h-full px-3 py-2 bg-transparent outline-none resize-none
+            w-full h-full px-3 py-2 bg-[#F9FDFF] outline-none resize-none
             [appearance:textfield]
             [&::-webkit-outer-spin-button]:appearance-none
             [&::-webkit-inner-spin-button]:appearance-none
