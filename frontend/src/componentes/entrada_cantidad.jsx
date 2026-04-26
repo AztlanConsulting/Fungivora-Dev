@@ -89,7 +89,7 @@ export const EntradaCantidadLista = ({ items = [] }) => {
   return (
     <div
       className="flex flex-col gap-3 p-4 rounded-3xl w-80 md:w-96"
-      style={{ border: `3px solid ${colores.azul}`, backgroundColor: '#F9FDFF' }}
+      style={{ border: `3px solid ${colores.azul}`, backgroundColor: '#C5CAE9' }}
     >
       {items.map((item, index) => (
         <EntradaCantidad
