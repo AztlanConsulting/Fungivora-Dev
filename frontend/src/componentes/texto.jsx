@@ -30,8 +30,10 @@ const variantes = {
 
   // Texto de inputs: 14 mobile / 20 desktop
   input: {
-    fontSize: "clamp(14px, 1.5vw, 20px)",
-    color: "#666",
+    fontFamily: "Montserrat, sans-serif",
+    fontStyle: "italic",
+    fontSize: "clamp(16px, 1.5vw, 20px)",
+    color: "#868889",
   },
 
   // Texto de botones: 18 mobile / 36 desktop
@@ -72,7 +74,7 @@ const variantes = {
   },
 };
 
-/*
+/**
 * Text
 Componente tipográfico reutilizable que aplica estilos según variantes
 definidas para mantener consistencia visual.
