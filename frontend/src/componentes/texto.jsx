@@ -43,9 +43,9 @@ const variantes = {
     color: "#fff",
   },
 
-  // Texto para dentro del input de fechas: 20 mobile / 40 desktop
+  // Texto para dentro del input de fechas: 18 mobile / 22 desktop
   dates: {
-    fontSize: "clamp(20px, 2.5vw, 40px)",
+    fontSize: "clamp(18px, 1.5vw, 22px)",
     color: "#999",
   },
 

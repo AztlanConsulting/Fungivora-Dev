@@ -4,6 +4,7 @@ import Titulo from "../componentes/titulo";
 import Button from "../componentes/botones";
 import Input from "../componentes/input_texto";
 import Text from "../componentes/texto";
+import InputFecha from "../componentes/input_fecha";
 
 function Pruebas() {
   // Estados para controlar los inputs de prueba
@@ -11,6 +12,12 @@ function Pruebas() {
   const [val2, setVal2] = useState("");
   const [val3, setVal3] = useState("");
   const [val4, setVal4] = useState("");
+   // Se necesita declara a la fecha vacia
+  const [fecha, setFecha] = useState({
+    day: "",
+    month: "",
+    year: ""
+  });
 
   return (
     <>
@@ -62,6 +69,16 @@ function Pruebas() {
           {/** Valor guardado en los inputs */}
           <Text variante="label">
             Valor 1: "{val}" Valor 2: "{val2}" Valor 3: "{val3}" Valor 4: "{val4}"
+          </Text>
+
+          <InputFecha
+            value={fecha}
+            onChange={setFecha}
+          />
+
+          {/** Valor guardado en el input de fecha */}
+          <Text variante="label">
+            Fecha: "{fecha.day}/{fecha.month}/{fecha.year}"
           </Text>
 
         </div>
