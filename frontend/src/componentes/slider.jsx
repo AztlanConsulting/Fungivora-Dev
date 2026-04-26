@@ -21,7 +21,7 @@ const Slider = ({ value, onChange }) => {
   };
 
   return (
-    <div className="w-full py-12 px-4">
+<div className="w-full md:max-w-xl mx-auto py-12 px-4">
       <div className="relative h-2 flex items-center">
         
         {/* Línea Base*/}
