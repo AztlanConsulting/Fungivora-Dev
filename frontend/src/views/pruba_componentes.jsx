@@ -5,6 +5,7 @@ import Button from "../componentes/botones";
 import Input from "../componentes/input_texto";
 import Text from "../componentes/texto";
 import InputFecha from "../componentes/input_fecha";
+import Stepper from "../componentes/stepper";
 
 function Pruebas() {
   // Estados para controlar los inputs de prueba
@@ -18,6 +19,24 @@ function Pruebas() {
     month: "",
     year: ""
   });
+
+  // Se declaran los pasos, la linea se adapta a la cantida
+  const [pasoActual, setPasoActual] = useState(0);
+  const [pasoActual2, setPasoActual2] = useState(0);
+
+    const misPasos = [
+        { label: "Lote" },
+        { label: "Bloque" },
+    ];
+    const misPasos2 = [
+        { label: "Inoculación" },
+        { label: "Colonización" },
+        { label: "Fructificación" },
+        { label: "Cosecha 1" },
+        { label: "Cosecha 2" },
+        { label: "Finalización" }
+    ];
+
 
   return (
     <>
@@ -80,6 +99,22 @@ function Pruebas() {
           <Text variante="label">
             Fecha: "{fecha.day}/{fecha.month}/{fecha.year}"
           </Text>
+
+          {/** Diferentes Steppers por catidad y color */}
+            <Stepper 
+                steps={misPasos} 
+                currentStep={pasoActual} 
+                onStepChange={(nuevoPaso) => setPasoActual(nuevoPaso)}
+                colorTheme="verde" 
+            />
+
+            <Stepper 
+                steps={misPasos2} 
+                currentStep={pasoActual2} 
+                onStepChange={(nuevoPaso) => setPasoActual2(nuevoPaso)}
+                colorTheme="azul" 
+            />
+
 
         </div>
       </Base>

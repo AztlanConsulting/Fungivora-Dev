@@ -10,10 +10,13 @@ export const colores = {
   azulClaro: "#777BEB",
   azulMedio: "#4C50C5",
   azulOscuro: "#01068B",
+  azulMuyOscuro: "#01068B",
+  
   verdeOscuro: "#25785A",
   verdeClaro: "#78CEAE",
   verdeAccent: "#00B372",
   verdeSoft: "#63A58E",
+  verdeMuyOscuro: "#025E3C",
 };
 
 const Color = ({
