@@ -17,7 +17,7 @@ const variantes = {
 
   // Texto Mediano: 32 mobile / 48 desktop
   medium: {
-    fontSize: "clamp(32px, 4vw, 48px)",
+    fontSize: "clamp(32px, 4vw, 44px)",
     fontWeight: 500,
   },
 

@@ -22,13 +22,13 @@ function Notas() {
         ${verHistorial ? "flex" : "hidden"} md:flex relative`}
       >
         <Titulo>Notas...</Titulo> 
-
+        
         <div className="flex-1 overflow-y-auto scrollbar-thin px-4 md:px-12 py-6">
-          <Base margen_arriba="mt-20 md:mt-18">
+          <Base margen_arriba="mt-16 md:mt-20">
             <div className="flex flex-col gap-4">
 
               {/* Área para que en movil funcione con un botón */}
-                <div className="md:hidden w-full px-3 mt-4">
+                <div className="md:hidden w-full px-2 mt-6">
                 <div className="flex items-start">
                     <div
                     onClick={() => setVerHistorial(!verHistorial)} // Al darle al botón se ve el historial (notas)
@@ -92,12 +92,11 @@ function Notas() {
           <Titulo color="white">Notas...</Titulo>
         </div>
 
-        <div className="flex-1 flex flex-col pt-28 md:pt-6 px-6 md:px-12">
-          <div className="hidden md:block flex-[0.3]" />
-          <div className="w-full max-w-sm mx-auto flex flex-col gap-6 px-4 md:px-0">
+        <div className="flex-1 flex flex-col justify-start pt-20 md:pt-16 px-6 md:px-12">
+          <div className="w-full max-w-sm mx-auto flex flex-col gap-6 px-4 md:px-0 mt-4 md:mt-24">
 
             {/* Área de inserts con el botón para ir para las notas */}
-            <div className="md:hidden w-full mt-6">
+            <div className="md:hidden w-full mt-8">
             <div className="flex items-start">
                 <div
                 onClick={() => setVerHistorial(!verHistorial)}
@@ -135,9 +134,9 @@ function Notas() {
             </div>
 
           </div>
+          
+         {/* Botón de agregar*/}
           <div className="flex-1" />
-
-          {/* Botón de agregar*/}
           <div className="w-full flex justify-center pb-10 md:pb-6">
             <Button variant="agregar">
               Agregar
