@@ -2,6 +2,12 @@ import React, { useState } from "react";
 import { colores } from "./colores";
 import Text from "./texto";
 
+/**
+ * EntradaCantidad
+ * Fila individual que representa un ingrediente con su cantidad y unidad.
+ * Se compone de tres secciones: nombre | input numérico | pastilla de unidad.
+ *
+ */
 const EntradaCantidad = ({
   nombre = "",
   unidad = "ml",
@@ -11,14 +17,17 @@ const EntradaCantidad = ({
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 
+  // Azul en reposo, verde al enfocar — consistente con el sistema de diseño
   const ringColor = isFocused ? colores.verde : colores.azul;
 
-  
+  // La altura escala fluidamente entre pantallas usando clamp
+  // El boxShadow simula el ring de foco para poder cambiar su color dinámicamente
   const alturaStyle = {
     height: "clamp(28px, 3vw, 40px)",
     boxShadow: `0 0 0 ${isFocused ? "4px" : "2px"} ${ringColor}`,
   };
 
+  // Tipografía compartida entre el nombre, el input y la unidad
   const textoStyle = {
     fontFamily: "Montserrat, sans-serif",
     fontSize: "clamp(14px, 1.2vw, 18px)",
@@ -26,32 +35,38 @@ const EntradaCantidad = ({
   };
 
   return (
+    // items-stretch hace que las tres secciones tengan la misma altura
+    // bg-white es el fondo de la fila; las secciones internas son transparentes para heredarlo
     <div
       className="flex items-stretch w-full rounded-full overflow-hidden transition-all bg-white"
       style={alturaStyle}
     >
-      {/* Nombre del ingrediente */}
+      {/* Sección izquierda: nombre del ingrediente. flex-1 ocupa todo el espacio sobrante */}
       <div className="flex flex-1 items-center px-5 bg-transparent">
         <p style={{ ...textoStyle, fontWeight: 700, color: colores.azul, margin: 0 }}>
           {nombre}
         </p>
       </div>
 
-      {/* Divisor vertical */}
+      {/* Divisor vertical: hereda la altura del contenedor y cambia de color con el foco */}
       <div style={{ width: "3px", backgroundColor: ringColor }} />
 
-      {/* Input numérico */}
+      {/* Sección central: input numérico con ancho fijo para que el divisor quede alineado en todas las filas */}
       <div
         className="flex items-center justify-center bg-transparent"
         style={{ width: "80px" }}
       >
         <input
           type="text"
-          inputMode={numeroTipo === "decimal" ? "decimal" : "numeric"} //  Solo afecta en Móvil,
-          pattern={numeroTipo === "decimal" ? "[0-9]*[.,]?[0-9]{0,2}" : "[0-9]*"} // Usado para validar la entrada que se recibe
+          // inputMode activa el teclado correcto en móvil sin afectar desktop
+          inputMode={numeroTipo === "decimal" ? "decimal" : "numeric"}
+          // pattern es una pista secundaria para el navegador; la validación real ocurre en onChange
+          pattern={numeroTipo === "decimal" ? "[0-9]*[.,]?[0-9]{0,2}" : "[0-9]*"}
           value={value}
-          //Verifica que la entrada a recibir sea un numero, solo permite numeros con 2 decimales
           onChange={(e) => {
+            // Valida el valor completo antes de propagarlo al estado
+            // decimal: permite dígitos, una coma/punto opcional y hasta 2 decimales
+            // entero: solo dígitos, sin separadores
             const regex = numeroTipo === "decimal" ? /^\d*[.,]?\d{0,2}$/ : /^\d*$/;
             if (regex.test(e.target.value)) onChange(e);
           }}
@@ -63,11 +78,13 @@ const EntradaCantidad = ({
             [&::-webkit-outer-spin-button]:appearance-none
             [&::-webkit-inner-spin-button]:appearance-none
           "
+          // outline-none quita el foco nativo del navegador; el foco visual lo maneja el contenedor padre
+          // Las clases de webkit eliminan las flechitas nativas de inputs numéricos en Chrome y Safari
           style={{ ...textoStyle, color: "#868889" }}
         />
       </div>
 
-      {/* Pastilla de unidad */}
+      {/* Sección derecha: pastilla con la unidad de medida. rounded-r-full redondea solo la esquina derecha */}
       <div
         className="flex items-center justify-center rounded-r-full"
         style={{ backgroundColor: "#C5C7F0", width: "56px" }}
@@ -80,17 +97,24 @@ const EntradaCantidad = ({
   );
 };
 
-/**
- * EntradaCantidadLista
- * Recibe una lista de objetos (nombre, unidad, value, onChange, numeroTipo )
- * Por cada lista recibida, los agrupa de forma ordenada dentro de la caja principal
+/** 
+ * Ese es el contenedor que agrupa varias entradas dentro de una caja con borde azul.
+ * El gap entre filas deja ver el fondo del contenedor como separador visual.
+ * Uso:
+ * <EntradaCantidadLista
+ *   items={[
+ *     { nombre: "Agua destilada", unidad: "ml", value: cantidades.agua, onChange: set("agua") },
+ *     { nombre: "Miel",           unidad: "g",  value: cantidades.miel, onChange: set("miel") },
+ *   ]}
+ * />
  */
 export const EntradaCantidadLista = ({ items = [] }) => {
   return (
     <div
       className="flex flex-col gap-3 p-4 rounded-3xl w-80 md:w-96"
-      style={{ border: `3px solid ${colores.azul}`, backgroundColor: '#C5CAE9' }}
+      style={{ border: `3px solid ${colores.azul}`, backgroundColor: '#F9FDFF' }}
     >
+      {/* Por cada item del array se renderiza una fila EntradaCantidad */}
       {items.map((item, index) => (
         <EntradaCantidad
           key={index}
