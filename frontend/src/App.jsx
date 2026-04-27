@@ -21,7 +21,11 @@ function App() {
  <BrowserRouter>
       <Routes>
         {/*<Route path="/" element={<LoginView />} />*/}
-        <Route path="/" element={<Notas />} />
+
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Pruebas />} />
+          <Route path="/notas" element={<Notas />} />
+        </Route>
         <Route path="*" element={<Navigate to="/" />} />
 
         

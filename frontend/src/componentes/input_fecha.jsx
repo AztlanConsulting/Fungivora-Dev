@@ -1,26 +1,21 @@
 import React, { useState } from "react";
 import { colores } from "./colores";
-import Text from "./texto";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Calendar03Icon } from '@hugeicons/core-free-icons';
 
 /**
  * Componente de entrada de fecha con campos de día, mes y año.
- * Mantiene la consistencia visual con el componente Input, utilizando
- * el sistema de enfoque y validaciones de rango.
- * @param {Object} value - Objeto con las propiedades 
- * @param {Function} onChange - Callback que retorna el objeto de fecha actualizado
+ * Se eliminó la duplicidad de texto utilizando placeholders nativos
+ * para asegurar que el número y la etiqueta no se encimen.
  */
 const InputFecha = ({ value = {}, onChange }) => {
     const [isFocused, setIsFocused] = useState(false);
 
-    /* 
-    Función para unicamente la aceptación de números
-    Con rangos especificos para el día, mes y año
-    Inpidiendo poner números de más para el campo
+    /* Función para validar la entrada: solo números y rangos lógicos
     */
     const handleChange = (field, val) => {
-        if (!/^\d*$/.test(val)) return;
+        if (!/^\d*$/.test(val)) return; // Solo permite dígitos
+        
         if (field === "day") {
             if (val.length > 2) return;
             if (parseInt(val) > 31) return;
@@ -35,10 +30,16 @@ const InputFecha = ({ value = {}, onChange }) => {
         onChange({ ...value, [field]: val });
     };
 
-    const inputOverlay = `
-        absolute inset-0 w-full h-full 
-        bg-transparent text-center outline-none 
-        text-transparent caret-[#3b3fb6]
+    /**
+     * Estilos base para los inputs:
+     * text-center: asegura que el número y el placeholder estén centrados.
+     * placeholder:text-gray-400: define el color del DD/MM/YYYY cuando no hay valor.
+     */
+    const inputStyle = `
+        w-full h-full bg-transparent 
+        text-center outline-none 
+        text-[#3b3fb6] font-semibold text-lg
+        placeholder:text-gray-400
         [appearance:textfield]
         [&::-webkit-outer-spin-button]:appearance-none
         [&::-webkit-inner-spin-button]:appearance-none
@@ -53,7 +54,7 @@ const InputFecha = ({ value = {}, onChange }) => {
             `}
             style={{ "--input-ring": isFocused ? colores.verde : colores.azul }}
         >
-            {/* Icono */}
+            {/* Icono lateral con borde divisorio */}
             <div 
                 className="flex items-center justify-center px-3 border-r-2" 
                 style={{ borderColor: colores.azul, color: colores.azul }}
@@ -61,16 +62,14 @@ const InputFecha = ({ value = {}, onChange }) => {
                 <HugeiconsIcon icon={Calendar03Icon} size={26} />
             </div>
 
-            {/* Contenedor flexible */}
+            {/* Contenedor principal de los inputs */}
             <div className="flex flex-1 items-center">
                 
-                {/* Día */}
-                <div className="relative flex-1 h-full flex items-center justify-center">
-                    <Text variante="dates">
-                        {value.day || "DD"}
-                    </Text>
+                {/* Campo Día */}
+                <div className="flex-1 h-full">
                     <input
-                        className={inputOverlay}
+                        className={inputStyle}
+                        placeholder="DD"
                         value={value.day || ""}
                         onChange={(e) => handleChange("day", e.target.value)}
                         onFocus={() => setIsFocused(true)}
@@ -79,16 +78,14 @@ const InputFecha = ({ value = {}, onChange }) => {
                     />
                 </div>
 
-                {/* Divisor */}
-                <div className="w-[2px] self-stretch" style={{ backgroundColor: colores.azul }} />
+                {/* Divisor Visual */}
+                <div className="w-[2px] h-full" style={{ backgroundColor: colores.azul }} />
 
-                {/* Mes */}
-                <div className="relative flex-1 h-full flex items-center justify-center">
-                    <Text variante="dates">
-                        {value.month || "MM"}
-                    </Text>
+                {/* Campo Mes */}
+                <div className="flex-1 h-full">
                     <input
-                        className={inputOverlay}
+                        className={inputStyle}
+                        placeholder="MM"
                         value={value.month || ""}
                         onChange={(e) => handleChange("month", e.target.value)}
                         onFocus={() => setIsFocused(true)}
@@ -97,16 +94,14 @@ const InputFecha = ({ value = {}, onChange }) => {
                     />
                 </div>
 
-                {/* Divisor */}
-                <div className="w-[2px] self-stretch" style={{ backgroundColor: colores.azul }} />
+                {/* Divisor Visual */}
+                <div className="w-[2px] h-full" style={{ backgroundColor: colores.azul }} />
 
-                {/* Año */}
-                <div className="relative flex-[1.5] h-full flex items-center justify-center">
-                    <Text variante="dates">
-                        {value.year || "YYYY"}
-                    </Text>
+                {/* Campo Año */}
+                <div className="flex-[1.5] h-full">
                     <input
-                        className={inputOverlay}
+                        className={inputStyle}
+                        placeholder="YYYY"
                         value={value.year || ""}
                         onChange={(e) => handleChange("year", e.target.value)}
                         onFocus={() => setIsFocused(true)}

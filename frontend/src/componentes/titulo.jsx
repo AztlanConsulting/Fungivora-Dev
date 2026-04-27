@@ -12,7 +12,7 @@ para mostrar títulos de vista.
 const Titulo = ({ children }) => {
   return (
     <div className="
-      fixed top-0 left-0 w-full z-50
+      fixed top-0 left-0 w-full md:left-20 z-50
       bg-[#3b3fb6]
       shadow-[0_10px_25px_rgba(0,0,0,0.2)]
       flex items-start
