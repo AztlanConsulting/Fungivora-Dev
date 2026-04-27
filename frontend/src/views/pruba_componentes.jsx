@@ -5,14 +5,24 @@ import Button from "../componentes/botones";
 import Input from "../componentes/input_texto";
 import Text from "../componentes/texto";
 import Slider from "../componentes/slider"
+import { EntradaCantidadLista } from "../componentes/entrada_cantidad";
+import BarraBusqueda from "../componentes/barra_busqueda";
 
 function Pruebas() {
-  // Estados para controlar los inputs de prueba
   const [val, setVal] = useState("");
   const [val2, setVal2] = useState("");
   const [val3, setVal3] = useState("");
   const [val4, setVal4] = useState("");
   const [sliderVal, setSliderVal] = useState(0);
+  const [busqueda, setBusqueda] = useState("");
+
+  const [cantidades, setCantidades] = useState({
+    agua: "",
+    miel: "",
+    peptona: "",
+  });
+  const set = (key) => (e) =>
+    setCantidades((prev) => ({ ...prev, [key]: e.target.value }));
 
   return (
     <>
@@ -22,6 +32,8 @@ function Pruebas() {
 
       <Base margen_arriba="mt-44 md:mt-28">
         <div className="flex flex-col gap-4">
+
+          {/** Botones — una variante por cada tipo definido en el sistema */}
           <Button variant="entrar">Entrar</Button>
           <Button variant="cancelar">Cancelar</Button>
           <Button variant="eliminar">Eliminar</Button>
@@ -30,7 +42,7 @@ function Pruebas() {
           <Button variant="agregar">Agregar</Button>
           <Button variant="confirmar">Confirmar</Button>
 
-          {/** Inputs de prueba */}
+          {/** Inputs — prueba de las tres variantes disponibles */}
           <Input
             variante="normal"
             placeholder="Escribe tu entrada..."
@@ -61,7 +73,7 @@ function Pruebas() {
             onChange={(e) => setVal4(e.target.value)}
           />
 
-          {/** Valor guardado en los inputs */}
+          {/** Muestra en tiempo real los valores capturados por los inputs */}
           <Text variante="label">
             Valor 1: "{val}" Valor 2: "{val2}" Valor 3: "{val3}" Valor 4: "{val4}"
           </Text>
@@ -78,6 +90,31 @@ function Pruebas() {
               Valor Slider: <span className="text-blue-600 font-bold">{sliderVal}%</span>
             </Text>
 
+          {/** Lista de ingredientes con sus cantidades y unidades */}
+          <EntradaCantidadLista
+            items={[
+              { nombre: "Agua destilada", unidad: "ml", value: cantidades.agua,    onChange: set("agua") },
+              { nombre: "Miel",           unidad: "g",  value: cantidades.miel,    onChange: set("miel") },
+              { nombre: "Peptona",        unidad: "ml", value: cantidades.peptona, onChange: set("peptona") },
+            ]}
+          />
+
+          {/** Muestra en tiempo real los valores capturados por EntradaCantidadLista */}
+          <Text variante="label">
+            Agua: "{cantidades.agua}" Miel: "{cantidades.miel}" Peptona: "{cantidades.peptona}"
+          </Text>
+
+          {/** Barra de búsqueda — el icono está incluido dentro del componente */}
+          <BarraBusqueda
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            placeholder="Buscar..."
+          />
+
+          {/** Muestra en tiempo real el valor capturado por la barra de búsqueda */}
+          <Text variante="label">
+            Búsqueda: "{busqueda}"
+          </Text>
 
         </div>
       </Base>
