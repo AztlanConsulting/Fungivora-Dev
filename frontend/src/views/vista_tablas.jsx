@@ -105,21 +105,34 @@ function VistaTablas() {
               className="grid grid-cols-3 md:grid-cols-3"
               style={{ ...bordeFilaStyle, backgroundColor: "#E8EAF6" }}
             >
-              {/** Móvil: inputs apilados — se oculta en desktop con md:hidden */}
-              <div className="col-span-3 md:hidden px-4 py-3 flex flex-col gap-1">
-                {["campo1", "campo2", "campo3"].map((campo, i) => (
+              {/** Móvil: campo1 arriba completo, campo2 y campo3 en fila abajo */}
+            <div className="col-span-3 md:hidden px-4 py-3 flex flex-col gap-1">
+              {/** campo1 — ocupa todo el ancho, texto más grande igual que los campos de output */}
+              <input
+                type="text"
+                value={nuevaFila["campo1"]}
+                onChange={(e) => handleNuevaFila("campo1", e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Escribe..."
+                className="bg-transparent outline-none placeholder-gray-400 w-full"
+                style={{ ...inputStyle, fontSize: "16px", color: colores.azul }}  // mismo tamaño y color que campo1 en output
+              />
+              {/** campo2 y campo3 — en la misma fila */}
+              <div className="flex gap-6">
+                {["campo2", "campo3"].map((campo, i) => (
                   <input
                     key={i}
                     type="text"
                     value={nuevaFila[campo]}
                     onChange={(e) => handleNuevaFila(campo, e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Escribe"
+                    placeholder="Escribe..."
                     className="bg-transparent outline-none placeholder-gray-400 w-full"
                     style={inputStyle}
                   />
                 ))}
               </div>
+            </div>
 
               {/** Desktop: inputs en columnas — se oculta en móvil con hidden md:block */}
               {["campo1", "campo2", "campo3"].map((campo, i) => (

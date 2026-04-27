@@ -27,9 +27,10 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Pruebas />} />
           <Route path="/notas" element={<Notas />} />
+          <Route path="/tablas" element={<VistaTablas />} />
         </Route>
         <Route path="*" element={<Navigate to="/" />} />
-        <Route path="/tablas" element={<VistaTablas />} />
+       
 
 
         
