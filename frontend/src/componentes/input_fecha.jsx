@@ -51,7 +51,7 @@ const InputFecha = ({ value = {}, onChange }) => {
         <div 
             className={`
                 w-80 h-10 md:w-96 md:h-12
-                bg-[#F9FDFF] rounded-md overflow-hidden transition-all flex items-stretch
+                bg-[#FFFFFF] rounded-md overflow-hidden transition-all flex items-stretch
                 ${isFocused ? "ring-4" : "ring-2"} ring-[var(--input-ring)]
             `}
             style={{ "--input-ring": isFocused ? colores.azul : colores.grisClaro }}
