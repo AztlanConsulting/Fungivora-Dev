@@ -26,7 +26,7 @@ const BarraBusqueda = ({
   const [isFocused, setIsFocused] = useState(false);
 
   // Azul en reposo, verde al enfocar — consistente con el sistema de diseño
-  const ringColor = isFocused ? colores.verde : colores.azul;
+  const ringColor = isFocused ? colores.azul : colores.grisMedio;
 
   return (
     /**
@@ -44,14 +44,15 @@ const BarraBusqueda = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        className="pl-12"
       />
 
       {/* Icono de búsqueda posicionado al final de la caja.
-          Al estar dentro de un contenedor 'w-fit', el 'right-4' siempre será
+          Al estar dentro de un contenedor 'w-fit', el 'left-4' siempre será
           respecto al final real del Input.
           pointer-events-none evita que intercepte clics del usuario */}
       <div
-        className="absolute right-4 inset-y-0 flex items-center pointer-events-none"
+        className="absolute left-4 inset-y-0 flex items-center pointer-events-none"
         style={{ 
             color: ringColor, 
             transition: "color 0.2s",

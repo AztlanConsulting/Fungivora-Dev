@@ -69,6 +69,7 @@ const Input = ({
     placeholder = "",
     value,
     onChange,
+    className = "",
 }) => {
     const [isFocused, setIsFocused] = useState(false);
     /** Referencia al elemento del DOM para calcular altura */
@@ -117,11 +118,12 @@ const Input = ({
         // Elimina el spinner nativo de inputs numéricos en Chrome/Safari y da el estilo inicial
         // Se agrega overflow-hidden para la variante amplia para evitar scrollbars feos mientras crece
         className: `
-            w-full h-full px-3 py-2 bg-[#F9FDFF] outline-none resize-none
+            w-full h-full px-3 py-2 bg-[#FFFFFF] outline-none resize-none
             [appearance:textfield]
             [&::-webkit-outer-spin-button]:appearance-none
             [&::-webkit-inner-spin-button]:appearance-none
             ${variante === "amplio" ? "overflow-hidden" : ""}
+            ${className} 
         `,
         style: inputTextStyle,
     };
@@ -138,15 +140,16 @@ const Input = ({
     return (
         <div
             className={`
+                tu-clase-base ${className}
                 ${sizeClass} rounded-md overflow-hidden transition-all relative
                 ${isFocused ? "ring-4" : "ring-2"} ring-[var(--input-ring)]
             `}
-            style={{ "--input-ring": isFocused ? colores.verde : colores.azul }}
+            style={{ "--input-ring": isFocused ? colores.azul : colores.grisClaro }}
         >
             {/** Placeholder visual que usa Text para coincidir con el diseño*/}
             {!value && (
                 <div className={`
-                    absolute inset-0 px-3 pointer-events-none ${alignmentClass}
+                    absolute inset-0 px-3 pointer-events-none z-0 ${alignmentClass} ${className}
                 `}>
                     <Text variante="input">{placeholder}</Text>
                 </div>
@@ -158,6 +161,7 @@ const Input = ({
                     ref={textAreaRef} 
                     rows={1}  
                     {...sharedProps} 
+                    
                 />
             ) : (
                 <input {...sharedProps} {...numProps} />
