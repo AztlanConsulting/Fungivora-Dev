@@ -20,7 +20,10 @@ function App() {
  <BrowserRouter>
       <Routes>
         {/*<Route path="/" element={<LoginView />} />*/}
-        <Route path="/" element={<Pruebas />} />
+
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Pruebas />} />
+        </Route>
         <Route path="*" element={<Navigate to="/" />} />
 
         
