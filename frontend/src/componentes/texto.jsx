@@ -30,8 +30,10 @@ const variantes = {
 
   // Texto de inputs: 14 mobile / 20 desktop
   input: {
-    fontSize: "clamp(14px, 1.5vw, 20px)",
-    color: "#666",
+    fontFamily: "Montserrat, sans-serif",
+    fontStyle: "italic",
+    fontSize: "clamp(16px, 1.5vw, 20px)",
+    color: "#868889",
   },
 
   // Texto de botones: 18 mobile / 36 desktop
@@ -41,9 +43,9 @@ const variantes = {
     color: "#fff",
   },
 
-  // Texto para dentro del input de fechas: 20 mobile / 40 desktop
+  // Texto para dentro del input de fechas: 18 mobile / 22 desktop
   dates: {
-    fontSize: "clamp(20px, 2.5vw, 40px)",
+    fontSize: "clamp(18px, 1.5vw, 22px)",
     color: "#999",
   },
 
@@ -72,7 +74,7 @@ const variantes = {
   },
 };
 
-/*
+/**
 * Text
 Componente tipográfico reutilizable que aplica estilos según variantes
 definidas para mantener consistencia visual.
