@@ -29,9 +29,10 @@ const BarraBusqueda = ({
   const ringColor = isFocused ? colores.verde : colores.azul;
 
   return (
-    // Contenedor relativo para posicionar el icono sobre el Input
+    // w-80 md:w-96 coincide con el ancho del Input interno para que el icono
+    // quede posicionado correctamente sobre el borde derecho
     <div
-      className={`relative ${className}`}
+      className={`relative w-80 md:w-96 ${className}`}
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
     >
@@ -46,7 +47,7 @@ const BarraBusqueda = ({
           Cambia de color junto con el borde al enfocar.
           pointer-events-none evita que intercepte clics del usuario */}
       <div
-        className="absolute right-4 inset-y-0 flex items-center pointer-events-none"
+        className="absolute right-3 inset-y-0 flex items-center pointer-events-none"
         style={{ color: ringColor, transition: "color 0.2s" }}
       >
         <HugeiconsIcon icon={Search02Icon} size={20} />

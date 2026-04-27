@@ -15,6 +15,8 @@ import Recetario from "./views/RecetarioView"
 import Lotes from "./views/LotesView";
 import Pruebas from "./views/pruba_componentes";
 
+import VistaTablas from "./views/vista_tablas";
+
 function App() {
   return (
  <BrowserRouter>
@@ -22,6 +24,8 @@ function App() {
         {/*<Route path="/" element={<LoginView />} />*/}
         <Route path="/" element={<Pruebas />} />
         <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/tablas" element={<VistaTablas />} />
+
 
         
 
