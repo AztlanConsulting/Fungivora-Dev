@@ -5,6 +5,15 @@ import BarraBusqueda from "../barra_busqueda";
 import Text from "../texto";
 import { colores } from "../colores";
 
+// Acceso a los estilos definidos en Text para aplicarlos a inputs
+const estilosReferencia = {
+  input: {
+    fontStyle: "italic",
+    fontSize: "clamp(10px, 1.5vw, 12px)",
+    color: "#868889",
+  }
+};
+
 function VistaTablas() {
 
   // Estado de la barra de búsqueda
@@ -42,15 +51,6 @@ function VistaTablas() {
     )
   );
 
-  // Estilo compartido para los inputs de la fila editable
-  const inputStyle = {
-    fontFamily: "Montserrat, sans-serif",
-    fontSize: "clamp(12px, 1.2vw, 14px)",
-    color: colores.gris,
-    fontStyle: "italic",
-    width: "100%",
-  };
-
   // Color constante basado en tu header
   const colorBordeHeader = "#F2F2FC";
 
@@ -58,7 +58,7 @@ function VistaTablas() {
     <>
       <Titulo>Tablas...</Titulo>
 
-      <Base margen_arriba="mt-36 md:mt-36">
+      <Base margen_arriba="mt-24 md:mt-20">
         <div className="flex flex-col gap-4">
 
           {/** Barra de búsqueda — filtra las filas en tiempo real */}
@@ -87,7 +87,7 @@ function VistaTablas() {
             >
               {["Encabezado 1", "Encabezado 2", "Encabezado 3"].map((enc, i) => (
                 <div key={i} className="px-4 py-3">
-                  <Text variante="selected" style={{ fontSize: "clamp(14px, 1.2vw, 18px)", color: "#3b3fb6" }}>
+                  <Text variante="option">
                     {enc}
                   </Text>
                 </div>
@@ -95,8 +95,7 @@ function VistaTablas() {
             </div>
 
             {/**
-             * Fila editable (Inputs)
-             * borderBottom: Línea horizontal del mismo color del header
+             * Fila editable
              */}
             <div
               className="grid grid-cols-1 md:grid-cols-3"
@@ -111,9 +110,9 @@ function VistaTablas() {
                   onKeyDown={handleKeyDown}
                   placeholder="Escribe..."
                   className="bg-transparent outline-none placeholder-gray-400 w-full"
-                  style={{ ...inputStyle, fontSize: "16px", color: colores.azul }}
+                  style={{ fontSize: "16px", color: colores.azul, fontStyle: "italic"}}
                 />
-                <div className="flex gap-6">
+                <div className="flex gap-0">
                   {["campo2", "campo3"].map((campo, i) => (
                     <input
                       key={i}
@@ -123,7 +122,7 @@ function VistaTablas() {
                       onKeyDown={handleKeyDown}
                       placeholder="Escribe..."
                       className="bg-transparent outline-none placeholder-gray-400 w-full"
-                      style={inputStyle}
+                      style={{fontSize: "14px", color: colores.azul, fontStyle: "italic"}}
                     />
                   ))}
                 </div>
@@ -139,7 +138,7 @@ function VistaTablas() {
                     onKeyDown={handleKeyDown}
                     placeholder="Escribe..."
                     className="bg-transparent outline-none placeholder-gray-400 w-full"
-                    style={inputStyle}
+                    style={{fontSize: "16px", color: colores.azul, fontStyle: "italic"}}
                   />
                 </div>
               ))}
@@ -161,14 +160,14 @@ function VistaTablas() {
               >
                 {/** Móvil */}
                 <div className="md:hidden px-4 py-3 border-2 mb-2 rounded-lg" style={{borderColor: colorBordeHeader}}>
-                  <Text variante="selected" style={{ color: colores.azul }}>
+                  <Text variante="option" style={{ color: colores.azul }}>
                     {fila.campo1}
                   </Text>
-                  <div className="flex gap-6 mt-1">
-                    <Text variante="body" style={{ color: colores.gris, fontStyle: "italic" }}>
+                  <div className="flex gap-32 mt-3">
+                    <Text variante="body" style={{ color: colores.gris}}>
                       {fila.campo2}
                     </Text>
-                    <Text variante="body" style={{ color: colores.gris, fontStyle: "italic" }}>
+                    <Text variante="body" style={{ color: colores.gris }}>
                       {fila.campo3}
                     </Text>
                   </div>
