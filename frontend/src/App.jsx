@@ -16,6 +16,8 @@ import Lotes from "./views/LotesView";
 import Pruebas from "./views/pruba_componentes";
 import Notas from "./componentes/template/notas";
 
+import VistaTablas from "./views/vista_tablas";
+
 function App() {
   return (
  <BrowserRouter>
@@ -25,8 +27,11 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Pruebas />} />
           <Route path="/notas" element={<Notas />} />
+          <Route path="/tablas" element={<VistaTablas />} />
         </Route>
         <Route path="*" element={<Navigate to="/" />} />
+       
+
 
         
 
