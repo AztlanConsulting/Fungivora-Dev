@@ -1,48 +1,58 @@
-import React from "react";
+import React, { useState } from "react";
+import { colores } from "./colores";
+import Input from "./input_texto";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Search02Icon } from '@hugeicons/core-free-icons';
 
+/**
+ * BarraBusqueda
+ * Input de búsqueda que reutiliza el componente Input del sistema.
+ * El icono de búsqueda está incluido dentro del componente y cambia
+ * de color junto con el borde al enfocar.
+ *
+ * Uso:
+ * <BarraBusqueda
+ *   value={busqueda}
+ *   onChange={(e) => setBusqueda(e.target.value)}
+ *   placeholder="Buscar producto..."
+ * />
+ */
 const BarraBusqueda = ({
   value,
   onChange,
   placeholder = "Buscar...",
-  icon,
-  className = ""
+  className = "",
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
+  // Azul en reposo, verde al enfocar — consistente con el sistema de diseño
+  const ringColor = isFocused ? colores.verde : colores.azul;
+
   return (
-    <div className={`w-full ${className}`}>
-      <div className="relative flex items-center">
+    // Contenedor relativo para posicionar el icono sobre el Input
+    <div
+      className={`relative ${className}`}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
+    >
+      <Input
+        variante="normal"
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+      />
 
-        <input
-          type="text"
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          className="w-full pr-10 pl-4 py-2 rounded-xl border-2 border-[#3B3FB6] bg-[#F9FDFF]
-                     text-sm outline-none
-                     focus:border-[#3B3FB6] focus:ring-2 focus:ring-[#3B3FB6]/30
-                     transition-all duration-200"  /* Ya incluye los colores establecidos*/
-        />
-
-        {icon && (
-          <span className="absolute right-3 text-gray-400"> {/* No importa el color del icono, eso se cambia en la vista */}
-            {icon}
-          </span>
-        )}
-
+      {/* Icono de búsqueda posicionado sobre el lado derecho del Input.
+          Cambia de color junto con el borde al enfocar.
+          pointer-events-none evita que intercepte clics del usuario */}
+      <div
+        className="absolute right-4 inset-y-0 flex items-center pointer-events-none"
+        style={{ color: ringColor, transition: "color 0.2s" }}
+      >
+        <HugeiconsIcon icon={Search02Icon} size={20} />
       </div>
     </div>
   );
 };
 
 export default BarraBusqueda;
-
-      /* Hacer copy paste para utilizarlo en la vista:
-    import { HugeiconsIcon } from '@hugeicons/react';
-    import { Search02Icon } from '@hugeicons/core-free-icons';
-    import BarraBusqueda from "../componentes/barra_busqueda";
-
-      <BarraBusqueda
-        value={busqueda}
-        onChange={(e) => setBusqueda(e.target.value)}
-        placeholder="Buscar producto..."
-        icon={<HugeiconsIcon icon={Search02Icon} size={24} className="text-[#3B3FB6]" />}
-      />*/
