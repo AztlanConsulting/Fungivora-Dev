@@ -67,11 +67,11 @@ function Pruebas() {
 
 
           {/* Selecionar y su logica basica */}
+          <Text variante="label" as="label">Selecciona</Text>
           <Select
-            label="Seleciona"
             value={seleccionado}
             onChange={(e) => setSeleccionado(e.target.value)}
-            placeholder="Seleciona una opcion.."
+            placeholder="Selecciona una opcion.."
             options={[
               {value: "1", label: "Opcion 1"},
               {value: "2", label: "Opcion 2"}   
