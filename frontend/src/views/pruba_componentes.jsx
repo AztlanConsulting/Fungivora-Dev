@@ -6,6 +6,9 @@ import Input from "../componentes/input_texto";
 import Text from "../componentes/texto";
 import InputFecha from "../componentes/input_fecha";
 import Stepper from "../componentes/stepper";
+import Slider from "../componentes/slider";
+import { EntradaCantidadLista } from "../componentes/entrada_cantidad";
+import BarraBusqueda from "../componentes/barra_busqueda";
 
 function Pruebas() {
   const [val, setVal] = useState("");
@@ -16,32 +19,49 @@ function Pruebas() {
   const [val7, setVal7] = useState("");
   const [val8, setVal8] = useState("");
 
+  const [sliderVal, setSliderVal] = useState(0);
+  const [busqueda, setBusqueda] = useState("");
+
+  const [cantidades, setCantidades] = useState({
+    agua: "",
+    miel: "",
+    peptona: "",
+  });
+
+  const set = (key) => (e) =>
+    setCantidades((prev) => ({ ...prev, [key]: e.target.value }));
+
   const [fecha, setFecha] = useState({ day: "", month: "", year: "" });
   const [pasoActual, setPasoActual] = useState(0);
   const [pasoActual2, setPasoActual2] = useState(0);
 
   const misPasos = [{ label: "Lote" }, { label: "Bloque" }];
   const misPasos2 = [
-    { label: "Inoculación" }, { label: "Colonización" },
-    { label: "Fructificación" }, { label: "Cosecha 1" },
-    { label: "Cosecha 2" }, { label: "Finalización" }
+    { label: "Inoculación" },
+    { label: "Colonización" },
+    { label: "Fructificación" },
+    { label: "Cosecha 1" },
+    { label: "Cosecha 2" },
+    { label: "Finalización" },
   ];
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white">
+
+      {/* IZQUIERDA */}
       <div className="flex flex-col w-full md:w-1/2 h-full border-r-2 border-gray-200">
-        
-        {/*Título */}
+
+        {/* HEADER */}
         <div className="w-full bg-[#3b3fb6] p-6 shrink-0 shadow-md">
           <Titulo color="white">Prueba de componentes</Titulo>
         </div>
 
-        {/* Área movible */}
+        {/* SCROLL */}
         <div className="flex-1 overflow-y-auto scrollbar-thin px-6 py-4">
-          <Base margen_arriba="mt-24 md:mt-10">
+          <Base margen_arriba="mt-10">
             <div className="flex flex-col gap-6">
 
-              {/* Botones */}
+              {/* BOTONES */}
               <div className="flex flex-wrap gap-2">
                 <Button variant="entrar">Entrar</Button>
                 <Button variant="cancelar">Cancelar</Button>
@@ -52,98 +72,54 @@ function Pruebas() {
                 <Button variant="confirmar">Confirmar</Button>
               </div>
 
-              {/* Input texto*/}
-              <Input
-                variante="normal"
-                placeholder="Escribe tu entrada..."
-                value={val}
-                onChange={(e) => setVal(e.target.value)}
-              />
-
-              {/* Input texto largo*/}
-              <Input
-                variante="amplio"
-                placeholder="Escribe tu entrada larga..."
-                value={val2}
-                onChange={(e) => setVal2(e.target.value)}
-              />
-
-              {/* Input número*/}
-              <Input
-                variante="numero"
-                numeroTipo="entero"
-                placeholder="0"
-                value={val3}
-                onChange={(e) => setVal3(e.target.value)}
-              />
-
-              <Input
-                variante="numero"
-                numeroTipo="decimal"
-                placeholder="0.0"
-                value={val4}
-                onChange={(e) => setVal4(e.target.value)}
-              />
+              {/* INPUTS */}
+              <Input variante="normal" placeholder="Escribe..." value={val} onChange={(e) => setVal(e.target.value)} />
+              <Input variante="amplio" placeholder="Texto largo..." value={val2} onChange={(e) => setVal2(e.target.value)} />
+              <Input variante="numero" numeroTipo="entero" placeholder="0" value={val3} onChange={(e) => setVal3(e.target.value)} />
+              <Input variante="numero" numeroTipo="decimal" placeholder="0.0" value={val4} onChange={(e) => setVal4(e.target.value)} />
 
               <Text variante="label">
-                Valor 1: "{val}" Valor 2: "{val2}" Valor 3: "{val3}" Valor 4: "{val4}"
+                Valores: "{val}" "{val2}" "{val3}" "{val4}"
               </Text>
 
-              {/* Input fecha*/}
+              {/* FECHA */}
               <InputFecha value={fecha} onChange={setFecha} />
 
-              <Text variante="label">
-                Fecha: "{fecha.day}/{fecha.month}/{fecha.year}"
-              </Text>
+              {/* SLIDER */}
+              <Slider value={sliderVal} onChange={setSliderVal} />
+              <Text variante="label">Slider: {sliderVal}%</Text>
 
-              {/* Stepper verde */}
-              <Stepper 
-                steps={misPasos} 
-                currentStep={pasoActual} 
-                onStepChange={setPasoActual}
-                colorTheme="verde" 
+              {/* LISTA */}
+              <EntradaCantidadLista
+                items={[
+                  { nombre: "Agua", unidad: "ml", value: cantidades.agua, onChange: set("agua") },
+                  { nombre: "Miel", unidad: "g", value: cantidades.miel, onChange: set("miel") },
+                  { nombre: "Peptona", unidad: "ml", value: cantidades.peptona, onChange: set("peptona") },
+                ]}
               />
 
-              {/* Stepper azul */}
-              <Stepper 
-                steps={misPasos2} 
-                currentStep={pasoActual2} 
-                onStepChange={setPasoActual2}
-                colorTheme="azul" 
-              />
+              {/* SEARCH */}
+              <BarraBusqueda value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
+
+              {/* STEPPER */}
+              <Stepper steps={misPasos} currentStep={pasoActual} onStepChange={setPasoActual} colorTheme="verde" />
+              <Stepper steps={misPasos2} currentStep={pasoActual2} onStepChange={setPasoActual2} colorTheme="azul" />
+
               <div className="pb-20" />
             </div>
           </Base>
         </div>
       </div>
 
-      {/* Área fija */}
+      {/* DERECHA */}
       <div className="hidden md:flex md:w-1/2 h-full bg-white items-center justify-center p-10">
-      <div className="flex flex-col gap-6">
-        <Text variante="lmedium">Configuración Fija</Text>
-              <Input
-                variante="amplio"
-                placeholder="Escribe tu entrada larga..."
-                value={val6}
-                onChange={(e) => setVal6(e.target.value)}
-              />
+        <div className="flex flex-col gap-6">
+          <Text variante="lmedium">Configuración Fija</Text>
 
-              <Input
-                variante="numero"
-                numeroTipo="entero"
-                placeholder="0"
-                value={val7}
-                onChange={(e) => setVal7(e.target.value)}
-              />
-
-              <Input
-                variante="numero"
-                numeroTipo="decimal"
-                placeholder="0.0"
-                value={val8}
-                onChange={(e) => setVal8(e.target.value)}
-              />
-          </div>
+          <Input variante="amplio" value={val6} onChange={(e) => setVal6(e.target.value)} />
+          <Input variante="numero" numeroTipo="entero" value={val7} onChange={(e) => setVal7(e.target.value)} />
+          <Input variante="numero" numeroTipo="decimal" value={val8} onChange={(e) => setVal8(e.target.value)} />
+        </div>
       </div>
 
     </div>
