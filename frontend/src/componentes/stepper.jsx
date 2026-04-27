@@ -11,12 +11,14 @@ import Text from "./texto";
 * @param currentStep Indice del paso activo seleccionado
 * @param onStepChange Callback para cambio de estado
 * @param colorTheme "azul" | "verde", preestablecidos
+* @param readOnly Si es true, el usuario no puede hacer click para cambiar de paso
 */
 const Stepper = ({ 
     steps = [], 
     currentStep = 0, 
     onStepChange, 
-    colorTheme = "azul" 
+    colorTheme = "azul",
+    readOnly = false // Controla si lo puedes clickear o no
 }) => {
     const isVerde = colorTheme === "verde";
     const totalSteps = steps.length;
@@ -28,10 +30,13 @@ const Stepper = ({
     const textColor = colores.gris; 
 
     const handleStepClick = (index) => {
-        if (onStepChange) onStepChange(index);
+        if (!readOnly && onStepChange) {
+            onStepChange(index);
+        }
     };
 
     return (
+
         // Div para hacer un zig zag del texto por espacio reducido
         <div className={`w-full pt-12 ${shouldZigZag ? "pb-12 md:pb-4" : "pb-4"}`}>
             <div className="flex items-center justify-between w-full relative">
@@ -44,10 +49,12 @@ const Stepper = ({
                     const borderColor = isReached ? (isActive ? activeColor : mainColor) : inactiveColor;
                     const isEven = index % 2 === 0;
 
-                    // Si hay más de  4 pasos, los impares bajan en móvil. Si no, todos estan arriba.
+                    // Si hay más de 4 pasos, los impares bajan en móvil. Si no, todos estan arriba.
                     const labelPosition = (shouldZigZag && !isEven) 
                         ? "top-9 md:-top-9" 
                         : "-top-9";
+
+                    const CircleContainer = readOnly ? "div" : "button";
 
                     return (
                         <div key={index} className="flex flex-col items-center relative flex-1">
@@ -69,10 +76,14 @@ const Stepper = ({
                                 </Text>
                             </div>
 
-                            {/* Círculos */}
-                            <button
+                            {/* Círculos*/}
+                            <CircleContainer
                                 onClick={() => handleStepClick(index)}
-                                className="relative z-10 transition-transform hover:scale-110 active:scale-95 outline-none"
+                                className={`relative z-10 transition-all outline-none ${
+                                    readOnly 
+                                    ? "cursor-default" 
+                                    : "cursor-pointer hover:scale-110 active:scale-95"
+                                }`}
                             >
                                 <div 
                                     className="w-5 h-5 md:w-6 md:h-6 rounded-full border-2 transition-all duration-500 flex items-center justify-center"
@@ -81,7 +92,7 @@ const Stepper = ({
                                         borderColor: borderColor,
                                     }}
                                 />
-                            </button>
+                            </CircleContainer>
 
                             {/* Línea central */}
                             {index !== steps.length - 1 && (

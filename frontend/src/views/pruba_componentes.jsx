@@ -45,6 +45,15 @@ function Pruebas() {
     { label: "Finalización" },
   ];
 
+  // Función para avanzar el paso del stepper
+  const avanzarPasoReadOnly = () => {
+    if (pasoActual < misPasos.length - 1) {
+      setPasoActual(pasoActual + 1);
+    } else {
+      setPasoActual(0);
+    }
+  };
+
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white">
 
@@ -101,9 +110,26 @@ function Pruebas() {
               {/* SEARCH */}
               <BarraBusqueda value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
 
-              {/* STEPPER */}
-              <Stepper steps={misPasos} currentStep={pasoActual} onStepChange={setPasoActual} colorTheme="verde" />
-              <Stepper steps={misPasos2} currentStep={pasoActual2} onStepChange={setPasoActual2} colorTheme="azul" />
+              {/* STEPPER DE BOTON*/}
+              <Stepper 
+                  steps={misPasos} 
+                  currentStep={pasoActual} 
+                  colorTheme="verde" 
+                  readOnly={true}
+                />
+              
+              {/* STEPPER CLICKEABLE */}
+              <Stepper 
+                steps={misPasos2} 
+                currentStep={pasoActual2} 
+                onStepChange={setPasoActual2} 
+                colorTheme="azul" 
+              />
+
+                {/* Botón que controla el Steppe*/}
+                <Button variant="siguiente" onClick={avanzarPasoReadOnly}>
+                    Siguiente Paso
+                </Button>
 
               <div className="pb-20" />
             </div>
