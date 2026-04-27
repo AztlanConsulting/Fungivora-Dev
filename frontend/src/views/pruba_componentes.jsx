@@ -7,6 +7,7 @@ import Text from "../componentes/texto";
 import Slider from "../componentes/slider"
 import { EntradaCantidadLista } from "../componentes/entrada_cantidad";
 import BarraBusqueda from "../componentes/barra_busqueda";
+import InputImagen from "../componentes/input_imagen"
 
 function Pruebas() {
   const [val, setVal] = useState("");
@@ -15,6 +16,8 @@ function Pruebas() {
   const [val4, setVal4] = useState("");
   const [sliderVal, setSliderVal] = useState(0);
   const [busqueda, setBusqueda] = useState("");
+
+  const [imagen, setImagen] = useState(null);
 
   const [cantidades, setCantidades] = useState({
     agua: "",
@@ -79,23 +82,23 @@ function Pruebas() {
           </Text>
 
           {/** Slider*/}
-            <Text variante="label">Rango de selección (0 - 100)</Text>
-            <Slider 
-              value={sliderVal} 
-              onChange={(nuevoValor) => setSliderVal(nuevoValor)} 
-            />
-            {/** Valor guardado del slider */}
+          <Text variante="label">Rango de selección (0 - 100)</Text>
+          <Slider
+            value={sliderVal}
+            onChange={(nuevoValor) => setSliderVal(nuevoValor)}
+          />
+          {/** Valor guardado del slider */}
           <Text variante="label">
-              <b>Resultados:</b><br/>
-              Valor Slider: <span className="text-blue-600 font-bold">{sliderVal}%</span>
-            </Text>
+            <b>Resultados:</b><br />
+            Valor Slider: <span className="text-blue-600 font-bold">{sliderVal}%</span>
+          </Text>
 
           {/** Lista de ingredientes con sus cantidades y unidades */}
           <EntradaCantidadLista
             items={[
-              { nombre: "Agua destilada", unidad: "ml", value: cantidades.agua,    onChange: set("agua") },
-              { nombre: "Miel",           unidad: "g",  value: cantidades.miel,    onChange: set("miel") },
-              { nombre: "Peptona",        unidad: "ml", value: cantidades.peptona, onChange: set("peptona") },
+              { nombre: "Agua destilada", unidad: "ml", value: cantidades.agua, onChange: set("agua") },
+              { nombre: "Miel", unidad: "g", value: cantidades.miel, onChange: set("miel") },
+              { nombre: "Peptona", unidad: "ml", value: cantidades.peptona, onChange: set("peptona") },
             ]}
           />
 
@@ -116,6 +119,14 @@ function Pruebas() {
             Búsqueda: "{busqueda}"
           </Text>
 
+          <InputImagen
+            value={imagen}
+            onChange={setImagen}
+          />
+
+          <Text variante="label">
+            Imagen: "{imagen ? imagen.name : "ninguna"}"
+          </Text>
         </div>
       </Base>
     </>
