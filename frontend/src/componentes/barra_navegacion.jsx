@@ -8,11 +8,11 @@ import fungivora from "/icons/icon-splash-blue.png?url"
 
 const Contenedor_principal = `
     flex flex-row gap-2 p-2 justify-between items-center
-    bg-white text-center w-full h-[4.5]
+    bg-white text-center w-full h-[4.5rem]
     fixed bottom-0 left-0 z-50
 
-    md:flex md:flex-col md:w-[5rem] md:h-screen
-    md:text-left md:sticky md:top-0 md:left-0
+    md:flex-col md:w-[5rem] md:h-screen
+    md:text-left md:sticky md:top-0
 `
 
 const LogoDiv = `
