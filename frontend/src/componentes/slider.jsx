@@ -64,7 +64,7 @@ const Slider = ({ value, onChange }) => {
           max="100"
           value={val}
           onChange={handleChange}
-          className="absolute w-full h-2 opacity-0 cursor-pointer z-30"
+          className="absolute w-full h-6 opacity-0 cursor-pointer z-30"
         />
 
         {/* Círculo que se mueve*/}
