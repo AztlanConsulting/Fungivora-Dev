@@ -14,6 +14,7 @@ import Experimentos from "./views/ExperimentosView";
 import Recetario from "./views/RecetarioView"
 import Lotes from "./views/LotesView";
 import Pruebas from "./views/pruba_componentes";
+import Notas from "./componentes/template/notas";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
 
         <Route element={<MainLayout />}>
           <Route path="/" element={<Pruebas />} />
+          <Route path="/notas" element={<Notas />} />
         </Route>
         <Route path="*" element={<Navigate to="/" />} />
 
