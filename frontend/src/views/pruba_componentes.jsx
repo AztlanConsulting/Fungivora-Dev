@@ -78,6 +78,10 @@ function Pruebas() {
             ]}
             />
 
+            <Text variante="label">
+              Valor: "{seleccionado}"
+            </Text> 
+
         </div>
       </Base>
     </>
