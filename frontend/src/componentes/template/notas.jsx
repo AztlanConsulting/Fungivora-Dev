@@ -137,7 +137,7 @@ function Notas() {
           
          {/* Botón de agregar*/}
           <div className="flex-1" />
-          <div className="w-full flex justify-center pb-10 md:pb-6">
+          <div className="w-full flex justify-center pb-24 md:pb-12">
             <Button variant="agregar">
               Agregar
             </Button>
