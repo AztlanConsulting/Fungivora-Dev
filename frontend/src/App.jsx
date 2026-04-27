@@ -14,6 +14,7 @@ import Experimentos from "./views/ExperimentosView";
 import Recetario from "./views/RecetarioView"
 import Lotes from "./views/LotesView";
 import Pruebas from "./views/pruba_componentes";
+import Notas from "./componentes/template/notas";
 
 import VistaTablas from "./views/vista_tablas";
 
@@ -22,7 +23,11 @@ function App() {
  <BrowserRouter>
       <Routes>
         {/*<Route path="/" element={<LoginView />} />*/}
-        <Route path="/" element={<Pruebas />} />
+
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Pruebas />} />
+          <Route path="/notas" element={<Notas />} />
+        </Route>
         <Route path="*" element={<Navigate to="/" />} />
         <Route path="/tablas" element={<VistaTablas />} />
 

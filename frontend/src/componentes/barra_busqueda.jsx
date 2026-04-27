@@ -12,9 +12,9 @@ import { Search02Icon } from '@hugeicons/core-free-icons';
  *
  * Uso:
  * <BarraBusqueda
- *   value={busqueda}
- *   onChange={(e) => setBusqueda(e.target.value)}
- *   placeholder="Buscar producto..."
+ * value={busqueda}
+ * onChange={(e) => setBusqueda(e.target.value)}
+ * placeholder="Buscar producto..."
  * />
  */
 const BarraBusqueda = ({
@@ -29,10 +29,13 @@ const BarraBusqueda = ({
   const ringColor = isFocused ? colores.verde : colores.azul;
 
   return (
-    // w-80 md:w-96 coincide con el ancho del Input interno para que el icono
-    // quede posicionado correctamente sobre el borde derecho
+    /**
+     * Contenedor relativo: 
+     * Se usa 'w-fit' para que el contenedor mida exactamente lo mismo que el Input interno.
+     * Esto evita que el icono se desplace fuera de la caja si el contenedor padre es más ancho.
+     */
     <div
-      className={`relative w-80 md:w-96 ${className}`}
+      className={`relative w-fit max-w-full ${className}`}
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
     >
@@ -43,12 +46,17 @@ const BarraBusqueda = ({
         onChange={onChange}
       />
 
-      {/* Icono de búsqueda posicionado sobre el lado derecho del Input.
-          Cambia de color junto con el borde al enfocar.
+      {/* Icono de búsqueda posicionado al final de la caja.
+          Al estar dentro de un contenedor 'w-fit', el 'right-4' siempre será
+          respecto al final real del Input.
           pointer-events-none evita que intercepte clics del usuario */}
       <div
-        className="absolute right-3 inset-y-0 flex items-center pointer-events-none"
-        style={{ color: ringColor, transition: "color 0.2s" }}
+        className="absolute right-4 inset-y-0 flex items-center pointer-events-none"
+        style={{ 
+            color: ringColor, 
+            transition: "color 0.2s",
+            zIndex: 10
+        }}
       >
         <HugeiconsIcon icon={Search02Icon} size={20} />
       </div>
