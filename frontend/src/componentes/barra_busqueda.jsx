@@ -1,24 +1,26 @@
 import React, { useState } from "react";
 import { colores } from "./colores";
-import Text from "./texto";
+import Input from "./input_texto";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Search02Icon } from '@hugeicons/core-free-icons';
 
 /**
  * BarraBusqueda
- * Input de búsqueda con borde azul en reposo y verde al enfocar.
- * 
+ * Input de búsqueda que reutiliza el componente Input del sistema.
+ * El icono de búsqueda está incluido dentro del componente y cambia
+ * de color junto con el borde al enfocar.
+ *
  * Uso:
  * <BarraBusqueda
  *   value={busqueda}
  *   onChange={(e) => setBusqueda(e.target.value)}
  *   placeholder="Buscar producto..."
- *   icon={<HugeiconsIcon icon={Search02Icon} size={20} />}
  * />
  */
 const BarraBusqueda = ({
   value,
   onChange,
   placeholder = "Buscar...",
-  icon,
   className = "",
 }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -27,46 +29,28 @@ const BarraBusqueda = ({
   const ringColor = isFocused ? colores.verde : colores.azul;
 
   return (
-    // El boxShadow simula el ring de foco para poder cambiar su color dinámicamente
+    // Contenedor relativo para posicionar el icono sobre el Input
     <div
-      className={`relative flex items-center w-80 md:w-96 h-7 md:h-10 rounded-md overflow-hidden transition-all bg-[#F9FDFF] ${className}`}
-      style={{ boxShadow: `0 0 0 ${isFocused ? "4px" : "2px"} ${ringColor}` }}
+      className={`relative ${className}`}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
     >
-      {/* Placeholder visible solo cuando el input está vacío.
-          pointer-events-none evita que bloquee los clics hacia el input real */}
-      {!value && (
-        <div className="absolute inset-0 flex items-center px-5 pointer-events-none">
-          <Text variante="input">{placeholder}</Text>
-        </div>
-      )}
-
-      {/* Input real — outline-none quita el foco nativo del navegador
-          ya que el foco visual lo maneja el contenedor padre con boxShadow
-          pr-10 reserva espacio a la derecha para que el texto no quede debajo del icono */}
-      <input
-        type="text"
+      <Input
+        variante="normal"
+        placeholder={placeholder}
         value={value}
         onChange={onChange}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        className="w-full h-full px-5 bg-transparent outline-none pr-10"
-        style={{
-          fontFamily: "Montserrat, sans-serif",
-          fontSize: "clamp(16px, 1.5vw, 20px)",
-          color: "#000",
-        }}
       />
 
-      {/* Icono decorativo — cambia de color junto con el borde al enfocar
+      {/* Icono de búsqueda posicionado sobre el lado derecho del Input.
+          Cambia de color junto con el borde al enfocar.
           pointer-events-none evita que intercepte clics del usuario */}
-      {icon && (
-        <div
-          className="absolute right-4 flex items-center pointer-events-none"
-          style={{ color: ringColor, transition: "color 0.2s" }}
-        >
-          {icon}
-        </div>
-      )}
+      <div
+        className="absolute right-4 inset-y-0 flex items-center pointer-events-none"
+        style={{ color: ringColor, transition: "color 0.2s" }}
+      >
+        <HugeiconsIcon icon={Search02Icon} size={20} />
+      </div>
     </div>
   );
 };
