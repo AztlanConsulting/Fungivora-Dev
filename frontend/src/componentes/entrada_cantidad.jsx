@@ -50,7 +50,7 @@ const EntradaCantidad = ({
         </p>
       </div>
 
-      {/* Divisor vertical: hereda la altura del contenedor y cambia de color con el foco */}
+      {/* Primer divisor vertical: separa el label del número */}
       <div style={{ width: "3px", backgroundColor: ringColor }} />
 
       {/* Sección central: input numérico con ancho fijo para que el divisor
@@ -88,11 +88,13 @@ const EntradaCantidad = ({
           style={{ ...textoStyle, color: "#868889" }}
         />
       </div>
+      
+      <div style={{ width: "3px", backgroundColor: ringColor }} />
 
       {/* Sección derecha: pastilla con la unidad de medida.
           rounded-r-full redondea solo la esquina derecha */}
       <div
-        className="flex items-center justify-center rounded-r-full"
+        className="flex items-center justify-center"
         style={{ backgroundColor: "#C5C7F0", width: "56px" }}
       >
         <p style={{ ...textoStyle, fontWeight: 700, color: colores.azul, margin: 0 }}>
@@ -108,15 +110,7 @@ const EntradaCantidad = ({
  * El gap entre filas deja ver el fondo del contenedor como separador visual.
  *
  * @param {Array} items - Lista de objetos con las props de cada EntradaCantidad:
- *                        { nombre, unidad, value, onChange, placeholder?, numeroTipo? }
- *
- * Uso:
- * <EntradaCantidadLista
- *   items={[
- *     { nombre: "Agua destilada", unidad: "ml", value: cantidades.agua, onChange: set("agua") },
- *     { nombre: "Miel",           unidad: "g",  value: cantidades.miel, onChange: set("miel") },
- *   ]}
- * />
+ * { nombre, unidad, value, onChange, placeholder?, numeroTipo? }
  */
 export const EntradaCantidadLista = ({ items = [] }) => {
   return (
