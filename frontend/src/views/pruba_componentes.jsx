@@ -74,10 +74,10 @@ function Pruebas() {
               <div className="flex flex-wrap gap-2">
                 <Button variant="entrar">Entrar</Button>
                 <Button variant="cancelar">Cancelar</Button>
-                <Button variant="eliminar">Eliminar</Button>
-                <Button variant="registrar">Registrar</Button>
+                <Button variant="eliminar" isOutline={true}>Eliminar</Button>
+                <Button variant="registrar" isOutline={true}>Registrar</Button>
                 <Button variant="siguiente">Siguiente</Button>
-                <Button variant="agregar">Agregar</Button>
+                <Button variant="agregar" isOutline={true}>Agregar</Button>
                 <Button variant="confirmar">Confirmar</Button>
               </div>
 

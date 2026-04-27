@@ -16,7 +16,7 @@ import Lotes from "./views/LotesView";
 import Pruebas from "./views/pruba_componentes";
 import Notas from "./componentes/template/notas";
 
-import VistaTablas from "./views/vista_tablas";
+import VistaTablas from "./componentes/template/vista_tablas";
 
 function App() {
   return (

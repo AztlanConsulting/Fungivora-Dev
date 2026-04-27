@@ -5,17 +5,17 @@ import Text from "./texto";
 // Colores relacionados al tipo de boton
 const variants = {
   entrar: "azulClaro",
-  cancelar: "azulMedio",
+  cancelar: "azulOscuro",
   eliminar: "azulOscuro",
-  registrar: "verdeOscuro",
-  siguiente: "verdeClaro",
+  registrar: "verdeAccent",
+  siguiente: "verdeAccent",
   agregar: "verdeAccent",
-  confirmar: "verdeSoft",
+  confirmar: "verdeAccent",
 };
 
 // Tamaño cambiante por el tamaño de pantalla
 const sizes = {
-  lg: "w-40 h-9 md:w-60 md:h-14 text-base md:text-lg",
+  lg: "w-40 h-8 md:w-52 md:h-10 text-base md:text-lg",
 };
 
 // Redondeo de las esquinas
@@ -38,34 +38,56 @@ Permite asignar colores  y tipografía uniforme.
 */
 const Button = ({
   children,
-  variant = "editar",
+  variant = "entrar",
   size = "lg", 
   rounded = "full", 
   onClick,
   type = "button",
+  isOutline = false,
+  icon: Icon,
 }) => {
   const colorKey = variants[variant] || "azul";
-  const bgColor = colores[colorKey] || colores.azul;
+  const mainColor = colores[colorKey] || colores.azul;
+  const textColor = isOutline ? mainColor : "#FFFFFF";
+  const buttonStyle = isOutline 
+    ? {
+        backgroundColor: "#FFFFFF",
+        border: `2px solid ${mainColor}`,
+      }
+    : {
+        backgroundColor: mainColor,
+        border: `2px solid transparent`,
+      };
 
   return (
     <button
       type={type}
       onClick={onClick}
       className={`
-        flex items-center justify-center 
+        flex items-center justify-center gap-2
         transition-all hover:opacity-90 active:scale-95
         flex-shrink-0 
         ${sizes[size]}
         ${roundings[rounded]}
       `}
-      style={{
-        backgroundColor: bgColor,
-      }}
+      style={buttonStyle}
     >
-      <div className="truncate px-1">
-        <Text variante="button">
+      <div className="flex items-center justify-center gap-2 truncate px-1">
+        <Text 
+          variante="button" 
+          style={{ color: textColor }}
+        >
           {children}
         </Text>
+        
+        {/** Renderizado condicional del icono con el mismo color del texto */}
+        {Icon && (
+          <Icon 
+            size={20} 
+            color={textColor} 
+            variant="outline" // Ajusta según la versión de Huge Icons que uses
+          />
+        )}
       </div>
     </button>
   );

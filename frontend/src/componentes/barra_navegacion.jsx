@@ -61,7 +61,7 @@ const Barra_navegacion = () => {
                     className={({ isActive }) => 
                         `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
                     }>
-                    <HugeiconsIcon icon={Home07FreeIcons} size={40} color={colores.azul} strokeWidth={1.5} />
+                    <HugeiconsIcon icon={Home07FreeIcons} size={33} color={colores.azul} strokeWidth={1.5} />
                     <span className={Tooltip}
                     style={{ backgroundColor: colores.azul, color: colores.blanco }}>
                         Inicio
@@ -74,7 +74,7 @@ const Barra_navegacion = () => {
                     className={({ isActive }) => 
                         `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
                     }> 
-                    <HugeiconsIcon icon={BookOpenTextFreeIcons} size={40} color={colores.azul} strokeWidth={1.5} />
+                    <HugeiconsIcon icon={BookOpenTextFreeIcons} size={33} color={colores.azul} strokeWidth={1.5} />
                     <span className={Tooltip}
                     style={{ backgroundColor: colores.azul, color: colores.blanco }}>
                         Lotes
@@ -87,7 +87,7 @@ const Barra_navegacion = () => {
                     className={({ isActive }) => 
                         `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
                     }> 
-                    <HugeiconsIcon icon={PackageIcon} size={40} color={colores.azul} strokeWidth={1.5} />
+                    <HugeiconsIcon icon={PackageIcon} size={33} color={colores.azul} strokeWidth={1.5} />
                     <span className={Tooltip}
                     style={{ backgroundColor: colores.azul, color: colores.blanco }}>
                         Inventario
@@ -100,7 +100,7 @@ const Barra_navegacion = () => {
                     className={({ isActive }) => 
                         `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
                     }> 
-                    <HugeiconsIcon icon={MushroomIcon} size={40} color={colores.azul} strokeWidth={1.5} />
+                    <HugeiconsIcon icon={MushroomIcon} size={33} color={colores.azul} strokeWidth={1.5} />
                     <span className={Tooltip}
                     style={{ backgroundColor: colores.azul, color: colores.blanco }}>
                         Biblioteca genética
@@ -110,7 +110,7 @@ const Barra_navegacion = () => {
                 {/* Log Out*/}
                 <button 
                     className={`${Botones} hover:bg-gray-100`}>
-                    <HugeiconsIcon icon={Logout02Icon} size={40} color={colores.azul} strokeWidth={1.5} />
+                    <HugeiconsIcon icon={Logout02Icon} size={33} color={colores.azul} strokeWidth={1.5} />
                     <span className={Tooltip}
                     style={{ backgroundColor: colores.azul, color: colores.blanco }}>
                         Cerrar sesión
