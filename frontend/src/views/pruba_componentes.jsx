@@ -4,6 +4,7 @@ import Titulo from "../componentes/titulo";
 import Button from "../componentes/botones";
 import Input from "../componentes/input_texto";
 import Text from "../componentes/texto";
+import Slider from "../componentes/slider"
 import { EntradaCantidadLista } from "../componentes/entrada_cantidad";
 import BarraBusqueda from "../componentes/barra_busqueda";
 
@@ -12,6 +13,7 @@ function Pruebas() {
   const [val2, setVal2] = useState("");
   const [val3, setVal3] = useState("");
   const [val4, setVal4] = useState("");
+  const [sliderVal, setSliderVal] = useState(0);
   const [busqueda, setBusqueda] = useState("");
 
   const [cantidades, setCantidades] = useState({
@@ -75,6 +77,18 @@ function Pruebas() {
           <Text variante="label">
             Valor 1: "{val}" Valor 2: "{val2}" Valor 3: "{val3}" Valor 4: "{val4}"
           </Text>
+
+          {/** Slider*/}
+            <Text variante="label">Rango de selección (0 - 100)</Text>
+            <Slider 
+              value={sliderVal} 
+              onChange={(nuevoValor) => setSliderVal(nuevoValor)} 
+            />
+            {/** Valor guardado del slider */}
+          <Text variante="label">
+              <b>Resultados:</b><br/>
+              Valor Slider: <span className="text-blue-600 font-bold">{sliderVal}%</span>
+            </Text>
 
           {/** Lista de ingredientes con sus cantidades y unidades */}
           <EntradaCantidadLista
