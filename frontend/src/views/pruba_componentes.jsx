@@ -15,9 +15,9 @@ function Pruebas() {
   const [busqueda, setBusqueda] = useState("");
 
   const [cantidades, setCantidades] = useState({
-    agua: "0",
-    miel: "0",
-    peptona: "0",
+    agua: "",
+    miel: "",
+    peptona: "",
   });
   const set = (key) => (e) =>
     setCantidades((prev) => ({ ...prev, [key]: e.target.value }));
