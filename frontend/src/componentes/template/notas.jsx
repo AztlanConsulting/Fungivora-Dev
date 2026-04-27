@@ -83,42 +83,34 @@ function Notas() {
 
       {/* Área para poder introducir texto */}
       <div
-        className={`flex-col w-full md:w-1/2 h-full bg-white relative
-        ${verHistorial ? "hidden" : "flex"} md:flex`}
+        className={`w-full md:w-1/2 h-full bg-white relative
+        ${verHistorial ? "hidden" : "flex"} md:flex flex-col`}
       >
-
-        {/* Título general para desktop, y movil en área de insterts */}
-        <div className="absolute top-0 left-0 w-full z-10">
+        {/* Título fijo en la parte superior */}
+        <div className="sticky top-0 left-0 w-full z-10 shrink-0">
           <Titulo color="white">Notas...</Titulo>
         </div>
 
-        <div className="flex-1 flex flex-col justify-start pt-20 md:pt-16 px-6 md:px-12">
-          <div className="w-full max-w-sm mx-auto flex flex-col gap-6 px-4 md:px-0 mt-4 md:mt-24">
-
-            {/* Área de inserts con el botón para ir para las notas */}
+        <div className="flex-1 overflow-y-auto scrollbar-thin px-6 md:px-12 flex flex-col">
+          
+          <div className="w-full max-w-sm mx-auto flex flex-col gap-6 px-4 md:px-0 mt-24 md:mt-40">
+            
+            {/* Switch para móvil */}
             <div className="md:hidden w-full mt-8">
-            <div className="flex items-start">
-                <div
-                onClick={() => setVerHistorial(!verHistorial)}
-                className={`
-                    px-4 h-8 rounded-md transition-all cursor-pointer
-                    flex items-center justify-center
-                    ${verHistorial ? "ring-4" : "ring-2"}
-                    ring-[var(--input-ring)]
-                `}
-                style={{
-                    "--input-ring": verHistorial ? colores.verde : colores.azul,
-                    backgroundColor: "#F9FDFF"
-                }}
-                >
-                <Text variante="label">
-                    Notas
-                 </Text>
-                </div>
-            </div>
+              <div className="flex items-start">
+                  <div
+                  onClick={() => setVerHistorial(!verHistorial)}
+                  className={`px-4 h-8 rounded-md transition-all cursor-pointer flex items-center justify-center ${verHistorial ? "ring-4" : "ring-2"} ring-[var(--input-ring)]`}
+                  style={{
+                      "--input-ring": verHistorial ? colores.verde : colores.azul,
+                      backgroundColor: "#F9FDFF"
+                  }}
+                  >
+                  <Text variante="label">Notas</Text>
+                  </div>
+              </div>
             </div>
 
-            {/* Texto e inputs*/}
             <Text variante="medium" className="text-2xl font-bold text-gray-800">
               Nueva entrada
             </Text>
@@ -132,19 +124,19 @@ function Notas() {
                 onChange={(e) => setVal6(e.target.value)}
               />
             </div>
-
           </div>
-          
-         {/* Botón de agregar*/}
-          <div className="flex-1" />
-          <div className="w-full flex justify-center pb-24 md:pb-12">
+
+          <div className="flex-1 min-h-[10px]" />
+
+          <div className="mt-auto w-full flex justify-center pt-10 pb-24 md:pb-12 shrink-0">
             <Button variant="agregar">
               Agregar
             </Button>
+            </div>
+          
           </div>
-
-        </div>
-      </div>
+          
+          </div>
 
     </div>
   );
