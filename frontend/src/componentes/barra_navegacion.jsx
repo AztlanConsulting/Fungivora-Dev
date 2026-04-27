@@ -77,7 +77,7 @@ const Barra_navegacion = () => {
                     <HugeiconsIcon icon={BookOpenTextFreeIcons} size={40} color={colores.azul} strokeWidth={1.5} />
                     <span className={Tooltip}
                     style={{ backgroundColor: colores.azul, color: colores.blanco }}>
-                        Experimentos
+                        Lotes
                     </span>
                 </NavLink>
 
@@ -103,7 +103,7 @@ const Barra_navegacion = () => {
                     <HugeiconsIcon icon={MushroomIcon} size={40} color={colores.azul} strokeWidth={1.5} />
                     <span className={Tooltip}
                     style={{ backgroundColor: colores.azul, color: colores.blanco }}>
-                        Recetario
+                        Biblioteca genética
                     </span>
                 </NavLink>
 
@@ -113,7 +113,7 @@ const Barra_navegacion = () => {
                     <HugeiconsIcon icon={Logout02Icon} size={40} color={colores.azul} strokeWidth={1.5} />
                     <span className={Tooltip}
                     style={{ backgroundColor: colores.azul, color: colores.blanco }}>
-                        Log Out
+                        Cerrar sesión
                     </span>
                 </button>
             </div>
