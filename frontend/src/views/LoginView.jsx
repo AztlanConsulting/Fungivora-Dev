@@ -5,7 +5,6 @@ import "../styles/Login.css";
 import figuraRoja from "../assets/mariarosaoutline.png";
 import figuraVerde from "../assets/melenascontorno.png";
 
-import InputField from "../componentes/entrada_texto_inicio";
 import Button from "../componentes/botones";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Key01Icon, User03Icon } from '@hugeicons/core-free-icons';
@@ -86,6 +85,8 @@ const LoginView = () => {
             handleLogin();
           }}
         >
+{/**
+ * 
 
           <InputField
             label="Usuario"
@@ -103,7 +104,7 @@ const LoginView = () => {
             placeholder="Escribe tu contraseña..."
             icon={<HugeiconsIcon icon={Key01Icon} size={28} className="text-white" />}
           />
-
+ */}
           {errorMsg && (
             <div className="bg-red-50 border border-red-200 text-red-500 px-4 py-2 rounded-xl mt-3 text-center text-[clamp(0.7rem,1.6vw,0.9rem)]">
               {errorMsg}

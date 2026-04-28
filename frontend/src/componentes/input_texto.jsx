@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react"; 
 import { colores } from "./colores";
 import Text from "./texto";
 
@@ -6,7 +6,6 @@ import Text from "./texto";
 
 /** Tipografía compartida para el texto escrito dentro del input */
 const inputTextStyle = {
-    fontFamily: "Montserrat, sans-serif",
     fontSize: "clamp(16px, 1.5vw, 20px)",
     color: "#000"
 };
@@ -14,7 +13,8 @@ const inputTextStyle = {
 /** Clases de tamaño según variante */
 const sizes = {
     normal: "w-80 h-7 md:w-96 md:h-10",
-    amplio: "w-80 h-16 md:w-96 md:h-24",
+    /** Se cambia altura fija por min-h para que pueda crecer */
+    amplio: "w-80 h-auto min-h-[4rem] md:w-96 md:min-h-[6rem]",
     numero: "w-24 h-7 md:w-32 md:h-10",
 }
 
@@ -47,10 +47,10 @@ const caracteresBase = ["<", ">", "{", "}", "[", "]", "\\", "`", "^", "~"];
 
 /**
  * Input — campo de texto reutilizable con soporte para:
- *  - Texto de una línea            (variante "normal")
- *  - Textarea multilínea           (variante "amplio")
- *  - Número entero sin negativo    (variante "numero", numeroTipo "entero")
- *  - Número decimal sin negativo   (variante "numero", numeroTipo "decimal")
+ * - Texto de una línea            (variante "normal")
+ * - Textarea multilínea           (variante "amplio")
+ * - Número entero sin negativo    (variante "numero", numeroTipo "entero")
+ * - Número decimal sin negativo   (variante "numero", numeroTipo "decimal")
  *
  * El ring de foco cambia de azul → verde para retroalimentación visual.
  * El placeholder usa el componente <Text> para mantener consistencia tipográfica.
@@ -68,12 +68,23 @@ const Input = ({
     placeholder = "",
     value,
     onChange,
+    className = "",
 }) => {
     const [isFocused, setIsFocused] = useState(false);
+    /** Referencia al elemento del DOM para calcular altura */
+    const textAreaRef = useRef(null);
 
     // Clases de tamaño y alineación según variante
     const sizeClass = sizes[variante] || sizes.normal;
     const alignmentClass = alignments[variante] || alignments.normal;
+
+    /** Ajusta la altura del textarea dinámicamente según el contenido */
+    useEffect(() => {
+        if (variante === "amplio" && textAreaRef.current) {
+            textAreaRef.current.style.height = "auto";
+            textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+        }
+    }, [value, variante]);
 
     // Handlers y validación
 
@@ -104,11 +115,14 @@ const Input = ({
         onFocus: () => setIsFocused(true),
         onBlur: () => setIsFocused(false),
         // Elimina el spinner nativo de inputs numéricos en Chrome/Safari y da el estilo inicial
+        // Se agrega overflow-hidden para la variante amplia para evitar scrollbars feos mientras crece
         className: `
-            w-full h-full px-3 py-2 bg-[#F9FDFF] outline-none resize-none
+            w-full h-full px-3 py-2 bg-[#FFFFFF] outline-none resize-none
             [appearance:textfield]
             [&::-webkit-outer-spin-button]:appearance-none
             [&::-webkit-inner-spin-button]:appearance-none
+            ${variante === "amplio" ? "overflow-hidden" : ""}
+            ${className} 
         `,
         style: inputTextStyle,
     };
@@ -125,15 +139,16 @@ const Input = ({
     return (
         <div
             className={`
+                tu-clase-base ${className}
                 ${sizeClass} rounded-md overflow-hidden transition-all relative
                 ${isFocused ? "ring-4" : "ring-2"} ring-[var(--input-ring)]
             `}
-            style={{ "--input-ring": isFocused ? colores.verde : colores.azul }}
+            style={{ "--input-ring": isFocused ? colores.azul : colores.grisClaro }}
         >
             {/** Placeholder visual que usa Text para coincidir con el diseño*/}
             {!value && (
                 <div className={`
-                    absolute inset-0 px-3 pointer-events-none ${alignmentClass}
+                    absolute inset-0 px-3 pointer-events-none z-0 ${alignmentClass} ${className}
                 `}>
                     <Text variante="input">{placeholder}</Text>
                 </div>
@@ -141,7 +156,12 @@ const Input = ({
 
             {/** Renderiza un <textarea> para la variante "amplio" y un <input> para las demás */}
             {variante === "amplio" ? (
-                <textarea {...sharedProps} />
+                <textarea 
+                    ref={textAreaRef} 
+                    rows={1}  
+                    {...sharedProps} 
+                    
+                />
             ) : (
                 <input {...sharedProps} {...numProps} />
             )}
