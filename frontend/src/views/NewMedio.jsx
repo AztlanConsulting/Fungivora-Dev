@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import CampoTexto from "../componentes/camp_txt"; 
 import Button from "../componentes/botones";
 import { useNavigate } from "react-router-dom";
 
@@ -94,18 +93,7 @@ const RegistrarMedioLiquido = () => {
                 <h2 className="text-[#3b3fb6] font-bold italic text-sm md:text-base mb-2">
                   Composición del medio (Ingredientes)
                 </h2>
-                <CampoTexto 
-                  label="Agua destilada (ml)" 
-                  value={form.agua} 
-                  onChange={handleInputChange("agua")} 
-                  placeholder="Ej: 500"
-                />
-                <CampoTexto 
-                  label="Miel / Peptona (g)" 
-                  value={form.miel} 
-                  onChange={handleInputChange("miel")} 
-                  placeholder="Ej: 20"
-                />
+
             </div>
 
             {/* Apartado de Fotos (Sin recuadros blancos extra) */}
@@ -147,20 +135,7 @@ const RegistrarMedioLiquido = () => {
 
           {/* COLUMNA DERECHA: Datos finales y notas */}
           <div className="flex flex-col gap-6">
-            <CampoTexto 
-              label="Cantidad producida (ml)" 
-              value={form.cantidadFinal} 
-              onChange={handleInputChange("cantidadFinal")} 
-              placeholder="Volumen total final..."
-            />
-            
-            <CampoTexto 
-              label="Notas adicionales" 
-              value={form.notas} 
-              onChange={handleInputChange("notas")} 
-              multiline={true} 
-              placeholder="Detalles sobre la esterilización o lote..."
-            />
+
           </div>
 
         </div>
