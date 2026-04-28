@@ -38,26 +38,29 @@ const InputFecha = ({ value = {}, onChange }) => {
     const inputStyle = `
         w-full h-full bg-transparent 
         text-center outline-none 
-        text-[#3b3fb6] font-semibold text-lg
-        placeholder:text-gray-400
+        text-[#555555] font-semibold text-lg
+        placeholder:#BFC1C7
         [appearance:textfield]
         [&::-webkit-outer-spin-button]:appearance-none
         [&::-webkit-inner-spin-button]:appearance-none
     `;
 
+    const ringColor = isFocused ? colores.azul : colores.grisMedio;
+
     return (
         <div 
             className={`
                 w-80 h-10 md:w-96 md:h-12
-                bg-[#F9FDFF] rounded-md overflow-hidden transition-all flex items-stretch
+                bg-[#FFFFFF] rounded-md overflow-hidden transition-all flex items-stretch
                 ${isFocused ? "ring-4" : "ring-2"} ring-[var(--input-ring)]
             `}
-            style={{ "--input-ring": isFocused ? colores.verde : colores.azul }}
+            style={{ "--input-ring": isFocused ? colores.azul : colores.grisClaro }}
         >
+            
             {/* Icono lateral con borde divisorio */}
             <div 
                 className="flex items-center justify-center px-3 border-r-2" 
-                style={{ borderColor: colores.azul, color: colores.azul }}
+                style={{ borderColor: colores.grisClaro, color: ringColor }}
             >
                 <HugeiconsIcon icon={Calendar03Icon} size={26} />
             </div>
@@ -79,7 +82,7 @@ const InputFecha = ({ value = {}, onChange }) => {
                 </div>
 
                 {/* Divisor Visual */}
-                <div className="w-[2px] h-full" style={{ backgroundColor: colores.azul }} />
+                <div className="w-[2px] h-full" style={{ backgroundColor: colores.grisClaro }} />
 
                 {/* Campo Mes */}
                 <div className="flex-1 h-full">
@@ -95,7 +98,7 @@ const InputFecha = ({ value = {}, onChange }) => {
                 </div>
 
                 {/* Divisor Visual */}
-                <div className="w-[2px] h-full" style={{ backgroundColor: colores.azul }} />
+                <div className="w-[2px] h-full" style={{ backgroundColor: colores.grisClaro}} />
 
                 {/* Campo Año */}
                 <div className="flex-[1.5] h-full">

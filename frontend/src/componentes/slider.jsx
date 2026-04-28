@@ -27,7 +27,7 @@ const Slider = ({ value, onChange }) => {
         {/* Línea Base*/}
         <div 
           className="absolute w-full h-[3px] rounded-full"
-          style={{ backgroundColor: colores.gris }}
+          style={{ backgroundColor: colores.grisMedio }}
         />
 
         {/* Línea de Progreso*/}
@@ -48,7 +48,7 @@ const Slider = ({ value, onChange }) => {
                 <div 
                   className="w-[2px] h-4 mb-1"
                   style={{ 
-                    backgroundColor: isReached ? colores.azul : colores.gris,
+                    backgroundColor: isReached ? colores.azul : colores.grisMedio,
                     transition: "background-color 0.3s"
                   }}
                 />
@@ -64,7 +64,7 @@ const Slider = ({ value, onChange }) => {
           max="100"
           value={val}
           onChange={handleChange}
-          className="absolute w-full h-6 opacity-0 cursor-pointer z-30"
+          className="absolute w-full h-8 opacity-0 cursor-pointer z-30"
         />
 
         {/* Círculo que se mueve*/}
@@ -77,7 +77,7 @@ const Slider = ({ value, onChange }) => {
           <div 
             className="w-6 h-6 rounded-full border-2 shadow-sm"
             style={{ 
-              backgroundColor: colores.azulOscuro,
+              backgroundColor: colores.azul,
               borderColor: colores.azul
             }}
           />

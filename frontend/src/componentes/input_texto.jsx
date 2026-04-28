@@ -6,7 +6,6 @@ import Text from "./texto";
 
 /** Tipografía compartida para el texto escrito dentro del input */
 const inputTextStyle = {
-    fontFamily: "Montserrat, sans-serif",
     fontSize: "clamp(16px, 1.5vw, 20px)",
     color: "#000"
 };

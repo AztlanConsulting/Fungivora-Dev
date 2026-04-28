@@ -26,7 +26,7 @@ const Stepper = ({
     
     const mainColor = isVerde ? colores.verde : colores.azul; // Colores de pasos que ya pasaron
     const activeColor = isVerde ? colores.verdeOscuro : colores.azulOscuro; // Colores del paso seleccionado
-    const inactiveColor = colores.gris; // Color para circulo incativo
+    const inactiveColor = colores.grisMedio; // Color para circulo incativo
     const textColor = colores.gris; 
 
     const handleStepClick = (index) => {
