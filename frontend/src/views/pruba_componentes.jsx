@@ -118,7 +118,7 @@ function Pruebas() {
 
               <BarraBusqueda value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />              
 
-              {/* Selecionar y su logica basica */}
+              {/* Selecionar */}
           <Text variante="label" as="label">Selecciona</Text>
           <Select
             value={seleccionado}
@@ -188,22 +188,6 @@ function Pruebas() {
         textoConfirmar="Confirmar"
         textoCancelar="Cancelar"
       />
-
-        {/* Selecionar y su logica basica */}
-          <Text variante="label" as="label">Selecciona</Text>
-          <Select
-            value={seleccionado}
-            onChange={(e) => setSeleccionado(e.target.value)}
-            placeholder="Selecciona una opcion.."
-            options={[
-              {value: "1", label: "Opcion 1"},
-              {value: "2", label: "Opcion 2"}   
-            ]}
-            />
-
-            <Text variante="label">
-              Valor: "{seleccionado}"
-            </Text> 
 
 
     </div>
