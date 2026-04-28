@@ -40,6 +40,13 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-    allowedHosts: ['localhost']
+    allowedHosts: ['localhost'],
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
   }
 })
