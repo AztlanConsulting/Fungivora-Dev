@@ -39,7 +39,7 @@ const Login = () => {
         localStorage.setItem("token", data.token); 
         window.location.href = "/first"; 
       } else {
-        setError(data.msg || "Error al iniciar sesión");
+        setError("Usuario y/o contraseña incorrectos");
       }
     } catch (err) {
       console.error("Error de red:", err);
@@ -118,8 +118,17 @@ const Login = () => {
               </div>
             </div>
 
+            {/* Mensaje de error*/}
+            {error && (
+              <div className="mt-6 w-full text-center animate-fade-in">
+                <Text variante="label" style={{ color: "#E53E3E", fontWeight: "600" }}>
+                  {error}
+                </Text>
+              </div>
+            )}
+
             {/* Botón de entrar */}
-            <div className="mt-14 w-full flex justify-center">
+            <div className={`w-full flex justify-center ${error ? 'mt-8' : 'mt-14'}`}>
               <Button variant="entrar" type="submit">Entrar</Button>
             </div>
             
