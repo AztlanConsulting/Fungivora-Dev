@@ -22,13 +22,15 @@ function App() {
   return (
  <BrowserRouter>
       <Routes>
-        {/*<Route path="/" element={<LoginView />} />*/}
-
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Pruebas />} />
+        
+        {/** 
+         * <Route path="/" element={<Pruebas />} />
           <Route path="/notas" element={<Notas />} />
           <Route path="/tablas" element={<VistaTablas />} />
-        </Route>
+        */}
+        <Route path="/" element={<LoginView />} />
+        <Route element={<MainLayout />}>
+        
         <Route path="*" element={<Navigate to="/" />} />
        
 
@@ -66,6 +68,7 @@ function App() {
        
           
            <Route path="*" element={<Navigate to="/first" />} />
+        </Route>
         </Route>
       </Routes>
     </BrowserRouter>
