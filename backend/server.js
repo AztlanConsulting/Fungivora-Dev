@@ -12,7 +12,7 @@ const { register } = require('./config/metrics');
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/status', (req, res) => {
+app.get('/api', (req, res) => {
     res.json({ mensaje: "Backend operativo y conectado a Nginx" });
 });
 
@@ -22,7 +22,7 @@ app.get('/metrics', async (req, res) => {
     res.end(await register.metrics());
 });
 
-app.use('/', generalRoutes);
+app.use('/api', generalRoutes);
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
