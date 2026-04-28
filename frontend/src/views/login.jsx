@@ -10,11 +10,38 @@ import fondoMovil from "../assets/fondo_fungivora_plano.png";
 const Login = () => {
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(""); 
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Login...");
-  };
+    setError(""); 
+
+    try {
+      const response = await fetch("http://localhost:5000/login", { 
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nombre_usuario: usuario,
+          contrasena: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Login exitoso");
+        localStorage.setItem("token", data.token); 
+        window.location.href = "/first"; 
+      } else {
+        setError(data.msg || "Error al iniciar sesión");
+      }
+    } catch (err) {
+      console.error("Error de red:", err);
+      setError("No se pudo conectar con el servidor");
+    }
+    };
 
   return (
     <div className="relative h-screen w-full overflow-hidden flex items-center">
@@ -33,9 +60,8 @@ const Login = () => {
 
       {/* Contenido del formulario*/}
       <div className="relative z-10 w-full md:w-1/2 flex justify-center items-center p-6">
-        <div className="w-full max-w-lg rounded-[3rem] bg-white p-16 shadow-2xl">
-           <form onSubmit={handleLogin} className="flex flex-col items-start w-full">
-            
+        <div className="w-full max-w-lg rounded-[2.5rem] sm:rounded-[3rem] bg-white p-8 sm:p-12 lg:p-16 shadow-2xl overflow-y-auto max-h-[90vh] ">
+         <form onSubmit={handleLogin} className="flex flex-col items-start w-full">
             {/* Titulos del formulario */}
             <div className="w-full text-center mb-10"> 
               <Text variante="title" style={{ color: colores.azul }}>Devora</Text>
