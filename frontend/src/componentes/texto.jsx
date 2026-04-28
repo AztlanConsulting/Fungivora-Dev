@@ -4,14 +4,16 @@ const variantes = {
   // Titulos: 28px mínimo / 44px máximo
   title: {
     fontSize: "clamp(28px, 5.5vw, 44px)",
-    fontWeight: 700,
-    color: "#fff",
+    fontFamily: "'ADLaM Display', cursive",
+    fontWeight: 600,
+    color: "#3b3fb6",
   },
 
   // Pop Ups: 14px mínimo / 24px máximo
   popup: {
     fontSize: "clamp(14px, 6vw, 24px)",
-    fontWeight: 700,
+    fontFamily: "'ADLaM Display', cursive",
+    fontWeight: 600,
   },
 
   // Texto Mediano: 14px mínimo / 24px máximo

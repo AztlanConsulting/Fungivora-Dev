@@ -9,6 +9,10 @@ import Stepper from "../componentes/stepper";
 import Slider from "../componentes/slider";
 import { EntradaCantidadLista } from "../componentes/entrada_cantidad";
 import BarraBusqueda from "../componentes/barra_busqueda";
+import ModalConfirmacion from "../componentes/modal_confirmacion";
+
+import { HugeiconsIcon } from '@hugeicons/react';
+import { StarIcon } from '@hugeicons/core-free-icons';
 
 function Pruebas() {
   const [val, setVal] = useState("");
@@ -45,13 +49,18 @@ function Pruebas() {
     { label: "Finalización" },
   ];
 
-  // Función para avanzar el paso del stepper
   const avanzarPasoReadOnly = () => {
     if (pasoActual < misPasos.length - 1) {
       setPasoActual(pasoActual + 1);
     } else {
       setPasoActual(0);
     }
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleDelete = () => {
+    console.log("Registro eliminado correctamente");
+    setIsModalOpen(false); 
   };
 
   return (
@@ -65,11 +74,12 @@ function Pruebas() {
           <Titulo color="white">Prueba de componentes</Titulo>
         </div>
 
-        {/* SCROLL */}
+        {/* SCROLL — El botón ahora está aquí arriba */}
         <div className="flex-1 overflow-y-auto scrollbar-thin px-6 py-4">
           <Base margen_arriba="mt-10">
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-8">
 
+              
               {/* BOTONES */}
               <div className="flex flex-wrap gap-2">
                 <Button variant="entrar">Entrar</Button>
@@ -91,14 +101,11 @@ function Pruebas() {
                 Valores: "{val}" "{val2}" "{val3}" "{val4}"
               </Text>
 
-              {/* FECHA */}
               <InputFecha value={fecha} onChange={setFecha} />
 
-              {/* SLIDER */}
               <Slider value={sliderVal} onChange={setSliderVal} />
               <Text variante="label">Slider: {sliderVal}%</Text>
 
-              {/* LISTA */}
               <EntradaCantidadLista
                 items={[
                   { nombre: "Agua", unidad: "ml", value: cantidades.agua, onChange: set("agua") },
@@ -107,10 +114,16 @@ function Pruebas() {
                 ]}
               />
 
-              {/* SEARCH */}
               <BarraBusqueda value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
+              
+              <Text variante="medium">Prueba de Modal</Text>
+                <Button 
+                  variant="eliminar" 
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Modal de Confirmación
+                </Button>
 
-              {/* STEPPER DE BOTON*/}
               <Stepper 
                   steps={misPasos} 
                   currentStep={pasoActual} 
@@ -118,7 +131,6 @@ function Pruebas() {
                   readOnly={true}
                 />
               
-              {/* STEPPER CLICKEABLE */}
               <Stepper 
                 steps={misPasos2} 
                 currentStep={pasoActual2} 
@@ -126,10 +138,9 @@ function Pruebas() {
                 colorTheme="azul" 
               />
 
-                {/* Botón que controla el Steppe*/}
-                <Button variant="siguiente" onClick={avanzarPasoReadOnly}>
-                    Siguiente Paso
-                </Button>
+              <Button variant="siguiente" onClick={avanzarPasoReadOnly}>
+                  Siguiente Paso
+              </Button>
 
               <div className="pb-20" />
             </div>
@@ -138,15 +149,26 @@ function Pruebas() {
       </div>
 
       {/* DERECHA */}
-      <div className="hidden md:flex md:w-1/2 h-full bg-white items-center justify-center p-10">
-        <div className="flex flex-col gap-6">
-          <Text variante="lmedium">Configuración Fija</Text>
-
+      <div className="hidden md:flex md:w-1/2 h-full bg-gray-50 items-center justify-center p-10">
+        <div className="flex flex-col gap-6 w-full max-w-sm">
+          <Text variante="medium">Configuración Fija</Text>
           <Input variante="amplio" value={val6} onChange={(e) => setVal6(e.target.value)} />
           <Input variante="numero" numeroTipo="entero" value={val7} onChange={(e) => setVal7(e.target.value)} />
           <Input variante="numero" numeroTipo="decimal" value={val8} onChange={(e) => setVal8(e.target.value)} />
         </div>
       </div>
+
+      {/* MODAL */}
+      <ModalConfirmacion
+        visible={isModalOpen}
+        icon={StarIcon}
+        titulo="¿Confirmar cierre de sesión?"
+        descripcion="Si eliminas este cultivo de hongos, se borrarán todos los datos asociados."
+        onConfirm={handleDelete}
+        onCancel={() => setIsModalOpen(false)}
+        textoConfirmar="Confirmar"
+        textoCancelar="Cancelar"
+      />
 
     </div>
   );

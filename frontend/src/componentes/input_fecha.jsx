@@ -38,8 +38,8 @@ const InputFecha = ({ value = {}, onChange }) => {
     const inputStyle = `
         w-full h-full bg-transparent 
         text-center outline-none 
-        text-[#3b3fb6] font-semibold text-lg
-        placeholder:text-gray-400
+        text-[#555555] font-semibold text-lg
+        placeholder:#BFC1C7
         [appearance:textfield]
         [&::-webkit-outer-spin-button]:appearance-none
         [&::-webkit-inner-spin-button]:appearance-none
