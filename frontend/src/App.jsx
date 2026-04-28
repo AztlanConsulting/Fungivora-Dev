@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import First_Page from "./views/First_Page";
-import LoginView from './views/LoginView';
+import Login from './views/login';
 import Usuario from "./views/Usuario";
 
 import Inventario from "./views/inventario/Inventario";
@@ -28,14 +28,8 @@ function App() {
           <Route path="/notas" element={<Notas />} />
           <Route path="/tablas" element={<VistaTablas />} />
         */}
-        <Route path="/" element={<LoginView />} />
-        <Route element={<MainLayout />}>
-        
+        <Route path="/" element={<Login />} />
         <Route path="*" element={<Navigate to="/" />} />
-       
-
-
-        
 
         {/* Wrapper principal, permite que exista la sidebar y proteger rutas*/}
         <Route
@@ -68,7 +62,6 @@ function App() {
        
           
            <Route path="*" element={<Navigate to="/first" />} />
-        </Route>
         </Route>
       </Routes>
     </BrowserRouter>
