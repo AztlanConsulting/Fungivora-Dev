@@ -6,8 +6,8 @@ import Text from "./texto";
 
 /** Tipografía compartida para el texto escrito dentro del input */
 const inputTextStyle = {
-    fontSize: "clamp(16px, 1.5vw, 20px)",
-    color: "#000"
+    fontSize: "clamp(16px, 1.5vw, 14px)",
+    color: colores.gris
 };
 
 /** Clases de tamaño según variante */
@@ -47,7 +47,7 @@ const caracteresBase = ["<", ">", "{", "}", "[", "]", "\\", "`", "^", "~"];
 
 /**
  * Input — campo de texto reutilizable con soporte para:
- * - Texto de una línea            (variante "normal")
+ * - Texto de una línea           (variante "normal")
  * - Textarea multilínea           (variante "amplio")
  * - Número entero sin negativo    (variante "numero", numeroTipo "entero")
  * - Número decimal sin negativo   (variante "numero", numeroTipo "decimal")
@@ -60,6 +60,7 @@ const caracteresBase = ["<", ">", "{", "}", "[", "]", "\\", "`", "^", "~"];
  * @param {string}   placeholder - Texto de ayuda
  * @param {string}   value       - Valor controlado
  * @param {Function} onChange    - Handler de cambio del input
+ * @param {string}   type        - Tipo de input (text, password, etc)
  */
 
 const Input = ({
@@ -69,6 +70,7 @@ const Input = ({
     value,
     onChange,
     className = "",
+    type = "text", // Se añade la prop type con valor por defecto
 }) => {
     const [isFocused, setIsFocused] = useState(false);
     /** Referencia al elemento del DOM para calcular altura */
@@ -128,10 +130,11 @@ const Input = ({
     };
 
     // Props extra para activar el teclado numérico correcto en móvil
+    // Se cambia el type fijo "text" por la prop dinámica type
     const numProps
         = variante === "numero"
             ? numeroConfig[numeroTipo] || numeroConfig.entero
-            : { type: "text" };
+            : { type: type }; 
 
 
     // Render

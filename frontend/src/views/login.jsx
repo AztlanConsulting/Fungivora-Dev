@@ -7,10 +7,14 @@ import { colores } from "../componentes/colores";
 import fondoEscritorio from "../assets/fondo_fungivora.png";
 import fondoMovil from "../assets/fondo_fungivora_plano.png";
 
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ViewOffIcon, ViewIcon, User03Icon, Key01Icon } from '@hugeicons/core-free-icons';
+
 const Login = () => {
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); 
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -75,7 +79,10 @@ const Login = () => {
             {/* Inputs de usuario y contraseña*/}
             <div className="flex flex-col gap-8 w-full">
               <div className="space-y-3">
-                <Text variante="label" style={{ color: colores.gris }}>Usuario</Text>
+                <div className="flex items-center gap-2">
+                  <HugeiconsIcon icon={User03Icon} size={20} className="text-gray-500 sm:w-6 sm:h-6" />
+                  <Text variante="label" style={{ color: colores.gris }}>Usuario</Text>
+                </div>
                 <Input
                   placeholder="Escribe tu usuario..."
                   value={usuario}
@@ -85,13 +92,29 @@ const Login = () => {
               </div>
 
               <div className="space-y-3">
-                <Text variante="label" style={{ color: colores.gris }}>Contraseña</Text>
-                <Input
-                  placeholder="Escribe tu contraseña..."
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full"
-                />
+                <div className="flex items-center gap-2">
+                  <HugeiconsIcon icon={Key01Icon} size={20} className="text-gray-500 sm:w-6 sm:h-6" />
+                  <Text variante="label" style={{ color: colores.gris }}>Contraseña</Text>
+                </div>
+                <div className="relative flex items-center">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Escribe tu contraseña..."
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full pr-12"
+                  />
+                  <div 
+                    className="absolute right-4 flex items-center justify-center cursor-pointer select-none"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    <HugeiconsIcon 
+                      icon={showPassword ? ViewIcon : ViewOffIcon} 
+                      size={20} 
+                      className="text-gray-400 hover:text-gray-600 sm:w-6 sm:h-6 transition-colors" 
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
