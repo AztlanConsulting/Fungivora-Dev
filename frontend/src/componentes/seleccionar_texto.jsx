@@ -22,12 +22,12 @@ const SelectField = ({
   //Clase donde se diseña el componente usando Tailwind y otros componentes como colores
     //Se pidio ayuda a la IA para sacar los comandos de diseño de tawilwind
   const clase = `${sizes[size]} 
-  border-2 border-[${colores.azul}] 
+  border-2 border-["#686868"] 
   rounded-xl 
   px-3 py-2 pr-8 
   text-sm text-[${colores.azul}] 
   outline-none cursor-pointer appearance-none 
-  transition-colors focus:border-[#2e9e6b]`;
+  transition-colors focus:border-[#3b3fb6]`;
 
   return (
 
