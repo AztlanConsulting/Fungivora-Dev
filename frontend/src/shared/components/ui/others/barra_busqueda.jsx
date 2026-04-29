@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { colores } from "./colores";
-import Input from "./input_texto";
+import { colores } from "../basics/colores";
+import Input from "../inputs/input_texto";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Search02Icon } from '@hugeicons/core-free-icons';
 
@@ -53,10 +53,10 @@ const BarraBusqueda = ({
           pointer-events-none evita que intercepte clics del usuario */}
       <div
         className="absolute left-4 inset-y-0 flex items-center pointer-events-none"
-        style={{ 
-            color: ringColor, 
-            transition: "color 0.2s",
-            zIndex: 10
+        style={{
+          color: ringColor,
+          transition: "color 0.2s",
+          zIndex: 10
         }}
       >
         <HugeiconsIcon icon={Search02Icon} size={20} />

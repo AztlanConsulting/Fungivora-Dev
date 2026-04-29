@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import Base from "../base";
-import Titulo from "../titulo";
-import Button from "../botones";
-import Input from "../input_texto";
-import Text from "../texto";
-import InputFecha from "../input_fecha";
-import TarjetaNota from "../area_notas"
-import { colores } from "../colores";
+import Base from "../../layout/base";
+import Titulo from "../basics/titulo";
+import Button from "../buttons/botones";
+import Input from "../inputs/input_texto";
+import Text from "../basics/texto";
+import InputFecha from "../inputs/input_fecha";
+import TarjetaNota from "../cards/area_notas"
+import { colores } from "../basics/colores";
 
 function Notas() {
   const [val6, setVal6] = useState("");
@@ -21,16 +21,16 @@ function Notas() {
         className={`flex-col w-full md:w-1/2 h-full border-r-2 border-gray-200 
         ${verHistorial ? "flex" : "hidden"} md:flex relative`}
       >
-        <Titulo>Notas...</Titulo> 
-        
+        <Titulo>Notas...</Titulo>
+
         <div className="flex-1 overflow-y-auto scrollbar-thin px-4 md:px-12 py-6">
           <Base margen_arriba="mt-16 md:mt-20">
             <div className="flex flex-col gap-4">
 
               {/* Área para que en movil funcione con un botón */}
-                <div className="md:hidden w-full px-2 mt-6">
+              <div className="md:hidden w-full px-2 mt-6">
                 <div className="flex items-start">
-                    <div
+                  <div
                     onClick={() => setVerHistorial(!verHistorial)} // Al darle al botón se ve el historial (notas)
                     className={`
                         px-4 h-8 rounded-md transition-all cursor-pointer
@@ -39,43 +39,43 @@ function Notas() {
                         ring-[var(--input-ring)]
                     `}
                     style={{
-                        "--input-ring": verHistorial ? colores.verde : colores.azul,
-                        backgroundColor: "#F9FDFF"
+                      "--input-ring": verHistorial ? colores.verde : colores.azul,
+                      backgroundColor: "#F9FDFF"
                     }}
-                    >
+                  >
                     <Text variante="label">
-                        Notas
+                      Notas
                     </Text>
-                    </div>
+                  </div>
                 </div>
-                </div>    
+              </div>
 
-                 {/* Ejemplo de como son las notas vizualmente 
+              {/* Ejemplo de como son las notas vizualmente 
                  (se elimina a futuro para añadirlas dinamicamente) */}
               <div className="flex flex-col gap-8 items-center w-full">
-                    <TarjetaNota 
-                        fecha="08 - 04 - 2026" 
-                        preview="Esta es mi primera nota... 
+                <TarjetaNota
+                  fecha="08 - 04 - 2026"
+                  preview="Esta es mi primera nota... 
                         안녕, 내 이름은 freak (whoa, whoa)
                         네 꿈에 나타나 break your head
                         마지막인 듯 let's cry (whoa, whoa)
-                        One look, I'm hooked (괜찮아요?)" 
-                    />
-                    <TarjetaNota 
-                        fecha="09 - 04 - 2026" 
-                        preview="And my heart goes beep, beep, beep, beep, beep, beep
+                        One look, I'm hooked (괜찮아요?)"
+                />
+                <TarjetaNota
+                  fecha="09 - 04 - 2026"
+                  preview="And my heart goes beep, beep, beep, beep, beep, beep
                         And my heart goes beep, beep, beep, beep, beep, beep
                         And my heart goes beep, beep, beep, beep, beep, beep
                         And my heart goes beep, beep, beep, beep, beep, beep
-                        And my heart goes." 
-                    />
-                    <TarjetaNota 
-                        fecha="07 - 04 - 2026" 
-                        preview="안녕, 내 이름은 freak (and my heart goes beep)
+                        And my heart goes."
+                />
+                <TarjetaNota
+                  fecha="07 - 04 - 2026"
+                  preview="안녕, 내 이름은 freak (and my heart goes beep)
                         안녕, 내 이름은 freak (and my heart goes beep)
-                        안녕, 내 이름은 freak" 
-                    />
-                </div>
+                        안녕, 내 이름은 freak"
+                />
+              </div>
             </div>
           </Base>
         </div>
@@ -92,22 +92,22 @@ function Notas() {
         </div>
 
         <div className="flex-1 overflow-y-auto scrollbar-thin px-6 md:px-12 flex flex-col">
-          
+
           <div className="w-full max-w-sm mx-auto flex flex-col gap-6 px-4 md:px-0 mt-24 md:mt-40">
-            
+
             {/* Switch para móvil */}
             <div className="md:hidden w-full mt-8">
               <div className="flex items-start">
-                  <div
+                <div
                   onClick={() => setVerHistorial(!verHistorial)}
                   className={`px-4 h-8 rounded-md transition-all cursor-pointer flex items-center justify-center ${verHistorial ? "ring-4" : "ring-2"} ring-[var(--input-ring)]`}
                   style={{
-                      "--input-ring": verHistorial ? colores.verde : colores.azul,
-                      backgroundColor: "#F9FDFF"
+                    "--input-ring": verHistorial ? colores.verde : colores.azul,
+                    backgroundColor: "#F9FDFF"
                   }}
-                  >
+                >
                   <Text variante="label">Notas</Text>
-                  </div>
+                </div>
               </div>
             </div>
 
@@ -132,11 +132,11 @@ function Notas() {
             <Button variant="agregar">
               Agregar
             </Button>
-            </div>
-          
           </div>
-          
-          </div>
+
+        </div>
+
+      </div>
 
     </div>
   );

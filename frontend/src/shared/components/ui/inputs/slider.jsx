@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { colores } from "./colores";
+import { colores } from "../basics/colores";
 
 /**
  * Slider
@@ -21,21 +21,21 @@ const Slider = ({ value, onChange }) => {
   };
 
   return (
-<div className="w-full md:max-w-xl mx-auto py-12 px-4">
+    <div className="w-full md:max-w-xl mx-auto py-12 px-4">
       <div className="relative h-2 flex items-center">
-        
+
         {/* Línea Base*/}
-        <div 
+        <div
           className="absolute w-full h-[3px] rounded-full"
           style={{ backgroundColor: colores.grisMedio }}
         />
 
         {/* Línea de Progreso*/}
-        <div 
+        <div
           className="absolute h-[3px] rounded-full transition-all duration-150"
-          style={{ 
+          style={{
             backgroundColor: colores.azul,
-            width: `${val}%` 
+            width: `${val}%`
           }}
         />
 
@@ -45,9 +45,9 @@ const Slider = ({ value, onChange }) => {
             const isReached = val >= step;
             return (
               <div key={step} className="relative flex flex-col items-center">
-                <div 
+                <div
                   className="w-[2px] h-4 mb-1"
-                  style={{ 
+                  style={{
                     backgroundColor: isReached ? colores.azul : colores.grisMedio,
                     transition: "background-color 0.3s"
                   }}
@@ -68,15 +68,15 @@ const Slider = ({ value, onChange }) => {
         />
 
         {/* Círculo que se mueve*/}
-        <div 
+        <div
           className="absolute z-20 pointer-events-none transition-all duration-150"
-          style={{ 
+          style={{
             left: `calc(${val}% - 12px)`, // Centrado
           }}
         >
-          <div 
+          <div
             className="w-6 h-6 rounded-full border-2 shadow-sm"
-            style={{ 
+            style={{
               backgroundColor: colores.azul,
               borderColor: colores.azul
             }}

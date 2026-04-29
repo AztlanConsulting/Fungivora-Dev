@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { colores } from "./colores";
+import { colores } from "../basics/colores";
 
 /**
  * EntradaCantidad
@@ -88,7 +88,7 @@ const EntradaCantidad = ({
           style={{ ...textoStyle, color: "#868889" }}
         />
       </div>
-      
+
       <div style={{ width: "3px", backgroundColor: ringColor }} />
 
       {/* Sección derecha: pastilla con la unidad de medida.

@@ -1,5 +1,5 @@
 import React from "react";
-import Text from "./texto";
+import Text from "../basics/texto";
 
 /*
 * Titulo

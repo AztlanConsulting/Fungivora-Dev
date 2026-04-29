@@ -1,5 +1,5 @@
 import React from "react";
-import Text from "./texto";
+import Text from "../basics/texto";
 
 /**
  * TarjetaNota
@@ -13,9 +13,9 @@ const TarjetaNota = ({ fecha, preview }) => {
   return (
     <div className="w-full max-w-full md:max-w-2xl bg-white rounded-[30px] shadow-lg p-8 border border-gray-100 flex flex-col gap-4 transition-transform hover:scale-[1.01]">
       {/* Para poder vizualizar la fecha*/}
-      <Text 
-        variante="popup" 
-        as="div" 
+      <Text
+        variante="popup"
+        as="div"
         style={{ color: "#333", fontWeight: 400 }}
       >
         {fecha}
@@ -25,18 +25,18 @@ const TarjetaNota = ({ fecha, preview }) => {
 
       <div className="mt-2">
         {/* Para vizualizar la cacho de texto*/}
-        <Text 
-          variante="body" 
-          as="p" 
-          style={{ 
-            color: "#666", 
-            lineHeight: "1.7" 
+        <Text
+          variante="body"
+          as="p"
+          style={{
+            color: "#666",
+            lineHeight: "1.7"
           }}
         >
           {preview}
         </Text>
       </div>
-      
+
       {/* Área para el icono de imagen si es necesario */}
       <div className="h-4"></div>
     </div>

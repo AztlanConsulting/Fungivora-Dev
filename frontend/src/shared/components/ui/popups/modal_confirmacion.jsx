@@ -1,7 +1,7 @@
 import React from "react";
-import Button from "./botones";
-import Text from "./texto";
-import { colores } from "./colores";
+import Button from "../buttons/botones";
+import Text from "../basics/texto";
+import { colores } from "../basics/colores";
 
 import { HugeiconsIcon } from '@hugeicons/react';
 /* Esta importación devuelve un array, por eso fallaba al usarlo como componente directo */
@@ -22,11 +22,11 @@ const ModalConfirmacion = ({
   return (
     /* Overlay: Cubre toda la pantalla, oscurece el fondo y centra el contenido */
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      
+
       {/* Fondo oscuro con desenfoque */}
-      <div 
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm" 
-        onClick={onCancel} 
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onClick={onCancel}
       />
 
       {/* Caja del Modal */}
@@ -34,20 +34,20 @@ const ModalConfirmacion = ({
       p-9 w-full max-w-lg shadow-2xl 
       flex flex-col items-center text-center 
       gap-8 border border-gray-100 animate-in fade-in zoom-in duration-200">
-        
+
         {/* ICONO DE X (SALIDA)*/}
-        <button 
+        <button
           onClick={onCancel}
           className="absolute top-5 right-5 w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
-          style={{ backgroundColor: `${colores.gris}20` }} 
+          style={{ backgroundColor: `${colores.gris}20` }}
         >
           {/* Solución: Usar HugeiconsIcon para procesar el array del icono de cierre */}
           <HugeiconsIcon icon={Cancel01Icon} size={20} color={colores.gris} />
         </button>
-        
+
         {/* Círculo con Icono */}
         {Icon && (
-          <div 
+          <div
             className="w-40 h-40 rounded-full flex items-center justify-center"
             style={{ backgroundColor: `${colores.azul}20` }}
           >
@@ -64,7 +64,7 @@ const ModalConfirmacion = ({
           <Text variante="popup" style={{ color: colores.azul }}>
             {titulo}
           </Text>
-          
+
           <Text variante="body">
             {descripcion}
           </Text>

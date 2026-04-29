@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from "react"; 
-import { colores } from "./colores";
-import Text from "./texto";
+import React, { useState, useRef, useEffect } from "react";
+import { colores } from "../basics/colores";
+import Text from "../basics/texto";
 
 // Estilos y configuración estática
 
@@ -134,7 +134,7 @@ const Input = ({
     const numProps
         = variante === "numero"
             ? numeroConfig[numeroTipo] || numeroConfig.entero
-            : { type: type }; 
+            : { type: type };
 
 
     // Render
@@ -159,11 +159,11 @@ const Input = ({
 
             {/** Renderiza un <textarea> para la variante "amplio" y un <input> para las demás */}
             {variante === "amplio" ? (
-                <textarea 
-                    ref={textAreaRef} 
-                    rows={1}  
-                    {...sharedProps} 
-                    
+                <textarea
+                    ref={textAreaRef}
+                    rows={1}
+                    {...sharedProps}
+
                 />
             ) : (
                 <input {...sharedProps} {...numProps} />

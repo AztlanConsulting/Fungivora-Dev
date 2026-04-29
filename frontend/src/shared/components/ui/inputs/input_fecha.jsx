@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { colores } from "./colores";
+import { colores } from "../basics/colores";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Calendar03Icon } from '@hugeicons/core-free-icons';
 
@@ -15,17 +15,17 @@ const InputFecha = ({ value = {}, onChange }) => {
     */
     const handleChange = (field, val) => {
         if (!/^\d*$/.test(val)) return; // Solo permite dígitos
-        
+
         if (field === "day") {
             if (val.length > 2) return;
             if (parseInt(val) > 31) return;
         }
         if (field === "month") {
             if (val.length > 2) return;
-            if (parseInt(val) > 12) return; 
+            if (parseInt(val) > 12) return;
         }
         if (field === "year") {
-            if (val.length > 4) return; 
+            if (val.length > 4) return;
         }
         onChange({ ...value, [field]: val });
     };
@@ -48,7 +48,7 @@ const InputFecha = ({ value = {}, onChange }) => {
     const ringColor = isFocused ? colores.azul : colores.grisMedio;
 
     return (
-        <div 
+        <div
             className={`
                 w-80 h-10 md:w-96 md:h-12
                 bg-[#FFFFFF] rounded-md overflow-hidden transition-all flex items-stretch
@@ -56,10 +56,10 @@ const InputFecha = ({ value = {}, onChange }) => {
             `}
             style={{ "--input-ring": isFocused ? colores.azul : colores.grisClaro }}
         >
-            
+
             {/* Icono lateral con borde divisorio */}
-            <div 
-                className="flex items-center justify-center px-3 border-r-2" 
+            <div
+                className="flex items-center justify-center px-3 border-r-2"
                 style={{ borderColor: colores.grisClaro, color: ringColor }}
             >
                 <HugeiconsIcon icon={Calendar03Icon} size={26} />
@@ -67,7 +67,7 @@ const InputFecha = ({ value = {}, onChange }) => {
 
             {/* Contenedor principal de los inputs */}
             <div className="flex flex-1 items-center">
-                
+
                 {/* Campo Día */}
                 <div className="flex-1 h-full">
                     <input
@@ -98,7 +98,7 @@ const InputFecha = ({ value = {}, onChange }) => {
                 </div>
 
                 {/* Divisor Visual */}
-                <div className="w-[2px] h-full" style={{ backgroundColor: colores.grisClaro}} />
+                <div className="w-[2px] h-full" style={{ backgroundColor: colores.grisClaro }} />
 
                 {/* Campo Año */}
                 <div className="flex-[1.5] h-full">

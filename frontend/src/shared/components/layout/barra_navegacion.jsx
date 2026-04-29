@@ -1,9 +1,9 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { colores } from "./colores";
-import Text from "./texto";
+import { colores } from "../ui/basics/colores";
+import Text from "../ui/basics/texto";
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Home07FreeIcons, BookOpenTextFreeIcons, PackageIcon, MushroomIcon, Logout02Icon} from '@hugeicons/core-free-icons';
+import { Home07FreeIcons, BookOpenTextFreeIcons, PackageIcon, MushroomIcon, Logout02Icon } from '@hugeicons/core-free-icons';
 import fungivora from "/icons/icon-splash-blue.png?url"
 
 const Contenedor_principal = `
@@ -40,7 +40,7 @@ const Tooltip = `
     hover:opacity-0 md:group-hover:opacity-100
 `
 
-const Botones =`
+const Botones = `
     flex relative items-center justify-center
     p-2 self-center rounded-lg transition-colors
     group
@@ -58,38 +58,38 @@ const Barra_navegacion = () => {
                 {/* Home */}
                 <NavLink
                     to="/first"
-                    className={({ isActive }) => 
+                    className={({ isActive }) =>
                         `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
                     }>
                     <HugeiconsIcon icon={Home07FreeIcons} size={33} color={colores.azul} strokeWidth={1.5} />
                     <span className={Tooltip}
-                    style={{ backgroundColor: colores.azul, color: colores.blanco }}>
+                        style={{ backgroundColor: colores.azul, color: colores.blanco }}>
                         Inicio
                     </span>
                 </NavLink>
 
                 {/* Experimentos */}
-                <NavLink 
+                <NavLink
                     to="/experimentos"
-                    className={({ isActive }) => 
+                    className={({ isActive }) =>
                         `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
-                    }> 
+                    }>
                     <HugeiconsIcon icon={BookOpenTextFreeIcons} size={33} color={colores.azul} strokeWidth={1.5} />
                     <span className={Tooltip}
-                    style={{ backgroundColor: colores.azul, color: colores.blanco }}>
+                        style={{ backgroundColor: colores.azul, color: colores.blanco }}>
                         Lotes
                     </span>
                 </NavLink>
 
                 {/* Inventario */}
-                <NavLink 
+                <NavLink
                     to="/inventario"
-                    className={({ isActive }) => 
+                    className={({ isActive }) =>
                         `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
-                    }> 
+                    }>
                     <HugeiconsIcon icon={PackageIcon} size={33} color={colores.azul} strokeWidth={1.5} />
                     <span className={Tooltip}
-                    style={{ backgroundColor: colores.azul, color: colores.blanco }}>
+                        style={{ backgroundColor: colores.azul, color: colores.blanco }}>
                         Inventario
                     </span>
                 </NavLink>
@@ -97,22 +97,22 @@ const Barra_navegacion = () => {
                 {/* Recetario */}
                 <NavLink
                     to="/recetario"
-                    className={({ isActive }) => 
+                    className={({ isActive }) =>
                         `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
-                    }> 
+                    }>
                     <HugeiconsIcon icon={MushroomIcon} size={33} color={colores.azul} strokeWidth={1.5} />
                     <span className={Tooltip}
-                    style={{ backgroundColor: colores.azul, color: colores.blanco }}>
+                        style={{ backgroundColor: colores.azul, color: colores.blanco }}>
                         Biblioteca genética
                     </span>
                 </NavLink>
 
                 {/* Log Out*/}
-                <button 
+                <button
                     className={`${Botones} hover:bg-gray-100`}>
                     <HugeiconsIcon icon={Logout02Icon} size={33} color={colores.azul} strokeWidth={1.5} />
                     <span className={Tooltip}
-                    style={{ backgroundColor: colores.azul, color: colores.blanco }}>
+                        style={{ backgroundColor: colores.azul, color: colores.blanco }}>
                         Cerrar sesión
                     </span>
                 </button>

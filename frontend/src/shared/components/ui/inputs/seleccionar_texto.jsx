@@ -1,14 +1,14 @@
 import React from "react";
-import { colores } from "./colores";
+import { colores } from "../basics/colores";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowDown01Icon } from '@hugeicons/core-free-icons';
 
 //Parametros a  usar dentro del componente
-const SelectField = ({ 
-  value, 
-  onChange, 
-  placeholder, 
-  options = [], 
+const SelectField = ({
+  value,
+  onChange,
+  placeholder,
+  options = [],
   size = "normal",
 }) => {
 
@@ -18,9 +18,9 @@ const SelectField = ({
     amplio: "w-80 md:w-96",
     numero: "w-24 md:w-32",
   };
-    
+
   //Clase donde se diseña el componente usando Tailwind y otros componentes como colores
-    //Se pidio ayuda a la IA para sacar los comandos de diseño de tawilwind
+  //Se pidio ayuda a la IA para sacar los comandos de diseño de tawilwind
   const clase = `${sizes[size]} 
   border-2 border-["#686868"] 
   rounded-xl 
@@ -40,15 +40,15 @@ const SelectField = ({
         style={{ backgroundColor: "#F9FDFF" }}
       >
 
-      {/*Opciones del seleccionar y como se seleccionara*/}
-      
+        {/*Opciones del seleccionar y como se seleccionara*/}
 
-      <option value="" disabled hidden>{placeholder}</option>  
-      {options.map((op) => (
-        <option key={op.value} value={op.value}>
-          {op.label}
-        </option>
-      ))}
+
+        <option value="" disabled hidden>{placeholder}</option>
+        {options.map((op) => (
+          <option key={op.value} value={op.value}>
+            {op.label}
+          </option>
+        ))}
       </select>
 
       <span className={`

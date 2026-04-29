@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import Base from "../base";
-import Titulo from "../titulo";
-import BarraBusqueda from "../barra_busqueda";
-import Text from "../texto";
-import { colores } from "../colores";
+import Base from "../../layout/base";
+import Titulo from "../basics/titulo";
+import BarraBusqueda from "../others/barra_busqueda";
+import Text from "../basics/texto";
+import { colores } from "../basics/colores";
 
 // Acceso a los estilos definidos en Text para aplicarlos a inputs
 const estilosReferencia = {
@@ -72,8 +72,8 @@ function VistaTablas() {
            * md:border: Borde exterior con el color del header
            * overflow-hidden: Para que el redondeado del header y la base se aplique correctamente
            */}
-          <div 
-            className="w-full flex flex-col md:border md:rounded-xl overflow-hidden" 
+          <div
+            className="w-full flex flex-col md:border md:rounded-xl overflow-hidden"
             style={{ borderColor: colorBordeHeader }}
           >
 
@@ -102,7 +102,7 @@ function VistaTablas() {
               style={{ backgroundColor: "#FFFFFF", borderBottom: `1px solid ${colorBordeHeader}` }}
             >
               {/** Vista Móvil: Inputs apilados */}
-              <div className="col-span-3 md:hidden px-4 py-3 flex flex-col gap-1 border-2 mb-2 rounded-lg" style={{borderColor: colorBordeHeader}}>
+              <div className="col-span-3 md:hidden px-4 py-3 flex flex-col gap-1 border-2 mb-2 rounded-lg" style={{ borderColor: colorBordeHeader }}>
                 <input
                   type="text"
                   value={nuevaFila["campo1"]}
@@ -110,7 +110,7 @@ function VistaTablas() {
                   onKeyDown={handleKeyDown}
                   placeholder="Escribe..."
                   className="bg-transparent outline-none placeholder-gray-400 w-full"
-                  style={{ fontSize: "16px", color: colores.azul, fontStyle: "italic"}}
+                  style={{ fontSize: "16px", color: colores.azul, fontStyle: "italic" }}
                 />
                 <div className="flex gap-0">
                   {["campo2", "campo3"].map((campo, i) => (
@@ -122,7 +122,7 @@ function VistaTablas() {
                       onKeyDown={handleKeyDown}
                       placeholder="Escribe..."
                       className="bg-transparent outline-none placeholder-gray-400 w-full"
-                      style={{fontSize: "14px", color: colores.azul, fontStyle: "italic"}}
+                      style={{ fontSize: "14px", color: colores.azul, fontStyle: "italic" }}
                     />
                   ))}
                 </div>
@@ -138,7 +138,7 @@ function VistaTablas() {
                     onKeyDown={handleKeyDown}
                     placeholder="Escribe..."
                     className="bg-transparent outline-none placeholder-gray-400 w-full"
-                    style={{fontSize: "16px", color: colores.azul, fontStyle: "italic"}}
+                    style={{ fontSize: "16px", color: colores.azul, fontStyle: "italic" }}
                   />
                 </div>
               ))}
@@ -159,12 +159,12 @@ function VistaTablas() {
                 }}
               >
                 {/** Móvil */}
-                <div className="md:hidden px-4 py-3 border-2 mb-2 rounded-lg" style={{borderColor: colorBordeHeader}}>
+                <div className="md:hidden px-4 py-3 border-2 mb-2 rounded-lg" style={{ borderColor: colorBordeHeader }}>
                   <Text variante="option" style={{ color: colores.azul }}>
                     {fila.campo1}
                   </Text>
                   <div className="flex gap-32 mt-3">
-                    <Text variante="body" style={{ color: colores.gris}}>
+                    <Text variante="body" style={{ color: colores.gris }}>
                       {fila.campo2}
                     </Text>
                     <Text variante="body" style={{ color: colores.gris }}>

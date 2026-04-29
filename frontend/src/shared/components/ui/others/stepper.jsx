@@ -1,6 +1,6 @@
 import React from "react";
-import { colores } from "./colores";
-import Text from "./texto";
+import { colores } from "../basics/colores";
+import Text from "../basics/texto";
 
 /**
 * Stepper 
@@ -13,21 +13,21 @@ import Text from "./texto";
 * @param colorTheme "azul" | "verde", preestablecidos
 * @param readOnly Si es true, el usuario no puede hacer click para cambiar de paso
 */
-const Stepper = ({ 
-    steps = [], 
-    currentStep = 0, 
-    onStepChange, 
+const Stepper = ({
+    steps = [],
+    currentStep = 0,
+    onStepChange,
     colorTheme = "azul",
     readOnly = false // Controla si lo puedes clickear o no
 }) => {
     const isVerde = colorTheme === "verde";
     const totalSteps = steps.length;
     const shouldZigZag = totalSteps > 4; //Cambia el orden de los labels si el espacio es reducido
-    
+
     const mainColor = isVerde ? colores.verde : colores.azul; // Colores de pasos que ya pasaron
     const activeColor = isVerde ? colores.verdeOscuro : colores.azulOscuro; // Colores del paso seleccionado
     const inactiveColor = colores.grisMedio; // Color para circulo incativo
-    const textColor = colores.gris; 
+    const textColor = colores.gris;
 
     const handleStepClick = (index) => {
         if (!readOnly && onStepChange) {
@@ -44,31 +44,31 @@ const Stepper = ({
                     const isCompleted = index < currentStep;
                     const isActive = index === currentStep;
                     const isReached = index <= currentStep;
-                    
+
                     const circleColor = isActive ? activeColor : (isCompleted ? mainColor : "#FFF");
                     const borderColor = isReached ? (isActive ? activeColor : mainColor) : inactiveColor;
                     const isEven = index % 2 === 0;
 
                     // Si hay más de 4 pasos, los impares bajan en móvil. Si no, todos estan arriba.
-                    const labelPosition = (shouldZigZag && !isEven) 
-                        ? "top-9 md:-top-9" 
+                    const labelPosition = (shouldZigZag && !isEven)
+                        ? "top-9 md:-top-9"
                         : "-top-9";
 
                     const CircleContainer = readOnly ? "div" : "button";
 
                     return (
                         <div key={index} className="flex flex-col items-center relative flex-1">
-                            
+
                             {/* Clase para poder tener los labels */}
                             <div className={`absolute w-full text-center px-1 transition-all duration-300 ${labelPosition}`}>
                                 <Text variante="input">
-                                    <span 
+                                    <span
                                         className="block leading-tight"
-                                        style={{ 
+                                        style={{
                                             color: textColor,
                                             fontWeight: isActive ? "700" : "400",
                                             fontSize: "clamp(12px, 1.5vw, 16px)",
-                                            whiteSpace: "normal" 
+                                            whiteSpace: "normal"
                                         }}
                                     >
                                         {step.label}
@@ -79,15 +79,14 @@ const Stepper = ({
                             {/* Círculos*/}
                             <CircleContainer
                                 onClick={() => handleStepClick(index)}
-                                className={`relative z-10 transition-all outline-none ${
-                                    readOnly 
-                                    ? "cursor-default" 
+                                className={`relative z-10 transition-all outline-none ${readOnly
+                                    ? "cursor-default"
                                     : "cursor-pointer hover:scale-110 active:scale-95"
-                                }`}
+                                    }`}
                             >
-                                <div 
+                                <div
                                     className="w-5 h-5 md:w-6 md:h-6 rounded-full border-2 transition-all duration-500 flex items-center justify-center"
-                                    style={{ 
+                                    style={{
                                         backgroundColor: circleColor,
                                         borderColor: borderColor,
                                     }}
@@ -96,7 +95,7 @@ const Stepper = ({
 
                             {/* Línea central */}
                             {index !== steps.length - 1 && (
-                                <div 
+                                <div
                                     className="absolute h-[3px] transition-all duration-500"
                                     style={{
                                         top: "50%",

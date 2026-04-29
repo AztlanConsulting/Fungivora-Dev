@@ -1,6 +1,6 @@
 import React from "react";
-import { colores } from "./colores";
-import Text from "./texto";
+import { colores } from "../basics/colores";
+import Text from "../basics/texto";
 
 // Colores relacionados al tipo de boton
 const variants = {
@@ -39,8 +39,8 @@ Permite asignar colores  y tipografía uniforme.
 const Button = ({
   children,
   variant = "entrar",
-  size = "lg", 
-  rounded = "full", 
+  size = "lg",
+  rounded = "full",
   onClick,
   type = "button",
   isOutline = false,
@@ -49,15 +49,15 @@ const Button = ({
   const colorKey = variants[variant] || "azul";
   const mainColor = colores[colorKey] || colores.azul;
   const textColor = isOutline ? mainColor : "#FFFFFF";
-  const buttonStyle = isOutline 
+  const buttonStyle = isOutline
     ? {
-        backgroundColor: "#FFFFFF",
-        border: `2px solid ${mainColor}`,
-      }
+      backgroundColor: "#FFFFFF",
+      border: `2px solid ${mainColor}`,
+    }
     : {
-        backgroundColor: mainColor,
-        border: `2px solid transparent`,
-      };
+      backgroundColor: mainColor,
+      border: `2px solid transparent`,
+    };
 
   return (
     <button
@@ -73,18 +73,18 @@ const Button = ({
       style={buttonStyle}
     >
       <div className="flex items-center justify-center gap-2 truncate px-1">
-        <Text 
-          variante="button" 
+        <Text
+          variante="button"
           style={{ color: textColor }}
         >
           {children}
         </Text>
-        
+
         {/** Renderizado condicional del icono con el mismo color del texto */}
         {Icon && (
-          <Icon 
-            size={20} 
-            color={textColor} 
+          <Icon
+            size={20}
+            color={textColor}
             variant="outline" // Ajusta según la versión de Huge Icons que uses
           />
         )}
