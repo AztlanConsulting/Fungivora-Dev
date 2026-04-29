@@ -1,28 +1,18 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import First_Page from "./views/First_Page";
-import Login from './views/login';
-import Usuario from "./views/Usuario";
-
-import Inventario from "./views/inventario/Inventario";
-import PruebaInsumo from "./views/inventario/RegistrarInsumo";
-
-import RegistrarMedioLiquido from "./views/NewMedio";
-
+import {
+  FirstPage, Login, Usuario,
+  Inventario, RegistrarInsumo,
+  RegistrarMedio, Lotes, Pruebas
+} from "./pages";
+import { MainLayout } from "./shared/components/layout";
+import { Notas, VistaTablas } from "./shared/components/ui"
 import Ruta_protegida from "../componentes_internos/ruta_protegida";
-import MainLayout from "./layouts/MainLayout";
-import Experimentos from "./views/ExperimentosView";
-import Recetario from "./views/RecetarioView"
-import Lotes from "./views/LotesView";
-import Pruebas from "./views/pruba_componentes";
-import Notas from "./componentes/template/notas";
-
-import VistaTablas from "./componentes/template/vista_tablas";
 
 function App() {
   return (
- <BrowserRouter>
+    <BrowserRouter>
       <Routes>
-        
+
         {/** 
          * <Route path="/" element={<Pruebas />} />
           <Route path="/notas" element={<Notas />} />
@@ -39,29 +29,27 @@ function App() {
             </Ruta_protegida>
           }
         >
-          
-        {/* //! Rutas hijas, estas son renderizadas por <Outlet /> en MainLayout para que tengan sidebar */}
-        <Route path="/first" element={<First_Page />} />
-        <Route path="/inventario" element={<Inventario />} />
-        <Route path="/inventario/micelio/crear" element={<RegistrarMedioLiquido />} />
-        <Route path="/experimentos" element={<Experimentos />} />
-        <Route path="/recetario" element={<Recetario />} />
-        <Route path="/lotes" element={<Lotes />} />
 
-        <Route path="/inventario/crearInsumo" element={<PruebaInsumo />} />
+          {/* //! Rutas hijas, estas son renderizadas por <Outlet /> en MainLayout para que tengan sidebar */}
+          <Route path="/first" element={<FirstPage />} />
+          <Route path="/inventario" element={<Inventario />} />
+          <Route path="/inventario/micelio/crear" element={<RegistrarMedio />} />
+          <Route path="/lotes" element={<Lotes />} />
 
-        {/* Rutas protegidas hijas */}
-        <Route
-          path="/usuario"
-          element={
-            <Ruta_protegida rolPermitido="Administrador">
-              <Usuario />
-            </Ruta_protegida>
-          }
-        />
-       
-          
-           <Route path="*" element={<Navigate to="/first" />} />
+          <Route path="/inventario/crearInsumo" element={<RegistrarInsumo />} />
+
+          {/* Rutas protegidas hijas */}
+          <Route
+            path="/usuario"
+            element={
+              <Ruta_protegida rolPermitido="Administrador">
+                <Usuario />
+              </Ruta_protegida>
+            }
+          />
+
+
+          <Route path="*" element={<Navigate to="/first" />} />
         </Route>
       </Routes>
     </BrowserRouter>
