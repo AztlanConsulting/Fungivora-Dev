@@ -4,8 +4,8 @@ import Button from "../componentes/botones";
 import Text from "../componentes/texto";
 import { colores } from "../componentes/colores";
 
-import fondoEscritorio from "../assets/fondo_fungivora.png";
-import fondoMovil from "../assets/fondo_fungivora_plano.png";
+import fondoEscritorio from "../images/assets/fondo_fungivora.png";
+import fondoMovil from "../images/assets/fondo_fungivora_plano.png";
 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ViewOffIcon, ViewIcon, User03Icon, Key01Icon } from '@hugeicons/core-free-icons';
@@ -13,15 +13,15 @@ import { ViewOffIcon, ViewIcon, User03Icon, Key01Icon } from '@hugeicons/core-fr
 const Login = () => {
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); 
+  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); 
+    setError("");
 
     try {
-      const response = await fetch("http://localhost:5000/login", { 
+      const response = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -36,8 +36,8 @@ const Login = () => {
 
       if (response.ok) {
         console.log("Login exitoso");
-        localStorage.setItem("token", data.token); 
-        window.location.href = "/first"; 
+        localStorage.setItem("token", data.token);
+        window.location.href = "/first";
       } else {
         setError("Usuario y/o contraseña incorrectos");
       }
@@ -45,29 +45,29 @@ const Login = () => {
       console.error("Error de red:", err);
       setError("No se pudo conectar con el servidor");
     }
-    };
+  };
 
   return (
     <div className="relative h-screen w-full overflow-hidden flex items-center">
-      
+
       {/* Imagenes del fondo*/}
-      <div 
+      <div
         className="absolute inset-0 z-0 bg-no-repeat bg-cover 
                    bg-[image:var(--bg-movil)] 
                    md:bg-[image:var(--bg-desktop)]"
-        style={{ 
+        style={{
           "--bg-movil": `url(${fondoMovil})`,
           "--bg-desktop": `url(${fondoEscritorio})`,
-          backgroundPosition: "center" 
+          backgroundPosition: "center"
         }}
       />
 
       {/* Contenido del formulario*/}
       <div className="relative z-10 w-full md:w-1/2 flex justify-center items-center p-6">
         <div className="w-full max-w-lg rounded-[2.5rem] sm:rounded-[3rem] bg-white p-8 sm:p-12 lg:p-16 shadow-2xl overflow-y-auto max-h-[90vh] ">
-         <form onSubmit={handleLogin} className="flex flex-col items-start w-full">
+          <form onSubmit={handleLogin} className="flex flex-col items-start w-full">
             {/* Titulos del formulario */}
-            <div className="w-full text-center mb-10"> 
+            <div className="w-full text-center mb-10">
               <Text variante="title" style={{ color: colores.azul }}>Devora</Text>
               <div className="mt-2">
                 <Text variante="medium" style={{ color: colores.azul }}>
@@ -104,14 +104,14 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full pr-12"
                   />
-                  <div 
+                  <div
                     className="absolute right-4 flex items-center justify-center cursor-pointer select-none"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    <HugeiconsIcon 
-                      icon={showPassword ? ViewIcon : ViewOffIcon} 
-                      size={20} 
-                      className="text-gray-400 hover:text-gray-600 sm:w-6 sm:h-6 transition-colors" 
+                    <HugeiconsIcon
+                      icon={showPassword ? ViewIcon : ViewOffIcon}
+                      size={20}
+                      className="text-gray-400 hover:text-gray-600 sm:w-6 sm:h-6 transition-colors"
                     />
                   </div>
                 </div>
@@ -131,7 +131,7 @@ const Login = () => {
             <div className={`w-full flex justify-center ${error ? 'mt-8' : 'mt-14'}`}>
               <Button variant="entrar" type="submit">Entrar</Button>
             </div>
-            
+
           </form>
         </div>
       </div>
