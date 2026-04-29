@@ -1,9 +1,12 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { colores } from "../ui/basics/colores";
 import Text from "../ui/basics/texto";
+import ModalConfirmacion from "../ui/popups/modal_confirmacion";
+
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Home07FreeIcons, BookOpenTextFreeIcons, PackageIcon, MushroomIcon, Logout02Icon } from '@hugeicons/core-free-icons';
+import { Home07FreeIcons, BookOpenTextFreeIcons, PackageIcon, MushroomIcon, Logout02Icon, Door01Icon } from '@hugeicons/core-free-icons';
+
 import fungivora from "/icons/icon-splash-blue.png?url"
 
 const Contenedor_principal = `
@@ -47,7 +50,17 @@ const Botones = `
 `
 
 const Barra_navegacion = () => {
+    const navigate = useNavigate();
+    const [showModal, setShowModal] = useState(false);
+
+    const confirmarCerrarSesion = () => {
+        localStorage.removeItem("token");
+        setShowModal(false); 
+        navigate("/"); 
+    };
+
     return (
+    <>
         <nav className={Contenedor_principal}>
             {/* Logo Fungivora */}
             <div className={LogoDiv}><img src={fungivora} className={LogoImg} /> </div>
@@ -68,9 +81,9 @@ const Barra_navegacion = () => {
                     </span>
                 </NavLink>
 
-                {/* Experimentos */}
+                {/* lotes */}
                 <NavLink
-                    to="/experimentos"
+                    to="/lotes"
                     className={({ isActive }) =>
                         `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
                     }>
@@ -108,8 +121,10 @@ const Barra_navegacion = () => {
                 </NavLink>
 
                 {/* Log Out*/}
-                <button
-                    className={`${Botones} hover:bg-gray-100`}>
+                <button 
+                        onClick={() => setShowModal(true)}
+                        className={`${Botones} hover:bg-gray-100`}
+                    >
                     <HugeiconsIcon icon={Logout02Icon} size={33} color={colores.azul} strokeWidth={1.5} />
                     <span className={Tooltip}
                         style={{ backgroundColor: colores.azul, color: colores.blanco }}>
@@ -118,6 +133,17 @@ const Barra_navegacion = () => {
                 </button>
             </div>
         </nav>
+
+        {/* Modal para poder confirmar el cierre de sesión*/}
+        <ModalConfirmacion
+                visible={showModal}
+                icon={Door01Icon}
+                titulo="¿Confirmar cierre de sesión?"
+                descripcion="Para volver a acceder, debes iniciar sesión nuevamente"
+                onConfirm={confirmarCerrarSesion}
+                onCancel={() => setShowModal(false)}
+            />
+        </>
     )
 }
 

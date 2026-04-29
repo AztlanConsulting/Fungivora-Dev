@@ -13,7 +13,7 @@ const Titulo = ({ children }) => {
   return (
     <div className="
       fixed top-0 left-0 w-full md:left-20 z-50
-      bg-[#FFFFFF]
+      bg-[#FAFAFE]
 
       flex items-start
       px-8 py-6 md:px-12
