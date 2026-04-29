@@ -10,35 +10,34 @@ exports.get_login = (req, res) => {
 /*
 * post_login
 Hacer un login basico para tener permisos
-Metodo que toma la información del usuario y su rol para poder acceder
-@param id_usuario, nombre_usuario, nombre_rol
+Metodo que toma la información del usuario/contraseña y su rol para poder acceder
+@param id_usuario, nombre_usuario
 */
 const { generarToken } = require("../util/jwtUtils");
 exports.post_login = async (req, res) => {
     try {
-        const { nombre_usuario, contrasena } = req.body;
-
+        const { nombre_usuario, contrasena } = req.body; 
         const user = await Usuario.fetch_one(nombre_usuario);
 
-        //! Usuario no existe
         if (!user) {
             return res.status(404).json({ 
-                error: "usuario",
-                msg: "Usuario incorrecto, intente de nuevo"
+                error: "identificador",
+                msg: "El usuario o correo no están registrados"
             });
         }
 
-        //! Contraseña incorrecta
+        console.log("Comparando:", user.contrasena_usuario, "con", contrasena);
+
         if (user.contrasena_usuario !== contrasena) {
             return res.status(401).json({ 
                 error: "password",
-                msg: "Contraseña incorrecta, intente de nuevo"
+                msg: "Contraseña incorrecta"
             });
         }
 
         const token = generarToken({
             id: user.id_usuario,
-            isAdmin: user.is_user_admin === 1 // true/false
+            isAdmin: user.is_user_admin === 1 
         });
 
         res.json({ token });

@@ -85,7 +85,7 @@ const Login = () => {
                 </div>
                 <div className="relative flex items-center">
                   <Input
-                    placeholder="Escribe tu usuario..."
+                    placeholder="Escribe tu usuario o correo..."
                     value={usuario}
                     onChange={(e) => setUsuario(e.target.value)}
                     className="w-full pr-12"
