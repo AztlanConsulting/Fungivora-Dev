@@ -1,28 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import "./First_Page.css";
 
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Logout02Icon } from "@hugeicons/core-free-icons";
-
-import Button from "../../shared/components/ui/buttons/botones";
+// Componentes de UI e Icons
 import ModalConfirmacion from "../../shared/components/ui/popups/modal_confirmacion";
+import Titulo from "../../shared/components/ui/basics/titulo"; 
+import Base from "../../shared/components/layout/base"; 
 
 function First_Page() {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const token = localStorage.getItem("token");
 
-  const handleLogout = () => {
-    const confirmacion = window.confirm("¿Confirmar cierre de sesión?");
-
-    if (confirmacion) {
-      localStorage.removeItem("token");
-      navigate("/");
-    }
-  };
-
+  // Decodificación del rol (opcional por si lo necesitas en el render)
   let rol = null;
   if (token) {
     try {
@@ -33,39 +23,40 @@ function First_Page() {
     }
   }
 
+  const confirmarCerrarSesion = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
+
   return (
-    <div className="container">
-      <h1>Pagina principal</h1>
+    <div className="flex flex-col md:flex-row min-h-screen">
 
-      <p>Bienvenidx</p>
+      <div className="flex-1 flex flex-col">
+        {/* Encabezado fijo con el nombre de la vista */}
+        <Titulo>Inicio</Titulo>
 
-      {/* Boton permitido solo para el Administrador */}
-      {rol === "Administrador" && (
-        <button
-          onClick={() => {
-            navigate("/usuario");
-          }}
-        >
-          Registro de Usuarios
-        </button>
-      )}
+        {/* Contenedor con padding y scroll para el contenido real */}
+        <Base margen_arriba="mt-24 md:mt-32">
+          {/* Aquí va el contenido de tu página */}
+          <div className="w-full max-w-4xl">
+            <h2 className="text-2xl font-bold mb-4">Bienvenidx a Fungivora</h2>
+            
+            {/* Ejemplo de botón que dispara el modal (si no usas el de la navbar) */}
+            <button 
+              onClick={() => setShowModal(true)}
+              className="mt-10 px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+            >
+              Cerrar sesión manualmente
+            </button>
+          </div>
+        </Base>
+      </div>
 
-      {/* Boton para cerrar sesión y destruir el token */}
-      <button onClick={() => setShowModal(true)} className="logout-btn">
-        <HugeiconsIcon
-          icon={Logout02Icon}
-          className="logout-icon"
-          color="#3b3fb6"
-        />
-      </button>
-
+      {/* Modal de confirmación */}
       <ModalConfirmacion
         visible={showModal}
         mensaje="¿Confirmar cierre de sesión?"
-        onConfirm={() => {
-          localStorage.removeItem("token");
-          navigate("/");
-        }}
+        onConfirm={confirmarCerrarSesion}
         onCancel={() => setShowModal(false)}
       />
     </div>

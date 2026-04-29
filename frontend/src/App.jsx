@@ -29,7 +29,6 @@ function App() {
             </Ruta_protegida>
           }
         >
-
           {/* //! Rutas hijas, estas son renderizadas por <Outlet /> en MainLayout para que tengan sidebar */}
           <Route path="/first" element={<FirstPage />} />
           <Route path="/inventario" element={<Inventario />} />
@@ -50,7 +49,7 @@ function App() {
 
 
           <Route path="*" element={<Navigate to="/first" />} />
-        </Route>
+          </Route>
       </Routes>
     </BrowserRouter>
   );
