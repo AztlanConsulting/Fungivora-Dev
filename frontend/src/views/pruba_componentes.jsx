@@ -7,6 +7,7 @@ import Text from "../componentes/texto";
 import InputFecha from "../componentes/input_fecha";
 import Stepper from "../componentes/stepper";
 import Slider from "../componentes/slider";
+import Select from "../componentes/seleccionar_texto"; 
 import { EntradaCantidadLista } from "../componentes/entrada_cantidad";
 import BarraBusqueda from "../componentes/barra_busqueda";
 import ModalConfirmacion from "../componentes/modal_confirmacion";
@@ -25,6 +26,7 @@ function Pruebas() {
 
   const [sliderVal, setSliderVal] = useState(0);
   const [busqueda, setBusqueda] = useState("");
+  const [seleccionado, setSeleccionado] = useState("");
 
   const [cantidades, setCantidades] = useState({
     agua: "",
@@ -114,8 +116,25 @@ function Pruebas() {
                 ]}
               />
 
-              <BarraBusqueda value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
-              
+              <BarraBusqueda value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />              
+
+              {/* Selecionar */}
+          <Text variante="label" as="label">Selecciona</Text>
+          <Select
+            value={seleccionado}
+            onChange={(e) => setSeleccionado(e.target.value)}
+            placeholder="Selecciona una opcion.."
+            options={[
+              {value: "1", label: "Opcion 1"},
+              {value: "2", label: "Opcion 2"}   
+            ]}
+            />
+
+            <Text variante="label">
+              Valor: "{seleccionado}"
+            </Text>
+
+
               <Text variante="medium">Prueba de Modal</Text>
                 <Button 
                   variant="eliminar" 
@@ -169,6 +188,7 @@ function Pruebas() {
         textoConfirmar="Confirmar"
         textoCancelar="Cancelar"
       />
+
 
     </div>
   );
