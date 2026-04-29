@@ -51,7 +51,7 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    enviroment: 'jsdom',
+    environment: 'jsdom',
     setupFiles: './src/test/setup.js',
     include: ['src/**/*.{test,spec}.{js,jsx}'],
     coverage: {
