@@ -5,7 +5,7 @@ function User() {
   const [texto, setTexto] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:5000/api")
+    fetch("/api/status")
       .then(res => res.json())
       .then(data => setMensaje(data.mensaje))
       .catch(err => console.error(err));
@@ -15,7 +15,7 @@ function User() {
     <div>
       <h1>User</h1>
 
-    {/*<p>{mensaje}</p>*/}
+      {/*<p>{mensaje}</p>*/}
       <p>Escribir contraseña</p>
       <input
         type="text"
@@ -25,38 +25,38 @@ function User() {
       />
 
       <br></br>
-        {/*<Botton para guardar la contraseña*/}
-        <button
+      {/*<Botton para guardar la contraseña*/}
+      <button
         onClick={() => {
-            fetch("http://localhost:5000/hash", {
+          fetch("/api/hash", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({ contrasena: texto }),
-            });
+          });
         }}
-        >
+      >
         Guardar contraseña
-        </button>
+      </button>
 
-        <br></br>
-        {/*<Botton para comparar la contraseña guardada*/}
-        <button
+      <br></br>
+      {/*<Botton para comparar la contraseña guardada*/}
+      <button
         onClick={() => {
-            fetch("http://localhost:5000/compare", {
+          fetch("/api/compare", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({ contrasena: texto }),
-            })
+          })
             .then(res => res.json())
             .then(data => console.log(data));
         }}
-        >
+      >
         Comparar contraseña
-        </button>
+      </button>
     </div>
   );
 }
