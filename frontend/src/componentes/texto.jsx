@@ -18,13 +18,13 @@ const variantes = {
 
   // Texto Mediano: 14px mínimo / 24px máximo
   medium: {
-    fontSize: "clamp(14px, 6vw, 24px)",
+    fontSize: "clamp(12px, 4vw, 24px)",
     fontWeight: 500,
   },
 
-  // Texto de select: 12px mínimo / 16px máximo
+  // Texto de select: 14px mínimo / 16px máximo
   label: {
-    fontSize: "clamp(12px, 1.8vw, 16px)",
+    fontSize: "clamp(14px, 1.8vw, 16px)",
     color: "#3b3fb6",
     fontWeight: 500,
   },
@@ -36,9 +36,9 @@ const variantes = {
     color: "#868889",
   },
 
-  // Texto de botones: 12px mínimo / 16px máximo
+  // Texto de botones: 14px mínimo / 18px máximo
   button: {
-    fontSize: "clamp(12px, 3vw, 16px)",
+    fontSize: "clamp(14px, 3vw, 18px)",
     fontWeight: 600,
     color: "#fff",
   },
