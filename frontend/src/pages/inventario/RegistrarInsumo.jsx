@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import Titulo from "../../componentes/titulo";
-import Base from "../../componentes/base";
-import CampoTexto from "../../componentes/input_titulo";
-import Button from "../../componentes/botones";
-import AlertaError from "../../componentes/error";
+import Titulo from "../../shared/components/ui/basics/titulo";
+import Base from "../../shared/components/layout/base";
+import CampoTexto from "../../shared/components/ui/inputs/input_titulo";
+import Button from "../../shared/components/ui/buttons/botones";
+import AlertaError from "../../shared/components/ui/basics/error";
 
 const PruebaInsumo = () => {
   // ESTADO - Declarado una sola vez

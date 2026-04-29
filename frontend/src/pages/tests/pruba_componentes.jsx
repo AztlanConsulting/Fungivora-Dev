@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import Base from "../componentes/base";
-import Titulo from "../componentes/titulo";
-import Button from "../componentes/botones";
-import Input from "../componentes/input_texto";
-import Text from "../componentes/texto";
-import InputFecha from "../componentes/input_fecha";
-import Stepper from "../componentes/stepper";
-import Slider from "../componentes/slider";
-import Select from "../componentes/seleccionar_texto"; 
-import { EntradaCantidadLista } from "../componentes/entrada_cantidad";
-import BarraBusqueda from "../componentes/barra_busqueda";
-import ModalConfirmacion from "../componentes/modal_confirmacion";
+import Base from "../../shared/components/layout/base";
+import Titulo from "../../shared/components/ui/basics/titulo";
+import Button from "../../shared/components/ui/buttons/botones";
+import Input from "../../shared/components/ui/inputs/input_texto";
+import Text from "../../shared/components/ui/basics/texto";
+import InputFecha from "../../shared/components/ui/inputs/input_fecha";
+import Stepper from "../../shared/components/ui/others/stepper";
+import Slider from "../../shared/components/ui/inputs/slider";
+import Select from "../../shared/components/ui/inputs/seleccionar_texto";
+import { EntradaCantidadLista } from "../../shared/components/ui/inputs/entrada_cantidad";
+import BarraBusqueda from "../../shared/components/ui/others/barra_busqueda";
+import ModalConfirmacion from "../../shared/components/ui/popups/modal_confirmacion";
 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { StarIcon } from '@hugeicons/core-free-icons';
@@ -62,7 +62,7 @@ function Pruebas() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleDelete = () => {
     console.log("Registro eliminado correctamente");
-    setIsModalOpen(false); 
+    setIsModalOpen(false);
   };
 
   return (
@@ -81,7 +81,7 @@ function Pruebas() {
           <Base margen_arriba="mt-10">
             <div className="flex flex-col gap-8">
 
-              
+
               {/* BOTONES */}
               <div className="flex flex-wrap gap-2">
                 <Button variant="entrar">Entrar</Button>
@@ -116,49 +116,49 @@ function Pruebas() {
                 ]}
               />
 
-              <BarraBusqueda value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />              
+              <BarraBusqueda value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
 
               {/* Selecionar */}
-          <Text variante="label" as="label">Selecciona</Text>
-          <Select
-            value={seleccionado}
-            onChange={(e) => setSeleccionado(e.target.value)}
-            placeholder="Selecciona una opcion.."
-            options={[
-              {value: "1", label: "Opcion 1"},
-              {value: "2", label: "Opcion 2"}   
-            ]}
-            />
+              <Text variante="label" as="label">Selecciona</Text>
+              <Select
+                value={seleccionado}
+                onChange={(e) => setSeleccionado(e.target.value)}
+                placeholder="Selecciona una opcion.."
+                options={[
+                  { value: "1", label: "Opcion 1" },
+                  { value: "2", label: "Opcion 2" }
+                ]}
+              />
 
-            <Text variante="label">
-              Valor: "{seleccionado}"
-            </Text>
+              <Text variante="label">
+                Valor: "{seleccionado}"
+              </Text>
 
 
               <Text variante="medium">Prueba de Modal</Text>
-                <Button 
-                  variant="eliminar" 
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  Modal de Confirmación
-                </Button>
+              <Button
+                variant="eliminar"
+                onClick={() => setIsModalOpen(true)}
+              >
+                Modal de Confirmación
+              </Button>
 
-              <Stepper 
-                  steps={misPasos} 
-                  currentStep={pasoActual} 
-                  colorTheme="verde" 
-                  readOnly={true}
-                />
-              
-              <Stepper 
-                steps={misPasos2} 
-                currentStep={pasoActual2} 
-                onStepChange={setPasoActual2} 
-                colorTheme="azul" 
+              <Stepper
+                steps={misPasos}
+                currentStep={pasoActual}
+                colorTheme="verde"
+                readOnly={true}
+              />
+
+              <Stepper
+                steps={misPasos2}
+                currentStep={pasoActual2}
+                onStepChange={setPasoActual2}
+                colorTheme="azul"
               />
 
               <Button variant="siguiente" onClick={avanzarPasoReadOnly}>
-                  Siguiente Paso
+                Siguiente Paso
               </Button>
 
               <div className="pb-20" />

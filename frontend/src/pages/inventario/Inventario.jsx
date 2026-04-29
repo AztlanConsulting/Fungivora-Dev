@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/Inventario.css";
+import "./Inventario.css";
 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Search02Icon, FilterMailIcon, PlusSignIcon } from '@hugeicons/core-free-icons';
-import BarraBusqueda from "../../componentes/barra_busqueda";
+import BarraBusqueda from "../../shared/components/ui/others/barra_busqueda";
 
 const Inventario = () => {
   const navigate = useNavigate();

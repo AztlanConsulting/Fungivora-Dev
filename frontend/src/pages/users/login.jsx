@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import Input from "../componentes/input_texto";
-import Button from "../componentes/botones";
-import Text from "../componentes/texto";
-import { colores } from "../componentes/colores";
+import Input from "../../shared/components/ui/inputs/input_texto";
+import Button from "../../shared/components/ui/buttons/botones";
+import Text from "../../shared/components/ui/basics/texto";
+import { colores } from "../../shared/components/ui/basics/colores";
 
-import fondoEscritorio from "../images/assets/fondo_fungivora.png";
-import fondoMovil from "../images/assets/fondo_fungivora_plano.png";
+import fondoEscritorio from "../../assets/images/fondo_fungivora.png";
+import fondoMovil from "../../assets/images/fondo_fungivora_plano.png";
 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ViewOffIcon, ViewIcon, User03Icon, Key01Icon } from '@hugeicons/core-free-icons';
