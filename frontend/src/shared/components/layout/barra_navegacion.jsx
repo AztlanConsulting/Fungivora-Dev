@@ -68,9 +68,9 @@ const Barra_navegacion = () => {
                     </span>
                 </NavLink>
 
-                {/* Experimentos */}
+                {/* Lotes */}
                 <NavLink
-                    to="/experimentos"
+                    to="/lotes"
                     className={({ isActive }) =>
                         `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
                     }>
@@ -94,9 +94,9 @@ const Barra_navegacion = () => {
                     </span>
                 </NavLink>
 
-                {/* Recetario */}
+                {/* Biblioteca genetica */}
                 <NavLink
-                    to="/recetario"
+                    to="/biblioteca_genetica"
                     className={({ isActive }) =>
                         `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
                     }>
