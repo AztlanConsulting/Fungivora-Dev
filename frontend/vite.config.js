@@ -10,11 +10,11 @@ export default defineConfig({
       registerType: 'autoUpdate', // Actualiza la app automáticamente cuando hay cambios
       includeAssets: ['icons/*.png'], // Archivos en /public a cachear
       manifest: {
-        name: 'Fungivora Cultivos',
-        short_name: 'Fungivora',
+        name: 'Devora - Cultivos',
+        short_name: 'Devora',
         description: 'Administrador de cultivos de hongos',
         theme_color: '#3b3fb6',      // El azul para la barra superior
-        background_color: '#faeed0', // El crema para el fondo de carga
+        background_color: '#ced3f3', // El crema para el fondo de carga
         display: 'standalone',
         icons: [
           {
@@ -34,6 +34,20 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         navigateFallback: '/index.html',
+
+        skipWaiting: true,
+        clientsClaim: true,
+
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'html-cache',
+              networkTimeoutSeconds: 3,
+            }
+          }
+        ]
       }
     })
   ],
