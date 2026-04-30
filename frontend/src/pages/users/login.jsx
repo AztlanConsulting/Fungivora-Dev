@@ -83,12 +83,14 @@ const Login = () => {
                   <HugeiconsIcon icon={User03Icon} size={20} className="text-gray-500 sm:w-6 sm:h-6" />
                   <Text variante="label" style={{ color: colores.gris }}>Usuario</Text>
                 </div>
-                <Input
-                  placeholder="Escribe tu usuario..."
-                  value={usuario}
-                  onChange={(e) => setUsuario(e.target.value)}
-                  className="w-full"
-                />
+                <div className="relative flex items-center">
+                  <Input
+                    placeholder="Escribe tu usuario o correo..."
+                    value={usuario}
+                    onChange={(e) => setUsuario(e.target.value)}
+                    className="w-full pr-12"
+                  />
+                </div>
               </div>
 
               <div className="space-y-3">
