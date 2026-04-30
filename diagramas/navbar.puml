@@ -1,0 +1,33 @@
+@startuml Navigation Bar
+autonumber
+
+actor Usuario as user
+participant barra_navegacion.jsx as navB
+control router.jsx as router
+collections pages as vistas
+
+activate user
+    user -> navB: Usuario elige una de las opciones de navegacion
+    activate navB
+
+    alt Se elige cerrar sesión
+    autonumber 1.1
+        user -> navB: Usuario elige cerrar sesion
+
+            navB -> user: Se ejecuta la historia de usuario LI-02
+    deactivate user
+    end
+
+        autonumber 2
+        navB -> router: Navbar llama a la ruta corespondiente por medio de NavLink
+    deactivate navB
+
+activate router
+    router -> vistas: Router llama a la vista correspondiente a renderizar
+deactivate router
+
+activate vistas
+    vistas -> user: Render de la vista correspondiente
+deactivate vistas
+
+@enduml
