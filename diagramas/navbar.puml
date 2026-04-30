@@ -14,7 +14,7 @@ activate user
     autonumber 1.1
         user -> navB: Usuario elige cerrar sesion
 
-            navB -> user: Se ejecuta la historia de usuario LI-02
+            navB -> user: Se ejecuta la historia de usuario ID:2
     deactivate user
     end
 
