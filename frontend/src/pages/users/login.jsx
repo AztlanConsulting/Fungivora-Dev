@@ -3,6 +3,7 @@ import Input from "../../shared/components/ui/inputs/input_texto";
 import Button from "../../shared/components/ui/buttons/botones";
 import Text from "../../shared/components/ui/basics/texto";
 import { colores } from "../../shared/components/ui/basics/colores";
+import useLogin from "../../features/hooks/useLogin";
 
 import fondoEscritorio from "../../assets/images/fondo_fungivora.png";
 import fondoMovil from "../../assets/images/fondo_fungivora_plano.png";
@@ -16,6 +17,15 @@ const Login = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const { ejecutarLogin, cargando, error } = useLogin();
+
+  const handleLogin = async (e) => {
+      e.preventDefault();
+      try {
+          await ejecutarLogin(usuario, contrasena);
+      } catch (err) {
+      }
+  };
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
