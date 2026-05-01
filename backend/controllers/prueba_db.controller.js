@@ -3,7 +3,7 @@ const db = require('../util/db');
 exports.get_data = async (req, res) => {
     const inicio = Date.now();
     try {
-        const [rows] = await db.execute('SELECT * FROM bitacora LIMIT 100');
+        const [rows] = await db.execute('SELECT * FROM Categorias LIMIT 100');
 
         const duracion = Date.now() - inicio;
         res.status(200).json({

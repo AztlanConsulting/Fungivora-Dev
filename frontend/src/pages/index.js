@@ -7,3 +7,4 @@ export { default as Lotes } from "./lotes/LotesView";
 export { default as Pruebas } from "./tests/pruba_componentes";
 export { default as Usuario } from "./users/Usuario";
 export { default as Login } from "./users/login";
+export { default as PruebaDb } from "./tests/PruebaDb";
