@@ -15,13 +15,13 @@ const useLogin = () => {
             return data;
         } catch (err) {
             setError("Usuario y/o contraseña incorrectos");
-            throw err;
+            throw err; 
         } finally {
             setCargando(false);
         }
     }, []);
 
-    return { login, cargando, error };
+    return { ejecutarLogin: login, cargando, error }; 
 }
 
 export default useLogin;

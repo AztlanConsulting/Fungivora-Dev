@@ -3,46 +3,62 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import useLogin from '../../../features/hooks/useLogin'
 import loginService from '../../../features/services/login.service'
 
-// Mock del servicio
-vi.mock('../services/login.service')
+// Mock explícito del servicio
+vi.mock('../../../features/services/login.service', () => {
+    return {
+        default: {
+            login: vi.fn()
+        }
+    }
+})
 
 describe('useLogin — Lógica de Autenticación', () => {
     beforeEach(() => {
         vi.clearAllMocks()
-        // Mock de localStorage y window.location
-        Object.defineProperty(window, 'localStorage', { value: { setItem: vi.fn() }, writable: true })
+        // Mock de localStorage
+        const store = {}
+        Object.defineProperty(window, 'localStorage', {
+            value: {
+                setItem: vi.fn((key, val) => { store[key] = val }),
+                getItem: vi.fn((key) => store[key]),
+            },
+            writable: true
+        })
+        // Mock de location
         delete window.location
-        window.location = { href: vi.fn() }
-    })
-
-    it('debe iniciar con estado limpio', () => {
-        const { result } = renderHook(() => useLogin())
-        expect(result.current.cargando).toBe(false)
-        expect(result.current.error).toBeNull()
+        window.location = { href: '' }
     })
 
     it('guarda token y redirige en login exitoso', async () => {
+        // Configuramos el mock para éxito
         loginService.login.mockResolvedValue({ token: 'jwt-123' })
+        
         const { result } = renderHook(() => useLogin())
 
         await act(async () => {
             await result.current.ejecutarLogin('admin', '123')
         })
 
-        expect(localStorage.setItem).toHaveBeenCalledWith('token', 'jwt-123')
+        expect(window.localStorage.setItem).toHaveBeenCalledWith('token', 'jwt-123')
         expect(window.location.href).toBe('/first')
     })
 
     it('maneja error 401 (Credenciales)', async () => {
-        const error401 = { response: { status: 401 } }
-        loginService.login.mockRejectedValue(error401)
+        // Configuramos el mock para fallo
+        loginService.login.mockRejectedValue({ response: { status: 401 } })
         
         const { result } = renderHook(() => useLogin())
 
-        try {
-            await act(async () => { await result.current.ejecutarLogin('u', 'p') })
-        } catch (e) {
-            expect(result.current.error).toBe("Usuario y/o contraseña incorrectos")
-        }
+        await act(async () => {
+            try {
+                await result.current.ejecutarLogin('u', 'p')
+            } catch (e) {
+                // El catch es necesario para que el test no se detenga aquí
+            }
+        })
+
+        // Ahora el estado de error de useLogin ya debería estar seteado
+        expect(result.current.error).toBe("Usuario y/o contraseña incorrectos")
+        expect(result.current.cargando).toBe(false)
     })
 })

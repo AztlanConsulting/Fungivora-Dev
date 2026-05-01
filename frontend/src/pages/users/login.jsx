@@ -14,49 +14,21 @@ import { ViewOffIcon, ViewIcon, User03Icon, Key01Icon } from '@hugeicons/core-fr
 const Login = () => {
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  // Extraemos la lógica del hook
   const { ejecutarLogin, cargando, error } = useLogin();
 
   const handleLogin = async (e) => {
-      e.preventDefault();
-      try {
-          await ejecutarLogin(usuario, contrasena);
-      } catch (err) {
-      }
-  };
-  const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
-
     try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          nombre_usuario: usuario,
-          contrasena: password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log("Login exitoso");
-        localStorage.setItem("token", data.token);
-        window.location.href = "/first";
-      } else {
-        setError("Usuario y/o contraseña incorrectos");
-      }
+      // Delegamos toda la lógica (fetch, localStorage, redirección) al hook
+      await ejecutarLogin(usuario, password);
     } catch (err) {
-      console.error("Error de red:", err);
-      setError("No se pudo conectar con el servidor");
+      // El error ya se guarda en errorHook automáticamente por el hook
+      console.log("Fallo en el inicio de sesión controlado");
     }
   };
-
   return (
     <div className="relative h-screen w-full overflow-hidden flex items-center">
 
