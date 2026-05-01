@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi } from 'vitest'
 import ResultadoPrueba from '../../../features/ejemplo/components/ResultadoPrueba'
 
-// Mock de componentes UI para aislar de sus dependencias internas
+// Mock de ui
 vi.mock('../../../shared/components/ui', () => ({
     Titulo: ({ children }) => <h1>{children}</h1>,
     Text: ({ children }) => <p>{children}</p>,
@@ -13,15 +13,11 @@ vi.mock('../../../shared/components/ui', () => ({
     ),
 }))
 
-// ─── Datos de prueba ──────────────────────────────────────────────────
-
 const resultadoMock = {
     status: 'success',
     tiempo_respuesta: '42ms',
     datos_recuperados: 100,
 }
-
-// ─── Helper ───────────────────────────────────────────────────────────
 
 const renderComponente = (props = {}) => {
     const defaults = {
@@ -34,72 +30,70 @@ const renderComponente = (props = {}) => {
     return render(<ResultadoPrueba {...defaults} {...props} />)
 }
 
-// ─── Tests ────────────────────────────────────────────────────────────
-
-describe('ResultadoPrueba — renderizado base', () => {
-    it('muestra el título del componente', () => {
+describe('ResultadoPrueba — renderizado', () => {
+    it('Titulo', () => {
         renderComponente()
         expect(screen.getByText('Prueba')).toBeInTheDocument()
     })
 
-    it('muestra el botón de ejecutar', () => {
+    it('Boton (ejecutar)', () => {
         renderComponente()
         expect(screen.getByText('Ejecutar prueba')).toBeInTheDocument()
     })
 
-    it('muestra el botón de limpiar', () => {
+    it('Boton (limpiar)', () => {
         renderComponente()
         expect(screen.getByText('Limpiar')).toBeInTheDocument()
     })
 
-    it('no muestra resultado ni error en estado inicial', () => {
+    it('Sin errores iniciales', () => {
         renderComponente()
         expect(screen.queryByText('Status')).not.toBeInTheDocument()
         expect(screen.queryByText('success')).not.toBeInTheDocument()
     })
 })
 
-describe('ResultadoPrueba — estado de carga', () => {
-    it('muestra mensaje de carga cuando cargando es true', () => {
+describe('ResultadoPrueba — carga', () => {
+    it('Cargando en true', () => {
         renderComponente({ cargando: true })
         expect(screen.getByText('Ejecutando prueba...')).toBeInTheDocument()
     })
 
-    it('no muestra el resultado mientras carga', () => {
+    it('Cargado en false', () => {
         renderComponente({ cargando: true, resultado: resultadoMock })
         expect(screen.queryByText('42ms')).not.toBeInTheDocument()
     })
 })
 
-describe('ResultadoPrueba — estado de error', () => {
-    it('muestra el mensaje de error', () => {
+describe('ResultadoPrueba —  error', () => {
+    it('Mensaje de error', () => {
         renderComponente({ error: 'Connection lost' })
         expect(screen.getByText('Error: Connection lost')).toBeInTheDocument()
     })
 
-    it('no muestra el resultado cuando hay error', () => {
+    it('No muestra mensaje', () => {
         renderComponente({ error: 'Fallo', resultado: resultadoMock })
         expect(screen.queryByText('42ms')).not.toBeInTheDocument()
     })
 })
 
-describe('ResultadoPrueba — estado de éxito', () => {
-    it('muestra el status del resultado', () => {
+describe('ResultadoPrueba —  éxito', () => {
+    it('Status de éxito', () => {
         renderComponente({ resultado: resultadoMock })
         expect(screen.getByText('success')).toBeInTheDocument()
     })
 
-    it('muestra el tiempo de respuesta', () => {
+    it('Tiempo de respuesta', () => {
         renderComponente({ resultado: resultadoMock })
         expect(screen.getByText('42ms')).toBeInTheDocument()
     })
 
-    it('muestra los registros recuperados', () => {
+    it('Registros recuperados', () => {
         renderComponente({ resultado: resultadoMock })
         expect(screen.getByText('100')).toBeInTheDocument()
     })
 
-    it('muestra las etiquetas de cada campo', () => {
+    it('Etiquetas de cada campo', () => {
         renderComponente({ resultado: resultadoMock })
         expect(screen.getByText('Status')).toBeInTheDocument()
         expect(screen.getByText('Tiempo de respuesta')).toBeInTheDocument()
@@ -108,7 +102,7 @@ describe('ResultadoPrueba — estado de éxito', () => {
 })
 
 describe('ResultadoPrueba — interacciones', () => {
-    it('llama a onEjecutar al hacer click en ejecutar', async () => {
+    it('onEjecutar al hacer click en ejecutar', async () => {
         const user = userEvent.setup()
         const onEjecutar = vi.fn()
         renderComponente({ onEjecutar })
@@ -116,7 +110,7 @@ describe('ResultadoPrueba — interacciones', () => {
         expect(onEjecutar).toHaveBeenCalledTimes(1)
     })
 
-    it('llama a onLimpiar al hacer click en limpiar', async () => {
+    it('onLimpiar al hacer click en limpiar', async () => {
         const user = userEvent.setup()
         const onLimpiar = vi.fn()
         renderComponente({ onLimpiar })

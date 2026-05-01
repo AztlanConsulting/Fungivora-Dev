@@ -10,11 +10,11 @@ const useLogin = () => {
         setError(null);
         try {
             const data = await loginService.login(usuario, password);
-            localStorage.setItem("token", data.token);
-            window.location.href = "/first";
-            return data;
+            localStorage.setItem("token", data.token); //guarda localmente el token
+            return data; 
         } catch (err) {
-            setError("Usuario y/o contraseña incorrectos");
+            const mensaje = err.response?.data?.msg || "Usuario y/o contraseña incorrectos"; //Mensaje de error de usuario y/o contraseña
+            setError(mensaje);
             throw err; 
         } finally {
             setCargando(false);
