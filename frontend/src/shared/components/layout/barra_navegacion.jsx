@@ -3,11 +3,12 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { colores } from "../ui/basics/colores";
 import Text from "../ui/basics/texto";
 import ModalConfirmacion from "../ui/popups/modal_confirmacion";
+import useLogout from '../../../features/hooks/useLogout';
 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Home07FreeIcons, BookOpenTextFreeIcons, PackageIcon, MushroomIcon, Logout02Icon, Door01Icon } from '@hugeicons/core-free-icons';
 
-import fungivora from "/icons/icon-splash-blue.png?url"
+const fungivora = "/icons/icon-splash-blue.png";
 
 const Contenedor_principal = `
     flex flex-row gap-2 p-2 justify-between items-center
@@ -50,15 +51,14 @@ const Botones = `
 `
 
 const Barra_navegacion = () => {
-    const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
+    const { ejecutarLogout } = useLogout(); 
 
     const confirmarCerrarSesion = () => {
-        localStorage.removeItem("token");
+        ejecutarLogout();
         setShowModal(false); 
-        navigate("/"); 
     };
-
+    
     return (
     <>
         <nav className={Contenedor_principal}>

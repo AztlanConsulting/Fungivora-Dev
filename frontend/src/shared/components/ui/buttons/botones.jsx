@@ -45,27 +45,34 @@ const Button = ({
   type = "button",
   isOutline = false,
   icon: Icon,
+  disabled,
+  ...props 
 }) => {
   const colorKey = variants[variant] || "azul";
   const mainColor = colores[colorKey] || colores.azul;
   const textColor = isOutline ? mainColor : "#FFFFFF";
   const buttonStyle = isOutline
     ? {
-      backgroundColor: "#FFFFFF",
-      border: `2px solid ${mainColor}`,
-    }
+        backgroundColor: "#FFFFFF",
+        border: `2px solid ${mainColor}`,
+        opacity: disabled ? 0.6 : 1, 
+      }
     : {
-      backgroundColor: mainColor,
-      border: `2px solid transparent`,
-    };
+        backgroundColor: mainColor,
+        border: `2px solid transparent`,
+        opacity: disabled ? 0.6 : 1, 
+      };
 
   return (
     <button
       type={type}
       onClick={onClick}
+      disabled={disabled} 
+      {...props}      
       className={`
         flex items-center justify-center gap-2
-        transition-all hover:opacity-90 active:scale-95
+        transition-all 
+        ${!disabled ? 'hover:opacity-90 active:scale-95' : 'cursor-not-allowed'} 
         flex-shrink-0 
         ${sizes[size]}
         ${roundings[rounded]}
@@ -73,19 +80,15 @@ const Button = ({
       style={buttonStyle}
     >
       <div className="flex items-center justify-center gap-2 truncate px-1">
-        <Text
-          variante="button"
-          style={{ color: textColor }}
-        >
+        <Text variante="button" style={{ color: textColor }}>
           {children}
         </Text>
 
-        {/** Renderizado condicional del icono con el mismo color del texto */}
         {Icon && (
           <Icon
             size={20}
             color={textColor}
-            variant="outline" // Ajusta según la versión de Huge Icons que uses
+            variant="outline"
           />
         )}
       </div>
