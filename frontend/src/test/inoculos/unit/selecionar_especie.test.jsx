@@ -43,6 +43,10 @@ const renderComponente = (props = {}) => {
 
 // ─── Tests ────────────────────────────────────────────────────────────
 
+// ─── Estado de carga ──────────────────────────────────────────────────────
+// Verifica el comportamiento del componente mientras el fetch no ha resuelto.
+// Se usa una promesa que nunca resuelve para simular la espera indefinida.
+
 describe('SelectEspecie — estado de carga', () => {
     it('muestra "Cargando especies..." mientras espera la respuesta', () => {
         global.fetch = vi.fn().mockReturnValue(new Promise(() => {}))
@@ -59,6 +63,8 @@ describe('SelectEspecie — estado de carga', () => {
         expect(screen.getByRole('combobox')).toBeDisabled()
     })
 })
+
+ // Verifica que el componente muestre correctamente los datos
 
 describe('SelectEspecie — carga exitosa', () => {
     it('muestra el placeholder tras cargar', async () => {
@@ -85,6 +91,9 @@ describe('SelectEspecie — carga exitosa', () => {
         mockFetchExito()
         renderComponente()
 
+        // Una vez que los datos llegaron, el select debe habilitarse
+        // para permitir la interacción del usuario
+
         await waitFor(() => {
             expect(screen.getByRole('combobox')).not.toBeDisabled()
         })
@@ -100,16 +109,23 @@ describe('SelectEspecie — carga exitosa', () => {
     })
 })
 
+// ─── Error de conexión ────────────────────────────────────────────────────
+// Verifica que el componente maneje correctamente un fallo de red
+
 describe('SelectEspecie — error de conexión', () => {
     it('muestra mensaje de error cuando fetch falla', async () => {
         mockFetchError()
         renderComponente()
 
+        // El mensaje de error reemplaza al placeholder en la opción hidden
         await waitFor(() => {
             expect(screen.getByText('Error de conexión')).toBeInTheDocument()
         })
     })
 })
+
+  // ─── Respuesta sin éxito ──────────────────────────────────────────────────
+// Verifica el caso donde el fetch resuelve correctamente pero el backend
 
 describe('SelectEspecie — respuesta sin éxito', () => {
     it('muestra mensaje cuando success es false', async () => {
@@ -121,6 +137,9 @@ describe('SelectEspecie — respuesta sin éxito', () => {
         })
     })
 })
+
+// ─── Props ────────────────────────────────────────────────────────────────
+// Verifica que el componente respete correctamente las props que recibe
 
 describe('SelectEspecie — props', () => {
     it('refleja el value recibido por prop', async () => {

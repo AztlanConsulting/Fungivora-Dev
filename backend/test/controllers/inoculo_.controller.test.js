@@ -15,13 +15,17 @@ const mockRes = () => {
 describe('inoculo.controller — get_especies', () => {
 
     beforeEach(() => {
+          // Limpia el historial de llamadas entre pruebas
         jest.clearAllMocks();
+         // Silencia los console.error que se provocan intencionalmente
         jest.spyOn(console, 'error').mockImplementation(() => {});
     });
 
     afterEach(() => {
         console.error.mockRestore();
     });
+
+    // ─── Casos exitosos ───────────────────────────────────────────────────────
 
     it('responde 200 con success true y las especies cuando la DB funciona', async () => {
         const especiesMock = [
@@ -44,6 +48,7 @@ describe('inoculo.controller — get_especies', () => {
     });
 
     it('responde 200 con data vacío si no hay especies registradas', async () => {
+        // Caso límite: la tabla existe y la query funciona, pero no hay registros.
         Inoculo.fetchEspecies.mockResolvedValue([[]]);
 
         const req = {};
@@ -58,7 +63,10 @@ describe('inoculo.controller — get_especies', () => {
         });
     });
 
+    // ─── Casos de error ───────────────────────────────────────────────────────
+
     it('responde 500 cuando la DB lanza un error', async () => {
+        // Simula un fallo de conexión o query inválida.
         Inoculo.fetchEspecies.mockRejectedValue(new Error('Connection lost'));
 
         const req = {};
@@ -74,6 +82,7 @@ describe('inoculo.controller — get_especies', () => {
     });
 
     it('registra el error en consola cuando la DB falla', async () => {
+        // Verifica que el controlador registre el error
         Inoculo.fetchEspecies.mockRejectedValue(new Error('Timeout'));
 
         const req = {};

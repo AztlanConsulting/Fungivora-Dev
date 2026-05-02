@@ -27,6 +27,8 @@ describe('GET /api/inoculos/especies', () => {
         console.error.mockRestore();
     });
 
+    // ─── Casos exitosos ───────────────────────────────────────────────────────
+
     it('responde 200 con success true y lista de especies', async () => {
         const especiesMock = [
             { especie: 'Shiitake' },
@@ -45,6 +47,7 @@ describe('GET /api/inoculos/especies', () => {
     });
 
     it('responde 200 con data vacío si no hay especies', async () => {
+        // Caso límite: la query funciona pero no hay registros en la tabla.
         Inoculo.fetchEspecies.mockResolvedValue([[]]);
 
         const res = await request(app).get('/api/inoculos/especies');
@@ -56,7 +59,10 @@ describe('GET /api/inoculos/especies', () => {
         });
     });
 
+    // ─── Casos de error ───────────────────────────────────────────────────────
+
     it('responde 500 cuando la DB falla', async () => {
+        // Simula un fallo de conexión o query inválida.
         Inoculo.fetchEspecies.mockRejectedValue(new Error('Timeout'));
 
         const res = await request(app).get('/api/inoculos/especies');
@@ -68,7 +74,10 @@ describe('GET /api/inoculos/especies', () => {
         });
     });
 
+    // ─── Formato de respuesta ─────────────────────────────────────────────────
+
     it('responde con Content-Type application/json', async () => {
+        // Verifica que el endpoint siempre responda en JSON.
         Inoculo.fetchEspecies.mockResolvedValue([[{ especie: 'Shiitake' }]]);
 
         const res = await request(app).get('/api/inoculos/especies');
