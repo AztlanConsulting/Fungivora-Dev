@@ -20,17 +20,44 @@ const [accionPendiente, setAccionPendiente] = useState(null);
 const [isModalOpen, setIsModalOpen] = useState(false);
 const [error, setError] = useState("");
 
-//Handle del registro de usario
+//Handle del registro de usario y sus errores
 const handleRegistrarClick = () => {
 
-  if (valcontrasena !== valverifica) {
-    setError("Las contraseñas no coinciden, deben ser iguales.");
+  // Validación: que no estén vacías
+  if ((!valusuario || !valcorreo || !valcontrasena || !valverifica)) {
+    setError("Llena todos los campos.");
+    return;
+  }
+  // Validación: no se esta usando espacios
+ if (/\s/.test(valusuario) || /\s/.test(valcorreo) || /\s/.test(valcontrasena) || /\s/.test(valverifica)) {
+    setError("No se permiten espacios en ningun campo.");
+    return;
+  }
+  // Validación: de carecteres en usuario
+  if (!/^[a-zA-Z0-9]+$/.test(valusuario)) {
+    setError("El usuario solo puede contener letras y numeros.");
+    return;
+  }
+  // Validación: de carecteres en correo
+  if (!/^[a-zA-Z0-9@.]+$/.test(valcorreo)) {
+    setError("Incerte un correo valido.");
+    return;
+  }
+  //Validación: de carecteres en contrasenas
+  if (!/^[a-zA-Z0-9]+$/.test(valcontrasena)) {
+    setError("La contraseña solo puede contener letras y numeros.");
     return;
   }
 
-  // Validación: que no estén vacías
-  if (!valusuario || !valcorreo || !valcontrasena || !valverifica) {
-    setError("Llena todos los campo.");
+  // Validación: de limite de contraseñas
+  if (valcontrasena.length > 25){
+    setError("La contraseña debe ser menor a 26 caracteres.");
+    return;
+  }
+
+  // Validación: De contraseñas iguales
+  if (valcontrasena !== valverifica) {
+    setError("Las contraseñas no coinciden, deben ser iguales.");
     return;
   }
 
