@@ -1,8 +1,9 @@
 // frontend/src/features/inoculos/components/seleccionar_especie.jsx
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { colores } from "../../../shared/components/ui/basics/colores";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
+import useEspecies from "../hooks/useEspecies";
 
 const SelectEspecie = ({
   value,
@@ -10,30 +11,7 @@ const SelectEspecie = ({
   placeholder = "Selecciona una especie...",
   size = "normal",
 }) => {
-  const [especies, setEspecies] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchEspecies = async () => {
-      try {
-        const res = await fetch("/api/inoculos/especies");
-        const json = await res.json();
-
-        if (json.success) {
-          setEspecies(json.data);
-        } else {
-          setError("No se pudieron cargar las especies");
-        }
-      } catch (err) {
-        setError("Error de conexión");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEspecies();
-  }, []);
+  const { especies, loading, error } = useEspecies();
 
   const sizes = {
     normal: "w-80 md:w-96",
