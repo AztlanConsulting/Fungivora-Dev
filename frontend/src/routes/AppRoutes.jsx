@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import {
     FirstPage, Login, Usuario, Inventario,
-    RegistrarInsumo, RegistrarMedio, Lotes
+    RegistrarInsumo, RegistrarMedio, Lotes, RegistrarUsuario
 } from "../pages";
 import { MainLayout, RutaProtegida } from "../shared/components/layout";
 
@@ -37,6 +37,15 @@ export default function AppRoutes() {
                     element={
                         <RutaProtegida rolPermitido="Administrador">
                             <Usuario />
+                        </RutaProtegida>
+                    }
+                />
+                {/* Rutas con rol específico. Regstrar Usuario */}
+                <Route
+                    path="/usuario/registrar"
+                    element={
+                        <RutaProtegida rolPermitido="Administrador">
+                            <RegistrarUsuario />
                         </RutaProtegida>
                     }
                 />

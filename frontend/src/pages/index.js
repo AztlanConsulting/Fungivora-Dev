@@ -8,3 +8,4 @@ export { default as Pruebas } from "./tests/pruba_componentes";
 export { default as Usuario } from "./users/Usuario";
 export { default as Login } from "./users/login";
 export { default as PruebaDb } from "./tests/PruebaDb";
+export { default as RegistrarUsuario } from "./users/RegistrarUsuario";
