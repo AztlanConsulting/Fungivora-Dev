@@ -9,19 +9,24 @@ import { colores } from "../../shared/components/ui/basics/colores";
 import useInsumos from "../../features/inventario/hooks/useInsumos";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import { PlusSignIcon } from "@hugeicons/core-free-icons";
+import { PlusSignIcon, CancelCircleIcon } from "@hugeicons/core-free-icons";
 
-const colorHeader = "#F2F2FC";
-const encabezados = ["Insumo", "Categoría", "Cantidad Actual", "Stock Recomendado"];
+const colorBordeHeader = "#F2F2FC";
+
+const columnas = [
+    { label: "Insumo",            key: "nombre" },
+    { label: "Cantidad Actual",   key: "cantidad" },
+    { label: "Stock Recomendado", key: "stock_recomendado" },
+];
 
 const Inventario = () => {
     const navigate = useNavigate();
     const [busqueda, setBusqueda] = useState("");
+    const [filaSeleccionada, setFilaSeleccionada] = useState(null);
     const { insumos, loading, error } = useInsumos();
 
     const insumosFiltrados = insumos.filter((item) =>
-        item.nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
-        item.nombre_categoria?.toLowerCase().includes(busqueda.toLowerCase())
+        item.nombre?.toLowerCase().includes(busqueda.toLowerCase())
     );
 
     return (
@@ -49,113 +54,142 @@ const Inventario = () => {
                         </div>
                     </div>
 
-                    {/* Estado de carga */}
-                    {loading && (
-                        <div className="px-4 py-10 text-center bg-white rounded-xl">
-                            <Text variante="body" style={{ color: colores.gris }}>
-                                Cargando insumos...
-                            </Text>
-                        </div>
-                    )}
+                    {/* Tarjeta contenedora */}
+                    <div className="w-full bg-white rounded-[32px] shadow-sm border p-4 md:p-8 min-h-[500px]">
 
-                    {/* Estado de error */}
-                    {error && (
-                        <div className="px-4 py-10 text-center bg-white rounded-xl">
-                            <Text variante="body" style={{ color: colores.gris }}>
-                                {error}
-                            </Text>
-                        </div>
-                    )}
-
-                    {/* Tarjeta contenedora de la tabla */}
-                    {!loading && !error && (
-                        <div
-                            className="w-full rounded-2xl overflow-hidden"
-                            style={{
-                                backgroundColor: "#FFFFFF",
-                                boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
-                                border: `1px solid ${colorHeader}`,
-                            }}
-                        >
-                            {/* Encabezado */}
-                            <div
-                                className="hidden md:grid md:grid-cols-4"
-                                style={{ backgroundColor: colorHeader }}
-                            >
-                                {encabezados.map((enc, i) => (
-                                    <div key={i} className="px-4 py-3">
-                                        <Text variante="option">{enc}</Text>
-                                    </div>
-                                ))}
+                        {/* Estado de carga */}
+                        {loading && (
+                            <div className="flex justify-center items-center h-[400px]">
+                                <Text variante="medium">Cargando insumos...</Text>
                             </div>
+                        )}
 
-                            {/* Sin resultados */}
-                            {insumosFiltrados.length === 0 && (
-                                <div className="px-4 py-10 text-center">
-                                    <Text variante="body" style={{ color: colores.gris }}>
-                                        No se encontraron insumos.
-                                    </Text>
-                                </div>
-                            )}
+                        {/* Estado de error */}
+                        {error && (
+                            <div className="flex justify-center items-center h-[400px]">
+                                <Text variante="medium" style={{ color: "red" }}>{error}</Text>
+                            </div>
+                        )}
 
-                            {/* Filas */}
-                            {insumosFiltrados.map((item, index) => (
+                        {/* Tabla */}
+                        {!loading && !error && (
+                            <div
+                                className="flex flex-col md:border md:rounded-2xl overflow-hidden"
+                                style={{ borderColor: colorBordeHeader }}
+                            >
+                                {/* Encabezado desktop */}
                                 <div
-                                    key={item.id_insumo}
-                                    className="grid grid-cols-1 md:grid-cols-4"
-                                    style={{
-                                        backgroundColor: "#FFFFFF",
-                                        borderBottom: index === insumosFiltrados.length - 1
-                                            ? "none"
-                                            : `1px solid ${colorHeader}`,
-                                    }}
+                                    className="hidden md:grid md:grid-cols-4"
+                                    style={{ backgroundColor: colorBordeHeader }}
                                 >
-                                    {/* Vista móvil */}
-                                    <div
-                                        className="md:hidden px-4 py-3 border-2 mb-2 rounded-lg"
-                                        style={{ borderColor: colorHeader }}
-                                    >
-                                        <Text variante="option" style={{ color: colores.azul }}>
-                                            {item.nombre}
-                                        </Text>
-                                        <div className="flex gap-4 mt-2">
-                                            <Text variante="body" style={{ color: colores.gris }}>
-                                                {item.nombre_categoria}
-                                            </Text>
-                                            <Text variante="body" style={{ color: colores.gris }}>
-                                                {item.cantidad} {item.unidad}
-                                            </Text>
-                                            <Text variante="body" style={{ color: colores.gris }}>
-                                                {item.stock_recomendado} {item.unidad}
+                                    {columnas.map((col, i) => (
+                                        <div key={i} className="px-6 py-4">
+                                            <Text variante="medium" style={{ color: colores.azul, fontWeight: "600" }}>
+                                                {col.label}
                                             </Text>
                                         </div>
-                                    </div>
-
-                                    {/* Vista desktop */}
-                                    <div className="hidden md:block px-4 py-4">
-                                        <Text variante="body" style={{ color: colores.azul, fontWeight: "600" }}>
-                                            {item.nombre}
-                                        </Text>
-                                    </div>
-                                    <div className="hidden md:block px-4 py-4">
-                                        <Text variante="body" style={{ color: colores.gris }}>
-                                            {item.nombre_categoria}
-                                        </Text>
-                                    </div>
-                                    <div className="hidden md:block px-4 py-4">
-                                        <Text variante="body" style={{ color: colores.gris }}>
-                                            {item.cantidad} {item.unidad}
-                                        </Text>
-                                    </div>
-                                    <div className="hidden md:block px-4 py-4">
-                                        <Text variante="body" style={{ color: colores.gris }}>
-                                            {item.stock_recomendado} {item.unidad}
-                                        </Text>
-                                    </div>
+                                    ))}
+                                    {/* Columna vacía para el icono de acción */}
+                                    <div className="px-6 py-4" />
                                 </div>
-                            ))}
-                        </div>
-                    )}
+
+                                {/* Sin resultados */}
+                                {insumosFiltrados.length === 0 && (
+                                    <div className="flex justify-center items-center h-[200px]">
+                                        <Text variante="body" style={{ color: colores.gris }}>
+                                            No se encontraron insumos.
+                                        </Text>
+                                    </div>
+                                )}
+
+                                {/* Contenedor de filas */}
+                                <div className="max-h-[680px] md:max-h-[530px] overflow-y-auto bg-transparent md:bg-white flex flex-col gap-3 md:gap-0">
+                                    {insumosFiltrados.map((item) => {
+                                        const esSeleccionado = filaSeleccionada === item.id_insumo;
+
+                                        return (
+                                            <div key={item.id_insumo} onClick={() => setFilaSeleccionada(item.id_insumo)}>
+
+                                                {/* Vista Móvil */}
+                                                <div
+                                                    className={`md:hidden p-5 rounded-2xl border bg-white shadow-sm flex flex-col gap-4 transition-all ${esSeleccionado ? "ring-2" : ""}`}
+                                                    style={{
+                                                        borderColor: esSeleccionado ? colores.azul : colorBordeHeader,
+                                                        boxShadow: esSeleccionado
+                                                            ? "0 4px 15px rgba(0,0,0,0.08)"
+                                                            : "0 2px 4px rgba(0,0,0,0.04)",
+                                                    }}
+                                                >
+                                                    {/* Fila superior */}
+                                                    <div className="flex justify-between items-start">
+                                                        <Text variante="option" style={{ color: colores.black, fontWeight: "500", fontSize: "18px" }}>
+                                                            {item.nombre}
+                                                        </Text>
+                                                        <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} className="cursor-pointer" />
+                                                    </div>
+
+                                                    {/* Fila de datos */}
+                                                    <div className="grid grid-cols-2 gap-4 border-t pt-4" style={{ borderColor: colorBordeHeader }}>
+                                                        <div className="flex flex-col gap-1">
+                                                            <Text variante="option" style={{ color: colores.gris, fontSize: "12px", fontWeight: "400" }}>
+                                                                Cantidad Actual
+                                                            </Text>
+                                                            <Text variante="option" style={{ color: colores.gris, fontSize: "14px", fontWeight: "400" }}>
+                                                                {parseFloat(item.cantidad)} {item.unidad}
+                                                            </Text>
+                                                        </div>
+                                                        <div className="flex flex-col gap-1">
+                                                            <Text variante="option" style={{ color: colores.gris, fontSize: "12px", fontWeight: "400" }}>
+                                                                Stock Recomendado
+                                                            </Text>
+                                                            <Text variante="option" style={{ color: colores.gris, fontSize: "14px", fontWeight: "400" }}>
+                                                                {parseFloat(item.stock_recomendado)} {item.unidad}
+                                                            </Text>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Vista Desktop */}
+                                                <div
+                                                    className={`hidden md:grid md:grid-cols-4 cursor-pointer transition-all relative ${esSeleccionado ? "z-10" : "border-b"}`}
+                                                    style={{
+                                                        borderColor: colorBordeHeader,
+                                                        boxShadow: esSeleccionado ? `inset 0 0 0 2px ${colores.azul}` : "none",
+                                                        backgroundColor: "white",
+                                                    }}
+                                                >
+                                                    {columnas.map((col, i) => (
+                                                        <div key={i} className="px-6 py-5 flex items-center">
+                                                            <Text
+                                                                variante="option"
+                                                                style={{
+                                                                    color: "black",
+                                                                    fontWeight: col.key === "nombre" ? "600" : "400",
+                                                                }}
+                                                            >
+                                                                {col.key === "cantidad" || col.key === "stock_recomendado"
+                                                                    ? `${parseFloat(item[col.key])} ${item.unidad}`
+                                                                    : item[col.key]}
+                                                            </Text>
+                                                        </div>
+                                                    ))}
+                                                    <div className="px-6 py-5">
+                                                        <HugeiconsIcon
+                                                            icon={CancelCircleIcon}
+                                                            size={24}
+                                                            color={colores.azul}
+                                                            className="cursor-pointer hover:opacity-80 transition-opacity"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </Base>
         </>
