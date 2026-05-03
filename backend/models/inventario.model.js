@@ -11,7 +11,7 @@ class Inventario {
         this.fecha_caducidad = fecha_caducidad;
     }
 
-    // Obtiene todos los insumos
+    // Obtiene todos los insumos + hongos/esporas (inóculos)
     static fetch_all = async () => {
         const [filas] = await db.execute(`
             SELECT 
@@ -21,8 +21,22 @@ class Inventario {
                 unidad,
                 stock_recomendado,
                 caducable,
-                fecha_caducidad
+                fecha_caducidad,
+                'insumo' AS tipo
             FROM Insumos
+
+            UNION ALL
+
+            SELECT
+                id_inoculo     AS id_insumo,
+                codigo_fungivora AS nombre,
+                cantidad_disponible AS cantidad,
+                unidad,
+                stock_recomendado,
+                0              AS caducable,
+                NULL           AS fecha_caducidad,
+                'inoculo'      AS tipo
+            FROM Inoculos
         `);
         return filas;
     }
