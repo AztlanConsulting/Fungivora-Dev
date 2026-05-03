@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
 import useEspecies from "../../../features/inoculos/hooks/useEspecies";
+import Titulo from "../../../shared/components/ui/basics/titulo";
 
 const FormSemilla = () => {
   const [especie, setEspecie] = useState("");
@@ -14,7 +15,7 @@ const FormSemilla = () => {
 
   return (
     <div>
-      <h1>Crear Inóculo — Semilla</h1>
+      <Titulo>Crear Inóculo — Semilla</Titulo>
 
       <SelectField
         value={especie}
