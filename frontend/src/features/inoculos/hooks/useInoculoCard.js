@@ -15,6 +15,7 @@ import { TIPO_INOCULO_DEFAULT } from '../types/inoculo.types';
  *   loading: boolean,
  *   error: string | null,
  *   collapsed: boolean,
+ *   isMobile: boolean,
  *   handleTipoChange: (tipo: string) => void,
  *   toggleCollapse: () => void,
  * }}
@@ -25,6 +26,7 @@ const useInoculoCard = (especie) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [collapsed, setCollapsed] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
     const fetchDatos = useCallback(async (tipo) => {
         try {
@@ -44,6 +46,17 @@ const useInoculoCard = (especie) => {
         fetchDatos(tipoSeleccionado);
     }, [tipoSeleccionado, fetchDatos]);
 
+    // Escuchar el tamaño de la pantalla
+    useEffect(() => {
+        const handleResize = () => {
+            // 768px es el breakpoint 'md' de Tailwind
+            setIsMobile(window.innerWidth < 768);
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const handleTipoChange = (tipo) => setTipoSeleccionado(tipo);
     const toggleCollapse = () => setCollapsed((prev) => !prev);
 
@@ -53,6 +66,7 @@ const useInoculoCard = (especie) => {
         loading,
         error,
         collapsed,
+        isMobile,
         handleTipoChange,
         toggleCollapse,
     };

@@ -18,6 +18,12 @@ const COLUMNAS = [
     { key: 'fecha', label: 'Fecha Creación', render: (f) => formatFecha(f.fecha) },
 ];
 
+const ABREVIACIONES = {
+    'Agar': 'Agar',
+    'Medio Líquido': 'Medio L.',
+    'Semilla': 'Semilla'
+};
+
 const formatFecha = (isoString) => {
     if (!isoString) return '—';
     return new Date(isoString).toLocaleDateString('es-MX', {
@@ -38,9 +44,15 @@ const InoculoCard = ({ especie }) => {
         loading,
         error,
         collapsed,
+        isMobile,
         handleTipoChange,
         toggleCollapse,
     } = useInoculoCard(especie.value);
+
+    const opcionesAbreviadas = TIPOS_INOCULO.map((tipo) => ({
+        value: tipo.value,
+        label: ABREVIACIONES[tipo.label] || tipo.label
+    }));
 
     return (
         <div
@@ -68,8 +80,8 @@ const InoculoCard = ({ especie }) => {
                     <SelectField
                         value={tipoSeleccionado}
                         onChange={(e) => handleTipoChange(e.target.value)}
-                        options={TIPOS_INOCULO}
-                        size="amplio"
+                        options={isMobile ? opcionesAbreviadas : TIPOS_INOCULO}
+                        size={isMobile ? 'numero' : 'amplio'}
                         placeholder="Tipo"
                     />
                 )}
