@@ -1,99 +1,165 @@
-import React, { useState, useEffect } from "react";
+// frontend/src/pages/inventario/Inventario.jsx
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Inventario.css";
-
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Search02Icon, FilterMailIcon, PlusSignIcon } from '@hugeicons/core-free-icons';
+import Base from "../../shared/components/layout/base";
+import Titulo from "../../shared/components/ui/basics/titulo";
 import BarraBusqueda from "../../shared/components/ui/others/barra_busqueda";
+import Text from "../../shared/components/ui/basics/texto";
+import { colores } from "../../shared/components/ui/basics/colores";
+import useInsumos from "../../features/inventario/hooks/useInsumos";
+
+import { HugeiconsIcon } from "@hugeicons/react";
+import { PlusSignIcon } from "@hugeicons/core-free-icons";
+
+const colorHeader = "#F2F2FC";
+const encabezados = ["Insumo", "Categoría", "Cantidad Actual", "Stock Recomendado"];
 
 const Inventario = () => {
-  const navigate = useNavigate();
-  const [busqueda, setBusqueda] = useState("");
-  const [datos, setDatos] = useState([]);
-  const [filaSeleccionada, setFilaSeleccionada] = useState(null);
+    const navigate = useNavigate();
+    const [busqueda, setBusqueda] = useState("");
+    const { insumos, loading, error } = useInsumos();
 
-  useEffect(() => {
-    const obtenerDatos = () => {
-      fetch("/api/inventario")
-        .then(res => res.json())
-        .then(data => setDatos(data))
-        .catch(err => console.error(err));
-    };
+    const insumosFiltrados = insumos.filter((item) =>
+        item.nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
+        item.nombre_categoria?.toLowerCase().includes(busqueda.toLowerCase())
+    );
 
-    obtenerDatos();
+    return (
+        <>
+            <Titulo>Inventario</Titulo>
 
-    //! Para que se actualicen los datos sin tener que refrescar la pagina
-    const intervalo = setInterval(obtenerDatos, 5000);
-    return () => clearInterval(intervalo);
-  }, []);
+            <Base margen_arriba="mt-24 md:mt-20">
+                <div className="flex flex-col gap-4">
 
-  return (
-    <div className="inventary-screen">
-      <div className="contenido">
+                    {/* Barra de búsqueda y botón agregar */}
+                    <div className="flex items-center gap-4">
+                        <div className="flex-1">
+                            <BarraBusqueda
+                                value={busqueda}
+                                onChange={(e) => setBusqueda(e.target.value)}
+                                placeholder="Buscar insumo..."
+                            />
+                        </div>
+                        <div
+                            className="flex items-center justify-center w-11 h-11 rounded-full cursor-pointer"
+                            style={{ backgroundColor: colores.azul }}
+                            onClick={() => navigate("/inventario/crearInsumo")}
+                        >
+                            <HugeiconsIcon icon={PlusSignIcon} size={24} color={colores.blanco} />
+                        </div>
+                    </div>
 
-        {/* Título */}
-        <h1 className="titulo">Inventario</h1>
+                    {/* Estado de carga */}
+                    {loading && (
+                        <div className="px-4 py-10 text-center bg-white rounded-xl">
+                            <Text variante="body" style={{ color: colores.gris }}>
+                                Cargando insumos...
+                            </Text>
+                        </div>
+                    )}
 
-        {/* Barra de busqueda (no funcional) */}
-        <div className="barra-container">
-          <div className="flex-1">
-            <BarraBusqueda
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Buscar producto..."
-              icon={<HugeiconsIcon icon={Search02Icon} size={24} className="text-[#3B3FB6]" />}
-            />
-          </div>
+                    {/* Estado de error */}
+                    {error && (
+                        <div className="px-4 py-10 text-center bg-white rounded-xl">
+                            <Text variante="body" style={{ color: colores.gris }}>
+                                {error}
+                            </Text>
+                        </div>
+                    )}
 
-          {/* Icono de filtro (no funcional) */}
-          <HugeiconsIcon
-            icon={FilterMailIcon}
-            size={45}
-            className="text-[#FE5000] icono"
-          />
+                    {/* Tarjeta contenedora de la tabla */}
+                    {!loading && !error && (
+                        <div
+                            className="w-full rounded-2xl overflow-hidden"
+                            style={{
+                                backgroundColor: "#FFFFFF",
+                                boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+                                border: `1px solid ${colorHeader}`,
+                            }}
+                        >
+                            {/* Encabezado */}
+                            <div
+                                className="hidden md:grid md:grid-cols-4"
+                                style={{ backgroundColor: colorHeader }}
+                            >
+                                {encabezados.map((enc, i) => (
+                                    <div key={i} className="px-4 py-3">
+                                        <Text variante="option">{enc}</Text>
+                                    </div>
+                                ))}
+                            </div>
 
-          {/* Circulo de agregar (no funcional) */}
-          <div className="btn-add" onClick={() => navigate("/inventario/crearInsumo")}>
-            <HugeiconsIcon icon={PlusSignIcon} size={30} className="text-white" />
-          </div>
-        </div>
+                            {/* Sin resultados */}
+                            {insumosFiltrados.length === 0 && (
+                                <div className="px-4 py-10 text-center">
+                                    <Text variante="body" style={{ color: colores.gris }}>
+                                        No se encontraron insumos.
+                                    </Text>
+                                </div>
+                            )}
 
-        {/* Tabla de informacion del inventario */}
-        <div className="tabla-container">
-          <table className="tabla-inventario">
-            {/* Encabezado de la tabla */}
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Categoría</th>
-                <th>Cantidad</th>
-                <th>Recomendado</th>
-                <th>Fecha</th>
-              </tr>
-            </thead>
+                            {/* Filas */}
+                            {insumosFiltrados.map((item, index) => (
+                                <div
+                                    key={item.id_insumo}
+                                    className="grid grid-cols-1 md:grid-cols-4"
+                                    style={{
+                                        backgroundColor: "#FFFFFF",
+                                        borderBottom: index === insumosFiltrados.length - 1
+                                            ? "none"
+                                            : `1px solid ${colorHeader}`,
+                                    }}
+                                >
+                                    {/* Vista móvil */}
+                                    <div
+                                        className="md:hidden px-4 py-3 border-2 mb-2 rounded-lg"
+                                        style={{ borderColor: colorHeader }}
+                                    >
+                                        <Text variante="option" style={{ color: colores.azul }}>
+                                            {item.nombre}
+                                        </Text>
+                                        <div className="flex gap-4 mt-2">
+                                            <Text variante="body" style={{ color: colores.gris }}>
+                                                {item.nombre_categoria}
+                                            </Text>
+                                            <Text variante="body" style={{ color: colores.gris }}>
+                                                {item.cantidad} {item.unidad}
+                                            </Text>
+                                            <Text variante="body" style={{ color: colores.gris }}>
+                                                {item.stock_recomendado} {item.unidad}
+                                            </Text>
+                                        </div>
+                                    </div>
 
-            {/* Cuerpo de la tabla */}
-            <tbody>
-              {datos.map((item, index) => (
-                <tr
-                  key={item.id_inventario}
-                  onClick={() => setFilaSeleccionada(item.id_inventario)}
-                  className={filaSeleccionada === item.id_inventario ? "seleccionada" : ""} //! Cambia el color al seleccionar la fila
-                >
-                  <td>{item.nombre_inventario}</td>
-                  <td>{item.nombre_categoria}</td>
-                  <td>{item.cantidad_inventario} {item.unidad_medida}</td> {/* Une la cantidad y la unidad de medida (2 kg) */}
-                  <td>{item.stock_recomendado} {item.unidad_medida}</td> {/* Une el stock recomendado y la unidad de medida (2 kg) */}
-                  <td>{new Date(item.fecha_inventario).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-      </div>
-    </div>
-  );
+                                    {/* Vista desktop */}
+                                    <div className="hidden md:block px-4 py-4">
+                                        <Text variante="body" style={{ color: colores.azul, fontWeight: "600" }}>
+                                            {item.nombre}
+                                        </Text>
+                                    </div>
+                                    <div className="hidden md:block px-4 py-4">
+                                        <Text variante="body" style={{ color: colores.gris }}>
+                                            {item.nombre_categoria}
+                                        </Text>
+                                    </div>
+                                    <div className="hidden md:block px-4 py-4">
+                                        <Text variante="body" style={{ color: colores.gris }}>
+                                            {item.cantidad} {item.unidad}
+                                        </Text>
+                                    </div>
+                                    <div className="hidden md:block px-4 py-4">
+                                        <Text variante="body" style={{ color: colores.gris }}>
+                                            {item.stock_recomendado} {item.unidad}
+                                        </Text>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </Base>
+        </>
+    );
 };
 
 export default Inventario;
