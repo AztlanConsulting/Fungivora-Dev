@@ -17,7 +17,7 @@ const SelectField = ({
   const sizes = {
     normal: "w-80 md:w-96",
     amplio: "w-80 md:w-96",
-    numero: "w-24 md:w-32",
+    numero: "w-28 md:w-36",
   };
 
   const textColor = value ? colores.azul : colores.gris;
@@ -33,8 +33,8 @@ const SelectField = ({
   const placeholderText = loading
     ? "Cargando..."
     : error
-    ? error
-    : placeholder;
+      ? error
+      : placeholder;
 
   return (
     <div className="flex flex-col gap-2">
