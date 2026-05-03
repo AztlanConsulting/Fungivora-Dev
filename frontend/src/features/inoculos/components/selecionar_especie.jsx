@@ -1,19 +1,18 @@
-// frontend/src/shared/components/ui/inputs/seleccionar_texto.jsx
+// frontend/src/features/inoculos/components/seleccionar_especie.jsx
 import React from "react";
-import { colores } from "../basics/colores";
+import { colores } from "../../../shared/components/ui/basics/colores";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
+import useEspecies from "../hooks/useEspecies";
 
-const SelectField = ({
+const SelectEspecie = ({
   value,
   onChange,
-  placeholder,
-  options = [],
+  placeholder = "Selecciona una especie...",
   size = "normal",
-  loading = false,
-  error = null,
-  label = null,
 }) => {
+  const { especies, loading, error } = useEspecies();
+
   const sizes = {
     normal: "w-80 md:w-96",
     amplio: "w-80 md:w-96",
@@ -22,28 +21,21 @@ const SelectField = ({
 
   const textColor = value ? colores.azul : colores.gris;
 
-  const clase = `${sizes[size]}
-    border-2
-    rounded-xl
-    px-3 py-2 pr-8
+  const clase = `${sizes[size]} 
+    border-2 
+    rounded-xl 
+    px-3 py-2 pr-8 
     text-base
-    outline-none cursor-pointer appearance-none
+    outline-none cursor-pointer appearance-none 
     transition-colors focus:border-[#3b3fb6]`;
-
-  const placeholderText = loading
-    ? "Cargando..."
-    : error
-    ? error
-    : placeholder;
 
   return (
     <div className="flex flex-col gap-2">
-      {/* Título opcional */}
-      {label && (
-        <span style={{ fontSize: "28px", color: colores.negro, fontWeight: "500" }}>
-          {label}
-        </span>
-      )}
+
+      {/* Título del componente */}
+      <span style={{ fontSize: "28px", color: colores.negro, fontWeight: "500" }}>
+        Especie
+      </span>
 
       <div className="relative w-fit">
         <select
@@ -58,12 +50,12 @@ const SelectField = ({
           disabled={loading}
         >
           <option value="" disabled hidden>
-            {placeholderText}
+            {loading ? "Cargando especies..." : error ? error : placeholder}
           </option>
 
-          {options.map((op) => (
-            <option key={op.value} value={op.value}>
-              {op.label}
+          {especies.map((esp) => (
+            <option key={esp.especie} value={esp.especie}>
+              {esp.especie}
             </option>
           ))}
         </select>
@@ -79,4 +71,4 @@ const SelectField = ({
   );
 };
 
-export default SelectField;
+export default SelectEspecie;
