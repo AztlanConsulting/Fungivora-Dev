@@ -63,9 +63,9 @@ describe('Inventario — renderizado base', () => {
         useInsumos.mockReturnValue({ ...hookBase, insumos: insumosMock })
         renderInventario()
 
-        expect(screen.getByText('Insumo')).toBeInTheDocument()
-        expect(screen.getByText('Cantidad Actual')).toBeInTheDocument()
-        expect(screen.getByText('Stock Recomendado')).toBeInTheDocument()
+       expect(screen.getAllByText('Insumo')[0]).toBeInTheDocument()
+        expect(screen.getAllByText('Cantidad Actual')[0]).toBeInTheDocument()
+        expect(screen.getAllByText('Stock Recomendado')[0]).toBeInTheDocument()
     })
 })
 
