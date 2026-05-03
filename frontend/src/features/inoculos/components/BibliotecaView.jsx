@@ -39,7 +39,7 @@ const BibliotecaView = () => {
             <button
                 onClick={() => setModalVisible(true)}
                 aria-label="Crear inóculo"
-                className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-opacity hover:opacity-80 active:scale-95"
+                className="fixed bottom-20 right-10 md:bottom-10 md:right-10 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-opacity hover:opacity-80 active:scale-95"
                 style={{ backgroundColor: colores.verdeAccent }}
             >
                 <HugeiconsIcon icon={Add01Icon} size={28} color={colores.blanco} />
