@@ -20,7 +20,7 @@ describe('GET /api/inoculos/especies', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        jest.spyOn(console, 'error').mockImplementation(() => {});
+        jest.spyOn(console, 'error').mockImplementation(() => { });
     });
 
     afterEach(() => {
@@ -81,6 +81,90 @@ describe('GET /api/inoculos/especies', () => {
         Inoculo.fetchEspecies.mockResolvedValue([[{ especie: 'Shiitake' }]]);
 
         const res = await request(app).get('/api/inoculos/especies');
+
+        expect(res.headers['content-type']).toMatch(/application\/json/);
+    });
+});
+
+describe('GET /api/inoculos/filtrado', () => {
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+        jest.spyOn(console, 'error').mockImplementation(() => { });
+    });
+
+    afterEach(() => {
+        console.error.mockRestore();
+    });
+
+    // ─── Casos exitosos ───────────────────────────────────────────────────────
+
+    it('responde 200 con success true y los inóculos filtrados cuando se pasan parámetros', async () => {
+        const especie = 'Shiitake';
+        const tipo = 'Agar';
+        const inoculosMock = [
+            { inóculo: 'Inóculo1' },
+            { inóculo: 'Inóculo2' },
+        ];
+        Inoculo.fetchInoculosFiltrados.mockResolvedValue([inoculosMock]);
+
+        const res = await request(app).get(`/api/inoculos/filtrado?especie=${especie}&tipo=${tipo}`);
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toMatchObject({
+            success: true,
+            data: inoculosMock,
+        });
+    });
+
+    it('responde 200 con success true y los inóculos por defecto cuando no se pasan parámetros', async () => {
+        const inoculosMock = [
+            { inóculo: 'Inóculo1' },
+            { inóculo: 'Inóculo2' },
+        ];
+        Inoculo.fetchInoculosFiltrados.mockResolvedValue([inoculosMock]);
+
+        const res = await request(app).get('/api/inoculos/filtrado'); // Sin query params, usa los valores por defecto
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toMatchObject({
+            success: true,
+            data: inoculosMock,
+        });
+    });
+
+    it('responde 200 con data vacío si no hay inóculos filtrados', async () => {
+        Inoculo.fetchInoculosFiltrados.mockResolvedValue([[]]);
+
+        const res = await request(app).get('/api/inoculos/filtrado?especie=Shiitake&tipo=Agar');
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toMatchObject({
+            success: true,
+            data: [],
+        });
+    });
+
+    // ─── Casos de error ───────────────────────────────────────────────────────
+
+    it('responde 500 cuando la DB lanza un error', async () => {
+        Inoculo.fetchInoculosFiltrados.mockRejectedValue(new Error('Connection lost'));
+
+        const res = await request(app).get('/api/inoculos/filtrado?especie=Shiitake&tipo=Agar');
+
+        expect(res.statusCode).toBe(500);
+        expect(res.body).toMatchObject({
+            success: false,
+            message: 'Error al obtener los inoculos',
+        });
+    });
+
+    // ─── Formato de respuesta ─────────────────────────────────────────────────
+
+    it('responde con Content-Type application/json', async () => {
+        Inoculo.fetchInoculosFiltrados.mockResolvedValue([[{ inóculo: 'Inóculo1' }]]);
+
+        const res = await request(app).get('/api/inoculos/filtrado?especie=Shiitake&tipo=Agar');
 
         expect(res.headers['content-type']).toMatch(/application\/json/);
     });
