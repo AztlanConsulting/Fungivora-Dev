@@ -1,12 +1,10 @@
-// Páginas
 export { default as FirstPage } from "./home/First_Page";
 export { default as RegistrarMedio } from "./inoculos/NewMedio";
-export { default as Inventario } from "./inventario/Inventario";
+export { default as Inventario } from "./inventario/inventario";
 export { default as RegistrarInsumo } from "./inventario/RegistrarInsumo";
 export { default as Lotes } from "./lotes/Lotes";
 export { default as Pruebas } from "./tests/pruba_componentes";
 export { default as Usuario } from "./users/Usuario";
 export { default as Login } from "./users/login";
 export { default as BibliotecaGenetica } from "./inoculos/biblioteca_genetica";
-export { default as InventarioPrueba } from "./inventario/inventariodummy";
 export { default as PruebaDb } from "./tests/PruebaDb";
