@@ -1,15 +1,16 @@
 // frontend/src/pages/inventario/Inventario.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Base from "../../shared/components/layout/base";
 import Titulo from "../../shared/components/ui/basics/titulo";
 import BarraBusqueda from "../../shared/components/ui/others/barra_busqueda";
 import Text from "../../shared/components/ui/basics/texto";
+import Button from "../../shared/components/ui/buttons/botones";
 import { colores } from "../../shared/components/ui/basics/colores";
 import useInsumos from "../../features/inventario/hooks/useInsumos";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import { PlusSignIcon, CancelCircleIcon } from "@hugeicons/core-free-icons";
+import { CancelCircleIcon } from "@hugeicons/core-free-icons";
 
 const colorBordeHeader = "#F2F2FC";
 
@@ -25,6 +26,12 @@ const Inventario = () => {
     const [filaSeleccionada, setFilaSeleccionada] = useState(null);
     const { insumos, loading, error } = useInsumos();
 
+    // Bloquea el scroll horizontal en toda la página mientras esta vista está montada
+    useEffect(() => {
+        document.body.style.overflowX = "hidden";
+        return () => { document.body.style.overflowX = ""; };
+    }, []);
+
     const insumosFiltrados = insumos.filter((item) =>
         item.nombre?.toLowerCase().includes(busqueda.toLowerCase())
     );
@@ -36,21 +43,22 @@ const Inventario = () => {
             <Base margen_arriba="mt-24 md:mt-20">
                 <div className="flex flex-col gap-4">
 
-                    {/* Barra de búsqueda y botón agregar */}
-                    <div className="flex items-center gap-4">
-                        <div className="flex-1">
+                    {/* Móvil: barra arriba, botón abajo — Desktop: en fila */}
+                    <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                        <div className="w-full md:flex-1">
                             <BarraBusqueda
                                 value={busqueda}
                                 onChange={(e) => setBusqueda(e.target.value)}
                                 placeholder="Buscar insumo..."
                             />
                         </div>
-                        <div
-                            className="flex items-center justify-center w-11 h-11 rounded-full cursor-pointer"
-                            style={{ backgroundColor: colores.azul }}
-                            onClick={() => navigate("/inventario/crearInsumo")}
-                        >
-                            <HugeiconsIcon icon={PlusSignIcon} size={24} color={colores.blanco} />
+                        <div className="w-full md:w-auto">
+                            <Button
+                                variant="agregar"
+                                onClick={() => navigate("/inventario/crearInsumo")}
+                            >
+                                Agregar
+                            </Button>
                         </div>
                     </div>
 
@@ -89,7 +97,6 @@ const Inventario = () => {
                                             </Text>
                                         </div>
                                     ))}
-                                    {/* Columna vacía para el icono de acción */}
                                     <div className="px-6 py-4" />
                                 </div>
 
@@ -120,7 +127,6 @@ const Inventario = () => {
                                                             : "0 2px 4px rgba(0,0,0,0.04)",
                                                     }}
                                                 >
-                                                    {/* Fila superior */}
                                                     <div className="flex justify-between items-start">
                                                         <Text variante="option" style={{ color: colores.black, fontWeight: "500", fontSize: "18px" }}>
                                                             {item.nombre}
@@ -128,7 +134,6 @@ const Inventario = () => {
                                                         <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} className="cursor-pointer" />
                                                     </div>
 
-                                                    {/* Fila de datos */}
                                                     <div className="grid grid-cols-2 gap-4 border-t pt-4" style={{ borderColor: colorBordeHeader }}>
                                                         <div className="flex flex-col gap-1">
                                                             <Text variante="option" style={{ color: colores.gris, fontSize: "12px", fontWeight: "400" }}>
@@ -195,3 +200,5 @@ const Inventario = () => {
         </>
     );
 };
+
+export default Inventario;
