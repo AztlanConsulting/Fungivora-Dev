@@ -1,66 +1,74 @@
 const db = require('../util/db');
 
 class Inventario {
-  constructor(id_inventario, id_categoria, nombre_inventario, fecha_inventario, cantidad_inventario, unidad_medida, stock_recomendado, es_manufacturado) {
-    this.id_inventario = id_inventario;
-    this.id_categoria = id_categoria;
-    this.nombre_inventario = nombre_inventario;
-    this.fecha_inventario = fecha_inventario;
-    this.cantidad_inventario = cantidad_inventario;
-    this.unidad_medida = unidad_medida;
-    this.stock_recomendado = stock_recomendado;
-    this.es_manufacturado = es_manufacturado;
-  }
+    constructor(id_insumo, nombre, cantidad, unidad, stock_recomendado, caducable, fecha_caducidad) {
+        this.id_insumo = id_insumo;
+        this.nombre = nombre;
+        this.cantidad = cantidad;
+        this.unidad = unidad;
+        this.stock_recomendado = stock_recomendado;
+        this.caducable = caducable;
+        this.fecha_caducidad = fecha_caducidad;
+    }
 
+    // Obtiene todos los insumos + hongos/esporas (inóculos)
     static fetch_all = async () => {
         const [filas] = await db.execute(`
             SELECT 
-            i.id_inventario,
-            i.nombre_inventario,
-            i.fecha_inventario,
-            i.cantidad_inventario,
-            i.unidad_medida,
-            i.stock_recomendado,
-            i.es_manufacturado,
-            c.nombre_categoria
-            FROM inventario i
-            INNER JOIN categorias c 
-            ON i.id_categoria = c.id_categoria
+                id_insumo,
+                nombre,
+                cantidad,
+                unidad,
+                stock_recomendado,
+                caducable,
+                fecha_caducidad,
+                'insumo' AS tipo
+            FROM Insumos
+
+            UNION ALL
+
+            SELECT
+                id_inoculo     AS id_insumo,
+                codigo_fungivora AS nombre,
+                cantidad_disponible AS cantidad,
+                unidad,
+                stock_recomendado,
+                0              AS caducable,
+                NULL           AS fecha_caducidad,
+                'inoculo'      AS tipo
+            FROM Inoculos
         `);
-
         return filas;
     }
 
+    // Obtiene todas las categorías disponibles
     static fetch_categorias = async () => {
-        const [filas] = await db.execute('SELECT * FROM categorias');
+        const [filas] = await db.execute('SELECT * FROM Categorias');
         return filas;
     }
 
-    static crear_insumo = async (id_inventario,nombre_insumo, cantidad_inicial, stock_minimo, unidad_medida, id_categoria) => {
-    // Usamos db.execute siguiendo tu estándar
-    const [resultado] = await db.execute(`
-        INSERT INTO inventario (
-            id_inventario,
-            id_categoria,
-            nombre_inventario, 
-            cantidad_inventario, 
-            unidad_medida, 
-            stock_recomendado, 
-            es_manufacturado
-        ) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    `, [
-        id_inventario,
-        id_categoria,
-        nombre_insumo, 
-        cantidad_inicial, 
-        unidad_medida, 
-        stock_minimo, 
-        0 // no es manufacturado
-    ]);
-
-    return resultado;
-  };
+    // Crea un nuevo insumo
+    static crear_insumo = async (id_insumo, nombre, cantidad, stock_recomendado, unidad) => {
+        const [resultado] = await db.execute(`
+            INSERT INTO Insumos (
+                id_insumo,
+                nombre,
+                cantidad,
+                stock_recomendado,
+                unidad,
+                caducable
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `, [
+            id_insumo,
+            nombre,
+            cantidad,
+            stock_recomendado,
+            unidad,
+            0
+        ]);
+        return resultado;
+    }
 }
 
 module.exports = Inventario;
