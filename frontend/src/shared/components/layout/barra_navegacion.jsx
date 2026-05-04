@@ -52,90 +52,90 @@ const Botones = `
 
 const Barra_navegacion = () => {
     const [showModal, setShowModal] = useState(false);
-    const { ejecutarLogout } = useLogout(); 
+    const { ejecutarLogout } = useLogout();
 
     const confirmarCerrarSesion = () => {
         ejecutarLogout();
-        setShowModal(false); 
+        setShowModal(false);
     };
-    
+
     return (
-    <>
-        <nav className={Contenedor_principal}>
-            {/* Logo Fungivora */}
-            <div className={LogoDiv}><img src={fungivora} className={LogoImg} /> </div>
+        <>
+            <nav className={Contenedor_principal}>
+                {/* Logo Fungivora */}
+                <div className={LogoDiv}><img src={fungivora} className={LogoImg} /> </div>
 
-            {/* Este contenedor lleva los iconos de toda la navbar*/}
-            <div className={Contenedor_iconos}>
+                {/* Este contenedor lleva los iconos de toda la navbar*/}
+                <div className={Contenedor_iconos}>
 
-                {/* Home */}
-                <NavLink
-                    to="/first"
-                    className={({ isActive }) =>
-                        `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
-                    }>
-                    <HugeiconsIcon icon={Home07FreeIcons} size={33} color={colores.azul} strokeWidth={1.5} />
-                    <span className={Tooltip}
-                        style={{ backgroundColor: colores.azul, color: colores.blanco }}>
-                        Inicio
-                    </span>
-                </NavLink>
+                    {/* Home */}
+                    <NavLink
+                        to="/first"
+                        className={({ isActive }) =>
+                            `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                        }>
+                        <HugeiconsIcon icon={Home07FreeIcons} size={33} color={colores.azul} strokeWidth={1.5} />
+                        <span className={Tooltip}
+                            style={{ backgroundColor: colores.azul, color: colores.blanco }}>
+                            Inicio
+                        </span>
+                    </NavLink>
 
-                {/* lotes */}
-                <NavLink
-                    to="/lotes"
-                    className={({ isActive }) =>
-                        `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
-                    }>
-                    <HugeiconsIcon icon={BookOpenTextFreeIcons} size={33} color={colores.azul} strokeWidth={1.5} />
-                    <span className={Tooltip}
-                        style={{ backgroundColor: colores.azul, color: colores.blanco }}>
-                        Lotes
-                    </span>
-                </NavLink>
+                    {/* lotes */}
+                    <NavLink
+                        to="/lotes"
+                        className={({ isActive }) =>
+                            `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                        }>
+                        <HugeiconsIcon icon={BookOpenTextFreeIcons} size={33} color={colores.azul} strokeWidth={1.5} />
+                        <span className={Tooltip}
+                            style={{ backgroundColor: colores.azul, color: colores.blanco }}>
+                            Lotes
+                        </span>
+                    </NavLink>
 
-                {/* Inventario */}
-                <NavLink
-                    to="/inventario"
-                    className={({ isActive }) =>
-                        `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
-                    }>
-                    <HugeiconsIcon icon={PackageIcon} size={33} color={colores.azul} strokeWidth={1.5} />
-                    <span className={Tooltip}
-                        style={{ backgroundColor: colores.azul, color: colores.blanco }}>
-                        Inventario
-                    </span>
-                </NavLink>
+                    {/* Inventario */}
+                    <NavLink
+                        to="/inventario"
+                        className={({ isActive }) =>
+                            `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                        }>
+                        <HugeiconsIcon icon={PackageIcon} size={33} color={colores.azul} strokeWidth={1.5} />
+                        <span className={Tooltip}
+                            style={{ backgroundColor: colores.azul, color: colores.blanco }}>
+                            Inventario
+                        </span>
+                    </NavLink>
 
-                {/* Recetario */}
-                <NavLink
-                    to="/recetario"
-                    className={({ isActive }) =>
-                        `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
-                    }>
-                    <HugeiconsIcon icon={MushroomIcon} size={33} color={colores.azul} strokeWidth={1.5} />
-                    <span className={Tooltip}
-                        style={{ backgroundColor: colores.azul, color: colores.blanco }}>
-                        Biblioteca genética
-                    </span>
-                </NavLink>
+                    {/* Biblioteca genetica */}
+                    <NavLink
+                        to="/inoculos"
+                        className={({ isActive }) =>
+                            `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
+                        }>
+                        <HugeiconsIcon icon={MushroomIcon} size={33} color={colores.azul} strokeWidth={1.5} />
+                        <span className={Tooltip}
+                            style={{ backgroundColor: colores.azul, color: colores.blanco }}>
+                            Biblioteca genética
+                        </span>
+                    </NavLink>
 
-                {/* Log Out*/}
-                <button 
+                    {/* Log Out*/}
+                    <button
                         onClick={() => setShowModal(true)}
                         className={`${Botones} hover:bg-gray-100`}
                     >
-                    <HugeiconsIcon icon={Logout02Icon} size={33} color={colores.azul} strokeWidth={1.5} />
-                    <span className={Tooltip}
-                        style={{ backgroundColor: colores.azul, color: colores.blanco }}>
-                        Cerrar sesión
-                    </span>
-                </button>
-            </div>
-        </nav>
+                        <HugeiconsIcon icon={Logout02Icon} size={33} color={colores.azul} strokeWidth={1.5} />
+                        <span className={Tooltip}
+                            style={{ backgroundColor: colores.azul, color: colores.blanco }}>
+                            Cerrar sesión
+                        </span>
+                    </button>
+                </div>
+            </nav>
 
-        {/* Modal para poder confirmar el cierre de sesión*/}
-        <ModalConfirmacion
+            {/* Modal para poder confirmar el cierre de sesión*/}
+            <ModalConfirmacion
                 visible={showModal}
                 icon={Door01Icon}
                 titulo="¿Confirmar cierre de sesión?"

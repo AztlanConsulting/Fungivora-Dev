@@ -3,66 +3,86 @@ const crypto = require('crypto');
 
 /*
 * get_inventory
-Obtener la información del inventario
-Metodo que hace una llamada al modelo apra obtener la info necesaria
-@param filas
+* Obtiene todos los insumos
 */
 exports.get_inventory = async (req, res) => {
-  try {
-    const filas = await Inventario.fetch_all();
-
-    res.json(filas); 
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al obtener inventario" });
-  }
-};
-
-exports.get_categorias = async (req, res) => {
     try {
-        const rows = await Inventario.fetch_categorias();
-        res.status(200).json({
-            status: 'success',
-            categorias: rows,
+        const filas = await Inventario.fetch_all();
 
+        res.status(200).json({
+            success: true,
+            data: filas
         });
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ status: 'error', error: error.message });
+        console.error('Error al obtener inventario:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error al obtener inventario'
+        });
     }
 };
 
+/*
+* get_categorias
+* Obtiene todas las categorías disponibles
+*/
+exports.get_categorias = async (req, res) => {
+    try {
+        const rows = await Inventario.fetch_categorias();
+
+        res.status(200).json({
+            success: true,
+            categorias: rows,
+        });
+    } catch (error) {
+        console.error('Error al obtener categorías:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+/*
+* post_crear_insumo
+* Crea un nuevo insumo verificando que no exista previamente
+*/
 exports.post_crear_insumo = async (req, res) => {
     try {
-        const rows = await Inventario.fetch_all();
-        const{nombre_insumo, cantidad_inicial, stock_minimo, unidad_medida, id_categoria} = req.body;
+        const filas = await Inventario.fetch_all();
+        const { nombre, cantidad, stock_recomendado, unidad } = req.body;
 
-        const existe = rows.some(item => 
-          item.nombre_inventario?.toLowerCase() === nombre_insumo?.toLowerCase());
+        // Verifica que no exista un insumo con el mismo nombre
+        const existe = filas.some(item =>
+            item.nombre?.toLowerCase() === nombre?.toLowerCase()
+        );
 
         if (existe) {
-            return res.status(400).json({ status: 'error', error: 'El insumo ya existe' });
+            return res.status(400).json({
+                success: false,
+                error: 'El insumo ya existe'
+            });
         }
-        
+
+        // Genera un ID único basado en el nombre y la fecha actual
         const fecha_actual = new Date().toISOString();
-
-        const id_inventario = crypto
+        const id_insumo = crypto
             .createHash('sha256')
-            .update(`${nombre_insumo}-${fecha_actual}`)
+            .update(`${nombre}-${fecha_actual}`)
             .digest('hex')
-            .substring(0, 36); // Lo cortamos a 36 caracteres para tu CHAR(36)
+            .substring(0, 36);
 
-        try {
-          const crear = await Inventario.crear_insumo(id_inventario, nombre_insumo, cantidad_inicial, stock_minimo, unidad_medida, id_categoria);
-          res.status(200).json({
-              status: 'success',
-          });
-      } catch (error) {
-          console.error('Error al crear insumo:', error);
-          res.status(500).json({ status: 'error', error: 'Error al crear insumo' });
-      }
+        await Inventario.crear_insumo(id_insumo, nombre, cantidad, stock_recomendado, unidad);
+
+        res.status(201).json({
+            success: true,
+        });
+
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ status: 'error', error: error.message });
+        console.error('Error al crear insumo:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error al crear insumo'
+        });
     }
 };
