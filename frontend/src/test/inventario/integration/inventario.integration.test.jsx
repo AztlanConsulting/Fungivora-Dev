@@ -48,7 +48,6 @@ describe('Inventario — integración página completa', () => {
         rerender(<MemoryRouter><Inventario /></MemoryRouter>)
 
         expect(screen.queryByText('Cargando insumos...')).not.toBeInTheDocument()
-        // Cada insumo aparece dos veces (móvil + desktop)
         expect(screen.getAllByText('Agua destilada').length).toBeGreaterThan(0)
         expect(screen.getAllByText('Peptona').length).toBeGreaterThan(0)
         expect(screen.getAllByText('Mijo rojo').length).toBeGreaterThan(0)
@@ -75,7 +74,6 @@ describe('Inventario — integración página completa', () => {
         expect(screen.getAllByText('Agua destilada').length).toBeGreaterThan(0)
         expect(screen.getAllByText('Peptona').length).toBeGreaterThan(0)
 
-        // Escribe en el textbox real (no tiene placeholder HTML)
         await user.type(screen.getByRole('textbox'), 'Agua')
 
         await waitFor(() => {
@@ -105,14 +103,13 @@ describe('Inventario — integración página completa', () => {
         })
     })
 
-    it('flujo navegación: click en + → navega a crearInsumo', async () => {
+    it('flujo navegación: click en Agregar → navega a crearInsumo', async () => {
         const user = userEvent.setup()
         useInsumos.mockReturnValue({ ...hookBase, insumos: insumosMock })
-        const { container } = renderInventario()
+        renderInventario()
 
-        // El botón + es un div con clase rounded-full, se busca por querySelector
-        const botonAgregar = container.querySelector('.rounded-full.cursor-pointer')
-        await user.click(botonAgregar)
+        // El botón ahora es <Button> con texto "Agregar"
+        await user.click(screen.getByText('Agregar'))
 
         expect(mockNavigate).toHaveBeenCalledWith('/inventario/crearInsumo')
     })
