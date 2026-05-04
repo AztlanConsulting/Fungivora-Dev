@@ -35,14 +35,23 @@ const BibliotecaView = () => {
         <>
             <Titulo>Biblioteca Genética</Titulo>
 
-            {/* FAB circular — esquina inferior derecha */}
+            {/* FAB circular — esquina inferior derecha — No se usa Botones por falta de className en ese componente */}
             <button
                 onClick={() => setModalVisible(true)}
                 aria-label="Crear inóculo"
-                className="fixed bottom-20 right-10 md:bottom-10 md:right-10 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-opacity hover:opacity-80 active:scale-95"
-                style={{ backgroundColor: colores.verdeAccent }}
+                className={`
+                    fixed bottom-20 right-10 md:bottom-10 md:right-16
+                    z-50 w-40 h-8 md:w-52 md:h-10 text-base md:text-lg
+                    rounded-full flex items-center justify-center shadow-lg
+                    transition-opacity hover:opacity-80 active:scale-95
+                `}
+
+                style={{
+                    backgroundColor: "#FFFFFF",
+                    border: `2px solid ${colores.azul}`
+                }}
             >
-                <HugeiconsIcon icon={Add01Icon} size={28} color={colores.blanco} />
+                <Text variante='button' style={{ color: colores.azul }}>Crear</Text>
             </button>
 
             <Base margen_arriba="mt-24 md:mt-20">

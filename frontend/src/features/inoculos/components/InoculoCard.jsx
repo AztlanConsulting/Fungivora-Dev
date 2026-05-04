@@ -14,7 +14,7 @@ const colorHeaderTabla = '#F2F2FC';
 const COLUMNAS = [
     { key: 'codigo_fungivora', label: 'Etiqueta' },
     { key: 'cantidad_disponible', label: 'Cantidad actual', render: (f) => `${f.cantidad_disponible} ${f.unidad}` },
-    { key: 'stock_recomendado', label: 'Stock mínimo' },
+    { key: 'stock_recomendado', label: 'Stock recomendado' },
     { key: 'fecha', label: 'Fecha Creación', render: (f) => formatFecha(f.fecha) },
 ];
 
