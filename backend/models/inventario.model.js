@@ -41,7 +41,7 @@ class Inventario {
         return filas;
     }
 
-    // Obtiene todas las categorías disponibles
+    // Obtiene todas las categorías
     static fetch_categorias = async () => {
         const [filas] = await db.execute('SELECT * FROM Categorias');
         return filas;
@@ -49,26 +49,18 @@ class Inventario {
 
     // Crea un nuevo insumo
     static crear_insumo = async (id_insumo, nombre, cantidad, stock_recomendado, unidad) => {
-        const [resultado] = await db.execute(`
-            INSERT INTO Insumos (
-                id_insumo,
-                nombre,
-                cantidad,
-                stock_recomendado,
-                unidad,
-                caducable
-            )
-            VALUES (?, ?, ?, ?, ?, ?)
-        `, [
-            id_insumo,
-            nombre,
-            cantidad,
-            stock_recomendado,
-            unidad,
-            0
-        ]);
-        return resultado;
-    }
+            return db.execute(`
+                INSERT INTO Insumos (
+                    id_insumo,
+                    nombre, 
+                    cantidad, 
+                    stock_recomendado, 
+                    unidad, 
+                    caducable
+                )
+                VALUES (?, ?, ?, ?, ?, 0)
+            `, [id_insumo, nombre, cantidad, stock_recomendado, unidad]);
+        }
 }
 
 module.exports = Inventario;

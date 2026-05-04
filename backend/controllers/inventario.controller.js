@@ -1,5 +1,6 @@
 const Inventario = require('../models/inventario.model');
-const crypto = require('crypto');
+const Categoria = require('../models/categoria.model'); 
+const crypto = require('crypto'); 
 
 /*
 * get_inventory
@@ -44,45 +45,69 @@ exports.get_categorias = async (req, res) => {
 };
 
 /*
+* get_unidades
+* Obtiene todas las unidades de la tabla de categorias
+* Funciona al tener el fetch por 'Unidad'
+*/
+exports.get_unidades = async (req, res) => {
+    try {
+        const [unidades] = await Categoria.fetchOpciones('Unidad', false);
+        res.status(200).json(unidades);
+    } catch (error) {
+        res.status(500).json({ success: false, error: 'Error al obtener unidades' });
+    }
+};
+
+/*
 * post_crear_insumo
 * Crea un nuevo insumo verificando que no exista previamente
 */
 exports.post_crear_insumo = async (req, res) => {
     try {
-        const filas = await Inventario.fetch_all();
         const { nombre, cantidad, stock_recomendado, unidad } = req.body;
-
-        // Verifica que no exista un insumo con el mismo nombre
+        
+        const filas = await Inventario.fetch_all();
         const existe = filas.some(item =>
             item.nombre?.toLowerCase() === nombre?.toLowerCase()
         );
 
         if (existe) {
-            return res.status(400).json({
-                success: false,
-                error: 'El insumo ya existe'
-            });
+            return res.status(400).json({ success: false, error: 'El insumo ya existe' });
         }
 
-        // Genera un ID único basado en el nombre y la fecha actual
-        const fecha_actual = new Date().toISOString();
-        const id_insumo = crypto
-            .createHash('sha256')
-            .update(`${nombre}-${fecha_actual}`)
-            .digest('hex')
-            .substring(0, 36);
+        const id_insumo = crypto.randomUUID(); 
 
         await Inventario.crear_insumo(id_insumo, nombre, cantidad, stock_recomendado, unidad);
 
         res.status(201).json({
             success: true,
+            message: 'Insumo creado con éxito',
+            id: id_insumo 
         });
 
     } catch (error) {
-        console.error('Error al crear insumo:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Error al crear insumo'
+        res.status(500).json({ success: false, error: 'Error interno del servidor' });
+    }
+};
+
+
+
+exports.post_update_cantidad = async (req, res) => {
+    try {
+        const { id_insumo, cantidad } = req.body;
+        
+        if (!id_insumo || cantidad === undefined) {
+            return res.status(400).json({ success: false, error: 'Datos insuficientes' });
+        }
+
+        await Inventario.update_cantidad(id_insumo, cantidad);
+
+        res.status(200).json({
+            success: true,
+            message: 'Cantidad actualizada correctamente'
         });
+    } catch (error) {
+        console.error('Error al actualizar cantidad:', error);
+        res.status(500).json({ success: false, error: 'Error interno' });
     }
 };
