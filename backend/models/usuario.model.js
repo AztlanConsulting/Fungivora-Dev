@@ -21,6 +21,15 @@ class Usuario {
 
     return filas[0];
   };
+
+  static anadir = async ({ nombre_usuario, correo_usuario, contrasena_usuario }) => {
+    const [registro] = await db.execute(
+      `INSERT INTO Usuarios (nombre_usuario, correo_usuario, contrasena_usuario) 
+       VALUES (?, ?, ?)`,
+       [nombre_usuario, correo_usuario, contrasena_usuario]
+    );
+    return registro;
+  };
 }
 
 module.exports = Usuario;

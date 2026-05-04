@@ -5,8 +5,10 @@ const loginRoutes = require('./inicio_sesion.routes');
 const pruebaRoutes = require('./prueba_db.routes');
 // Inicio de sesión
 const inventarioRoutes = require('./inventario.routes')
+const usuarioRoutes = require('./usuario.routes');
 
 router.use('/login', loginRoutes);
+router.use('/usuario', usuarioRoutes);
 router.use('/prueba', pruebaRoutes);
 
 router.use('/inventario', inventarioRoutes);

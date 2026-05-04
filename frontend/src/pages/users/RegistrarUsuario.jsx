@@ -29,17 +29,25 @@ const handleRegistrarClick = () => {
     return;
   }
   // Validación: no se esta usando espacios
- if (/\s/.test(valusuario) || /\s/.test(valcorreo) || /\s/.test(valcontrasena) || /\s/.test(valverifica)) {
-    setError("No se permiten espacios en ningun campo.");
+ if (/\s/.test(valcorreo) || /\s/.test(valcontrasena) || /\s/.test(valverifica)) {
+    setError("Solo se pueden usar espacios en el usuario.");
     return;
   }
+
+  // Validación: no se esta usando espacios inecesarios en usuario
+  if (!/^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$/.test(valusuario)) {
+    setError("El usuario debe de tener solo letras o numeros y sin espacios al inicio o final")
+    return;
+  }
+
+
   // Validación: de carecteres en usuario
-  if (!/^[a-zA-Z0-9]+$/.test(valusuario)) {
+  if (!/^[a-zA-Z0-9 ]+$/.test(valusuario)) {
     setError("El usuario solo puede contener letras y numeros.");
     return;
   }
   // Validación: de carecteres en correo
-  if (!/^[a-zA-Z0-9@.]+$/.test(valcorreo)) {
+  if (!/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/.test(valcorreo)) {
     setError("Incerte un correo valido.");
     return;
   }
@@ -50,8 +58,8 @@ const handleRegistrarClick = () => {
   }
 
   // Validación: de limite de contraseñas
-  if (valcontrasena.length > 25){
-    setError("La contraseña debe ser menor a 26 caracteres.");
+  if (valcontrasena.length > 20){
+    setError("La contraseña debe ser menor a 21 caracteres.");
     return;
   }
 
@@ -72,18 +80,53 @@ const handleCancelarClick = () => {
   setIsModalOpen(true);
 };
 
-//Handle de la confirmacion
-const handleConfirm = () => {
-  setIsModalOpen(false);
-  navigate("/usuario");
+//Handle de la confirmacion y la conexcion 
+const handleConfirm = async () => {
+  setIsModalOpen(false); 
+
+  if (accionPendiente === "cancelar"){
+    setAccionPendiente(null);
+    navigate("/usuario")
+    return;
+  }
+
+ try{
+
+  //se encarga de mandar el post
+  const response = await fetch("/api/usuario/anadir", {
+    method: "POST",
+    headers: { "Content-Type": "application/json"},
+    body: JSON.stringify({
+
+      nombre_usuario: valusuario,
+      correo_usuario: valcorreo,
+      contrasena: valcontrasena,
+    }),
+  });
+  //Respuesta de la db y si fue exitosa o no
+  const data = await response.json();
+
+  if (!response.ok) {
+    setError(data.msg);
+    setAccionPendiente(null)
+    return;
+  }
+
   setAccionPendiente(null);
+  navigate("/usuario");
+} catch (err) {
+  console.error("error de red", err);
+  setError("Hubo un error con la conexion, intenta otra vez");
+  setAccionPendiente(null)
+}
+
 };
 
   return (
     <Base margen_arriba="mt-8 md:mt-[vh]">
       <Titulo>Crear Usuario</Titulo>
 
-    <div className="bg-white rounded-2xl p-8 shadow-sm w-full min-h-[80vh] flex flex-col">
+    <div className="bg-white rounded-2xl p-8 shadow-sm w-full min-h-[70vh] flex flex-col mt-6">
 
      {/* INPUTS del usuario, estructura general de tanto el nombre, correo y contraseña*/}
      {/* Solo se uso IA para ayudar con las clases de Tailwind, como los flex, gaps, etc*/}
@@ -169,7 +212,6 @@ const handleConfirm = () => {
         onConfirm={handleConfirm}
         onCancel={() => setIsModalOpen(false)}
         textoConfirmar="Confirmar"
-        text
     >
     </ModalConfirmacion>
     </div>
