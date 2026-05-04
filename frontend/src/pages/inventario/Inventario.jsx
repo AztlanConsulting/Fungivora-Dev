@@ -136,17 +136,13 @@ const Inventario = () => {
 
                                                     <div className="grid grid-cols-2 gap-4 border-t pt-4" style={{ borderColor: colorBordeHeader }}>
                                                         <div className="flex flex-col gap-1">
-                                                            <Text variante="option" style={{ color: colores.gris, fontSize: "12px", fontWeight: "400" }}>
-                                                                Cantidad Actual
-                                                            </Text>
+                                                            
                                                             <Text variante="option" style={{ color: colores.gris, fontSize: "14px", fontWeight: "400" }}>
                                                                 {parseFloat(item.cantidad)} {item.unidad}
                                                             </Text>
                                                         </div>
                                                         <div className="flex flex-col gap-1">
-                                                            <Text variante="option" style={{ color: colores.gris, fontSize: "12px", fontWeight: "400" }}>
-                                                                Stock Recomendado
-                                                            </Text>
+                                                            
                                                             <Text variante="option" style={{ color: colores.gris, fontSize: "14px", fontWeight: "400" }}>
                                                                 {parseFloat(item.stock_recomendado)} {item.unidad}
                                                             </Text>
