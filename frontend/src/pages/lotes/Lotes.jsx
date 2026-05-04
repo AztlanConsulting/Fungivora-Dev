@@ -40,8 +40,8 @@ function Lotes() {
       <Titulo>Lotes</Titulo>
 
       <Base margen_arriba="mt-24 md:mt-20">
-        <div className="w-full bg-white rounded-[32px] shadow-sm border p-4 md:p-8 md:pl-16 min-h-[500px]">
-          
+        <div className="w-full bg-white rounded-[32px] shadow-sm border p-4 md:p-8 min-h-[500px]">
+  
           {/* Manejo de estados */}
           {cargando && datos.length === 0 ? (
             <div className="flex justify-center items-center h-[400px]">
