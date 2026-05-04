@@ -46,25 +46,35 @@ const Inventario = () => {
 
     // Que cuando haga enter se guarden los datos
     const handleKeyDown = async (e) => {
-        if (e.key === "Enter") {
-            const { nombre, cantidad, stock_recomendado, unidad } = nuevaFila;
-            
-            if (
-                nombre.trim() !== "" && 
-                cantidad !== "" && 
-                stock_recomendado !== "" && 
-                unidad !== ""
-            ) {
-                setErrorValidacion(""); 
-                const exito = await addInsumo(nuevaFila);
-                if (exito) {
-                    setNuevaFila({ nombre: "", cantidad: "", stock_recomendado: "", unidad: "" });
-                }
-            } else {
-                setErrorValidacion("Por favor, completa todos los campos");
-            }
+    if (e.key === "Enter") {
+        const { nombre, cantidad, stock_recomendado, unidad } = nuevaFila;
+    
+        if (
+            nombre.trim() === "" || 
+            cantidad === "" || 
+            stock_recomendado === "" || 
+            unidad === ""
+        ) {
+            setErrorValidacion("Por favor, completa todos los campos");
+            return; 
         }
-    };
+
+        const existe = insumos.some(
+            (insumo) => insumo.nombre.toLowerCase().trim() === nombre.toLowerCase().trim()
+        );
+
+        if (existe) {
+            setErrorValidacion("Este insumo ya existe en el inventario");
+            return; 
+        }
+
+        setErrorValidacion(""); 
+        const exito = await addInsumo(nuevaFila);
+        if (exito) {
+            setNuevaFila({ nombre: "", cantidad: "", stock_recomendado: "", unidad: "" });
+        }
+    }
+};
 
     // Para filtar datos (futura busqueda)
     const insumosFiltrados = insumos.filter((item) =>
