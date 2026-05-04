@@ -154,7 +154,7 @@ describe('Inventario — navegación', () => {
         const { container } = renderInventario()
 
         // El botón + es un div con clase rounded-full, se busca por querySelector
-        const botonAgregar = container.querySelector('.rounded-full.cursor-pointer')
+        const botonAgregar =  screen.getByText('Agregar')
         await user.click(botonAgregar)
 
         expect(mockNavigate).toHaveBeenCalledWith('/inventario/crearInsumo')
