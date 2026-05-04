@@ -1,5 +1,14 @@
 import React from "react";
+import BibliotecaView from "../../features/inoculos/components/BibliotecaView";
+import Titulo from "../../shared/components/ui/basics/titulo";
 
-export default function Biblioteca_genetica () {
-    return <h1>Llegaste a Bilbioteca genetica</h1>
-} 
+const Biblioteca_genetica = () => {
+
+    return (
+        <div className="min-h-screen">
+            <BibliotecaView />
+        </div>
+    )
+}
+
+export default Biblioteca_genetica

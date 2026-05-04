@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { BrowserRouter } from 'react-router-dom'
-import Barra_navegacion from '../../../shared/components/layout/Barra_navegacion' 
+import Barra_navegacion from '../../../shared/components/layout/Barra_navegacion'
 
 vi.mock('/icons/icon-splash-blue.png', () => ({ default: 'logo-mock' }))
 
@@ -12,9 +12,9 @@ vi.mock('@hugeicons/react', () => ({
 }))
 
 const renderNavbar = () => render(
-        <BrowserRouter>
-            <Barra_navegacion />
-        </BrowserRouter>
+    <BrowserRouter>
+        <Barra_navegacion />
+    </BrowserRouter>
 )
 
 describe('Pruebas de navegacion - Configuracion', () => {
@@ -23,7 +23,7 @@ describe('Pruebas de navegacion - Configuracion', () => {
     })
 
     it('Los links estan en el componente', () => {
-        const rutas = ['/first', '/lotes', '/inventario', '/biblioteca_genetica']
+        const rutas = ['/first', '/lotes', '/inventario', '/inoculos']
 
         rutas.forEach(ruta => {
             const link = document.querySelector(`a[href="${ruta}"]`)
@@ -40,7 +40,7 @@ describe('Pruebas de navegacion - Configuracion', () => {
         expect(linkInicio).toHaveAttribute('href', '/first')
         expect(linkLotes).toHaveAttribute('href', '/lotes')
         expect(linkInventario).toHaveAttribute('href', '/inventario')
-        expect(linkBiblioteca).toHaveAttribute('href', '/biblioteca_genetica')
+        expect(linkBiblioteca).toHaveAttribute('href', '/inoculos')
     })
 })
 
@@ -49,7 +49,7 @@ describe('Pruebas de navegacion - Funcionalidad', () => {
         renderNavbar()
     })
 
-    it('El usuario se mueve a Lotes', async() => {
+    it('El usuario se mueve a Lotes', async () => {
         const user = userEvent.setup()
         const linkLotes = screen.getByText(/lotes/i).closest('a')
 
@@ -58,7 +58,7 @@ describe('Pruebas de navegacion - Funcionalidad', () => {
         expect(window.location.pathname).toBe('/lotes')
     })
 
-    it('El usuario se mueve a Inicio', async() => {
+    it('El usuario se mueve a Inicio', async () => {
         const user = userEvent.setup()
         const linkInicio = screen.getByText(/inicio/i).closest('a')
 
@@ -67,7 +67,7 @@ describe('Pruebas de navegacion - Funcionalidad', () => {
         expect(window.location.pathname).toBe('/first')
     })
 
-    it('El usuario se mueve a Inventario', async() => {
+    it('El usuario se mueve a Inventario', async () => {
         const user = userEvent.setup()
         const linkInventario = screen.getByText(/inventario/i).closest('a')
 
@@ -76,12 +76,12 @@ describe('Pruebas de navegacion - Funcionalidad', () => {
         expect(window.location.pathname).toBe('/inventario')
     })
 
-    it('El usuario se mueve a Biblioteca genetica', async() => {
+    it('El usuario se mueve a Biblioteca genetica', async () => {
         const user = userEvent.setup()
         const linkBiblioteca = screen.getByText(/biblioteca genética/i).closest('a')
 
         await user.click(linkBiblioteca)
 
-        expect(window.location.pathname).toBe('/biblioteca_genetica')
+        expect(window.location.pathname).toBe('/inoculos')
     })
 })
