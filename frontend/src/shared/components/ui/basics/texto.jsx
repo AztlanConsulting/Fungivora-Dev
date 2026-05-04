@@ -16,9 +16,9 @@ const variantes = {
     fontWeight: 600,
   },
 
-  // Texto Mediano: 14px mínimo / 24px máximo
+  // Texto Mediano: 14px mínimo / 22px máximo
   medium: {
-    fontSize: "clamp(12px, 4vw, 24px)",
+    fontSize: "clamp(12px, 4vw, 22px)",
     fontWeight: 500,
   },
 
