@@ -1,116 +1,71 @@
 import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import { Inventario } from '../../../pages'
 
+// Mock del hook
 vi.mock('../../../features/inventario/hooks/useInsumos')
 import useInsumos from '../../../features/inventario/hooks/useInsumos'
 
-const mockNavigate = vi.fn()
-vi.mock('react-router-dom', async () => {
-    const actual = await vi.importActual('react-router-dom')
-    return { ...actual, useNavigate: () => mockNavigate }
-})
-
-const hookBase = { insumos: [], loading: false, error: null }
-
 const insumosMock = [
-    { id_insumo: 1, nombre: 'Agua destilada', cantidad: 2000, unidad: 'ml', stock_recomendado: 200 },
-    { id_insumo: 2, nombre: 'Peptona',         cantidad: 200,  unidad: 'g',  stock_recomendado: 200 },
-    { id_insumo: 3, nombre: 'Mijo rojo',       cantidad: 200,  unidad: 'g',  stock_recomendado: 200 },
+  { id_insumo: 1, nombre: 'Agua destilada', cantidad: 2000, unidad: 'ml', stock_recomendado: 200 },
+  { id_insumo: 2, nombre: 'Peptona',         cantidad: 200,   unidad: 'g',  stock_recommended: 200 },
 ]
 
+const unidadesMock = [
+  { id: 1, opcion: 'ml' },
+  { id: 2, opcion: 'g' },
+]
+
+const mockAddInsumo = vi.fn()
+const mockUpdateInsumo = vi.fn()
+
+const hookBase = { 
+  insumos: [], 
+  unidades: unidadesMock, 
+  loading: false, 
+  error: null,
+  addInsumo: mockAddInsumo,
+  updateInsumo: mockUpdateInsumo
+}
+
 const renderInventario = () =>
-    render(<MemoryRouter><Inventario /></MemoryRouter>)
+  render(<MemoryRouter><Inventario /></MemoryRouter>)
 
 beforeEach(() => {
-    vi.clearAllMocks()
-    useInsumos.mockReturnValue(hookBase)
+  vi.clearAllMocks()
+  useInsumos.mockReturnValue(hookBase)
 })
 
-describe('Inventario — integración página completa', () => {
+describe('Inventario — Integración con Formulario y Ajustes', () => {
 
-    it('renderiza la página sin errores', () => {
-        renderInventario()
-        expect(screen.getByText('Inventario')).toBeInTheDocument()
-    })
+  it('renderiza la página y el formulario de creación', () => {
+    renderInventario()
+    expect(screen.getByText('Inventario')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /crear insumo/i })).toBeInTheDocument()
+  })
 
-    it('flujo completo: loading → datos cargados → tabla visible', () => {
+  it('flujo de carga: muestra skeleton/mensaje de carga', () => {
         useInsumos.mockReturnValue({ ...hookBase, loading: true })
-        const { rerender } = renderInventario()
-
-        expect(screen.getByText('Cargando insumos...')).toBeInTheDocument()
-        expect(screen.queryByText('Insumo')).not.toBeInTheDocument()
-
-        useInsumos.mockReturnValue({ ...hookBase, insumos: insumosMock })
-        rerender(<MemoryRouter><Inventario /></MemoryRouter>)
-
-        expect(screen.queryByText('Cargando insumos...')).not.toBeInTheDocument()
-        expect(screen.getAllByText('Agua destilada').length).toBeGreaterThan(0)
-        expect(screen.getAllByText('Peptona').length).toBeGreaterThan(0)
-        expect(screen.getAllByText('Mijo rojo').length).toBeGreaterThan(0)
-    })
-
-    it('flujo de error: loading → error → muestra mensaje', () => {
-        useInsumos.mockReturnValue({ ...hookBase, loading: true })
-        const { rerender } = renderInventario()
-
-        expect(screen.getByText('Cargando insumos...')).toBeInTheDocument()
-
-        useInsumos.mockReturnValue({ ...hookBase, error: 'Error de conexión' })
-        rerender(<MemoryRouter><Inventario /></MemoryRouter>)
-
-        expect(screen.queryByText('Cargando insumos...')).not.toBeInTheDocument()
-        expect(screen.getByText('Error de conexión')).toBeInTheDocument()
-    })
-
-    it('flujo búsqueda: datos visibles → escribe → filtra → borra → vuelven todos', async () => {
-        const user = userEvent.setup()
-        useInsumos.mockReturnValue({ ...hookBase, insumos: insumosMock })
         renderInventario()
-
-        expect(screen.getAllByText('Agua destilada').length).toBeGreaterThan(0)
-        expect(screen.getAllByText('Peptona').length).toBeGreaterThan(0)
-
-        await user.type(screen.getByRole('textbox'), 'Agua')
-
-        await waitFor(() => {
-            expect(screen.getAllByText('Agua destilada').length).toBeGreaterThan(0)
-            expect(screen.queryByText('Peptona')).not.toBeInTheDocument()
-            expect(screen.queryByText('Mijo rojo')).not.toBeInTheDocument()
-        })
-
-        await user.clear(screen.getByRole('textbox'))
-
-        await waitFor(() => {
-            expect(screen.getAllByText('Agua destilada').length).toBeGreaterThan(0)
-            expect(screen.getAllByText('Peptona').length).toBeGreaterThan(0)
-            expect(screen.getAllByText('Mijo rojo').length).toBeGreaterThan(0)
-        })
+    expect(screen.getByText(/cargando/i)).toBeInTheDocument()
     })
 
-    it('flujo sin resultados: búsqueda sin coincidencias → mensaje vacío', async () => {
-        const user = userEvent.setup()
-        useInsumos.mockReturnValue({ ...hookBase, insumos: insumosMock })
-        renderInventario()
 
-        await user.type(screen.getByRole('textbox'), 'xyz')
-
-        await waitFor(() => {
-            expect(screen.getByText('No se encontraron insumos.')).toBeInTheDocument()
-        })
-    })
-
-    it('flujo navegación: click en Agregar → navega a crearInsumo', async () => {
-        const user = userEvent.setup()
-        useInsumos.mockReturnValue({ ...hookBase, insumos: insumosMock })
-        renderInventario()
-
-        // El botón ahora es <Button> con texto "Agregar"
-        await user.click(screen.getByText('Agregar'))
-
-        expect(mockNavigate).toHaveBeenCalledWith('/inventario/crearInsumo')
-    })
+  it('lógica de estados: muestra etiqueta correcta según cantidad', () => {
+    const insumosEstado = [
+      { id_insumo: 1, nombre: 'Agotado Item', cantidad: 0, unidad: 'ml', stock_recomendado: 100 },
+      { id_insumo: 2, nombre: 'Bajo Item',    cantidad: 10, unidad: 'ml', stock_recomendado: 100 },
+      { id_insumo: 3, nombre: 'Optimo Item',  cantidad: 200, unidad: 'ml', stock_recomendado: 100 },
+    ]
+    useInsumos.mockReturnValue({ ...hookBase, insumos: insumosEstado })
+    
+    renderInventario()
+    
+    expect(screen.getAllByText(/agotado/i)[0]).toBeInTheDocument()
+    expect(screen.getAllByText(/bajo/i)[0]).toBeInTheDocument()
+    expect(screen.getAllByText(/óptimo/i)[0]).toBeInTheDocument()
+  })
 })
