@@ -95,15 +95,12 @@ compara con la que esta en el cuadro de texto
 exports.post_comparacion = async (request, response, next) => {
     try {
         const { contrasena } = request.body;
-        console.log("Contraseña en el cuadro de texto:", contrasena);
-        console.log("Hash de esa contraseña:", contrasena_hasheada);
 
         if (!contrasena_hasheada) {
             return response.status(400).json({ error: "No hay contraseña guardada" });
         }
 
         const result = await bcrypt.compare(contrasena, contrasena_hasheada);
-        console.log("Si es la contraseña?:", result);
 
     } catch (error) {
         console.error(error);

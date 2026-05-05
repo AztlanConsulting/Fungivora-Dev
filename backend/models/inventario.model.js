@@ -24,24 +24,11 @@ class Inventario {
                 fecha_caducidad,
                 'insumo' AS tipo
             FROM Insumos
-
-            UNION ALL
-
-            SELECT
-                id_inoculo     AS id_insumo,
-                codigo_fungivora AS nombre,
-                cantidad_disponible AS cantidad,
-                unidad,
-                stock_recomendado,
-                0              AS caducable,
-                NULL           AS fecha_caducidad,
-                'inoculo'      AS tipo
-            FROM Inoculos
         `);
         return filas;
     }
 
-    // Obtiene todas las categorías disponibles
+    // Obtiene todas las categorías
     static fetch_categorias = async () => {
         const [filas] = await db.execute('SELECT * FROM Categorias');
         return filas;
@@ -49,26 +36,63 @@ class Inventario {
 
     // Crea un nuevo insumo
     static crear_insumo = async (id_insumo, nombre, cantidad, stock_recomendado, unidad) => {
-        const [resultado] = await db.execute(`
-            INSERT INTO Insumos (
-                id_insumo,
-                nombre,
-                cantidad,
-                stock_recomendado,
-                unidad,
-                caducable
-            )
-            VALUES (?, ?, ?, ?, ?, ?)
-        `, [
-            id_insumo,
-            nombre,
-            cantidad,
-            stock_recomendado,
-            unidad,
-            0
-        ]);
-        return resultado;
-    }
+            return db.execute(`
+                INSERT INTO Insumos (
+                    id_insumo,
+                    nombre, 
+                    cantidad, 
+                    stock_recomendado, 
+                    unidad, 
+                    caducable
+                )
+                VALUES (?, ?, ?, ?, ?, 0)
+            `, [id_insumo, nombre, cantidad, stock_recomendado, unidad]);
+        }
+
+    // Editar la cantidad
+    static update_cantidad = async (id_insumo, nueva_cantidad) => {
+        const connection = await db.getConnection();
+        try {
+            await connection.beginTransaction();
+
+            const [rows] = await connection.execute(
+                'SELECT cantidad FROM Insumos WHERE id_insumo = ?', 
+                [id_insumo]
+            );
+            
+            if (rows.length === 0) throw new Error('Insumo no encontrado');
+
+            const cantidadAnterior = parseFloat(rows[0].cantidad);
+            const diferencia = nueva_cantidad - cantidadAnterior;
+
+            if (diferencia === 0) {
+                await connection.rollback();
+                return true;
+            }
+
+            // Ve si es in o out dependiendo si se suma o resta
+            const tipo = diferencia > 0 ? 'In' : 'Out';
+
+            // Hace el update de los insumos
+            await connection.execute(
+                'UPDATE Insumos SET cantidad = ? WHERE id_insumo = ?',
+                [nueva_cantidad, id_insumo]
+            );
+
+            await connection.execute(
+                'INSERT INTO Logs_ins_outs (id_insumo, cantidad, tipo) VALUES (?, ?, ?)',
+                [id_insumo, diferencia, tipo]
+            );
+
+            await connection.commit();
+            return true;
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
+    };
 }
 
 module.exports = Inventario;
