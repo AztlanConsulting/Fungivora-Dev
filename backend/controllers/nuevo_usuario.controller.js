@@ -84,6 +84,6 @@ Obtener el usuario
 TODO: obtener usuario de la base de datos
 @param 
 */
-exports.get_usuario = (req, res) => {
-    res.json({ msg: "Acceso autorizado" });
+exports.get_registrar_usuario = (req, res) => {
+    res.status(200).json({ msg: "Autorizado" });
 };

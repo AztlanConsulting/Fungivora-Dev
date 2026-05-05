@@ -2,14 +2,22 @@
 actor Usuario
 boundary usuario.routes as Routes
 boundary usuario.jsx as usuarioView
+boundary auth.jsx as PermisosMiddleware
 boundary registrar_usuario.jsx as View
 boundary componente_usuario.jsx as ViewComponent
 control usuario.controller as Controller
 entity usuario.model as Model
 database Database
-
     Usuario -> Routes: GET /usuario/registrar_usuario
     activate Routes
+    Routes -> PermisosMiddleware: get_registrar_usuario\n(request, response, next)
+    activate PermisosMiddleware
+    alt usuario no autorizado
+    PermisosMiddleware -> Routes: response.redirect(/home)
+    Routes -->> Usuario: HTTP 302 Redirect
+    end
+    PermisosMiddleware -> Routes: next()
+    deactivate PermisosMiddleware
     Routes -> Controller: get_registrar_usuario\n(request, response, next)
     deactivate Routes
     activate Controller
@@ -30,7 +38,7 @@ database Database
     activate Usuario
     Usuario -> ViewComponent: Registrar Usuario
     deactivate Usuario
-    activate ViewComponent
+    activate ViewComponent 
     ViewComponent -> ViewComponent: validarCampos(datosUsuario)
 
     alt Datos Incompletos
@@ -40,6 +48,14 @@ database Database
     ViewComponent -> Routes: POST /usuario/anadir\n{ nombre, correo, contraseña, is_user_admin, estatus_usuario }
     deactivate ViewComponent
     activate Routes
+    Routes -> PermisosMiddleware: post_registrar_usuario\n(request, response, next)
+    activate PermisosMiddleware
+    alt usuario no autorizado
+    PermisosMiddleware -> Routes: response.redirect(/home)
+    Routes -->> Usuario: HTTP 302 Redirect
+    end
+    PermisosMiddleware -> Routes: next()
+    deactivate PermisosMiddleware
     Routes -> Controller: post_registrar_usuario(request, response, next)
     deactivate Routes
     activate Controller

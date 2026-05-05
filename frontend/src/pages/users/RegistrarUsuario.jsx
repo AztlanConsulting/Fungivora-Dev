@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Titulo from "../../shared/components/ui/basics/titulo";
 import Base from "../../shared/components/layout/base";
 import Text from "../../shared/components/ui/basics/texto";
@@ -19,6 +19,41 @@ const navigate = useNavigate();
 const [accionPendiente, setAccionPendiente] = useState(null);
 const [isModalOpen, setIsModalOpen] = useState(false);
 const [error, setError] = useState("");
+
+useEffect(() => {
+
+  //Verifica el usuario si es admin y restringe su acceso
+  //Asistencia de la IA para entender y como implementar estructuracion
+  const verificarAdmin = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setError("No eres un usuario, redirigiendo a login")
+      setTimeout(() => navigate("/login"), 2000);
+      return;
+    }
+
+    try{
+      const response = await fetch("/api/usuario/registrar_usuario",{
+        method: "GET",
+        headers: { "Authorization": token},
+        cache: "no-store",
+      });
+    
+    const data = await response.json();
+
+    if (data.msg !== "Autorizado"){
+      setError("No eres un usuario autorizado, redirigiendo a login")
+      setTimeout(() => navigate("/login"), 2000);
+    }
+    } catch(err){
+      console.error("Error al verificar permisos", err);
+      setError("Error de conexion, vuelva a iniciar seccion");
+      setTimeout(() => navigate("/login"), 2000);
+      }
+    };
+    verificarAdmin();
+}, []);
 
 //Handle del registro de usario y sus errores
 const handleRegistrarClick = () => {
@@ -93,9 +128,15 @@ const handleConfirm = async () => {
  try{
 
   //se encarga de mandar el post
+
+  const token = localStorage.getItem("token");
   const response = await fetch("/api/usuario/anadir", {
     method: "POST",
-    headers: { "Content-Type": "application/json"},
+    headers: { 
+      "Content-Type": "application/json",
+      "Authorization": token,
+      cache: "no-store"
+    },
     body: JSON.stringify({
 
       nombre_usuario: valusuario,
@@ -105,6 +146,13 @@ const handleConfirm = async () => {
   });
   //Respuesta de la db y si fue exitosa o no
   const data = await response.json();
+
+  if (data.msg === "No autorizado" || data.msg === "Token inválido") {
+    setError("No eres un usuario autorizado vuelva a iniciar sesion");
+    setAccionPendiente(null);
+    navigate("/login");
+    return
+  }
 
   if (!response.ok) {
     setError(data.msg);
