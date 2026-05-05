@@ -101,7 +101,7 @@ const Inventario = () => {
   return (
     <>
       <Titulo>Inventario</Titulo>
-      <Base margen_arriba="mt-24 md:mt-20">
+      <Base margen_arriba="mt-20 md:mt-20">
 
         {/* Boton de moviles para abrir el forms */}
         <div className="lg:hidden w-full mb-6">
