@@ -64,5 +64,18 @@ describe('Inventario Routes', () => {
             expect(res.statusCode).toBe(400);
             expect(res.body.error).toBe('El insumo ya existe');
         });
+
+        it('500 - base de datos desconectada', async () => {
+            Inventario.update_cantidad.mockRejectedValue(new Error('Connection timed out'));
+
+            const res = await request(app)
+                .post('/api/inventario/update-cantidad') 
+                .send({ id_insumo: 'uuid-existente', cantidad: 20 });
+
+            expect(res.statusCode).toBe(500);
+            expect(res.body.success).toBe(false);
+            expect(res.body.error).toBe('Error interno del servidor');
+        });
     });
+
 });
