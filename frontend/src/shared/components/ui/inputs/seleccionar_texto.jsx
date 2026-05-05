@@ -15,13 +15,13 @@ const SelectField = ({
   label = null,
 }) => {
   const sizes = {
-    forms: "w-80 md:w-[22rem]",
+    forms: "w-80 md:w-[24rem]",
     normal: "w-80 md:w-96",
     amplio: "w-80 md:w-96",
     numero: "w-28 md:w-36",
   };
 
-  const textColor = value ? colores.azul : colores.gris;
+  const textColor = value ? colores.gris : colores.gris;
 
   const clase = `${sizes[size]}
     border-2
@@ -52,9 +52,10 @@ const SelectField = ({
           onChange={onChange}
           className={clase}
           style={{
-            backgroundColor: "#F9FDFF",
+            backgroundColor: "#FFFFFF",
             color: textColor,
-            borderColor: colores.grisMedio,
+            borderColor: colores.grisClaro,
+            fontStyle: "italic",
           }}
           disabled={loading}
         >
@@ -71,9 +72,9 @@ const SelectField = ({
 
         <span
           className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2"
-          style={{ color: colores.azul }}
+          style={{ color: colores.grisMedio }}
         >
-          <HugeiconsIcon icon={ArrowDown01Icon} size={25} />
+          <HugeiconsIcon icon={ArrowDown01Icon} size={24} />
         </span>
       </div>
     </div>
