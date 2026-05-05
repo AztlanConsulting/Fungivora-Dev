@@ -90,24 +90,29 @@ exports.post_crear_insumo = async (req, res) => {
     }
 };
 
-
-
+/*
+* post_update_cantidad
+* Cambia la cantidad en la tabla de in y outs
+*/
 exports.post_update_cantidad = async (req, res) => {
     try {
         const { id_insumo, cantidad } = req.body;
-        
-        if (!id_insumo || cantidad === undefined) {
-            return res.status(400).json({ success: false, error: 'Datos insuficientes' });
+        const nuevaCantidad = parseFloat(cantidad);
+
+        if (!id_insumo || isNaN(nuevaCantidad)) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Datos insuficientes' 
+            });
         }
 
-        await Inventario.update_cantidad(id_insumo, cantidad);
+        await Inventario.update_cantidad(id_insumo, nuevaCantidad);
 
         res.status(200).json({
             success: true,
-            message: 'Cantidad actualizada correctamente'
+            message: 'Inventario actualizado'
         });
     } catch (error) {
-        console.error('Error al actualizar cantidad:', error);
-        res.status(500).json({ success: false, error: 'Error interno' });
+        res.status(500).json({ success: false, error: 'Error interno del servidor' });
     }
 };

@@ -13,12 +13,12 @@ const inventarioService = {
         });
         return await res.json();
     },
-
-    actualizarInsumo: async (id, datos) => {
+    
+    actualizarInsumo: async (id_insumo, datos) => {
         const res = await fetch("/api/inventario/update-cantidad", {
             method: "POST", 
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id, ...datos }), 
+            body: JSON.stringify({ id_insumo, cantidad: datos.cantidad }), 
         });
         return await res.json();
     },

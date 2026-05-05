@@ -57,19 +57,27 @@ const useInsumos = () => {
     const updateInsumo = async (id, datosActualizados) => {
         try {
             const res = await inventarioService.actualizarInsumo(id, datosActualizados);
+            
             if (res.success) {
                 setInsumos((prev) =>
-                    prev.map((item) => (item.id_insumo === id ? { ...item, ...datosActualizados } : item))
+                    prev.map((item) => 
+                        item.id_insumo === id 
+                            ? { ...item, ...datosActualizados } 
+                            : item
+                    )
                 );
                 return true;
+            } else {
+                console.error("Error del backend:", res.message);
+                return false;
             }
         } catch (err) {
             console.error("Error al actualizar:", err);
+            return false;
         }
-        return false;
     };
 
-    return { insumos, unidades, loading, error, addInsumo, updateInsumo, refresh: fetchInsumos };
-};
+        return { insumos, unidades, loading, error, addInsumo, updateInsumo, refresh: fetchInsumos };
+    };
 
 export default useInsumos;

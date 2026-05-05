@@ -1,4 +1,4 @@
-// frontend/src/shared/components/ui/inputs/seleccionar_texto.jsx
+
 import React from "react";
 import { colores } from "../basics/colores";
 import { HugeiconsIcon } from "@hugeicons/react";
