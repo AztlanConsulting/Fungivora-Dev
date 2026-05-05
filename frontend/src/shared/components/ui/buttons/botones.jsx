@@ -6,7 +6,7 @@ import Text from "../basics/texto";
 const variants = {
   entrar: "azulClaro",
   cancelar: "azulOscuro",
-  eliminar: "azulOscuro",
+  eliminar: "azul",
   registrar: "verdeAccent",
   siguiente: "verdeAccent",
   agregar: "verdeAccent",

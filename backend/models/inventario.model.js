@@ -24,19 +24,6 @@ class Inventario {
                 fecha_caducidad,
                 'insumo' AS tipo
             FROM Insumos
-
-            UNION ALL
-
-            SELECT
-                id_inoculo     AS id_insumo,
-                codigo_fungivora AS nombre,
-                cantidad_disponible AS cantidad,
-                unidad,
-                stock_recomendado,
-                0              AS caducable,
-                NULL           AS fecha_caducidad,
-                'inoculo'      AS tipo
-            FROM Inoculos
         `);
         return filas;
     }
