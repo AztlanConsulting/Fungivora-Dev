@@ -20,32 +20,47 @@ function Lotes() {
     { label: "Estado", key: "fase" },
     { label: "Fecha", key: "fecha_lote" }
   ];
-    const [fecha, setFecha] = useState({ day: "", month: "", year: "" });
-
+  
+  const [fecha, setFecha] = useState({ day: "", month: "", year: "" });
   const { datos, cargando, error, addLote } = useLotes();
   const [filaSeleccionada, setFilaSeleccionada] = useState(null);
   const [verFormulario, setVerFormulario] = useState(false);
   const [nuevaFila, setNuevaFila] = useState({ tipo_sustrato: "", ubicacion_lote: "" });
   const [errorValidacion, setErrorValidacion] = useState("");
 
+  // Opciones fijas para Ubicación
+  const opcionesUbicacion = [
+    { value: "Granja", label: "Granja" },
+    { value: "Laboratorio", label: "Laboratorio" }
+  ];
+
   const handleNuevaFila = (campo, valor) => {
-    setNuevaFila((prev) => ({ ...prev, [campo]: valor }));
+    const valorLimpio = valor?.target ? valor.target.value : (valor?.value || valor);
+    
+    setNuevaFila((prev) => ({ ...prev, [campo]: valorLimpio }));
   };
 
   const handleGuardarLote = async () => {
-    const { tipo_sustrato, ubicacion_lote } = nuevaFila;
-    if ( !ubicacion_lote) {
-      setErrorValidacion("Por favor, completa todos los campos");
+    const { ubicacion_lote } = nuevaFila;
+    
+    // Validación (actualmente solo ubicación)
+    if (!ubicacion_lote) {
+      setErrorValidacion("Por favor, selecciona una ubicación");
       return;
     }
+    
     setErrorValidacion("");
+    
+    // Objeto a nuevaFila 
     const exito = await addLote(nuevaFila);
+    
     if (exito) {
-      setNuevaFila({ ubicacion_lote: "" });
+      setNuevaFila({ tipo_sustrato: "", ubicacion_lote: "" });
       setVerFormulario(false);
     }
   };
 
+  // Estilos para la fase
   const obtenerEstiloFase = (fase) => {
     const f = fase?.toLowerCase() || "";
     if (f.includes("cosecha")) return { bg: "#E8F5E9", text: "#2E7D32" };
@@ -56,6 +71,7 @@ function Lotes() {
     return { bg: "#F5F5F5", text: "#616161" };
   };
 
+  // Color del header
   const colorBordeHeader = "#F2F2FC";
 
   const gridLayout = "grid-cols-1 md:grid-cols-[1.2fr_1fr_1.1fr_1.2fr_1fr_0.5fr]";
@@ -91,7 +107,6 @@ function Lotes() {
         <div className="flex flex-col lg:flex-row gap-8 items-stretch">
           {/* Contenedor Principal de la Tabla */}
           <div className={`w-full bg-white rounded-[32px] shadow-sm border p-4 md:p-8 md:pl-16 min-h-[500px] ${verFormulario ? "hidden" : "block"} lg:block`}>
-            
             {cargando && datos.length === 0 ? (
               <div className="flex justify-center items-center h-[400px]">
                 <Text variante="medium">Cargando lotes...</Text>
@@ -102,7 +117,6 @@ function Lotes() {
               </div>
             ) : (
               <div className="flex flex-col md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
-                
                 {/* Header Desktop */}
                 <div className={`hidden md:grid ${gridLayout}`} style={{ backgroundColor: colorBordeHeader }}>
                   {columnas.map((col, i) => (
@@ -150,7 +164,7 @@ function Lotes() {
                         </div>
 
                         {/* Vista Desktop */}
-                       <div
+                        <div
                           className={`hidden md:grid ${gridLayout} cursor-pointer transition-all relative ${esSeleccionado ? 'z-10' : 'border-b'}`}
                           style={{ 
                             borderColor: colorBordeHeader,
@@ -159,12 +173,7 @@ function Lotes() {
                           }}
                         >
                           {columnas.map((col, i) => (
-                            <div 
-                              key={i} 
-                              // He cambiado px-8 por px-6 para mejor espacio y asegurado items-center para alineación vertical
-                              // El contenido por defecto en un div flex irá a la izquierda si no se indica justify-center
-                              className="px-6 py-5 flex items-center justify-start" 
-                            >
+                            <div key={i} className="px-6 py-5 flex items-center justify-start">
                               {col.key === 'fase' ? (
                                 <div 
                                   className="px-4 py-1 rounded-lg inline-block text-sm font-semibold" 
@@ -179,7 +188,7 @@ function Lotes() {
                                     color: "black", 
                                     fontSize: "15px", 
                                     fontWeight: col.key === 'codigo_fungivora' ? '600' : '400',
-                                    textAlign: 'left' // Asegura alineación de texto a la izquierda
+                                    textAlign: 'left'
                                   }}
                                 >
                                   {col.key === 'fecha_lote' ? fechaFormateada : lote[col.key]}
@@ -187,7 +196,6 @@ function Lotes() {
                               )}
                             </div>
                           ))}
-                                                  {/* Columna del icono de borrar */}
                           <div className="py-4 flex justify-between items-start mb-3">
                             <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} className="cursor-pointer hover:opacity-80 transition-opacity" />
                           </div>
@@ -207,49 +215,57 @@ function Lotes() {
             </div>
 
             <div className="flex flex-col gap-5">
-                 <div className="flex flex-col gap-2">
-                 <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Especie</Text>
-               <SelectField
+              <div className="flex flex-col gap-2">
+                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Especie</Text>
+                <SelectField
                   placeholder="Selecciona especie"
                   size="forms"
                 />
-                </div>
-                 <div className="flex flex-col gap-2">
-                 <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Sustrato</Text>
-               <SelectField
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Sustrato</Text>
+                <SelectField
                   placeholder="Selecciona un sustrato"
                   size="forms"
                 />
-                </div>
-                <div className="flex flex-col gap-2">
-                 <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Ubicación</Text>
-               <SelectField
+              </div>
+
+              {/* Seleccionar ubicación*/}
+              <div className="flex flex-col gap-2">
+                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Ubicación</Text>
+                <SelectField
                   placeholder="Selecciona un ubicación"
                   size="forms"
+                  options={opcionesUbicacion}
+                  value={nuevaFila.ubicacion_lote}
+                  onChange={(opcion) => handleNuevaFila("ubicacion_lote", opcion)} 
                 />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Fecha</Text>
-                 <InputFecha value={fecha} onChange={setFecha} />
-                </div>
-             </div>
+              </div>
 
-              {errorValidacion && (
-                <div className="text-center">
-                  <Text variante="label" style={{ color: "#E53E3E", fontWeight: "600" }}>{errorValidacion}</Text>
-                </div>
-              )}
-
-              <div className="flex justify-center pt-4">
-                <Button
-                  variant="primario"
-                  size="lg"
-                  className="w-full"
-                >
-                  Crear Insumo
-                </Button>
+              <div className="flex flex-col gap-2">
+                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Fecha</Text>
+                <InputFecha value={fecha} onChange={setFecha} />
               </div>
             </div>
+
+            {errorValidacion && (
+              <div className="text-center mt-4">
+                <Text variante="label" style={{ color: "#E53E3E", fontWeight: "600" }}>{errorValidacion}</Text>
+              </div>
+            )}
+
+            <div className="flex justify-center pt-4">
+              <Button
+                variant="primario"
+                size="lg"
+                className="w-full"
+                onClick={handleGuardarLote}
+              >
+                Crear Lote
+              </Button>
+            </div>
+          </div>
         </div>
       </Base>
     </>

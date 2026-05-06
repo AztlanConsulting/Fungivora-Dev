@@ -92,5 +92,22 @@ describe('Inventario Controller', () => {
                 message: 'Inventario actualizado'
             }));
         });
+
+        it('500 - error de conexión', async () => {
+            Inventario.fetch_all.mockRejectedValue(new Error('Connection lost'));
+
+            const req = { 
+                body: { nombre: 'Nitrógeno', cantidad: 10, stock_recomendado: 2, unidad: 'L' } 
+            };
+            const res = mockRes();
+
+            await controller.post_crear_insumo(req, res);
+            
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
+                success: false,
+                error: 'Error interno del servidor'
+            }));
+        });
     });
 });

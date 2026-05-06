@@ -33,6 +33,22 @@ class Lotes {
             throw err; 
         }
     }
+    
+    // Metodo para asignar valores a la tabla de lotes
+    static async crear_lote(id_lote, id_inoculo, tipo_sustrato, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase) {
+        try {
+            return await db.execute(`
+                INSERT INTO Lotes (
+                    id_lote, id_inoculo, tipo_sustrato, codigo_fungivora, 
+                    fecha_lote, ubicacion_lote, activo, fase
+                ) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `, [id_lote, id_inoculo, tipo_sustrato, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase]);
+        } catch (err) {
+            console.error("Error en crear_lote model:", err);
+            throw err;
+        }
+    }
 }
 
 module.exports = Lotes;
