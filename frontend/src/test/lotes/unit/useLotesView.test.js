@@ -6,7 +6,8 @@ import loteService from '../../../features/lotes/services/lotes.service';
 // Mock del service (conexión con la ruta)
 vi.mock('../../../features/lotes/services/lotes.service', () => ({
   default: {
-    getLotes: vi.fn()
+    getLotes: vi.fn(),
+    addLote: vi.fn()
   }
 }));
 
@@ -68,5 +69,23 @@ describe('useLotes con hook', () => {
     
     // Mensaje si no hay ningun lote
     expect(result.current.error).toBe("No se pudo obtener la lista de lotes");
+  });
+
+  it('Debe agregar un nuevo lote y refrescar la lista', async () => {
+    const nuevoLote = { tipo_sustrato: "Paja", ubicacion_lote: "Granja" };
+    vi.mocked(loteService.addLote).mockResolvedValue({ success: true });
+    vi.mocked(loteService.getLotes).mockResolvedValue(mockData);
+
+    const { result } = renderHook(() => useLotes());
+
+    let exito;
+    await act(async () => {
+      exito = await result.current.addLote(nuevoLote);
+    });
+
+    expect(exito).toBe(true);
+    expect(loteService.addLote).toHaveBeenCalledWith(nuevoLote);
+    // llamada a get lotes
+    expect(loteService.getLotes).toHaveBeenCalledTimes(2);
   });
 });
