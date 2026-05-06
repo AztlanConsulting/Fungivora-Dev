@@ -34,6 +34,12 @@ function Lotes() {
     { value: "Laboratorio", label: "Laboratorio" }
   ];
 
+   // Opciones fijas para Sustrato
+  const opcionesSustrato = [
+    { value: "Encino", label: "Encino" },
+    { value: "Olote", label: "Olote" }
+  ];
+
   const handleNuevaFila = (campo, valor) => {
     const valorLimpio = valor?.target ? valor.target.value : (valor?.value || valor);
     
@@ -41,11 +47,11 @@ function Lotes() {
   };
 
   const handleGuardarLote = async () => {
-    const { ubicacion_lote } = nuevaFila;
+    const { ubicacion_lote, tipo_sustrato } = nuevaFila;
     
     // Validación (actualmente solo ubicación)
-    if (!ubicacion_lote) {
-      setErrorValidacion("Por favor, selecciona una ubicación");
+    if (!ubicacion_lote || !tipo_sustrato) {
+      setErrorValidacion("Por favor, completa los campos");
       return;
     }
     
@@ -223,11 +229,15 @@ function Lotes() {
                 />
               </div>
 
+              {/* Seleccionar sustrato*/}
               <div className="flex flex-col gap-2">
                 <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Sustrato</Text>
                 <SelectField
                   placeholder="Selecciona un sustrato"
                   size="forms"
+                  options={opcionesSustrato}
+                  value={nuevaFila.tipo_sustrato}
+                  onChange={(opcion) => handleNuevaFila("tipo_sustrato", opcion)} 
                 />
               </div>
 

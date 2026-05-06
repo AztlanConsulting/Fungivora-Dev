@@ -19,12 +19,9 @@ const CampoTexto = ({
   opciones = []
 }) => {
   const clase = "w-full border-2 border-[#3b3fb6] rounded-xl px-3 py-2 text-sm text-[#3b3fb6] bg-[#F9FDFF] outline-none placeholder-[#a0a8d9] placeholder:italic focus:border-[#ffb81c] appearance-none";
-// Para que solaente acepte texto se hizo full con IA
-  // Crea un onChange sanitizado que envuelve el original
   const handleChange = (e) => {
     if (tipo === "text") {
       const cleaned = sanitize(e.target.value);
-      // Mutamos el evento para que el padre reciba el valor limpio
       const syntheticEvent = {
         ...e,
         target: { ...e.target, value: cleaned, name: e.target.name },
