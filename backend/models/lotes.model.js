@@ -30,10 +30,10 @@ class Lotes {
             return filas;
         } catch (err) {
             console.error("Error en fetch_all lotes:", err);
-            throw err; 
+            throw err;
         }
     }
-    
+
     // Metodo para asignar valores a la tabla de lotes
     static async crear_lote(id_lote, id_inoculo, tipo_sustrato, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase) {
         try {
@@ -46,6 +46,20 @@ class Lotes {
             `, [id_lote, id_inoculo, tipo_sustrato, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase]);
         } catch (err) {
             console.error("Error en crear_lote model:", err);
+            throw err;
+        }
+    }
+
+    //  Metodo para actualizar la fase del lote
+    static async actualizar_fase(id_lote, nuevaFase) {
+        try {
+            return await db.execute(`
+                UPDATE Lotes 
+                SET fase = ? 
+                WHERE id_lote = ?
+            `, [nuevaFase, id_lote]);
+        } catch (err) {
+            console.error("Error en actualizar_fase model:", err);
             throw err;
         }
     }

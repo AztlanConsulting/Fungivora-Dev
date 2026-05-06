@@ -10,7 +10,7 @@ Metodo que hace una llamada al modelo para obtener la info necesaria
 exports.get_batches = async (req, res) => {
     try {
         const lotes = await Lotes.fetch_all();
-        
+
         res.status(200).json({
             success: true,
             data: lotes
@@ -18,7 +18,7 @@ exports.get_batches = async (req, res) => {
 
     } catch (err) {
         console.error("Error en get_batches controller:", err);
-        
+
         res.status(500).json({
             success: false,
             message: "Hubo un error al recuperar los lotes",
@@ -41,7 +41,7 @@ exports.post_batch = async (req, res) => {
         const id_lote = crypto.randomUUID();
 
         // Actualmente los valores de fecha, ubicación, activo y fase si estan correctos
-        const id_inoculo = null; 
+        const id_inoculo = null;
         const tipo_sustrato = "Pendiente"; // Sustrato dummy
         const codigo_fungivora = `LOT-${Date.now().toString()}`; // Codigo dummy
         const fecha_lote = new Date();
@@ -49,13 +49,13 @@ exports.post_batch = async (req, res) => {
         const fase = "Inoculación";
 
         await Lotes.crear_lote(
-            id_lote, 
-            id_inoculo, 
-            tipo_sustrato, 
-            codigo_fungivora, 
-            fecha_lote, 
-            ubicacion_lote, 
-            activo, 
+            id_lote,
+            id_inoculo,
+            tipo_sustrato,
+            codigo_fungivora,
+            fecha_lote,
+            ubicacion_lote,
+            activo,
             fase
         );
 
@@ -67,9 +67,37 @@ exports.post_batch = async (req, res) => {
 
     } catch (error) {
         console.error("Error en post_batch:", error);
-        res.status(500).json({ 
-            success: false, 
-            error: 'Error interno al crear el lote' 
+        res.status(500).json({
+            success: false,
+            error: 'Error interno al crear el lote'
+        });
+    }
+};
+
+/**
+ * actualizar_fase
+ * Metodo para actualizar la fase del lote
+ * @param {*} req 
+ * @param {*} res 
+ */
+exports.actualizar_fase = async (req, res) => {
+    try {
+        const { id_lote, nuevaFase } = req.body;
+
+        await Lotes.actualizar_fase(id_lote, nuevaFase);
+
+        res.status(200).json({
+            success: true,
+            message: 'Fase actualizada con éxito',
+            id: id_lote,
+            fase: nuevaFase
+        });
+
+    } catch (error) {
+        console.error("Error en actualizar_fase:", error);
+        res.status(500).json({
+            success: false,
+            error: 'Error interno al actualizar la fase'
         });
     }
 };
