@@ -29,4 +29,52 @@ module.exports = class Inoculo {
             ORDER BY fecha ASC
         `, [especie, tipo]);
     }
+
+
+     // Obtiene todos los inóculos registrados en la tabla Inoculos
+    static fetchInoculos() {
+        return db.execute(`SELECT id_inoculo, codigo_fungivora, 
+            tipo, especie, fecha, cantidad_disponible 
+            FROM Inoculos
+        ORDER BY fecha DESC`);
+    }
+
+    // Obtiene la cantidad total de ingredientes usados en todos los inóculos
+    static fetchCantidadIngredientes() {
+        return db.execute(`
+            SELECT id_insumo, nombre, cantidad FROM Insumos 
+            WHERE nombre IN (
+            'Peptona', 'Extracto de Malta', 
+            'Agua Destilada', 'Miel', 
+            'Jarabe de Maíz', 'Mijo Rojo')
+        `);
+    }
+
+    // Crea un nuevo inóculo y registra sus ingredientes asociados
+    static async createInoculo({codigo_fungivora,
+        id_inoculo_usado,
+        cantidad_usada,
+        tipo,
+        proceso,
+        especie,
+        fecha,
+        cantidad_disponible,
+        unidad,
+        stock_recomendado
+        }, connection) {
+        // 1 — inserta el nuevo inóculo y obtiene su id
+        const [result] = await connection.execute(`
+            INSERT INTO Inoculos (id_inoculo_usado, cantidad_usada, codigo_fungivora, tipo, proceso, especie, fecha, cantidad_disponible, unidad, stock_recomendado) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `, [id_inoculo_usado, cantidad_usada, codigo_fungivora, tipo, proceso, especie, fecha, cantidad_disponible, unidad, stock_recomendado]);
+        const inoculoId = result.insertId;
+        return inoculoId;
+    }
+
+    static async insertIngrediente({ inoculoId, ingredienteId, cantidad }, connection) {
+        await connection.execute(`
+            INSERT INTO InoculoIngredientes (id_inoculo, id_ingrediente, cantidad) 
+            VALUES (?, ?, ?)
+        `, [inoculoId, ingredienteId, cantidad]);
+    }
 };

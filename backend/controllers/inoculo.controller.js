@@ -34,12 +34,144 @@ exports.get_inoculos_filtrados = async (req, res, next) => {
             success: true,
             data: inoculos
         });
-
     } catch (error) {
-        console.error('Error al obtener respuesta:', error);
+        console.error('Error al obtener inóculos:', error);
         res.status(500).json({
             success: false,
-            message: 'Error al obtener los inoculos'
+            message: 'Error al obtener los inóculos'
         });
     }
 };
+
+exports.get_inoculos = async (req, res, next) => {
+    try {
+        const [inoculos] = await Inoculo.fetchInoculos();
+
+        res.status(200).json({
+            success: true,
+            data: inoculos
+        });
+    } catch (error) {
+        console.error('Error al obtener inóculos:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener los inóculos'
+        });
+    }
+};
+
+exports.get_cantidad_ingredientes = async (req, res, next) => {
+    try {
+        const [cantidad] = await Inoculo.fetchCantidadIngredientes();   
+        res.status(200).json({
+            success: true,
+            data: cantidad
+        });
+    } catch (error) {
+        console.error('Error al obtener cantidad de ingredientes:', error);
+        res.status(500).json({  
+            success: false,
+            message: 'Error al obtener la cantidad de ingredientes'
+        });
+    }
+};
+
+exports.post_crear_inoculo = async (req, res, next) => {
+  // ── validaciones antes de tocar la BD ──────────────────────
+    const {
+        codigo_fungivora,
+        tipo,
+        especie,
+        fecha,
+        cantidad_disponible,
+        nota,
+        inoculo_usado,  // { id, cantidad }
+        ingredientes  // [{ id, nombre, cantidad, unidad }, ...]
+    } = req.body
+
+    // ── Abre la transacción ─────────────────────────────────────
+    const connection = await MI.beginTransaction()
+
+    try {
+
+        // 1 — inserta el inóculo
+        const inoculoId = await MI.insertInoculo({
+        codigo_fungivora,
+        id_inoculo_usado: inoculo_usado.id,
+        cantidad_usada: inoculo_usado.cantidad,
+        tipo,
+        especie,
+        fecha,
+        cantidad_disponible,
+        unidad,
+        stock_recomendado
+        }, connection)
+        // connection se pasa para que este INSERT
+        // forme parte de la misma transacción
+
+        // 2 — inserta una fila por cada ingrediente
+        // el for..of espera a que cada INSERT termine
+        // antes de pasar al siguiente
+        for (const ingrediente of ingredientes) {
+            await MI.insertIngrediente({
+                inoculoId,             // id que devolvió el paso 1
+                ingredienteId: ingrediente.id,
+                cantidad:      ingrediente.cantidad
+            }, connection)
+        }
+
+        // 3 — registra en bitácora
+        await MI.insertBitacora({
+        inoculoId,
+        fecha,
+        nota
+        }, connection)
+
+        // 4 — descuenta el stock de cada insumo
+        // si alguno no tiene stock suficiente el model
+        // lanza throw new Error('STOCK_INSUFICIENTE')
+        // y salta directo al catch
+        for (const ingrediente of ingredientes) {
+            await MI.updateInsumo({
+                ingredienteId: ingrediente.id,
+                cantidad:      ingrediente.cantidad
+            }, connection)
+        }
+
+        // 5 — registra un log de salida por cada ingrediente
+        for (const ingrediente of ingredientes) {
+        await MI.insertLog({
+            ingredienteId: ingrediente.id,
+            cantidad:      ingrediente.cantidad,
+            fecha,
+            tipo:          '0'
+        }, connection)
+        }
+
+        // ── todo salió bien — confirma los cambios en la BD ────────
+        // sin este COMMIT ningún cambio se persiste
+        await MI.commitTransaction(connection)
+
+        res.status(201).json({
+        success: true,
+        message: 'Inóculo creado exitosamente'
+        })
+
+    } catch (error) {
+
+        // ── algo falló — deshace TODO lo que se hizo arriba ────────
+        // si el INSERT de Inoculos ya ocurrió pero updateInsumo falló,
+        // el rollback borra también ese INSERT
+        await MI.rollbackTransaction(connection)
+
+        if (error.message === 'STOCK_INSUFICIENTE') {
+        return res.status(422).json({
+            success: false,
+            message: 'Stock insuficiente para uno o más ingredientes'
+        })
+        }
+
+        // cualquier otro error inesperado lo maneja el middleware global
+        next(error)
+    };
+}
