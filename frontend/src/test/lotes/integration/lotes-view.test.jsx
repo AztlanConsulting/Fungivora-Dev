@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, waitFor, act } from '@testing-library/react'
+import { render, screen, waitFor, act, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { Lotes } from '../../../pages'
@@ -9,11 +9,33 @@ vi.mock('../../shared/components/ui/basics/titulo', () => ({
     default: ({ children }) => <h1>{children}</h1>
 }))
 vi.mock('../../shared/components/ui/basics/texto', () => ({
-    default: ({ children }) => <span>{children}</span>
+    default: ({ children, style, className }) => <span style={style} className={className}>{children}</span>
 }))
 vi.mock('../../shared/components/layout/base', () => ({
-    default: ({ children }) => <div>{children}</div>
+    default: ({ children, margen_arriba }) => <div className={margen_arriba}>{children}</div>
 }))
+vi.mock('../../shared/components/ui/inputs/seleccionar_texto', () => ({
+    default: ({ placeholder, onChange, options, value, ...props }) => (
+        <select 
+            data-testid={`select-${placeholder}`} 
+            value={value || ""}
+            onChange={(e) => onChange && onChange({ value: e.target.value })}
+        >
+            <option value="">{placeholder}</option>
+            {options?.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+        </select>
+    )
+}));
+vi.mock('../../shared/components/ui/buttons/botones', () => ({
+    default: ({ children, onClick, variant, className }) => (
+        <button onClick={onClick} data-variant={variant} className={className}>{children}</button>
+    )
+}));
+vi.mock('../../shared/components/ui/inputs/input_fecha', () => ({
+    default: () => <input type="date" data-testid="input-fecha" />
+}));
 
 // Mock de datos para la API
 const mockLotes = {
@@ -88,7 +110,7 @@ describe('Vista Lotes', () => {
 
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1))
         await act(async () => {
-            vi.advanceTimersByTime(5000) // avanzar el tiempo esos 5 segs
+            vi.advanceTimersByTime(5000) // avanzar el tiempo 5 segs
         })
 
         expect(fetch).toHaveBeenCalledTimes(2)
@@ -106,7 +128,21 @@ describe('Vista Lotes', () => {
         const filas = await screen.findAllByText("LOTE-001")
         const filaMovil = filas[0].closest('.md\\:hidden')
         
-        await user.click(filaMovil) // Hacer un click en el recuadro
+        await user.click(filaMovil) // Hacer un click la fila
         expect(filaMovil).toHaveClass('ring-2')
     })
+
+    it('Muestra error de validación si falta la ubicación', async () => {
+        const user = userEvent.setup();
+        fetch.mockResolvedValue({ ok: true, json: async () => mockLotes });
+
+        render(<Lotes />);
+
+        // Intentar guardar sin llenar nada
+        const botonCrear = screen.getByRole('button', { name: /Crear Lote/i });
+        await user.click(botonCrear);
+
+        expect(screen.getByText(/Por favor, selecciona una ubicación/i)).toBeInTheDocument();
+    });
+
 })
