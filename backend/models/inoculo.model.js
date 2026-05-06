@@ -29,4 +29,19 @@ module.exports = class Inoculo {
             ORDER BY fecha ASC
         `, [especie, tipo]);
     }
+
+    // Método para obtener el codigo_fungivora del inóculo por su ID
+    static async obtenerCodigoFungivora(id_inoculo) {
+        try {
+            const [filas] = await db.execute(`
+                SELECT codigo_fungivora
+                FROM Inoculos
+                WHERE id_inoculo = ?
+            `, [id_inoculo]);
+            return filas[0]?.codigo_fungivora;
+        } catch (err) {
+            console.error("Error en obtenerCodigoFungivora model:", err);
+            throw err;
+        }
+    }
 };
