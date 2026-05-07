@@ -1,4 +1,5 @@
 const Lotes = require('../models/lotes.model');
+const Categoria = require('../models/categoria.model'); 
 const crypto = require('crypto');
 
 /*
@@ -27,6 +28,56 @@ exports.get_batches = async (req, res) => {
     }
 };
 
+
+/*
+* get_categorias
+* Obtiene todas las categorías disponibles
+*/
+exports.get_categorias = async (req, res) => {
+    try {
+        const rows = await Lotes.fetch_categorias();
+
+        res.status(200).json({
+            success: true,
+            categorias: rows,
+        });
+    } catch (error) {
+        console.error('Error al obtener categorías:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+/*
+* get_sustratos
+* Obtiene todas los sustratos de la tabla de categorias
+* Funciona al tener el fetch por 'Sustrato'
+*/
+exports.get_sustratos = async (req, res) => {
+    try {
+        const [sustratos] = await Categoria.fetchOpciones('Sustrato', false);
+        res.status(200).json(sustratos);
+    } catch (error) {
+        res.status(500).json({ success: false, error: 'Error al obtener sustratos' });
+    }
+};
+
+/*
+* get_ubicaciones
+* Obtiene todas las ubicaciones de la tabla de categorias
+* Funciona al tener el fetch por 'Ubicacion'
+*/
+exports.get_ubicaciones = async (req, res) => {
+    try {
+        const [ubicaciones] = await Categoria.fetchOpciones('Ubicacion', false);
+        res.status(200).json(ubicaciones);
+    } catch (error) {
+        res.status(500).json({ success: false, error: 'Error al obtener ubicaciones' });
+    }
+};
+
 /*
 * post_batch
 Mandar la información del lote
@@ -35,14 +86,13 @@ Metodo que añade la información de lotes a la tabla
 */
 exports.post_batch = async (req, res) => {
     try {
-        const { ubicacion_lote } = req.body;
+        const { ubicacion_lote, tipo_sustrato } = req.body;
 
         // Generar el id
         const id_lote = crypto.randomUUID();
 
         // Actualmente los valores de fecha, ubicación, activo y fase si estan correctos
         const id_inoculo = null; 
-        const tipo_sustrato = "Pendiente"; // Sustrato dummy
         const codigo_fungivora = `LOT-${Date.now().toString()}`; // Codigo dummy
         const fecha_lote = new Date();
         const activo = 1;
