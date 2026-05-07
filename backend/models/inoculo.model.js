@@ -46,7 +46,8 @@ module.exports = class Inoculo {
             WHERE nombre IN (
             'Peptona', 'Extracto de Malta', 
             'Agua Destilada', 'Miel', 
-            'Jarabe de Maíz', 'Mijo Rojo')
+            'Jarabe de Maíz', 'Mijo Rojo',
+            'Mijo Blanco', 'Agua')
         `);
     }
 
