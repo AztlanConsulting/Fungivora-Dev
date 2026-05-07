@@ -12,9 +12,31 @@ const loteService = {
     }
   },
 
+  getSustratos: async () => {
+    try {
+      const res = await fetch("/api/lotes/sustratos"); // Ruta de sustrato
+      if (!res.ok) throw new Error("Error al obtener sustratos");
+      return await res.json();
+    } catch (error) {
+      console.error("Error en getSustratos:", error);
+      return []; 
+    }
+  },
+
+  getUbicaciones: async () => {
+    try {
+      const res = await fetch("/api/lotes/ubicaciones"); // Ruta de ubicación
+      if (!res.ok) throw new Error("Error al obtener ubicaciones");
+      return await res.json();
+    } catch (error) {
+      console.error("Error en getUbicaciones:", error);
+      return [];
+    }
+  },
+
   addLote: async (datosLote) => {
       try {
-        // Ruta unicamente para crear
+        // Ruta para crear
           const res = await fetch("/api/lotes/crear", {
               method: "POST",
               headers: { "Content-Type": "application/json" },

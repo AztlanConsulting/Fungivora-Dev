@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Base from "../../shared/components/layout/base";
 import Titulo from "../../shared/components/ui/basics/titulo";
 import Text from "../../shared/components/ui/basics/texto";
@@ -21,37 +21,38 @@ function Lotes() {
     { label: "Fecha", key: "fecha_lote" }
   ];
   
+  // Acciones de use Lotes
+  const { datos, sustratos, ubicaciones, cargando, error, addLote } = useLotes();
+  
   const [fecha, setFecha] = useState({ day: "", month: "", year: "" });
-  const { datos, cargando, error, addLote } = useLotes();
   const [filaSeleccionada, setFilaSeleccionada] = useState(null);
   const [verFormulario, setVerFormulario] = useState(false);
   const [nuevaFila, setNuevaFila] = useState({ tipo_sustrato: "", ubicacion_lote: "" });
   const [errorValidacion, setErrorValidacion] = useState("");
 
-  // Opciones fijas para Ubicación
-  const opcionesUbicacion = [
-    { value: "Granja", label: "Granja" },
-    { value: "Laboratorio", label: "Laboratorio" }
-  ];
-
+  // EAgregar nueva fila al añadir
   const handleNuevaFila = (campo, valor) => {
-    const valorLimpio = valor?.target ? valor.target.value : (valor?.value || valor);
-    
-    setNuevaFila((prev) => ({ ...prev, [campo]: valorLimpio }));
+    if (valor && typeof valor === 'object' && 'value' in valor) {
+      setNuevaFila((prev) => ({ ...prev, [campo]: valor.value }));
+    } 
+    else if (valor?.target) {
+      setNuevaFila((prev) => ({ ...prev, [campo]: valor.target.value }));
+    } 
+    else {
+      setNuevaFila((prev) => ({ ...prev, [campo]: valor || "" }));
+    }
   };
 
+  // Verificación de los campos
   const handleGuardarLote = async () => {
-    const { ubicacion_lote } = nuevaFila;
+    const { ubicacion_lote, tipo_sustrato } = nuevaFila;
     
-    // Validación (actualmente solo ubicación)
-    if (!ubicacion_lote) {
-      setErrorValidacion("Por favor, selecciona una ubicación");
+    if (!ubicacion_lote || !tipo_sustrato) {
+      setErrorValidacion("Por favor, completa los campos");
       return;
     }
     
     setErrorValidacion("");
-    
-    // Objeto a nuevaFila 
     const exito = await addLote(nuevaFila);
     
     if (exito) {
@@ -117,6 +118,7 @@ function Lotes() {
               </div>
             ) : (
               <div className="flex flex-col md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
+
                 {/* Header Desktop */}
                 <div className={`hidden md:grid ${gridLayout}`} style={{ backgroundColor: colorBordeHeader }}>
                   {columnas.map((col, i) => (
@@ -136,6 +138,7 @@ function Lotes() {
 
                     return (
                       <div key={lote.id_lote} onClick={() => setFilaSeleccionada(lote.id_lote)}>
+                        
                         {/* Vista Móvil */}
                         <div 
                           className={`md:hidden p-5 rounded-2xl border bg-white shadow-sm flex flex-col gap-4 transition-all ${esSeleccionado ? 'ring-2' : ''}`}
@@ -223,25 +226,29 @@ function Lotes() {
                 />
               </div>
 
-              <div className="flex flex-col gap-2">
-                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Sustrato</Text>
-                <SelectField
-                  placeholder="Selecciona un sustrato"
-                  size="forms"
-                />
-              </div>
+              {/* Seleccionar sustrato*/}
+                <div className="flex flex-col gap-2">
+                  <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Sustrato</Text>
+                  <SelectField
+                    placeholder="Selecciona un sustrato"
+                    size="forms"
+                    options={sustratos} 
+                    value={nuevaFila.tipo_sustrato} 
+                    onChange={(opcion) => handleNuevaFila("tipo_sustrato", opcion)}
+                  />
+                </div>
 
               {/* Seleccionar ubicación*/}
-              <div className="flex flex-col gap-2">
-                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Ubicación</Text>
-                <SelectField
-                  placeholder="Selecciona un ubicación"
-                  size="forms"
-                  options={opcionesUbicacion}
-                  value={nuevaFila.ubicacion_lote}
-                  onChange={(opcion) => handleNuevaFila("ubicacion_lote", opcion)} 
-                />
-              </div>
+                <div className="flex flex-col gap-2">
+                  <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Ubicación</Text>
+                  <SelectField
+                    placeholder="Selecciona una ubicación"
+                    size="forms"
+                    options={ubicaciones}
+                    value={nuevaFila.ubicacion_lote}
+                    onChange={(opcion) => handleNuevaFila("ubicacion_lote", opcion)}
+                  />
+                </div>
 
               <div className="flex flex-col gap-2">
                 <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Fecha</Text>
