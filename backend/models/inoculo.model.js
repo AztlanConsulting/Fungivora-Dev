@@ -17,9 +17,6 @@ module.exports = class Inoculo {
      * @description Obtiene los inóculos que coinciden con cierta especie y tipo
      * @param {string} especie - El nombre de la especie (por defecto es 'Shiitake').
      * @param {string} tipo - El tipo del inóculo (por defecto es 'Agar').
-     * @returns {Promise} - Retorna una promesa con los inóculos de la consulta.
-     * 
-     * * IMPORTANTE: Asegúrate de que el nombre de la especie y el tipo sean correcton en la base de datos.
      */
     static fetchInoculosFiltrados(especie = 'Shiitake', tipo = 'Agar') {
         return db.execute(`
@@ -30,24 +27,47 @@ module.exports = class Inoculo {
         `, [especie, tipo]);
     }
 
-
-     // Obtiene todos los inóculos registrados en la tabla Inoculos
-    static fetchInoculos() {
-        return db.execute(`SELECT id_inoculo, codigo_fungivora, 
-            tipo, especie, fecha, cantidad_disponible 
+    /**
+     * @description Obtiene los inóculos disponibles para ser usados como inóculo
+     *              madre en la preparación de semillas. Solo devuelve registros de
+     *              tipo 'Agar' y 'Medio Líquido' con cantidad_disponible > 0.
+     */
+    static fetchInoculosParaSemilla() {
+        return db.execute(`
+            SELECT
+                id_inoculo,
+                codigo_fungivora,
+                especie,
+                tipo,
+                cantidad_disponible,
+                unidad,
+                stock_recomendado
             FROM Inoculos
-        ORDER BY fecha DESC`);
+            WHERE tipo IN ('Agar', 'Medio Líquido')
+              AND cantidad_disponible > 0
+            ORDER BY especie ASC, fecha DESC
+        `);
+    }
+
+    // Obtiene todos los inóculos registrados en la tabla Inoculos
+    static fetchInoculos() {
+        return db.execute(`
+            SELECT id_inoculo, codigo_fungivora,
+                tipo, especie, fecha, cantidad_disponible
+            FROM Inoculos
+            ORDER BY fecha DESC
+        `);
     }
 
     // Obtiene la cantidad total de ingredientes usados en todos los inóculos
     static fetchCantidadIngredientes() {
         return db.execute(`
-            SELECT id_insumo, nombre, cantidad FROM Insumos 
+            SELECT id_insumo, nombre, cantidad FROM Insumos
             WHERE nombre IN (
-            'Peptona', 'Extracto de Malta', 
-            'Agua Destilada', 'Miel', 
-            'Jarabe de Maíz', 'Mijo Rojo',
-            'Mijo Blanco', 'Agua')
+                'Peptona', 'Extracto de Malta',
+                'Agua Destilada', 'Miel',
+                'Jarabe de Maíz', 'Mijo Rojo',
+                'Mijo Blanco', 'Agua')
         `);
     }
 
@@ -62,56 +82,54 @@ module.exports = class Inoculo {
         cantidad_disponible,
         unidad,
         stock_recomendado
-        }, connection) {
-        // 1 — inserta el nuevo inóculo y obtiene su id
+    }, connection) {
         const [result] = await connection.execute(`
             INSERT INTO Inoculos (
-            id_inoculo_usado, cantidad_usada, 
-            codigo_fungivora, tipo, especie, 
-            fecha, cantidad_disponible, unidad, 
-            stock_recomendado
-            ) 
+                id_inoculo_usado, cantidad_usada,
+                codigo_fungivora, tipo, especie,
+                fecha, cantidad_disponible, unidad,
+                stock_recomendado
+            )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `, [
-            id_inoculo_usado, 
-            cantidad_usada, 
-            codigo_fungivora, 
-            tipo, 
-            especie, 
-            fecha, 
-            cantidad_disponible, 
-            unidad, 
+            id_inoculo_usado,
+            cantidad_usada,
+            codigo_fungivora,
+            tipo,
+            especie,
+            fecha,
+            cantidad_disponible,
+            unidad,
             stock_recomendado
         ]);
 
-        const inoculoId = result.insertId;
-        return inoculoId;
+        return result.insertId;
     }
 
     static async insertIngrediente({ inoculoId, ingredienteId, cantidad }, connection) {
         await connection.execute(`
-            INSERT INTO Ingredientes (id_inoculo_creado, id_insumo, cantidad) 
+            INSERT INTO Ingredientes (id_inoculo_creado, id_insumo, cantidad)
             VALUES (?, ?, ?)
         `, [inoculoId, ingredienteId, cantidad]);
     }
 
     static async insertBitacora({ inoculoId, fecha, nota }, connection) {
         await connection.execute(`
-            INSERT INTO Bitacora_inoculos (id_inoculo, fecha_bitacora, notas_bitacora) 
+            INSERT INTO Bitacora_inoculos (id_inoculo, fecha_bitacora, notas_bitacora)
             VALUES (?, ?, ?)
         `, [inoculoId, fecha, nota]);
     }
 
     static async updateInsumo({ cantidad, ingredienteId }, connection) {
-        const [rows] = await connection.execute(`
-            UPDATE Insumos 
+        await connection.execute(`
+            UPDATE Insumos
             SET cantidad = cantidad - ?
             WHERE id_insumo = ?
         `, [cantidad, ingredienteId]);
     }
 
     static async updateInoculo({ cantidad_disponible, id }, connection) {
-        const [result] = await connection.execute(`
+        await connection.execute(`
             UPDATE Inoculos
             SET cantidad_disponible = cantidad_disponible - ?
             WHERE id_inoculo = ?
@@ -120,9 +138,8 @@ module.exports = class Inoculo {
 
     static async insertLog({ ingredienteId, cantidad, fecha, tipo }, connection) {
         await connection.execute(`
-            INSERT INTO Logs_ins_outs (id_insumo, cantidad, fecha, tipo) 
+            INSERT INTO Logs_ins_outs (id_insumo, cantidad, fecha, tipo)
             VALUES (?, ?, ?, ?)
         `, [ingredienteId, cantidad, fecha, tipo]);
     }
-
 };
