@@ -29,4 +29,27 @@ module.exports = class Inoculo {
             ORDER BY fecha ASC
         `, [especie, tipo]);
     }
+
+    /**
+     * @description Obtiene los inóculos disponibles para ser usados como inóculo
+     *              madre en la preparación de semillas. Solo devuelve registros de
+     *              tipo 'Agar' y 'Medio Líquido' con cantidad_disponible > 0.
+     * @returns {Promise} - Retorna una promesa con los inóculos disponibles.
+     */
+    static fetchInoculosParaSemilla() {
+        return db.execute(`
+            SELECT
+                id_inoculo,
+                codigo_fungivora,
+                especie,
+                tipo,
+                cantidad_disponible,
+                unidad,
+                stock_recomendado
+            FROM Inoculos
+            WHERE tipo IN ('Agar', 'Medio Líquido')
+              AND cantidad_disponible > 0
+            ORDER BY especie ASC, fecha DESC
+        `);
+    }
 };

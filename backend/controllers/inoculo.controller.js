@@ -43,3 +43,25 @@ exports.get_inoculos_filtrados = async (req, res, next) => {
         });
     }
 };
+
+/** Obtiene los inóculos disponibles para ser usados como inóculo madre
+ *  en la preparación de semillas (tipo Agar o Medio Líquido con stock > 0).
+ *  Si no hay registros disponibles responde con data: [] sin error.
+ */
+exports.get_inoculos_para_semilla = async (req, res, next) => {
+    try {
+        const [inoculos] = await Inoculo.fetchInoculosParaSemilla();
+
+        res.status(200).json({
+            success: true,
+            data: inoculos
+        });
+
+    } catch (error) {
+        console.error('Error al obtener inóculos para semilla:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener los inóculos para semilla'
+        });
+    }
+};
