@@ -51,11 +51,11 @@ module.exports = class Inoculo {
     }
 
     // Crea un nuevo inóculo y registra sus ingredientes asociados
-    static async createInoculo({codigo_fungivora,
+    static async insertInoculo({
         id_inoculo_usado,
         cantidad_usada,
+        codigo_fungivora,
         tipo,
-        proceso,
         especie,
         fecha,
         cantidad_disponible,
@@ -64,17 +64,65 @@ module.exports = class Inoculo {
         }, connection) {
         // 1 — inserta el nuevo inóculo y obtiene su id
         const [result] = await connection.execute(`
-            INSERT INTO Inoculos (id_inoculo_usado, cantidad_usada, codigo_fungivora, tipo, proceso, especie, fecha, cantidad_disponible, unidad, stock_recomendado) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `, [id_inoculo_usado, cantidad_usada, codigo_fungivora, tipo, proceso, especie, fecha, cantidad_disponible, unidad, stock_recomendado]);
+            INSERT INTO Inoculos (
+            id_inoculo_usado, cantidad_usada, 
+            codigo_fungivora, tipo, especie, 
+            fecha, cantidad_disponible, unidad, 
+            stock_recomendado
+            ) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `, [
+            id_inoculo_usado, 
+            cantidad_usada, 
+            codigo_fungivora, 
+            tipo, 
+            especie, 
+            fecha, 
+            cantidad_disponible, 
+            unidad, 
+            stock_recomendado
+        ]);
+
         const inoculoId = result.insertId;
         return inoculoId;
     }
 
     static async insertIngrediente({ inoculoId, ingredienteId, cantidad }, connection) {
         await connection.execute(`
-            INSERT INTO InoculoIngredientes (id_inoculo, id_ingrediente, cantidad) 
+            INSERT INTO Ingredientes (id_inoculo_creado, id_insumo, cantidad) 
             VALUES (?, ?, ?)
         `, [inoculoId, ingredienteId, cantidad]);
     }
+
+    static async insertBitacora({ inoculoId, fecha, nota }, connection) {
+        await connection.execute(`
+            INSERT INTO Bitacora_inoculos (id_inoculo, fecha_bitacora, notas_bitacora) 
+            VALUES (?, ?, ?)
+        `, [inoculoId, fecha, nota]);
+    }
+
+    static async updateInsumo({ cantidad, ingredienteId }, connection) {
+        // Primero obtenemos el stock actual del insumo
+        const [rows] = await connection.execute(`
+            UPDATE Insumos 
+            SET cantidad = cantidad - ?
+            WHERE id_insumo = ?
+        `, [cantidad, ingredienteId]);
+    }
+
+    static async updateInoculo({ cantidad_disponible, id }, connection) {
+        const [result] = await connection.execute(`
+            UPDATE Inoculos
+            SET cantidad_disponible = cantidad_disponible - ?
+            WHERE id_inoculo = ?
+        `, [cantidad_disponible, id]);
+    }
+
+    static async insertLog({ ingredienteId, cantidad, fecha, tipo }, connection) {
+        await connection.execute(`
+            INSERT INTO Logs_ins_outs (id_insumo, cantidad, fecha, tipo) 
+            VALUES (?, ?, ?, ?)
+        `, [ingredienteId, cantidad, fecha, tipo]);
+    }
+
 };

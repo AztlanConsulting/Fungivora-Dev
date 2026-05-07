@@ -85,20 +85,26 @@ exports.post_crear_inoculo = async (req, res, next) => {
         fecha,
         cantidad_disponible,
         nota,
+        unidad,
+        stock_recomendado,
         inoculo_usado,  // { id, cantidad }
-        ingredientes  // [{ id, nombre, cantidad, unidad }, ...]
+        ingredientes  //    [ { id, cantidad }, ... ]
     } = req.body
 
+    const db = require('../util/db');
+
+    const connection = await db.getConnection();
+
     // ── Abre la transacción ─────────────────────────────────────
-    const connection = await MI.beginTransaction()
+    await connection.beginTransaction()
 
     try {
 
         // 1 — inserta el inóculo
-        const inoculoId = await MI.insertInoculo({
-        codigo_fungivora,
+        const inoculoId = await Inoculo.insertInoculo({
         id_inoculo_usado: inoculo_usado.id,
         cantidad_usada: inoculo_usado.cantidad,
+        codigo_fungivora,
         tipo,
         especie,
         fecha,
@@ -113,7 +119,7 @@ exports.post_crear_inoculo = async (req, res, next) => {
         // el for..of espera a que cada INSERT termine
         // antes de pasar al siguiente
         for (const ingrediente of ingredientes) {
-            await MI.insertIngrediente({
+            await Inoculo.insertIngrediente({
                 inoculoId,             // id que devolvió el paso 1
                 ingredienteId: ingrediente.id,
                 cantidad:      ingrediente.cantidad
@@ -121,7 +127,7 @@ exports.post_crear_inoculo = async (req, res, next) => {
         }
 
         // 3 — registra en bitácora
-        await MI.insertBitacora({
+        await Inoculo.insertBitacora({
         inoculoId,
         fecha,
         nota
@@ -132,25 +138,30 @@ exports.post_crear_inoculo = async (req, res, next) => {
         // lanza throw new Error('STOCK_INSUFICIENTE')
         // y salta directo al catch
         for (const ingrediente of ingredientes) {
-            await MI.updateInsumo({
+            await Inoculo.updateInsumo({
                 ingredienteId: ingrediente.id,
                 cantidad:      ingrediente.cantidad
             }, connection)
         }
 
+        await Inoculo.updateInoculo({
+            id: inoculoId,
+            cantidad_disponible: cantidad_disponible
+        }, connection)
+
         // 5 — registra un log de salida por cada ingrediente
         for (const ingrediente of ingredientes) {
-        await MI.insertLog({
+        await Inoculo.insertLog({
             ingredienteId: ingrediente.id,
             cantidad:      ingrediente.cantidad,
             fecha,
-            tipo:          '0'
+            tipo:          'Out'
         }, connection)
         }
 
         // ── todo salió bien — confirma los cambios en la BD ────────
         // sin este COMMIT ningún cambio se persiste
-        await MI.commitTransaction(connection)
+        await connection.commit(connection)
 
         res.status(201).json({
         success: true,
@@ -162,7 +173,7 @@ exports.post_crear_inoculo = async (req, res, next) => {
         // ── algo falló — deshace TODO lo que se hizo arriba ────────
         // si el INSERT de Inoculos ya ocurrió pero updateInsumo falló,
         // el rollback borra también ese INSERT
-        await MI.rollbackTransaction(connection)
+        await connection.rollback(connection)
 
         if (error.message === 'STOCK_INSUFICIENTE') {
         return res.status(422).json({
