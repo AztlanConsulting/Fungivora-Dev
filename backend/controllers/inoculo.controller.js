@@ -42,7 +42,7 @@ exports.get_inoculos_filtrados = async (req, res, next) => {
         });
     }
 };
-
+// Obtiene todos los inóculos registrados en la tabla Inoculos
 exports.get_inoculos = async (req, res, next) => {
     try {
         const [inoculos] = await Inoculo.fetchInoculos();
@@ -60,6 +60,7 @@ exports.get_inoculos = async (req, res, next) => {
     }
 };
 
+// Obtiene la cantidad actual de ingredientes para crear inóculos
 exports.get_cantidad_ingredientes = async (req, res, next) => {
     try {
         const [cantidad] = await Inoculo.fetchCantidadIngredientes();   
@@ -76,8 +77,11 @@ exports.get_cantidad_ingredientes = async (req, res, next) => {
     }
 };
 
+/**
+ * Crea un nuevo inóculo, registra sus ingredientes asociados
+ * y actualiza el stock de los insumos usados, todo dentro de una transacción
+ */
 exports.post_crear_inoculo = async (req, res, next) => {
-  // ── validaciones antes de tocar la BD ──────────────────────
     const {
         codigo_fungivora,
         tipo,
@@ -88,14 +92,14 @@ exports.post_crear_inoculo = async (req, res, next) => {
         unidad,
         stock_recomendado,
         inoculo_usado,  // { id, cantidad }
-        ingredientes  //    [ { id, cantidad }, ... ]
+        ingredientes  //    [ { id, cantidad }]
     } = req.body
 
     const db = require('../util/db');
 
     const connection = await db.getConnection();
 
-    // ── Abre la transacción ─────────────────────────────────────
+    // ── Abre la transacción ──
     await connection.beginTransaction()
 
     try {
@@ -112,12 +116,8 @@ exports.post_crear_inoculo = async (req, res, next) => {
         unidad,
         stock_recomendado
         }, connection)
-        // connection se pasa para que este INSERT
-        // forme parte de la misma transacción
 
         // 2 — inserta una fila por cada ingrediente
-        // el for..of espera a que cada INSERT termine
-        // antes de pasar al siguiente
         for (const ingrediente of ingredientes) {
             await Inoculo.insertIngrediente({
                 inoculoId,             // id que devolvió el paso 1
@@ -136,7 +136,6 @@ exports.post_crear_inoculo = async (req, res, next) => {
         // 4 — descuenta el stock de cada insumo
         // si alguno no tiene stock suficiente el model
         // lanza throw new Error('STOCK_INSUFICIENTE')
-        // y salta directo al catch
         for (const ingrediente of ingredientes) {
             await Inoculo.updateInsumo({
                 ingredienteId: ingrediente.id,
@@ -159,8 +158,7 @@ exports.post_crear_inoculo = async (req, res, next) => {
         }, connection)
         }
 
-        // ── todo salió bien — confirma los cambios en la BD ────────
-        // sin este COMMIT ningún cambio se persiste
+        // Todas las transacciones son exitosas, confirma los cambios en la BD 
         await connection.commit(connection)
 
         res.status(201).json({
@@ -170,9 +168,7 @@ exports.post_crear_inoculo = async (req, res, next) => {
 
     } catch (error) {
 
-        // ── algo falló — deshace TODO lo que se hizo arriba ────────
-        // si el INSERT de Inoculos ya ocurrió pero updateInsumo falló,
-        // el rollback borra también ese INSERT
+        // Si una operación falla, revierte todos los cambios realizados en la BD durante esta transacción
         await connection.rollback(connection)
 
         if (error.message === 'STOCK_INSUFICIENTE') {
@@ -182,7 +178,6 @@ exports.post_crear_inoculo = async (req, res, next) => {
         })
         }
 
-        // cualquier otro error inesperado lo maneja el middleware global
         next(error)
     };
 }

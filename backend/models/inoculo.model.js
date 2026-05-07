@@ -102,7 +102,6 @@ module.exports = class Inoculo {
     }
 
     static async updateInsumo({ cantidad, ingredienteId }, connection) {
-        // Primero obtenemos el stock actual del insumo
         const [rows] = await connection.execute(`
             UPDATE Insumos 
             SET cantidad = cantidad - ?
