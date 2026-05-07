@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { colores } from "../../basics/colores";
-import Text from "../../basics/texto";
+import { colores } from "../../../shared/components/ui/basics/colores";
+import Text from "../../../shared/components/ui/basics/texto";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { PlusSignIcon } from '@hugeicons/core-free-icons';
 

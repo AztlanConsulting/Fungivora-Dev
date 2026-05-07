@@ -4,7 +4,7 @@ import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto"
 import useEspecies from "../../../features/inoculos/hooks/useEspecies";
 import Titulo from "../../../shared/components/ui/basics/titulo";
 import EntradaCantidad from "../../../shared/components/ui/inputs/entrada_cantidad"
-import { EntradaLista } from "../../../shared/components/ui/inoculos/components/seleccionar_cantidades"
+import { EntradaLista } from "../../../features/crear_inoculos/components/seleccionar_cantidades"
 
 const FormSemilla = () => {
   // Estados locales para simular la DB

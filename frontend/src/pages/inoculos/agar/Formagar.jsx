@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
 import useEspecies from "../../../features/inoculos/hooks/useEspecies";
 import Titulo from "../../../shared/components/ui/basics/titulo";
-import SeleccionarInoculo from "../../../shared/components/ui/inoculos/components/seleccionarInoculo";
+import SeleccionarInoculo from "../../../features/crear_inoculos/components/seleccionarInoculo"
 
 const FormAgar = () => {
   const [especie, setEspecie] = useState("");
