@@ -7,11 +7,10 @@ import EntradaCantidad from "../../../shared/components/ui/inputs/entrada_cantid
 import { EntradaLista } from "../../../features/crear_inoculos/components/seleccionar_cantidades"
 
 const FormSemilla = () => {
-  // Estados locales para simular la DB
-  const [agua, setAgua] = useState(100);
-  const [mijo, setMijo] = useState(60);
-  const [queso, setQueso] = useState(80);
-  const [pera, setPera] = useState(10);
+  const [agua, setAgua] = useState("");
+  const [mijo, setMijo] = useState("");
+  const [queso, setQueso] = useState("");
+  const [pera, setPera] = useState("");
 
   const materiales = [
     { 

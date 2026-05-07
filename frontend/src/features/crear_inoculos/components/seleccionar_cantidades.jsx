@@ -27,6 +27,7 @@ const EntradaCard = ({ nombre, unidad, value, onChange }) => {
                 <input 
                 type="text"
                 inputMode="decimal"
+                placeholder="0"
                 value={value}
                 onChange={(e) => {
                     const val = e.target.value;
@@ -74,20 +75,17 @@ export const EntradaLista = ({ items = [] }) => {
                 
                 <div className="relative flex items-center justify-center self-stretch mx-4">
                     
-                    {/* El Divisor Vertical */}
                     <div 
                     className="hidden md:block w-[1px] h-full" 
                     style={{ backgroundColor: colores.grisClaro }} 
                     />
 
-                    {/* El Símbolo + */}
                     <div className="absolute md:flex items-center justify-center">
                     <Text variante="medium" style={{ color: colores.azul, lineHeight: 0, fontSize: "22px"}}>
                         +
                     </Text>
                     </div>
 
-                    {/* Divisor Mobile (Opcional) */}
                     <div className="block md:hidden h-[1px] w-full" style={{ backgroundColor: colores.grisClaro }} />
                 </div>
                 )}
