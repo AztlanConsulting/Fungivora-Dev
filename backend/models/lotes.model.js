@@ -33,6 +33,12 @@ class Lotes {
             throw err; 
         }
     }
+
+    // Obtiene todas las categorías
+        static fetch_categorias = async () => {
+            const [filas] = await db.execute('SELECT * FROM Categorias');
+            return filas;
+        }
     
     // Metodo para asignar valores a la tabla de lotes
     static async crear_lote(id_lote, id_inoculo, tipo_sustrato, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase) {

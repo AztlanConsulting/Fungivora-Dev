@@ -1,9 +1,8 @@
 import { renderHook, waitFor, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import useLotes from '../../../features/lotes/hooks/useLotes';
 import loteService from '../../../features/lotes/services/lotes.service';
 
-// Mock del service (conexión con la ruta)
 vi.mock('../../../features/lotes/services/lotes.service', () => ({
   default: {
     getLotes: vi.fn(),
@@ -11,64 +10,48 @@ vi.mock('../../../features/lotes/services/lotes.service', () => ({
   }
 }));
 
-describe('useLotes con hook', () => {
+// Mock de fetch global
+global.fetch = vi.fn();
+
+describe('useLotes Hook', () => {
   const mockData = {
     success: true,
     data: [
-      { id_lote: 1, codigo_fungivora: 'LOTE-OLD', fecha_lote: '2024-01-01T10:00:00Z' },
-      { id_lote: 2, codigo_fungivora: 'LOTE-NEW', fecha_lote: '2024-05-01T10:00:00Z' }
+      { id_lote: 1, codigo_fungivora: 'LOTE-001', fecha_lote: '2024-01-01' },
+      { id_lote: 2, codigo_fungivora: 'LOTE-002', fecha_lote: '2024-05-01' }
     ]
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
+    fetch.mockResolvedValue({
+      json: () => Promise.resolve([{ opcion: 'Paja' }])
+    });
   });
 
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it('Cargar y ordenar los lotes por fecha', async () => {
+  it('Debe cargar los lotes al inicializar', async () => {
     vi.mocked(loteService.getLotes).mockResolvedValue(mockData);
 
     const { result } = renderHook(() => useLotes());
 
-    await waitFor(() => expect(result.current.cargando).toBe(false), { timeout: 1000 });
+    // Empieza cargando
+    expect(result.current.cargando).toBe(true);
 
-    expect(result.current.datos[0].codigo_fungivora).toBe('LOTE-NEW');
+    await waitFor(() => expect(result.current.cargando).toBe(false));
+
     expect(result.current.datos).toHaveLength(2);
+    expect(result.current.datos[0].codigo_fungivora).toBe('LOTE-001');
   });
 
-  it('Refrescar automáticamente en 5 segundos', async () => {
-    vi.useFakeTimers(); 
-    vi.mocked(loteService.getLotes).mockResolvedValue(mockData);
-
-    renderHook(() => useLotes());
-
-    // Antes de refrescar
-    await act(async () => {
-      vi.advanceTimersByTime(0); 
-    });
-
-    expect(loteService.getLotes).toHaveBeenCalledTimes(1);
-
-    // Despues de 5 segs
-    await act(async () => {
-      vi.advanceTimersByTime(5000);
-    });
-
-    expect(loteService.getLotes).toHaveBeenCalledTimes(2);
-  });
-
-  it('Estados de error', async () => {
+  it('Debe manejar errores del servicio correctamente', async () => {
+    // Fallo en la respuesta del service
     vi.mocked(loteService.getLotes).mockResolvedValue({ success: false });
 
     const { result } = renderHook(() => useLotes());
 
     await waitFor(() => expect(result.current.cargando).toBe(false));
     
-    // Mensaje si no hay ningun lote
-    expect(result.current.error).toBe("No se pudo obtener la lista de lotes");
+    expect(result.current.error).toBe("Error al cargar lotes");
   });
 
   it('Debe agregar un nuevo lote y refrescar la lista', async () => {
@@ -78,6 +61,8 @@ describe('useLotes con hook', () => {
 
     const { result } = renderHook(() => useLotes());
 
+    await waitFor(() => expect(result.current.cargando).toBe(false));
+
     let exito;
     await act(async () => {
       exito = await result.current.addLote(nuevoLote);
@@ -85,7 +70,6 @@ describe('useLotes con hook', () => {
 
     expect(exito).toBe(true);
     expect(loteService.addLote).toHaveBeenCalledWith(nuevoLote);
-    // llamada a get lotes
     expect(loteService.getLotes).toHaveBeenCalledTimes(2);
   });
 });

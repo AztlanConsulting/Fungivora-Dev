@@ -63,8 +63,8 @@ const SelectField = ({
             {placeholderText}
           </option>
 
-          {options.map((op) => (
-            <option key={op.value} value={op.value}>
+          {options.map((op, index) => (
+            <option key={`${op.value}-${index}`} value={op.value}>
               {op.label}
             </option>
           ))}
