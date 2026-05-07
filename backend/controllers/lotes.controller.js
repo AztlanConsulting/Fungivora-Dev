@@ -100,7 +100,7 @@ Metodo que añade la información de lotes a la tabla
 */
 exports.post_batch = async (req, res) => {
     try {
-        const { ubicacion_lote, tipo_sustrato } = req.body;
+        const { ubicacion_lote, tipo_sustrato, especies } = req.body;
 
         // Generar el id
         const id_lote = crypto.randomUUID();

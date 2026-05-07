@@ -22,15 +22,15 @@ function Lotes() {
   ];
   
   // Acciones de use Lotes
-  const { datos, sustratos, ubicaciones, cargando, error, addLote } = useLotes();
+  const { datos, sustratos, ubicaciones, especies, cargando, error, addLote } = useLotes();
   
   const [fecha, setFecha] = useState({ day: "", month: "", year: "" });
   const [filaSeleccionada, setFilaSeleccionada] = useState(null);
   const [verFormulario, setVerFormulario] = useState(false);
-  const [nuevaFila, setNuevaFila] = useState({ tipo_sustrato: "", ubicacion_lote: "" });
+  const [nuevaFila, setNuevaFila] = useState({ tipo_sustrato: "", ubicacion_lote: "", especies: "" });
   const [errorValidacion, setErrorValidacion] = useState("");
 
-  // EAgregar nueva fila al añadir
+  // Agregar nueva fila al añadir
   const handleNuevaFila = (campo, valor) => {
     if (valor && typeof valor === 'object' && 'value' in valor) {
       setNuevaFila((prev) => ({ ...prev, [campo]: valor.value }));
@@ -45,9 +45,9 @@ function Lotes() {
 
   // Verificación de los campos
   const handleGuardarLote = async () => {
-    const { ubicacion_lote, tipo_sustrato } = nuevaFila;
+    const { ubicacion_lote, tipo_sustrato, especies } = nuevaFila;
     
-    if (!ubicacion_lote || !tipo_sustrato) {
+    if (!ubicacion_lote || !tipo_sustrato || !especies) {
       setErrorValidacion("Por favor, completa los campos");
       return;
     }
@@ -56,7 +56,7 @@ function Lotes() {
     const exito = await addLote(nuevaFila);
     
     if (exito) {
-      setNuevaFila({ tipo_sustrato: "", ubicacion_lote: "" });
+      setNuevaFila({ tipo_sustrato: "", ubicacion_lote: "", especies: "" });
       setVerFormulario(false);
     }
   };
@@ -223,6 +223,9 @@ function Lotes() {
                 <SelectField
                   placeholder="Selecciona especie"
                   size="forms"
+                  options={especies}
+                  value={nuevaFila.especies}
+                  onChange={(opcion) => handleNuevaFila("especies", opcion)}
                 />
               </div>
 
