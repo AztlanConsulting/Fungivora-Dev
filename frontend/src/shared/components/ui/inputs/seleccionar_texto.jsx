@@ -1,9 +1,8 @@
-
 import React from "react";
 import { colores } from "../basics/colores";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
-
+ 
 const SelectField = ({
   value,
   onChange,
@@ -13,6 +12,7 @@ const SelectField = ({
   loading = false,
   error = null,
   label = null,
+  disabled = false,
 }) => {
   const sizes = {
     forms: "w-80 md:w-[24rem]",
@@ -20,9 +20,9 @@ const SelectField = ({
     amplio: "w-80 md:w-96",
     numero: "w-28 md:w-36",
   };
-
-  const textColor = value ? colores.gris : colores.gris;
-
+ 
+  const textColor = colores.gris;
+ 
   const clase = `${sizes[size]}
     border-2
     rounded-xl
@@ -30,13 +30,16 @@ const SelectField = ({
     text-base
     outline-none cursor-pointer appearance-none
     transition-colors focus:border-[#3b3fb6]`;
-
+ 
   const placeholderText = loading
     ? "Cargando..."
     : error
       ? error
       : placeholder;
-
+ 
+  // disabled es true si se recibe por prop O si está cargando
+  const isDisabled = disabled || loading;
+ 
   return (
     <div className="flex flex-col gap-2">
       {/* Título opcional */}
@@ -45,7 +48,7 @@ const SelectField = ({
           {label}
         </span>
       )}
-
+ 
       <div className="relative w-fit">
         <select
           value={value}
@@ -57,19 +60,19 @@ const SelectField = ({
             borderColor: colores.grisClaro,
             fontStyle: "italic",
           }}
-          disabled={loading}
+          disabled={isDisabled}
         >
           <option value="" disabled hidden>
             {placeholderText}
           </option>
-
+ 
           {options.map((op) => (
             <option key={op.value} value={op.value}>
               {op.label}
             </option>
           ))}
         </select>
-
+ 
         <span
           className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2"
           style={{ color: colores.grisMedio }}
@@ -80,5 +83,5 @@ const SelectField = ({
     </div>
   );
 };
-
+ 
 export default SelectField;
