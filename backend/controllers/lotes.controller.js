@@ -79,6 +79,20 @@ exports.get_ubicaciones = async (req, res) => {
 };
 
 /*
+* get_especies
+* Obtiene todas las especies de la tabla de categorias
+* Funciona al tener el fetch por 'Especies'
+*/
+exports.get_especies = async (req, res) => {
+    try {
+        const [especies] = await Categoria.fetchOpciones('Especies', false);
+        res.status(200).json(especies);
+    } catch (error) {
+        res.status(500).json({ success: false, error: 'Error al obtener especies' });
+    }
+};
+
+/*
 * post_batch
 Mandar la información del lote
 Metodo que añade la información de lotes a la tabla
