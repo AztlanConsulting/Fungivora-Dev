@@ -13,3 +13,10 @@ const inoculoService = {
 };
 
 export default inoculoService;
+
+export const fetchInoculosParaSemilla = async () => {
+    const res = await fetch("/api/inoculos/semilla");
+    if (!res.ok) throw new Error('Error al obtener los inóculos para semilla');
+    const json = await res.json();
+    return json.data;
+};
