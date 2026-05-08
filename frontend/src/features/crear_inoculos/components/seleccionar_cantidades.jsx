@@ -4,7 +4,7 @@ import Text from "../../../shared/components/ui/basics/texto";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { PlusSignIcon } from '@hugeicons/core-free-icons';
 
-const EntradaCard = ({ nombre, unidad, value, onChange }) => {
+const EntradaCard = ({ nombre, unidad, value, onChange, cantMax }) => {
   const [isFocused, setIsFocused] = useState(false);
   
   const ringColor = isFocused ? colores.azul : colores.grisClaro;
@@ -14,6 +14,29 @@ const EntradaCard = ({ nombre, unidad, value, onChange }) => {
     boxShadow: `0 0 0 ${isFocused ? "4px" : "2px"} ${ringColor}`,
     transition: "all 0.2s ease"
   };
+
+  const manejarCambio = (e) => {
+    const val = e.target.value;
+    const regex = /^\d*[.,]?\d{0,2}$/;
+
+    if ( val === "" || regex.test(val)) {
+      const numValor = parseFloat(val.replace(',', '.'));
+
+      if (!isNaN(numValor)) {
+        if (numValor > cantMax) {
+          e.target.value = cantMax.toString();
+          onChange(e);
+        }
+        else {
+          onChange(e);
+        }
+      }
+      else {
+        onChange(e);
+      }
+    }
+
+  }
 
   return (
     <div className="flex flex-col items-center gap-5 p-5">
@@ -29,11 +52,7 @@ const EntradaCard = ({ nombre, unidad, value, onChange }) => {
                 inputMode="decimal"
                 placeholder="0"
                 value={value}
-                onChange={(e) => {
-                    const val = e.target.value;
-                    const regex = /^\d*[.,]?\d{0,2}$/;
-                    if (regex.test(val) || val === "") {onChange(e)}
-                }}
+                onChange={manejarCambio}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 className="outline-none w-16 text-center bg-transparent"
@@ -68,6 +87,7 @@ export const EntradaLista = ({ items = [] }) => {
               unidad={item.unidad}
               value={item.value}
               onChange={item.onChange}
+              cantMax={item.cantidad}
             />
 
             
