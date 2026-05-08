@@ -6,13 +6,15 @@ import { PlusSignIcon } from '@hugeicons/core-free-icons';
 
 const EntradaCard = ({ nombre, unidad, value, onChange, cantMax }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [cantError, setError] = useState(false);
   
   const ringColor = isFocused ? colores.azul : colores.grisClaro;
 
   const alturaStyle = {
     height: "clamp(28px, 3vw, 40px)",
     boxShadow: `0 0 0 ${isFocused ? "4px" : "2px"} ${ringColor}`,
-    transition: "all 0.2s ease"
+    transition: "all 0.2s ease",
+    border: cantError ? `1px solid ${colores.rojo}` : "none"
   };
 
   const manejarCambio = (e) => {
@@ -24,10 +26,14 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax }) => {
 
       if (!isNaN(numValor)) {
         if (numValor > cantMax) {
+          setError(true);
           e.target.value = cantMax.toString();
           onChange(e);
+
+          setTimeout(() => setError(false), 5000)
         }
         else {
+          setError(false)
           onChange(e);
         }
       }
@@ -39,14 +45,14 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax }) => {
   }
 
   return (
-    <div className="flex flex-col items-center gap-5 p-5">
+    <div className="relative flex flex-col items-center gap-3 p-5 ">
     
-        <Text className="p-2" variante="label" style={{color: colores.black, fontSize: "18px"}}>
+        <Text className="text-center p-2" variante="label" style={{color: colores.black, fontSize: "18px"}}>
             {nombre}
         </Text>
 
-        <div className="flex flex-row items-center gap-3">
-            <div className="flex flex-row items-center px-3 rounded-xl bg-white" style={alturaStyle}>
+        <div className="flex flex-row items-center gap-4">
+            <div className="flex flex-row items-center w-full px-3 rounded-xl bg-white" style={alturaStyle}>
                 <input 
                 type="text"
                 inputMode="decimal"
@@ -65,6 +71,11 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax }) => {
                     {unidad}
                 </Text>
             </div>
+        </div>
+        <div className={`relative md:absolute -bottom-1 transition-opacity duration-300 ${cantError ? "opacity-100" : "opacity-0"}`}>
+          <span style={{ color: "red", fontSize: "10px" }}>
+            Máximo disponible: {cantMax}
+          </span>
         </div>
     </div>
     
@@ -91,8 +102,7 @@ export const EntradaLista = ({ items = [] }) => {
             />
 
             
-            {index < items.length - 1 && (
-                
+            {index < items.length - 1 && (  
                 <div className="relative flex items-center justify-center self-stretch mx-4">
                     
                     <div 
