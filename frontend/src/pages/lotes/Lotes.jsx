@@ -53,9 +53,11 @@ function Lotes() {
     }
     
     setErrorValidacion("");
+    // Aquí enviamos nuevaFila que incluye { tipo_sustrato, ubicacion_lote, especies }
     const exito = await addLote(nuevaFila);
     
     if (exito) {
+      // Resetear el formulario incluyendo el campo especies
       setNuevaFila({ tipo_sustrato: "", ubicacion_lote: "", especies: "" });
       setVerFormulario(false);
     }

@@ -102,12 +102,17 @@ exports.post_batch = async (req, res) => {
     try {
         const { ubicacion_lote, tipo_sustrato, especies } = req.body;
 
-        // Generar el id
         const id_lote = crypto.randomUUID();
 
-        // Actualmente los valores de fecha, ubicación, activo y fase si estan correctos
+        // --- LÓGICA PARA EL CÓDIGO FUNGÍVORA ---
+        // Tomamos las primeras 3 letras de la especie en mayúsculas (ej: "Orellana" -> "ORE")
+        const prefijoEspecie = especies ? especies.substring(0, 3).toUpperCase() : "LOT";
+        // Generamos un sufijo único basado en la fecha (últimos 5 dígitos para no ser tan largo)
+        const sufijoUnico = Date.now().toString().slice(-5);
+        const codigo_fungivora = `${prefijoEspecie}-${sufijoUnico}`;
+        // ---------------------------------------
+
         const id_inoculo = null; 
-        const codigo_fungivora = `LOT-${Date.now().toString()}`; // Codigo dummy
         const fecha_lote = new Date();
         const activo = 1;
         const fase = "Inoculación";
@@ -126,7 +131,8 @@ exports.post_batch = async (req, res) => {
         res.status(201).json({
             success: true,
             message: 'Lote creado con éxito',
-            id: id_lote
+            id: id_lote,
+            codigo: codigo_fungivora // Opcional: devolver el código generado
         });
 
     } catch (error) {
