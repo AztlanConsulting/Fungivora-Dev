@@ -1,48 +1,37 @@
 // frontend/src/pages/inoculos/semillas/FormSemilla.jsx
 import React, { useState } from "react";
-import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
-import useEspecies from "../../../features/inoculos/hooks/useEspecies";
+import SelectEspecie from "../../../features/inoculos/components/selecionar_especie";
+import SelectInoculo from "../../../features/inoculos/components/selecionar_inoculo";
 import Titulo from "../../../shared/components/ui/basics/titulo";
-import EntradaCantidad from "../../../shared/components/ui/inputs/entrada_cantidad"
-import { EntradaLista } from "../../../features/crear_inoculos/components/seleccionar_cantidades"
 
 const FormSemilla = () => {
-  const [agua, setAgua] = useState("");
-  const [mijo, setMijo] = useState("");
-  const [queso, setQueso] = useState("");
-  const [pera, setPera] = useState("");
+  const [especie, setEspecie] = useState("");
+  const [inoculoId, setInoculoId] = useState("");
+  const [inoculoRaw, setInoculoRaw] = useState(null);
 
-  const materiales = [
-    { 
-      nombre: "Agua", 
-      unidad: "ml", 
-      value: agua, 
-      onChange: (e) => setAgua(e.target.value) 
-    },
-    { 
-      nombre: "Mijo", 
-      unidad: "g", 
-      value: mijo, 
-      onChange: (e) => setMijo(e.target.value) 
-    },
-    { 
-      nombre: "Queso", 
-      unidad: "g", 
-      value: queso, 
-      onChange: (e) => setQueso(e.target.value) 
-    },
-    { 
-      nombre: "Pera", 
-      unidad: "P", 
-      value: pera, 
-      onChange: (e) => setPera(e.target.value) 
-    }
-  ];
+  const handleEspecieChange = (e) => {
+    setEspecie(e.target.value);
+    // Resetea el inóculo si cambia la especie
+    setInoculoId("");
+    setInoculoRaw(null);
+  };
 
   return (
-    <div className="p-10">
-      <h1 className="text-2xl mb-5">Prueba de Composición</h1>
-      <EntradaLista items={materiales} />
+    <div>
+
+      {/* Campo especie — usa SelectEspecie que maneja su propio fetch */}
+      <SelectEspecie
+        value={especie}
+        onChange={handleEspecieChange}
+      />
+
+      {/* Campo inóculo — se filtra automáticamente por la especie elegida */}
+      <SelectInoculo
+        especie={especie}
+        value={inoculoId}
+        onChange={(e) => setInoculoId(e.target.value)}
+        onRawChange={(raw) => setInoculoRaw(raw)}
+      />
     </div>
   );
 };
