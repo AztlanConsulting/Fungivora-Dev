@@ -50,11 +50,12 @@ const useLotes = () => {
         const cargarEspecies = async () => {
             try {
                 const res = await fetch('/api/lotes/especies');
-                const data = await res.json();
-                const formateados = data.map(e => ({ 
-                    value: e.opcion, 
-                    label: e.opcion 
+                const json = await res.json();
+                const formateados = json.data.map(i => ({ 
+                    value: i.id_inoculo, 
+                    label: `${i.codigo_fungivora} / ${i.especie}` 
                 }));
+                
                 setEspecies(formateados);
             } catch (err) {
                 console.error("Error especies:", err);

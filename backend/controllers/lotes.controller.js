@@ -79,16 +79,24 @@ exports.get_ubicaciones = async (req, res) => {
 };
 
 /*
-* get_especies
-* Obtiene todas las especies de la tabla de categorias
-* Funciona al tener el fetch por 'Especies'
+* get_inoculos_activos
+* Obtiene todos inoculos activos existentes en la tabla de inoculos
+* Funciona al tener el fetch desde la tabla de inoculos
 */
-exports.get_especies = async (req, res) => {
+exports.get_inoculos_activos = async (req, res) => {
     try {
-        const [especies] = await Categoria.fetchOpciones('Especies', false);
-        res.status(200).json(especies);
+        const inoculos = await Lotes.fetch_inoculos_disponibles();
+        
+        res.status(200).json({
+            success: true,
+            data: inoculos
+        });
     } catch (error) {
-        res.status(500).json({ success: false, error: 'Error al obtener especies' });
+        console.error('Error al obtener inóculos:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener la lista de inóculos'
+        });
     }
 };
 
@@ -100,21 +108,17 @@ Metodo que añade la información de lotes a la tabla
 */
 exports.post_batch = async (req, res) => {
     try {
-        const { ubicacion_lote, tipo_sustrato, especies } = req.body;
+        const { ubicacion_lote, tipo_sustrato, id_inoculo } = req.body;
 
-        // Generar el id
         const id_lote = crypto.randomUUID();
-
-        // Actualmente los valores de fecha, ubicación, activo y fase si estan correctos
-        const id_inoculo = null; 
-        const codigo_fungivora = `LOT-${Date.now().toString()}`; // Codigo dummy
+        const codigo_fungivora = `LOT-${Date.now().toString()}`; 
         const fecha_lote = new Date();
         const activo = 1;
         const fase = "Inoculación";
 
         await Lotes.crear_lote(
             id_lote, 
-            id_inoculo, 
+            id_inoculo,
             tipo_sustrato, 
             codigo_fungivora, 
             fecha_lote, 
@@ -125,7 +129,7 @@ exports.post_batch = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: 'Lote creado con éxito',
+            message: 'Lote creado con éxito vinculado al inóculo',
             id: id_lote
         });
 

@@ -14,7 +14,7 @@ router.get('/sustratos', controller.get_sustratos);
 // Obtener todas las ubicacionesde categorias
 router.get('/ubicaciones', controller.get_ubicaciones);
 
-// Obtener todas las especies de categorias
-router.get('/especies', controller.get_especies);
+// Obtener todos los inoculos activos
+router.get('/especies', controller.get_inoculos_activos);
 
 module.exports = router;
