@@ -52,7 +52,7 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax }) => {
         </Text>
 
         <div className="flex flex-row items-center gap-4">
-            <div className="flex flex-row items-center w-full px-3 rounded-xl bg-white" style={alturaStyle}>
+            <div className="flex flex-row items-center  w-full mb-3 px-3 rounded-xl bg-white" style={alturaStyle}>
                 <input 
                 type="text"
                 inputMode="decimal"
@@ -72,8 +72,8 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax }) => {
                 </Text>
             </div>
         </div>
-        <div className={`relative md:absolute -bottom-1 transition-opacity duration-300 ${cantError ? "opacity-100" : "opacity-0"}`}>
-          <span style={{ color: "red", fontSize: "10px" }}>
+        <div className={`relative md:absolute -bottom-1 mb-2 left-2 transition-opacity duration-300 ${cantError ? "opacity-100" : "opacity-0"}`}>
+          <span style={{ color: "red", fontSize: "10px", fontWeight: "600" }}>
             Máximo disponible: {cantMax}
           </span>
         </div>
@@ -84,7 +84,7 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax }) => {
 
 export const EntradaLista = ({ items = [] }) => {
   return (
-    <div className="w-full max-h-[780px] md:max-h-[700px] lg:flex-1 bg-white rounded-[32px] shadow-sm border p-6 md:p-8 flex flex-col">
+    <div className="w-full max-h-[780px] lg:flex-1 bg-white rounded-[32px] shadow-sm border pb-8 p-6 md:p-8 flex flex-col">
       
       <div className="mb-6">
         <Text variante="medium">Composición</Text>
