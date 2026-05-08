@@ -103,14 +103,13 @@ exports.post_batch = async (req, res) => {
         const { ubicacion_lote, tipo_sustrato, especies } = req.body;
 
         const id_lote = crypto.randomUUID();
+        const abreviatura = await Categoria.fetchAbreviaturaPorNombre('Especies', especies);
+        const prefijo = abreviatura 
+            ? abreviatura.toUpperCase() 
+            : (especies ? especies.substring(0, 3).toUpperCase() : "LOT");
 
-        // --- LÓGICA PARA EL CÓDIGO FUNGÍVORA ---
-        // Tomamos las primeras 3 letras de la especie en mayúsculas (ej: "Orellana" -> "ORE")
-        const prefijoEspecie = especies ? especies.substring(0, 3).toUpperCase() : "LOT";
-        // Generamos un sufijo único basado en la fecha (últimos 5 dígitos para no ser tan largo)
         const sufijoUnico = Date.now().toString().slice(-5);
-        const codigo_fungivora = `${prefijoEspecie}-${sufijoUnico}`;
-        // ---------------------------------------
+        const codigo_fungivora = `${prefijo}-${sufijoUnico}`;
 
         const id_inoculo = null; 
         const fecha_lote = new Date();
@@ -131,15 +130,14 @@ exports.post_batch = async (req, res) => {
         res.status(201).json({
             success: true,
             message: 'Lote creado con éxito',
-            id: id_lote,
-            codigo: codigo_fungivora // Opcional: devolver el código generado
+            codigo: codigo_fungivora
         });
 
     } catch (error) {
         console.error("Error en post_batch:", error);
         res.status(500).json({ 
             success: false, 
-            error: 'Error interno al crear el lote' 
+            error: 'Error al crear el lote' 
         });
     }
 };

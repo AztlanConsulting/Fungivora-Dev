@@ -30,4 +30,21 @@ module.exports = class Categoria {
             ORDER BY ${campo} ASC
         `, [categoria]);
     }
+
+    /**
+     * @description Busca la abreviatura de una opción específica basándose en su nombre.
+     * @param {string} categoria - El nombre de la categoría madre
+     * @param {string} nombre - El nombre de la opción
+     * @returns {Promise<string|null>} - La abreviatura o null si no se encuentra.
+     */
+    static async fetchAbreviaturaPorNombre(categoria, nombre) {
+        const [rows] = await db.execute(`
+            SELECT abreviatura_opcion 
+            FROM Categorias 
+            WHERE nombre_categoria = ? AND nombre_opcion = ?
+            LIMIT 1
+        `, [categoria, nombre]);
+        
+        return rows.length > 0 ? rows[0].abreviatura_opcion : null;
+    }
 };
