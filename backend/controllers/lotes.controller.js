@@ -104,24 +104,43 @@ exports.get_inoculos_activos = async (req, res) => {
 * post_batch
 Mandar la información del lote
 Metodo que añade la información de lotes a la tabla
-@param ubicacion_lote
+@param ubicacion_lote, tipo_sustrato, id_inoculo 
 */
 exports.post_batch = async (req, res) => {
     try {
         const { ubicacion_lote, tipo_sustrato, id_inoculo } = req.body;
+        const inoculos = await Lotes.fetch_inoculos_disponibles();
+        const inoculoSeleccionado = inoculos.find(i => i.id_inoculo == id_inoculo);
 
+        if (!inoculoSeleccionado) {
+            return res.status(400).json({ success: false, message: "Inóculo no encontrado" });
+        }
+
+        // Obtener la abreviatura
+        const [abreviaturaResult] = await Categoria.fetchAbreviaturaPorNombre(inoculoSeleccionado.especie);
+        const abreviatura = abreviaturaResult[0].abreviatura_opcion;
+
+        // Fecha en formato
+        const hoy = new Date();
+        const dd = String(hoy.getDate()).padStart(2, '0');
+        const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+        const yy = hoy.getFullYear().toString().slice(-2);
+        const fechaFormateada = `${dd}${mm}${yy}`;
+
+        // El codigo escrito
+        const codigo_fungivora = `LT-${abreviatura}-${fechaFormateada}`;
+        
         const id_lote = crypto.randomUUID();
-        const codigo_fungivora = `LOT-${Date.now().toString()}`; 
-        const fecha_lote = new Date();
         const activo = 1;
         const fase = "Inoculación";
 
+        // Guardar
         await Lotes.crear_lote(
             id_lote, 
             id_inoculo,
             tipo_sustrato, 
             codigo_fungivora, 
-            fecha_lote, 
+            hoy,
             ubicacion_lote, 
             activo, 
             fase
@@ -129,15 +148,16 @@ exports.post_batch = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: 'Lote creado con éxito vinculado al inóculo',
+            message: 'Lote creado con éxito',
+            codigo: codigo_fungivora,
             id: id_lote
         });
 
     } catch (error) {
-        console.error("Error en post_batch:", error);
+        console.error("Error en post_batch controller:", error);
         res.status(500).json({ 
             success: false, 
-            error: 'Error al crear el lote' 
+            error: 'Error interno al procesar el lote' 
         });
     }
 };
