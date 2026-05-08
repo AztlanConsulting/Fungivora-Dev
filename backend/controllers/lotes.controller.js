@@ -137,7 +137,7 @@ exports.post_batch = async (req, res) => {
         console.error("Error en post_batch:", error);
         res.status(500).json({ 
             success: false, 
-            error: 'Error interno al crear el lote' 
+            error: 'Error al crear el lote' 
         });
     }
 };
