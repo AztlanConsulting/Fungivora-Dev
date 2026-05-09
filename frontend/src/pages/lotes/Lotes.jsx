@@ -80,9 +80,9 @@ function Lotes() {
 
           const hoy = new Date();
           setFecha({ 
-            day: hoy.getDate().toString(), 
-            month: (hoy.getMonth() + 1).toString(), 
-            year: hoy.getFullYear().toString() 
+            day: hoy.getDate().toString().padStart(2, '0'), 
+            month: (hoy.getMonth() + 1).toString().padStart(2, '0'), 
+            year: hoy.getFullYear().toString()
           });
 
           setVerFormulario(false);

@@ -76,6 +76,22 @@ class Lotes {
             throw err;
         }
     }
+
+    // Metodo para contar si ya existe un código igual e ir sumando 1
+    static async count_lotes_similares(prefijo) {
+        try {
+            const [result] = await db.execute(`
+                SELECT COUNT(*) as total 
+                FROM Lotes 
+                WHERE codigo_fungivora LIKE ?
+            `, [`${prefijo}-%`]); 
+            
+            return result[0].total;
+        } catch (err) {
+            console.error("Error en count_lotes_similares:", err);
+            throw err;
+        }
+    }
 }
 
 module.exports = Lotes;
