@@ -21,10 +21,16 @@ function Lotes() {
     { label: "Fecha", key: "fecha_lote" }
   ];
   
+  const hoy = new Date();
+  const [fecha, setFecha] = useState({ 
+    day: hoy.getDate().toString().padStart(2, '0'), 
+    month: (hoy.getMonth() + 1).toString().padStart(2, '0'), 
+    year: hoy.getFullYear().toString()
+  });
+
   // Acciones de use Lotes
   const { datos, sustratos, ubicaciones, especies, cargando, error, addLote } = useLotes();
   
-  const [fecha, setFecha] = useState({ day: "", month: "", year: "" });
   const [filaSeleccionada, setFilaSeleccionada] = useState(null);
   const [verFormulario, setVerFormulario] = useState(false);
   const [nuevaFila, setNuevaFila] = useState({ tipo_sustrato: "", ubicacion_lote: "", id_inoculo: "" });
@@ -52,8 +58,17 @@ function Lotes() {
           return;
       }
       
+      const mes = fecha.month.toString().padStart(2, '0');
+      const dia = fecha.day.toString().padStart(2, '0');
+      const fechaFormateada = `${fecha.year}-${mes}-${dia}`;
+
+      const datosParaEnviar = {
+          ...nuevaFila,
+          fecha_lote: fechaFormateada
+      };
+
       setErrorValidacion("");
-      const exito = await addLote(nuevaFila);
+      const exito = await addLote(datosParaEnviar);
       
       if (exito) {
 
@@ -62,6 +77,14 @@ function Lotes() {
               ubicacion_lote: "", 
               id_inoculo: "" 
           });
+
+          const hoy = new Date();
+          setFecha({ 
+            day: hoy.getDate().toString(), 
+            month: (hoy.getMonth() + 1).toString(), 
+            year: hoy.getFullYear().toString() 
+          });
+
           setVerFormulario(false);
       }
   };
