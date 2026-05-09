@@ -22,15 +22,15 @@ function Lotes() {
   ];
   
   // Acciones de use Lotes
-  const { datos, sustratos, ubicaciones, cargando, error, addLote } = useLotes();
+  const { datos, sustratos, ubicaciones, especies, cargando, error, addLote } = useLotes();
   
   const [fecha, setFecha] = useState({ day: "", month: "", year: "" });
   const [filaSeleccionada, setFilaSeleccionada] = useState(null);
   const [verFormulario, setVerFormulario] = useState(false);
-  const [nuevaFila, setNuevaFila] = useState({ tipo_sustrato: "", ubicacion_lote: "" });
+  const [nuevaFila, setNuevaFila] = useState({ tipo_sustrato: "", ubicacion_lote: "", id_inoculo: "" });
   const [errorValidacion, setErrorValidacion] = useState("");
 
-  // EAgregar nueva fila al añadir
+  // Agregar nueva fila al añadir
   const handleNuevaFila = (campo, valor) => {
     if (valor && typeof valor === 'object' && 'value' in valor) {
       setNuevaFila((prev) => ({ ...prev, [campo]: valor.value }));
@@ -45,20 +45,25 @@ function Lotes() {
 
   // Verificación de los campos
   const handleGuardarLote = async () => {
-    const { ubicacion_lote, tipo_sustrato } = nuevaFila;
-    
-    if (!ubicacion_lote || !tipo_sustrato) {
-      setErrorValidacion("Por favor, completa los campos");
-      return;
-    }
-    
-    setErrorValidacion("");
-    const exito = await addLote(nuevaFila);
-    
-    if (exito) {
-      setNuevaFila({ tipo_sustrato: "", ubicacion_lote: "" });
-      setVerFormulario(false);
-    }
+      const { ubicacion_lote, tipo_sustrato, id_inoculo } = nuevaFila;
+
+      if (!ubicacion_lote || !tipo_sustrato || !id_inoculo) {
+          setErrorValidacion("Por favor, completa los campos");
+          return;
+      }
+      
+      setErrorValidacion("");
+      const exito = await addLote(nuevaFila);
+      
+      if (exito) {
+
+          setNuevaFila({ 
+              tipo_sustrato: "", 
+              ubicacion_lote: "", 
+              id_inoculo: "" 
+          });
+          setVerFormulario(false);
+      }
   };
 
   // Estilos para la fase
@@ -218,13 +223,17 @@ function Lotes() {
             </div>
 
             <div className="flex flex-col gap-5">
+                 {/* Seleccionar Inoculo - Especie*/}
               <div className="flex flex-col gap-2">
-                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Especie</Text>
-                <SelectField
-                  placeholder="Selecciona especie"
-                  size="forms"
-                />
-              </div>
+                  <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Inóculo / (Especie)</Text>
+                  <SelectField
+                    placeholder="Selecciona inóculo"
+                    size="forms"
+                    options={especies}
+                    value={nuevaFila.id_inoculo}
+                    onChange={(opcion) => handleNuevaFila("id_inoculo", opcion)}
+                  />
+                </div>
 
               {/* Seleccionar sustrato*/}
                 <div className="flex flex-col gap-2">

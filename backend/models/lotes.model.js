@@ -55,6 +55,27 @@ class Lotes {
             throw err;
         }
     }
+
+    // Metodo para encontrar los inoculos activos
+    static async fetch_inoculos_disponibles() {
+        try {
+            const [filas] = await db.execute(`
+                SELECT 
+                    id_inoculo, 
+                    codigo_fungivora, 
+                    especie,
+                    cantidad_disponible,
+                    unidad
+                FROM Inoculos 
+                WHERE cantidad_disponible > 0
+                ORDER BY fecha DESC
+            `);
+            return filas;
+        } catch (err) {
+            console.error("Error en fetch_inoculos_disponibles:", err);
+            throw err;
+        }
+    }
 }
 
 module.exports = Lotes;

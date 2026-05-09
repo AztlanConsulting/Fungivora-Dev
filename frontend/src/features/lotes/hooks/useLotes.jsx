@@ -5,6 +5,7 @@ const useLotes = () => {
     const [datos, setDatos] = useState([]);
     const [sustratos, setSustratos] = useState([]);
     const [ubicaciones, setUbicaciones] = useState([]);
+    const [especies, setEspecies] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
 
@@ -44,6 +45,25 @@ const useLotes = () => {
         cargarUbicaciones();
     }, []);
 
+    // Cargar Especies
+    useEffect(() => {
+        const cargarEspecies = async () => {
+            try {
+                const res = await fetch('/api/lotes/especies');
+                const json = await res.json();
+                const formateados = json.data.map(i => ({ 
+                    value: i.id_inoculo, 
+                    label: `${i.codigo_fungivora} / ${i.especie}` 
+                }));
+                
+                setEspecies(formateados);
+            } catch (err) {
+                console.error("Error especies:", err);
+            }
+        };
+        cargarEspecies();
+    }, []);
+
     // Cargar Lotes 
     const fetchLotes = async () => {
         setCargando(true);
@@ -75,7 +95,7 @@ const useLotes = () => {
         return false;
     };
 
-    return { datos, sustratos, ubicaciones, cargando, error, addLote, refresh: fetchLotes };
+    return { datos, sustratos, ubicaciones, especies, cargando, error, addLote, refresh: fetchLotes };
 };
 
 export default useLotes;
