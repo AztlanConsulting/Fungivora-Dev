@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react"; 
 import loteService from "../services/lotes.service";
 
 const useLotes = () => {
@@ -9,78 +9,60 @@ const useLotes = () => {
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
 
-    // Cargar Sustratos
-    useEffect(() => {
-        const cargarSustratos = async () => {
-            try {
-                const res = await fetch('/api/lotes/sustratos');
-                const data = await res.json();
-                const formateados = data.map(s => ({ 
-                    value: s.opcion, 
-                    label: s.opcion 
-                }));
-                setSustratos(formateados);
-            } catch (err) {
-                console.error("Error sustratos:", err);
-            }
-        };
-        cargarSustratos();
-    }, []);
-
-    // Cargar Ubicaciones
-    useEffect(() => {
-        const cargarUbicaciones = async () => {
-            try {
-                const res = await fetch('/api/lotes/ubicaciones');
-                const data = await res.json();
-                const formateados = data.map(u => ({ 
-                    value: u.opcion, 
-                    label: u.opcion 
-                }));
-                setUbicaciones(formateados);
-            } catch (err) {
-                console.error("Error ubicaciones:", err);
-            }
-        };
-        cargarUbicaciones();
-    }, []);
-
-    // Cargar Especies
-    useEffect(() => {
-        const cargarEspecies = async () => {
-            try {
-                const res = await fetch('/api/lotes/especies');
-                const json = await res.json();
-                const formateados = json.data.map(i => ({ 
-                    value: i.id_inoculo, 
-                    label: `${i.codigo_fungivora} / ${i.especie}` 
-                }));
-                
-                setEspecies(formateados);
-            } catch (err) {
-                console.error("Error especies:", err);
-            }
-        };
-        cargarEspecies();
-    }, []);
-
-    // Cargar Lotes 
-    const fetchLotes = async () => {
+    const fetchLotes = useCallback(async () => {
         setCargando(true);
         try {
             const json = await loteService.getLotes();
-            if (json.success) setDatos(json.data);
-            else setError("Error al cargar lotes");
+            if (json.success) {
+                setDatos(json.data);
+                setError(null);
+            } else {
+                setError("Error al cargar lotes");
+            }
         } catch (err) {
             setError("Error de conexión");
         } finally {
             setCargando(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
-        fetchLotes();
+        const cargarCatalogos = async () => {
+            try {
+                // Sustratos
+                const resSus = await fetch('/api/lotes/sustratos');
+                const dataSus = await resSus.json();
+                const listSus = Array.isArray(dataSus) ? dataSus : (dataSus.data || []);
+                setSustratos(listSus.map(s => ({ value: s.opcion, label: s.opcion })));
+
+                // Ubicaciones
+                const resUbi = await fetch('/api/lotes/ubicaciones');
+                const dataUbi = await resUbi.json();
+                const listUbi = Array.isArray(dataUbi) ? dataUbi : (dataUbi.data || []);
+                setUbicaciones(listUbi.map(u => ({ value: u.opcion, label: u.opcion })));
+
+                // Especies
+                const resEsp = await fetch('/api/lotes/especies');
+                const jsonEsp = await resEsp.json();
+                setEspecies(jsonEsp.data.map(i => ({ 
+                    value: i.id_inoculo, 
+                    label: `${i.codigo_fungivora} / ${i.especie}` 
+                })));
+            } catch (err) {
+                console.error("Error cargando catálogos:", err);
+            }
+        };
+        cargarCatalogos();
     }, []);
+
+    useEffect(() => {
+        fetchLotes(); 
+        const intervalo = setInterval(() => {
+            fetchLotes();
+        }, 5000);
+
+        return () => clearInterval(intervalo); 
+    }, [fetchLotes]);
 
     const addLote = async (nuevoLote) => {
         try {
