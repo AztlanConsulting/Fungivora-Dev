@@ -62,7 +62,7 @@ module.exports = class Inoculo {
     // Obtiene la cantidad total de ingredientes usados en todos los inóculos
     static fetchCantidadIngredientes() {
         return db.execute(`
-            SELECT id_insumo, nombre, cantidad FROM Insumos
+            SELECT id_insumo, nombre, cantidad, unidad FROM Insumos
             WHERE nombre IN (
                 'Peptona', 'Extracto de Malta',
                 'Agua Destilada', 'Miel',
