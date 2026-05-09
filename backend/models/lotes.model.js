@@ -92,6 +92,32 @@ class Lotes {
             throw err;
         }
     }
+
+    // Metodo para ordenar por codigo_fungivora la tabla de valores
+    static async fetch_all() {
+        try {
+            const [filas] = await db.execute(`
+                SELECT 
+                    id_lote, 
+                    id_inoculo, 
+                    tipo_sustrato, 
+                    codigo_fungivora, 
+                    fecha_lote, 
+                    ubicacion_lote, 
+                    activo, 
+                    fase 
+                FROM Lotes 
+                ORDER BY 
+                    fecha_lote DESC,
+                    SUBSTRING_INDEX(SUBSTRING_INDEX(codigo_fungivora, '-', 2), '-', -1) ASC,
+                    CAST(SUBSTRING_INDEX(codigo_fungivora, '-', -1) AS UNSIGNED) DESC
+            `);
+            return filas;
+        } catch (err) {
+            console.error("Error en fetch_all lotes:", err);
+            throw err; 
+        }
+    }
 }
 
 module.exports = Lotes;
