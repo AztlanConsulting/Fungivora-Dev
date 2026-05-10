@@ -3,6 +3,7 @@ import { LoteService } from '../services/lote.service';
 
 const useDetalleLote = (id_lote, id_inoculo_usado) => {
     const [bloques, setBloques] = useState([]);
+    const [especie, setEspecie] = useState("");
     const [codigoInoculo, setCodigoInoculo] = useState("");
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
@@ -12,12 +13,14 @@ const useDetalleLote = (id_lote, id_inoculo_usado) => {
             if (!id_lote) return;
             setCargando(true);
             try {
-                const [resBloques, resCodigo] = await Promise.all([
+                const [resBloques, resCodigo, resEspecie] = await Promise.all([
                     LoteService.getBloquesByLote(id_lote),
-                    id_inoculo_usado ? LoteService.getCodigoInoculo(id_inoculo_usado) : Promise.resolve("N/A")
+                    id_inoculo_usado ? LoteService.getCodigoInoculo(id_inoculo_usado) : Promise.resolve("N/A"),
+                    id_inoculo_usado ? LoteService.getEspecieByLote(id_inoculo_usado) : Promise.resolve("S/N")
                 ]);
                 setBloques(resBloques.data || []);
                 setCodigoInoculo(resCodigo);
+                setEspecie(resEspecie);
             } catch (err) {
                 setError(err.message);
                 setBloques([]);
@@ -38,7 +41,7 @@ const useDetalleLote = (id_lote, id_inoculo_usado) => {
         }
     };
 
-    return { bloques, setBloques, codigoInoculo, cargando, error, guardarCambios };
+    return { bloques, setBloques, especie, codigoInoculo, cargando, error, guardarCambios };
 };
 
 export default useDetalleLote;

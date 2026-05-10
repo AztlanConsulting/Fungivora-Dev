@@ -12,7 +12,7 @@ const DetalleLote = () => {
     const { id_lote } = useParams();
     const { state } = useLocation();
 
-    const { bloques, setBloques, codigoInoculo, cargando, error, guardarCambios } = useDetalleLote(
+    const { bloques, setBloques, especie, codigoInoculo, cargando, error, guardarCambios } = useDetalleLote(
         id_lote,
         state?.id_inoculo_usado
     );
@@ -54,7 +54,7 @@ const DetalleLote = () => {
         fecha: state?.fecha ? new Date(state.fecha).toLocaleDateString('es-MX', {
             day: '2-digit', month: 'long', year: 'numeric'
         }) : 'Sin fecha',
-        especie: state?.especie || 'Shiitake',
+        especie: cargando ? 'Cargando...' : especie || 'S/N',
         sustrato: state?.sustrato || 'No especificado',
         ubicacion: state?.ubicacion || 'Sin ubicación',
         inoculo: cargando ? 'Cargando...' : codigoInoculo || 'S/N'

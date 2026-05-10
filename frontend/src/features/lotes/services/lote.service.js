@@ -14,10 +14,17 @@ export const LoteService = {
      * Endpoint: /inoculos/codigo?id_inoculo=...
      */
     getCodigoInoculo: async (id_inoculo) => {
-        console.log("LoteService.getCodigoInoculo llamado con id_inoculo:", id_inoculo);
         const data = await api.get(`/inoculos/codigo?id_inoculo=${id_inoculo}`);
-        console.log("Respuesta de getCodigoInoculo:", data);
         return data.data; // Retornamos solo el string del código
+    },
+
+    /**
+     * Obtiene el nombre de la especie asociada a un lote
+     * Endpoint: /lotes/especie?id_lote=...
+     */
+    getEspecieByLote: async (id_inoculo) => {
+        const data = await api.get(`/inoculos/especie?id_inoculo=${id_inoculo}`);
+        return data.data;
     },
 
     /** WIP
