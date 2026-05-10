@@ -1,54 +1,101 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import loteService from "../services/lotes.service";
 
 const useLotes = () => {
-  const [datos, setDatos] = useState([]);
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState(null);
+    const [datos, setDatos] = useState([]);
+    const [sustratos, setSustratos] = useState([]);
+    const [ubicaciones, setUbicaciones] = useState([]);
+    const [especies, setEspecies] = useState([]);
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState(null);
 
-  const obtenerLotes = useCallback(async () => {
-    try {
-      const resultado = await loteService.getLotes();
-      if (resultado.success) {
-        const datosOrdenados = resultado.data.sort((a, b) => {
-          return new Date(b.fecha_lote) - new Date(a.fecha_lote);
-        });
-        setDatos(datosOrdenados);
-        setError(null);
-      } else {
-        setError("No se pudo obtener la lista de lotes");
-      }
-    } catch (err) {
-      setError("Error de conexión");
-    } finally {
-      setCargando(false);
-    }
-  }, []);
+    // Cargar Sustratos
+    useEffect(() => {
+        const cargarSustratos = async () => {
+            try {
+                const res = await fetch('/api/lotes/sustratos');
+                const data = await res.json();
+                const formateados = data.map(s => ({ 
+                    value: s.opcion, 
+                    label: s.opcion 
+                }));
+                setSustratos(formateados);
+            } catch (err) {
+                console.error("Error sustratos:", err);
+            }
+        };
+        cargarSustratos();
+    }, []);
 
-  // Añadir un lote
-  const addLote = async (nuevoLote) => {
-    try {
-      const resultado = await loteService.addLote(nuevoLote);
-      if (resultado.success) {
-        await obtenerLotes(); // Recarga la lista despues de guardar
-        return true;
-      }
-      return false;
-    } catch (err) {
-      console.error("Error al crear lote:", err);
-      return false;
-    }
-  };
+    // Cargar Ubicaciones
+    useEffect(() => {
+        const cargarUbicaciones = async () => {
+            try {
+                const res = await fetch('/api/lotes/ubicaciones');
+                const data = await res.json();
+                const formateados = data.map(u => ({ 
+                    value: u.opcion, 
+                    label: u.opcion 
+                }));
+                setUbicaciones(formateados);
+            } catch (err) {
+                console.error("Error ubicaciones:", err);
+            }
+        };
+        cargarUbicaciones();
+    }, []);
 
-  useEffect(() => {
-    obtenerLotes();
-    const intervalo = setInterval(() => {
-      obtenerLotes();
-    }, 5000);
-    return () => clearInterval(intervalo);
-  }, [obtenerLotes]);
+    // Cargar Especies
+    useEffect(() => {
+        const cargarEspecies = async () => {
+            try {
+                const res = await fetch('/api/lotes/especies');
+                const json = await res.json();
+                const formateados = json.data.map(i => ({ 
+                    value: i.id_inoculo, 
+                    label: `${i.codigo_fungivora} / ${i.especie}` 
+                }));
+                
+                setEspecies(formateados);
+            } catch (err) {
+                console.error("Error especies:", err);
+            }
+        };
+        cargarEspecies();
+    }, []);
 
-  return { datos, cargando, error, refrescar: obtenerLotes, addLote };
+    // Cargar Lotes 
+    const fetchLotes = async () => {
+        setCargando(true);
+        try {
+            const json = await loteService.getLotes();
+            if (json.success) setDatos(json.data);
+            else setError("Error al cargar lotes");
+        } catch (err) {
+            setError("Error de conexión");
+        } finally {
+            setCargando(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchLotes();
+    }, []);
+
+    const addLote = async (nuevoLote) => {
+        try {
+            const res = await loteService.addLote(nuevoLote);
+            if (res.success) {
+                await fetchLotes(); 
+                return true;
+            }
+        } catch (err) {
+            console.error("Error al crear:", err);
+        }
+        return false;
+    };
+
+    return { datos, sustratos, ubicaciones, especies, cargando, error, addLote, refresh: fetchLotes };
 };
 
 export default useLotes;

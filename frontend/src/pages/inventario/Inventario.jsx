@@ -28,6 +28,7 @@ const Inventario = () => {
   const [filaSeleccionada, setFilaSeleccionada] = useState(null);
   const [nuevaFila, setNuevaFila] = useState({ nombre: "", cantidad: "", stock_recomendado: "", unidad: "" });
   const [errorValidacion, setErrorValidacion] = useState("");
+  const [errorModal, setErrorModal] = useState("");
   const [verFormulario, setVerFormulario] = useState(false);
   const [modalEdicion, setModalEdicion] = useState({ visible: false, insumo: null });
   const [ajusteCantidad, setAjusteCantidad] = useState("");
@@ -41,11 +42,19 @@ const Inventario = () => {
   };
 
   const handleConfirmarAjuste = async () => {
-    const cambio = parseFloat(ajusteCantidad.replace(',', '.')); // Manejo de decimales
+  const cambio = parseFloat(ajusteCantidad.replace(',', '.'));
 
-    if (isNaN(cambio) || cambio <= 0) return;
+  if (isNaN(cambio) || cambio <= 0) return;
 
-    const cantidadActual = parseFloat(modalEdicion.insumo.cantidad) || 0;
+  const cantidadActual = parseFloat(modalEdicion.insumo.cantidad) || 0;
+
+    if (tipoOperacion === "reduccion" && cambio > cantidadActual) {
+      setErrorModal("El stock del artículo es insuficiente");
+      return;
+    }
+
+    setErrorModal("");
+
     let nuevaCantidad = tipoOperacion === "incremento"
       ? cantidadActual + cambio
       : cantidadActual - cambio;
@@ -362,10 +371,21 @@ const Inventario = () => {
                     variante="decimal"
                     placeholder="0.00"
                     value={ajusteCantidad}
-                    onChange={(e) => setAjusteCantidad(e.target.value)}
+                    onChange={(e) => {
+                      setAjusteCantidad(e.target.value);
+                      if (errorModal) setErrorModal(""); 
+                    }}
                   />
                 </div>
               </div>
+
+              {errorModal && (
+                <div className="w-full">
+                  <Text variante="label" style={{ color: "#E53E3E", fontWeight: "600", fontSize: "13px" }}>
+                    {errorModal}
+                  </Text>
+                </div>
+              )}
 
               <div className="flex gap-4 pt-4 w-full">
                 <Button variant="cancelar" isOutline={true} onClick={() => setModalEdicion({ visible: false, insumo: null })} className="flex-1">

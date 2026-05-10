@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import Base from "../../shared/components/layout/base";
 import Titulo from "../../shared/components/ui/basics/titulo";
@@ -23,33 +23,48 @@ function Lotes() {
 
   const navigate = useNavigate();
 
+
+  // Acciones de use Lotes
+  const { datos, sustratos, ubicaciones, especies, cargando, error, addLote } = useLotes();
+
   const [fecha, setFecha] = useState({ day: "", month: "", year: "" });
-  const { datos, cargando, error, addLote } = useLotes();
   const [filaSeleccionada, setFilaSeleccionada] = useState(null);
   const [verFormulario, setVerFormulario] = useState(false);
-  const [nuevaFila, setNuevaFila] = useState({ tipo_sustrato: "", ubicacion_lote: "" });
+  const [nuevaFila, setNuevaFila] = useState({ tipo_sustrato: "", ubicacion_lote: "", id_inoculo: "" });
   const [errorValidacion, setErrorValidacion] = useState("");
 
-  const opcionesUbicacion = [
-    { value: "Granja", label: "Granja" },
-    { value: "Laboratorio", label: "Laboratorio" }
-  ];
-
+  // Agregar nueva fila al añadir
   const handleNuevaFila = (campo, valor) => {
-    const valorLimpio = valor?.target ? valor.target.value : (valor?.value || valor);
-    setNuevaFila((prev) => ({ ...prev, [campo]: valorLimpio }));
+    if (valor && typeof valor === 'object' && 'value' in valor) {
+      setNuevaFila((prev) => ({ ...prev, [campo]: valor.value }));
+    }
+    else if (valor?.target) {
+      setNuevaFila((prev) => ({ ...prev, [campo]: valor.target.value }));
+    }
+    else {
+      setNuevaFila((prev) => ({ ...prev, [campo]: valor || "" }));
+    }
   };
 
+  // Verificación de los campos
   const handleGuardarLote = async () => {
-    const { ubicacion_lote } = nuevaFila;
-    if (!ubicacion_lote) {
-      setErrorValidacion("Por favor, selecciona una ubicación");
+    const { ubicacion_lote, tipo_sustrato, id_inoculo } = nuevaFila;
+
+    if (!ubicacion_lote || !tipo_sustrato || !id_inoculo) {
+      setErrorValidacion("Por favor, completa los campos");
       return;
     }
+
     setErrorValidacion("");
     const exito = await addLote(nuevaFila);
+
     if (exito) {
-      setNuevaFila({ tipo_sustrato: "", ubicacion_lote: "" });
+
+      setNuevaFila({
+        tipo_sustrato: "",
+        ubicacion_lote: "",
+        id_inoculo: ""
+      });
       setVerFormulario(false);
     }
   };
@@ -196,38 +211,57 @@ function Lotes() {
               <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "22px" }}>Crear Lote</Text>
             </div>
             <div className="flex flex-col gap-5">
+              {/* Seleccionar Inoculo - Especie*/}
               <div className="flex flex-col gap-2">
-                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Especie</Text>
-                <SelectField placeholder="Selecciona especie" size="forms" />
+                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Inóculo / (Especie)</Text>
+                <SelectField
+                  placeholder="Selecciona inóculo"
+                  size="forms"
+                  options={especies}
+                  value={nuevaFila.id_inoculo}
+                  onChange={(opcion) => handleNuevaFila("id_inoculo", opcion)}
+                />
               </div>
+
+              {/* Seleccionar sustrato*/}
               <div className="flex flex-col gap-2">
                 <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Sustrato</Text>
-                <SelectField placeholder="Selecciona un sustrato" size="forms" />
+                <SelectField
+                  placeholder="Selecciona un sustrato"
+                  size="forms"
+                  options={sustratos}
+                  value={nuevaFila.tipo_sustrato}
+                  onChange={(opcion) => handleNuevaFila("tipo_sustrato", opcion)}
+                />
               </div>
+
+              {/* Seleccionar ubicación*/}
               <div className="flex flex-col gap-2">
                 <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Ubicación</Text>
                 <SelectField
-                  placeholder="Selecciona ubicación"
+                  placeholder="Selecciona una ubicación"
                   size="forms"
-                  options={opcionesUbicacion}
+                  options={ubicaciones}
                   value={nuevaFila.ubicacion_lote}
                   onChange={(opcion) => handleNuevaFila("ubicacion_lote", opcion)}
                 />
               </div>
+
               <div className="flex flex-col gap-2">
                 <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Fecha</Text>
                 <InputFecha value={fecha} onChange={setFecha} />
               </div>
-            </div>
+            </div >
             {errorValidacion && (
               <div className="text-center mt-4"><Text variante="label" style={{ color: "#E53E3E", fontWeight: "600" }}>{errorValidacion}</Text></div>
-            )}
+            )
+            }
             <div className="flex justify-center pt-4">
               <Button variant="primario" size="lg" className="w-full" onClick={handleGuardarLote}>Crear Lote</Button>
             </div>
-          </div>
-        </div>
-      </Base>
+          </div >
+        </div >
+      </Base >
     </>
   );
 }
