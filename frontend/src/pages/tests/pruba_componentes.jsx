@@ -11,6 +11,7 @@ import Select from "../../shared/components/ui/inputs/seleccionar_texto";
 import { EntradaCantidadLista } from "../../shared/components/ui/inputs/entrada_cantidad";
 import BarraBusqueda from "../../shared/components/ui/others/barra_busqueda";
 import ModalConfirmacion from "../../shared/components/ui/popups/modal_confirmacion";
+import Checkbox from "../../shared/components/ui/checkbox/check";
 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { StarIcon } from '@hugeicons/core-free-icons';
@@ -64,6 +65,9 @@ function Pruebas() {
     console.log("Registro eliminado correctamente");
     setIsModalOpen(false);
   };
+
+  const [checkBase, setCheckBase] = useState(false);
+
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white">
@@ -189,7 +193,18 @@ function Pruebas() {
         textoCancelar="Cancelar"
       />
 
-
+      <Text variante="medium">Checkboxes</Text>
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-3">
+          <Checkbox 
+          isChecked={checkBase} 
+          onChange={setCheckBase} 
+          variant="defult" />
+          <Text variante="label">
+            Base - {checkBase ? "seleccionado" : "vacio"}
+          </Text>/
+        </div>
+     </div>
     </div>
   );
 }
