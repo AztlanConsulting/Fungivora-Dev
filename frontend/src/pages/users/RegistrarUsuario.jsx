@@ -63,44 +63,40 @@ const handleRegistrarClick = () => {
     setError("Llena todos los campos.");
     return;
   }
-  // Validación: no se esta usando espacios
- if (/\s/.test(valcorreo) || /\s/.test(valcontrasena) || /\s/.test(valverifica)) {
-    setError("Solo se pueden usar espacios en el usuario.");
-    return;
-  }
 
-  // Validación: no se esta usando espacios inecesarios en usuario
-  if (!/^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$/.test(valusuario)) {
-    setError("El usuario debe de tener solo letras o numeros y sin espacios al inicio o final")
-    return;
-  }
-
-
-  // Validación: de carecteres en usuario
-  if (!/^[a-zA-Z0-9 ]+$/.test(valusuario)) {
-    setError("El usuario solo puede contener letras y numeros.");
-    return;
-  }
-  // Validación: de carecteres en correo
+   // Validación: de carecteres en correo
   if (!/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/.test(valcorreo)) {
-    setError("Incerte un correo valido.");
+    setError("Inserte un correo valido (ejemplo: ejemplo@mail.com).");
     return;
   }
+
+  // Validación: no se esta usando espacios en contrseñas
+ if (/\s/.test(valcontrasena) || /\s/.test(valverifica)) {
+    setError("La contraseña no puede contener espacios");
+    return;
+  }
+
+  // Validación: no se esta usando espacios innecesarios y de caracteres en usuario
+  if (!/^[\p{L}\p{N}]+([ ][\p{L}\p{N}]+)*$/u.test(valusuario)) {
+    setError("El usuario solo puede contener letras o números, sin espacios al inicio o final")
+    return;
+  }
+
   //Validación: de carecteres en contrasenas
   if (!/^[a-zA-Z0-9]+$/.test(valcontrasena)) {
-    setError("La contraseña solo puede contener letras y numeros.");
+    setError("La contraseña solo puede contener letras y números.");
     return;
   }
 
   // Validación: de limite de contraseñas
   if (valcontrasena.length > 20){
-    setError("La contraseña debe ser menor a 21 caracteres.");
+    setError("La contraseña no puede superar 20 caracteres.");
     return;
   }
 
   // Validación: De contraseñas iguales
   if (valcontrasena !== valverifica) {
-    setError("Las contraseñas no coinciden, deben ser iguales.");
+    setError("Las contraseñas no coinciden, verifica que sean iguales.");
     return;
   }
 
@@ -184,7 +180,7 @@ const handleConfirm = async () => {
             <span>Usuario</span>
             <Input 
                 variante="normal" 
-                placeholder="Escribe tu entrada..." 
+                placeholder="Escribe tu usuario..." 
                 className="!w-full"
                 value={valusuario} 
                 onChange={(e) => setValusuario(e.target.value)} />
@@ -195,18 +191,18 @@ const handleConfirm = async () => {
             <Input 
                 variante="normal"
                 className="!w-full"
-                placeholder="Escribe tu entrada..." 
+                placeholder="Escribe un correo (correo@mail.com)..." 
                 value={valcorreo} 
                 onChange={(e) => setValcorreo(e.target.value)} />
           </div>
 
         {/* INPUT de la contrasena del usuario*/}
-        <div className="flex flex-col gap-1 min-w-0 mt-6">
+        <div className="flex flex-col gap-1 gap-1 min-w-0">
             <span>Contraseña</span>
         <Input 
             type="password" 
             className="!w-full"
-            placeholder="Escribe tu entrada..." 
+            placeholder="Escribe una contraseña..." 
             autoComplete="new-password" 
             value={valcontrasena} 
             onChange={(e) => {
@@ -215,12 +211,12 @@ const handleConfirm = async () => {
         }} />
         </div>
 
-        <div className="flex flex-col gap-1 min-w-0 mt-6">
+        <div className="flex flex-col gap-1 gap-1 min-w-0">
             <span>Confirmar Contraseña</span>
             <Input 
             type="password" 
             className="!w-full"
-            placeholder="Escribe tu entrada..." 
+            placeholder="Escribe otra vez tu contraseña..." 
             autoComplete="new-password" 
             value={valverifica} 
             onChange={(e) => {

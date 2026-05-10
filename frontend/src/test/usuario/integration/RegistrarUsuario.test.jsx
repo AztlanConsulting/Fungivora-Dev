@@ -84,7 +84,7 @@ describe('RegistrarUsuario  — renderizado base', () => {
     it('muestra los 4 inputs', async() => {
         renderVista()
         await waitFor(() => {
-            const inputs = screen.getAllByPlaceholderText(/Escribe tu entrada/i)
+            const inputs = screen.getAllByPlaceholderText(/Escribe/i)
             expect(inputs).toHaveLength(4)
           })
     })
@@ -159,31 +159,12 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
         expect(errorMsg).toBeInTheDocument()
     })
 
-    //error si las contraseñas no coiciden
-    it('muestra error si las contrasena no coinciden', async () => {
-        const user = userEvent.setup()
-        renderVista()
-        
-        const inputs= screen.getAllByPlaceholderText(/Escribe tu entrada/i)
-
-        await user.type(inputs[0], 'juanperez')
-        await user.type(inputs[1], 'Correo@test.com')
-        await user.type(inputs[2], '123')
-        await user.type(inputs[3], '124')
-
-        const botonRegistrar = screen.getByRole('button', { name: /registrar/i})
-        await user.click(botonRegistrar)
-
-        const errorMsg = await screen.findByText(/Las contraseñas no coinciden, deben ser iguales/i)
-        expect(errorMsg).toBeInTheDocument()
-    })
-
     //el correo no es valido por no cumplir el formato
     it('muestra error si el correo no tiene un formato valido', async () => {
         const user = userEvent.setup()
         renderVista()
         
-        const inputs= screen.getAllByPlaceholderText(/Escribe tu entrada/i)
+        const inputs= screen.getAllByPlaceholderText(/Escribe/i)
 
         await user.type(inputs[0], 'juanperez')
         await user.type(inputs[1], 'Correofake')
@@ -193,16 +174,35 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
         const botonRegistrar = screen.getByRole('button', { name: /registrar/i})
         await user.click(botonRegistrar)
 
-        const errorMsg = await screen.findByText(/Incerte un correo valido/i)
+        const errorMsg = await screen.findByText(/Inserte un correo valido/i)
         expect(errorMsg).toBeInTheDocument()
     })
 
-    //error si hay caracteres especiales
+    //Verifica espacios en la contraseña
+    it('muestra error si la contresena tiene espacios', async () => {
+        const user = userEvent.setup()
+        renderVista()
+        
+        const inputs= screen.getAllByPlaceholderText(/Escribe/i)
+
+        await user.type(inputs[0], 'juanperez')
+        await user.type(inputs[1], 'Correo@test.com')
+        await user.type(inputs[2], '12 3')
+        await user.type(inputs[3], '123')
+
+        const botonRegistrar = screen.getByRole('button', { name: /registrar/i})
+        await user.click(botonRegistrar)
+
+        const errorMsg = await screen.findByText(/La contraseña no puede contener espacios/i)
+        expect(errorMsg).toBeInTheDocument()
+    })
+
+    //error si hay caracteres especiales en usuario
     it('muestra error usuario contiene caracteres especiales', async () => {
         const user = userEvent.setup()
         renderVista()
         
-        const inputs= screen.getAllByPlaceholderText(/Escribe tu entrada/i)
+        const inputs= screen.getAllByPlaceholderText(/Escribe/i)
 
         await user.type(inputs[0], 'juan@perez')
         await user.type(inputs[1], 'Correo@test.com')
@@ -212,7 +212,7 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
         const botonRegistrar = screen.getByRole('button', { name: /registrar/i})
         await user.click(botonRegistrar)
 
-        const errorMsg = await screen.findByText(/El usuario debe de tener solo letras o numeros y sin espacios al inicio o final/i)        
+        const errorMsg = await screen.findByText(/El usuario solo puede contener letras o números, sin espacios al inicio o final/i)        
         expect(errorMsg).toBeInTheDocument()
     })
 
@@ -221,7 +221,7 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
         const user = userEvent.setup()
         renderVista()
         
-        const inputs= screen.getAllByPlaceholderText(/Escribe tu entrada/i)
+        const inputs= screen.getAllByPlaceholderText(/Escribe/i)
 
         await user.type(inputs[0], 'juanperez')
         await user.type(inputs[1], 'Correo@test.com')
@@ -231,25 +231,26 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
         const botonRegistrar = screen.getByRole('button', { name: /registrar/i})
         await user.click(botonRegistrar)
 
-        const errorMsg = await screen.findByText(/La contraseña debe ser menor a 21 caracteres/i)
+        const errorMsg = await screen.findByText(/La contraseña no puede superar 20 caracteres/i)
         expect(errorMsg).toBeInTheDocument()
     })
 
-    it('muestra error si el correo tiene espacios', async () => {
+        //error si las contraseñas no coiciden
+    it('muestra error si las contrasena no coinciden', async () => {
         const user = userEvent.setup()
         renderVista()
         
-        const inputs= screen.getAllByPlaceholderText(/Escribe tu entrada/i)
+        const inputs= screen.getAllByPlaceholderText(/Escribe/i)
 
         await user.type(inputs[0], 'juanperez')
-        await user.type(inputs[1], 'Correo@ test.com')
+        await user.type(inputs[1], 'Correo@test.com')
         await user.type(inputs[2], '123')
-        await user.type(inputs[3], '123')
+        await user.type(inputs[3], '124')
 
         const botonRegistrar = screen.getByRole('button', { name: /registrar/i})
         await user.click(botonRegistrar)
 
-        const errorMsg = await screen.findByText(/Solo se pueden usar espacios en el usuario/i)
+        const errorMsg = await screen.findByText(/Las contraseñas no coinciden, verifica que sean iguales/i)
         expect(errorMsg).toBeInTheDocument()
     })
 }) 
@@ -320,7 +321,7 @@ describe('RegistrarUsuario — flujo de registro exitoso', () => {
 
     const user = userEvent.setup()
         renderVista()
-    const inputs = screen.getAllByPlaceholderText(/Escribe tu entrada/i)
+    const inputs = screen.getAllByPlaceholderText(/Escribe/i)
         await user.type(inputs[0], 'juanperez')
         await user.type(inputs[1], 'correo@test.com')
         await user.type(inputs[2], 'password123')
