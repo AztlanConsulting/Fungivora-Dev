@@ -34,7 +34,6 @@ export default function AppRoutes() {
                 {/* Rutas inventario */}
                 <Route path="/inventario" element={<Inventario />} />
                 <Route path="/inventario/micelio/crear" element={<RegistrarMedio />} />
-                <Route path="/inventario/crearInsumo" element={<RegistrarInsumo />} />
 
                 {/* Rutas biblioteca genetica */}
                 <Route path="/inoculos" element={<BibliotecaGenetica />} />

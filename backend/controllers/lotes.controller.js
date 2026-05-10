@@ -108,7 +108,8 @@ Metodo que añade la información de lotes a la tabla
 */
 exports.post_batch = async (req, res) => {
     try {
-        const { ubicacion_lote, tipo_sustrato, id_inoculo } = req.body;
+        const { ubicacion_lote, tipo_sustrato, id_inoculo, fecha_lote } = req.body;
+
         const inoculos = await Lotes.fetch_inoculos_disponibles();
         const inoculoSeleccionado = inoculos.find(i => i.id_inoculo == id_inoculo);
 
@@ -116,31 +117,37 @@ exports.post_batch = async (req, res) => {
             return res.status(400).json({ success: false, message: "Inóculo no encontrado" });
         }
 
-        // Obtener la abreviatura
+        // Abreviatura de la especie del inóculo
         const [abreviaturaResult] = await Categoria.fetchAbreviaturaPorNombre(inoculoSeleccionado.especie);
         const abreviatura = abreviaturaResult[0].abreviatura_opcion;
 
-        // Fecha en formato
-        const hoy = new Date();
-        const dd = String(hoy.getDate()).padStart(2, '0');
-        const mm = String(hoy.getMonth() + 1).padStart(2, '0');
-        const yy = hoy.getFullYear().toString().slice(-2);
-        const fechaFormateada = `${dd}${mm}${yy}`;
+        // Formato de la fecha
+        const fechaParaCodigo = new Date(fecha_lote);
+        const dd = String(fechaParaCodigo.getUTCDate()).padStart(2, '0');
+        const mm = String(fechaParaCodigo.getUTCMonth() + 1).padStart(2, '0');
+        const yy = fechaParaCodigo.getUTCFullYear().toString().slice(-2);
+        const fechaStr = `${dd}${mm}${yy}`;
 
-        // El codigo escrito
-        const codigo_fungivora = `LT-${abreviatura}-${fechaFormateada}`;
+        // Formato del código
+        const prefijoBase = `LC-${abreviatura}-${fechaStr}`;
+
+        // Contador para el último número
+        const cantidadGrupo = await Lotes.count_lotes_similares(prefijoBase);
+        const nuevoNumero = cantidadGrupo + 1;
+
+        // Código final
+        const codigo_fungivora = `${prefijoBase}-${nuevoNumero}`;
 
         const id_lote = crypto.randomUUID();
         const activo = 1;
         const fase = "Inoculación";
 
-        // Guardar
         await Lotes.crear_lote(
             id_lote,
             id_inoculo,
             tipo_sustrato,
             codigo_fungivora,
-            hoy,
+            fecha_lote,
             ubicacion_lote,
             activo,
             fase
@@ -148,17 +155,13 @@ exports.post_batch = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: 'Lote creado con éxito',
             codigo: codigo_fungivora,
             id: id_lote
         });
 
     } catch (error) {
-        console.error("Error en post_batch controller:", error);
-        res.status(500).json({
-            success: false,
-            error: 'Error interno al procesar el lote'
-        });
+        console.error("Error en post_batch:", error);
+        res.status(500).json({ success: false, error: 'Error interno' });
     }
 };
 

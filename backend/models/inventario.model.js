@@ -1,14 +1,12 @@
 const db = require('../util/db');
 
 class Inventario {
-    constructor(id_insumo, nombre, cantidad, unidad, stock_recomendado, caducable, fecha_caducidad) {
+    constructor(id_insumo, nombre, cantidad, unidad, stock_recomendado) {
         this.id_insumo = id_insumo;
         this.nombre = nombre;
         this.cantidad = cantidad;
         this.unidad = unidad;
         this.stock_recomendado = stock_recomendado;
-        this.caducable = caducable;
-        this.fecha_caducidad = fecha_caducidad;
     }
 
     // Obtiene todos los insumos + hongos/esporas (inóculos)
@@ -20,8 +18,6 @@ class Inventario {
                 cantidad,
                 unidad,
                 stock_recomendado,
-                caducable,
-                fecha_caducidad,
                 'insumo' AS tipo
             FROM Insumos
         `);
@@ -35,17 +31,16 @@ class Inventario {
     }
 
     // Crea un nuevo insumo
-    static crear_insumo = async (id_insumo, nombre, cantidad, stock_recomendado, unidad) => {
+        static crear_insumo = async (id_insumo, nombre, cantidad, stock_recomendado, unidad) => {
             return db.execute(`
                 INSERT INTO Insumos (
                     id_insumo,
                     nombre, 
                     cantidad, 
                     stock_recomendado, 
-                    unidad, 
-                    caducable
+                    unidad
                 )
-                VALUES (?, ?, ?, ?, ?, 0)
+                VALUES (?, ?, ?, ?, ?)
             `, [id_insumo, nombre, cantidad, stock_recomendado, unidad]);
         }
 
