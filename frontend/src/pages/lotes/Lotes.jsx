@@ -81,11 +81,9 @@ function Lotes() {
         ubicacion: lote.ubicacion_lote,
         id_inoculo_usado: lote.id_inoculo,
         codigo: lote.codigo_fungivora,
-        fase: lote.fase,
-        especie: lote.nombre_especie || "Shiitake" // Asumiendo que el hongo viene en el objeto
+        fase: lote.fase
       }
     });
-    console.log("Navegando a detalle con lote:", lote);
   };
 
   const obtenerEstiloFase = (fase) => {
@@ -153,14 +151,14 @@ function Lotes() {
                           style={{ borderColor: colorBordeHeader }}
                         >
                           <div className="flex justify-between items-start">
-                            <Text variante="option" style={{ color: colores.black, fontWeight: '700', fontSize: '18px' }}>{lote.codigo_fungivora}</Text>
+                            <Text variante="option" style={{ color: colores.black, fontWeight: '500', fontSize: '18px' }}>{lote.codigo_fungivora}</Text>
                             <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
                           </div>
                           <div className="grid grid-cols-2 gap-4 border-t pt-4" style={{ borderColor: colorBordeHeader }}>
                             <Text variante="option" style={{ color: colores.gris, fontSize: '14px' }}>{lote.tipo_sustrato}</Text>
                             <Text variante="option" style={{ color: colores.gris, fontSize: '14px' }}>{lote.ubicacion_lote}</Text>
                             <div>
-                              <span className="px-2 py-0.5 rounded-md text-[12px] font-bold" style={{ backgroundColor: estiloFase.bg, color: estiloFase.text }}>
+                              <span className="px-2 py-0.5 rounded-md text-[12px] font-semibold" style={{ backgroundColor: estiloFase.bg, color: estiloFase.text }}>
                                 {lote.fase}
                               </span>
                             </div>
@@ -177,11 +175,11 @@ function Lotes() {
                           {columnas.map((col, i) => (
                             <div key={i} className="px-6 py-5 flex items-center justify-start">
                               {col.key === 'fase' ? (
-                                <div className="px-4 py-1 rounded-lg text-sm font-bold" style={{ backgroundColor: estiloFase.bg, color: estiloFase.text }}>
+                                <div className="px-4 py-1 rounded-lg text-sm font-semibold" style={{ backgroundColor: estiloFase.bg, color: estiloFase.text }}>
                                   {lote[col.key]}
                                 </div>
                               ) : (
-                                <Text variante="option" style={{ color: "black", fontSize: "15px", fontWeight: col.key === 'codigo_fungivora' ? '700' : '400' }}>
+                                <Text variante="option" style={{ color: "black", fontSize: "15px", fontWeight: col.key === 'codigo_fungivora' ? '600' : '400' }}>
                                   {col.key === 'fecha_lote' ? fechaFormateada : lote[col.key]}
                                 </Text>
                               )}

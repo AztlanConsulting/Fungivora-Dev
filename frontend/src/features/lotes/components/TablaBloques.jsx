@@ -74,15 +74,15 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, codi
                     className="hidden md:grid grid-cols-5 py-5 px-8 gap-4 items-center"
                     style={{ backgroundColor: colorHeaderTabla }}
                 >
-                    <div><Text variante="option" style={{ fontWeight: '700' }}>Código del bloque</Text></div>
-                    <div><Text variante="option" style={{ fontWeight: '700' }}>Tamaño</Text></div>
-                    <div><Text variante="option" style={{ fontWeight: '700' }}>Peso (g)</Text></div>
+                    <div><Text variante="option" style={{ fontWeight: '600' }}>Código del bloque</Text></div>
+                    <div><Text variante="option" style={{ fontWeight: '600' }}>Tamaño</Text></div>
+                    <div><Text variante="option" style={{ fontWeight: '600' }}>Peso (g)</Text></div>
                     <div className="flex items-center gap-1">
-                        <Text variante="option" style={{ fontWeight: '700' }}>Clasificación</Text>
+                        <Text variante="option" style={{ fontWeight: '600' }}>Clasificación</Text>
                         <HugeiconsIcon icon={ArrowDown01Icon} size={14} color="#3b3fb6" />
                     </div>
                     <div className="flex items-center gap-1">
-                        <Text variante="option" style={{ fontWeight: '700' }}>Contaminado</Text>
+                        <Text variante="option" style={{ fontWeight: '600' }}>Contaminado</Text>
                         <HugeiconsIcon icon={ArrowDown01Icon} size={14} color="#3b3fb6" />
                     </div>
                 </div>
@@ -105,7 +105,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, codi
                                 <div key={bloque.id_bloque || index} className="relative">
                                     {/* VISTA MÓVIL (Cards) */}
                                     <div className="md:hidden p-5 flex flex-col gap-2 bg-white border-b border-gray-100">
-                                        <Text variante="body" style={{ fontWeight: '700', color: colores.azul }}>
+                                        <Text variante="body" style={{ fontWeight: '600', color: colores.azul }}>
                                             {codigoVisual}
                                         </Text>
                                         <div className="flex justify-between items-center mt-1">
@@ -130,7 +130,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, codi
                                             borderBottom: index === bloques.length - 1 ? 'none' : '1px solid #F0F0F0',
                                         }}
                                     >
-                                        <Text variante="body" style={{ fontWeight: '700', color: '#1A1A40' }}>{codigoVisual}</Text>
+                                        <Text variante="body" style={{ fontWeight: '600', color: '#1A1A40' }}>{codigoVisual}</Text>
                                         <Text variante="body" style={{ color: '#444' }}>{bloque.contenedor}</Text>
                                         <Text variante="body" style={{ color: '#444' }}>{pesoLimpio} g</Text>
                                         <div>{renderEtiqueta(bloque.produccion)}</div>
