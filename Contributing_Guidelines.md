@@ -39,9 +39,35 @@ We will use tags in brackets followed by a description.
 
 ---
 
-## 3. Workflow
+## 3. Coding & Structure Standards
 
-### 3.1 Basic Workflow
+### 3.1 File Naming Convention
+We follow a hybrid language rule: **Spanish** for business logic and **English** for technical descriptors.
+
+| File Type | Format | Example |
+| :--- | :--- | :--- |
+| **React Components** | `PascalCase` | `BibliotecaGenetica.jsx` |
+| **Hooks** | `camelCase` (prefix `use`) | `useEspeciesList.js` |
+| **Services / API** | `kebab-case` + `.service` | `lotes-operaciones.service.js` |
+| **Types / Models** | `kebab-case` + `.types` | `usuario-datos.types.js` |
+| **Assets (Images/Fonts)** | `kebab-case` | `fondo-fungivora-plano.png` |
+| **Tests** | `OriginalName.test.js/jsx` | `InoculoCard.test.jsx` |
+
+> **Prohibited:** Do not use `snake_case` (underscores) for filenames.
+
+### 3.2 Folder Responsibilities
+* **`src/features/`**: Modular logic. Contains components, hooks, and services that belong **only** to that specific functionality.
+* **`src/pages/`**: Route-level components. They should only organize features; keep complex logic out of here.
+* **`src/shared/`**: Global reusable assets.
+    * `ui/`: Atomic components (buttons, inputs, cards).
+    * `layout/`: Structural components (Navbar, Sidebar).
+    * `utils/`: Helper functions (date formatters, validators).
+
+---
+
+## 4. Workflow
+
+### 4.1 Basic Workflow
 1.  **Sync:** `git checkout develop` -> `git pull origin develop`.
 2.  **New Branch:** `git checkout -b feature/task-name`.
 3.  **Development:** Perform atomic commits (one logical change per commit).
@@ -49,18 +75,16 @@ We will use tags in brackets followed by a description.
 5.  **Push:** `git push origin feature/task-name`.
 6.  **Pull Request (PR):** Open a PR on GitHub targeting the `develop` branch.
 
-### 3.2 Advanced Workflow Steps
-* **Early Visibility:** Once you create your local branch, push it to the remote repository immediately (`git push -u origin feature/your-task`), even if you haven't written any code yet. This lets the team know someone is already working on that feature.
-* **Handling Merge Conflicts:**
-    1.  Switch to your target branch: `git checkout develop` and `git pull origin develop`.
-    2.  Go back to your feature branch: `git checkout feature/your-task`.
-    3.  Merge develop into your branch: `git merge develop`.
-    4.  If conflicts arise, VS Code will highlight them. Choose the correct changes, save the files.
-    5.  Finalize the merge: `git add .` and `git commit -m "[FIX] resolve merge conflicts with develop"`.
+### 4.2 Handling Merge Conflicts
+1.  Switch to your target branch: `git checkout develop` and `git pull origin develop`.
+2.  Go back to your feature branch: `git checkout feature/your-task`.
+3.  Merge develop into your branch: `git merge develop`.
+4.  If conflicts arise, VS Code will highlight them. Choose the correct changes and save.
+5.  Finalize the merge: `git add .` and `git commit -m "[FIX] resolve merge conflicts with develop"`.
 
 ---
 
-## 4. Golden Rules (Security & Code)
+## 5. Golden Rules (Security & Code)
 
 * **Environment Variables:** NEVER upload the content of your `.env` file.
 * **Credentials:** MariaDB passwords must be personal and stay only in your local `.env`.
@@ -72,8 +96,6 @@ We will use tags in brackets followed by a description.
 # Estándar de Desarrollo: Fungivora-Dev (Español)
 
 Este documento define los lineamientos para el desarrollo del proyecto, con el fin de mantener un código consistente, claro y fácil de colaborar.
-
-Esta traducción está destinada como un apoyo de lectura para los miembros del equipo. El acuerdo es trabajar commits, ramas y PRs en inglés.
 
 ## 1. Estándares del Repositorio
 
@@ -91,8 +113,6 @@ Esta traducción está destinada como un apoyo de lectura para los miembros del 
 * Usar minúsculas y guiones (sin acentos ni ñ): `tipo-de-rama/descripcion-corta`.
 
 ## 2. Estándares de Commits
-Usaremos etiquetas entre corchetes seguidas de una descripción breve.
-
 **Formato:** `[TIPO] (área) descripción breve`
 * **`[ADD]`**: Nueva funcionalidad/archivo.
 * **`[FIX]`**: Corrección de bug.
@@ -101,25 +121,49 @@ Usaremos etiquetas entre corchetes seguidas de una descripción breve.
 * **`[ENV]`**: Ajustes de configuración/servidor.
 * **`[DOC]`**: Cambios en la documentación.
 
-## 3. Flujo de Trabajo
-### 3.1 Flujo básico
+## 3. Estándares de Codificación y Estructura
 
+### 3.1 Convención de Nombres de Archivos
+Seguimos la regla de idioma híbrido: **Español** para lógica de negocio e **Inglés** para descriptores técnicos.
+
+| Tipo de Archivo | Formato | Ejemplo |
+| :--- | :--- | :--- |
+| **Componentes React** | `PascalCase` | `BibliotecaGenetica.jsx` |
+| **Hooks** | `camelCase` (prefijo `use`) | `useEspeciesList.js` |
+| **Servicios / API** | `kebab-case` + `.service` | `lotes-operaciones.service.js` |
+| **Tipos / Modelos** | `kebab-case` + `.types` | `usuario-datos.types.js` |
+| **Assets (Imágenes)** | `kebab-case` | `fondo-fungivora-plano.png` |
+| **Tests** | `NombreOriginal.test.js` | `InoculoCard.test.jsx` |
+
+> **Prohibido:** No utilizar `snake_case` (guiones bajos) para nombres de archivos.
+
+### 3.2 Responsabilidad de Carpetas
+* **`src/features/`**: Lógica modular. Contiene componentes, hooks y servicios que pertenecen **solo** a esa funcionalidad específica.
+* **`src/pages/`**: Componentes de ruta. Deben orquestar las features; evita meter lógica compleja aquí.
+* **`src/shared/`**: Recursos globales reutilizables.
+    * `ui/`: Componentes atómicos (botones, inputs).
+    * `layout/`: Componentes de estructura (Navbar, Sidebar).
+    * `utils/`: Funciones de ayuda (formateadores, validadores).
+
+## 4. Flujo de Trabajo
+
+### 4.1 Flujo básico
 1. **Sincronizar:** `git checkout develop` -> `git pull origin develop`.
 2. **Nueva Rama:** `git checkout -b feature/nombre-tarea`.
 3. **Visibilidad Temprana:** En cuanto crees tu rama local, súbela al repositorio `git push -u origin feature/tu-tarea`.
-4.  **Desarrollo:** Realiza commits atómicos (un cambio lógico por commit).
+4. **Desarrollo:** Realiza commits atómicos (un cambio lógico por commit).
 5. **Prueba:** Verificar `npm run dev` desde la raíz.
 6. **Push:** `git push origin feature/task-name`.
 7. **Pull Request (PR):** Abre un PR en GitHub hacia la rama `develop`.
 
-### 3.2 Resolución de Conflictos (Merge conflicts)
-1.  Ve a la rama base: `git checkout develop` y haz `git pull origin develop`.
-2.  Regresa a tu rama: `git checkout feature/tu-tarea`.
-3.  Integra los cambios: `git merge develop`.
-4.  Si hay conflictos, VS Code los marcará. Elige los cambios correctos y guarda los archivos.
-5.  Finaliza el merge: `git add .` y `git commit -m "[FIX] resolve merge conflicts with develop"`.
+### 4.2 Resolución de Conflictos
+1. Ve a la rama base: `git checkout develop` y haz `git pull origin develop`.
+2. Regresa a tu rama: `git checkout feature/tu-tarea`.
+3. Integra los cambios: `git merge develop`.
+4. Si hay conflictos, elige los cambios correctos en VS Code y guarda.
+5. Finaliza: `git add .` y `git commit -m "[FIX] resolve merge conflicts with develop"`.
 
-## 4. Reglas de Oro
+## 5. Reglas de Oro
 * **Variables de Entorno:** NUNCA subas el contenido de tu `.env`.
 * **Credenciales:** Passwords de MariaDB personales y locales.
 * **Revisión:** Todo PR debe ser revisado por un compañero.
