@@ -21,12 +21,22 @@ function Lotes() {
     { label: "Fecha", key: "fecha_lote" }
   ];
   
+  // Funciones de la fecha
   const hoy = new Date();
   const [fecha, setFecha] = useState({ 
     day: hoy.getDate().toString().padStart(2, '0'), 
     month: (hoy.getMonth() + 1).toString().padStart(2, '0'), 
     year: hoy.getFullYear().toString()
   });
+
+  const esFechaValida = (d, m, y) => {
+    const fechaCheck = new Date(y, m - 1, d);
+    return (
+      fechaCheck.getFullYear() === parseInt(y) &&
+      fechaCheck.getMonth() === parseInt(m) - 1 &&
+      fechaCheck.getDate() === parseInt(d)
+    );
+  };
 
   // Acciones de use Lotes
   const { datos, sustratos, ubicaciones, especies, cargando, error, addLote } = useLotes();
@@ -55,6 +65,11 @@ function Lotes() {
 
       if (!ubicacion_lote || !tipo_sustrato || !id_inoculo) {
           setErrorValidacion("Por favor, completa los campos");
+          return;
+      }
+
+      if (!esFechaValida(fecha.day, fecha.month, fecha.year)) {
+          setErrorValidacion("La fecha seleccionada no es válida");
           return;
       }
       
