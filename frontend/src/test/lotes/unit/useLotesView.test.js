@@ -6,7 +6,10 @@ import loteService from '../../../features/lotes/services/lotes.service';
 vi.mock('../../../features/lotes/services/lotes.service', () => ({
   default: {
     getLotes: vi.fn(),
-    addLote: vi.fn()
+    addLote: vi.fn(),
+    getSustratos: vi.fn(),
+    getUbicaciones: vi.fn(),
+    getEspecies: vi.fn(),
   }
 }));
 
@@ -18,11 +21,11 @@ describe('useLotes Hook', () => {
     success: true,
     data: [
       { id_lote: 1, codigo_fungivora: 'LOTE-001', fecha_lote: '2024-01-01' },
-      { id_lote: 2, codigo_fungivora: 'LOTE-002', fecha_lote: '2024-05-01' }
     ]
   };
 
   const mockEspeciesData = {
+    success: true,
     data: [
       { id_inoculo: 10, codigo_fungivora: 'INC-01', especie: 'Pleurotus' }
     ]
@@ -31,38 +34,56 @@ describe('useLotes Hook', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Mock para las diferentes llamadas
     fetch.mockImplementation((url) => {
       if (url.includes('/api/lotes/sustratos')) {
-        return Promise.resolve({ json: () => Promise.resolve([{ opcion: 'Paja' }]) });
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve([{ opcion: 'Paja' }])
+        });
       }
       if (url.includes('/api/lotes/ubicaciones')) {
-        return Promise.resolve({ json: () => Promise.resolve([{ opcion: 'Estante A' }]) });
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve([{ opcion: 'Estante A' }])
+        });
       }
       if (url.includes('/api/lotes/especies')) {
-        return Promise.resolve({ json: () => Promise.resolve(mockEspeciesData) });
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockEspeciesData)
+        });
       }
       return Promise.reject(new Error("URL no mockeada"));
     });
   });
 
-  it('Cargar lotes y catálogos', async () => {
+  it('cargar correctamente los catálogos y lotes', async () => {
     vi.mocked(loteService.getLotes).mockResolvedValue(mockLotesData);
 
     const { result } = renderHook(() => useLotes());
 
+    // carga inicial
     expect(result.current.cargando).toBe(true);
 
     await waitFor(() => expect(result.current.cargando).toBe(false));
 
-    // Verificar Lotes
-    expect(result.current.datos).toHaveLength(2);
+    // transformación de Sustratos
     expect(result.current.sustratos).toEqual([{ value: 'Paja', label: 'Paja' }]);
+    
+    // transformación de Ubicaciones
     expect(result.current.ubicaciones).toEqual([{ value: 'Estante A', label: 'Estante A' }]);
-    expect(result.current.especies).toEqual([{ value: 10, label: 'INC-01 / Pleurotus' }]);
+    
+    // transformación de Especies
+    expect(result.current.especies).toEqual([
+      { value: 10, label: 'INC-01 / Pleurotus' }
+    ]);
+
+    //  datos de lotes
+    expect(result.current.datos).toHaveLength(1);
+    expect(result.current.error).toBeNull();
   });
 
-  it('Manejar errores correctamente', async () => {
+  it(' error cuando el servicio devuelve success: false', async () => {
     vi.mocked(loteService.getLotes).mockResolvedValue({ success: false });
 
     const { result } = renderHook(() => useLotes());
@@ -70,10 +91,11 @@ describe('useLotes Hook', () => {
     await waitFor(() => expect(result.current.cargando).toBe(false));
     
     expect(result.current.error).toBe("Error al cargar lotes");
+    expect(result.current.datos).toEqual([]);
   });
 
-  it('Manejar errores de conexión', async () => {
-    vi.mocked(loteService.getLotes).mockRejectedValue(new Error("Network Error"));
+  it('errores de excepción carga de lotes', async () => {
+    vi.mocked(loteService.getLotes).mockRejectedValue(new Error("Error de red"));
 
     const { result } = renderHook(() => useLotes());
 
@@ -82,40 +104,38 @@ describe('useLotes Hook', () => {
     expect(result.current.error).toBe("Error de conexión");
   });
 
-  it('Agregar un nuevo lote y refrescar la lista', async () => {
+  it('llamar al servicio, true y refrescar la lista', async () => {
     const nuevoLote = { tipo_sustrato: "Paja", ubicacion_lote: "Estante A", id_inoculo: 10 };
+    
     vi.mocked(loteService.addLote).mockResolvedValue({ success: true });
     vi.mocked(loteService.getLotes).mockResolvedValue(mockLotesData);
 
     const { result } = renderHook(() => useLotes());
-
     await waitFor(() => expect(result.current.cargando).toBe(false));
 
-    let exito;
+    let resultadoAccion;
     await act(async () => {
-      exito = await result.current.addLote(nuevoLote);
+      resultadoAccion = await result.current.addLote(nuevoLote);
     });
 
-    expect(exito).toBe(true);
+    expect(resultadoAccion).toBe(true);
     expect(loteService.addLote).toHaveBeenCalledWith(nuevoLote);
-    
     expect(loteService.getLotes).toHaveBeenCalledTimes(2);
   });
 
-  it('Retornar false si creación del lote falla', async () => {
+  it('retornar false si la API falla', async () => {
     vi.mocked(loteService.addLote).mockResolvedValue({ success: false });
     vi.mocked(loteService.getLotes).mockResolvedValue(mockLotesData);
 
     const { result } = renderHook(() => useLotes());
-
     await waitFor(() => expect(result.current.cargando).toBe(false));
 
-    let exito;
+    let resultadoAccion;
     await act(async () => {
-      exito = await result.current.addLote({ incompleto: true });
+      resultadoAccion = await result.current.addLote({});
     });
 
-    expect(exito).toBe(false);
+    expect(resultadoAccion).toBe(false);
     expect(loteService.getLotes).toHaveBeenCalledTimes(1);
   });
 });

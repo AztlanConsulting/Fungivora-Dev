@@ -65,7 +65,11 @@ exports.get_unidades = async (req, res) => {
 exports.post_crear_insumo = async (req, res) => {
     try {
         const { nombre, cantidad, stock_recomendado, unidad } = req.body;
-        
+
+        if (!nombre || !cantidad || !unidad) {
+            return res.status(400).json({ success: false, error: 'Faltan campos obligatorios' });
+        }
+
         const filas = await Inventario.fetch_all();
         const existe = filas.some(item =>
             item.nombre?.toLowerCase() === nombre?.toLowerCase()
@@ -113,6 +117,7 @@ exports.post_update_cantidad = async (req, res) => {
             message: 'Inventario actualizado'
         });
     } catch (error) {
+        console.error("DETAILED ERROR:", error);
         res.status(500).json({ success: false, error: 'Error interno del servidor' });
     }
 };

@@ -21,10 +21,26 @@ function Lotes() {
     { label: "Fecha", key: "fecha_lote" }
   ];
   
+  // Funciones de la fecha
+  const hoy = new Date();
+  const [fecha, setFecha] = useState({ 
+    day: hoy.getDate().toString().padStart(2, '0'), 
+    month: (hoy.getMonth() + 1).toString().padStart(2, '0'), 
+    year: hoy.getFullYear().toString()
+  });
+
+  const esFechaValida = (d, m, y) => {
+    const fechaCheck = new Date(y, m - 1, d);
+    return (
+      fechaCheck.getFullYear() === parseInt(y) &&
+      fechaCheck.getMonth() === parseInt(m) - 1 &&
+      fechaCheck.getDate() === parseInt(d)
+    );
+  };
+
   // Acciones de use Lotes
   const { datos, sustratos, ubicaciones, especies, cargando, error, addLote } = useLotes();
   
-  const [fecha, setFecha] = useState({ day: "", month: "", year: "" });
   const [filaSeleccionada, setFilaSeleccionada] = useState(null);
   const [verFormulario, setVerFormulario] = useState(false);
   const [nuevaFila, setNuevaFila] = useState({ tipo_sustrato: "", ubicacion_lote: "", id_inoculo: "" });
@@ -51,9 +67,23 @@ function Lotes() {
           setErrorValidacion("Por favor, completa los campos");
           return;
       }
+
+      if (!esFechaValida(fecha.day, fecha.month, fecha.year)) {
+          setErrorValidacion("La fecha seleccionada no es válida");
+          return;
+      }
       
+      const mes = fecha.month.toString().padStart(2, '0');
+      const dia = fecha.day.toString().padStart(2, '0');
+      const fechaFormateada = `${fecha.year}-${mes}-${dia}`;
+
+      const datosParaEnviar = {
+          ...nuevaFila,
+          fecha_lote: fechaFormateada
+      };
+
       setErrorValidacion("");
-      const exito = await addLote(nuevaFila);
+      const exito = await addLote(datosParaEnviar);
       
       if (exito) {
 
@@ -62,6 +92,14 @@ function Lotes() {
               ubicacion_lote: "", 
               id_inoculo: "" 
           });
+
+          const hoy = new Date();
+          setFecha({ 
+            day: hoy.getDate().toString().padStart(2, '0'), 
+            month: (hoy.getMonth() + 1).toString().padStart(2, '0'), 
+            year: hoy.getFullYear().toString()
+          });
+
           setVerFormulario(false);
       }
   };
