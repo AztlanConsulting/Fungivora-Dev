@@ -30,16 +30,16 @@ class Lotes {
             return filas;
         } catch (err) {
             console.error("Error en fetch_all lotes:", err);
-            throw err; 
+            throw err;
         }
     }
 
     // Obtiene todas las categorías
-        static fetch_categorias = async () => {
-            const [filas] = await db.execute('SELECT * FROM Categorias');
-            return filas;
-        }
-    
+    static fetch_categorias = async () => {
+        const [filas] = await db.execute('SELECT * FROM Categorias');
+        return filas;
+    }
+
     // Metodo para asignar valores a la tabla de lotes
     static async crear_lote(id_lote, id_inoculo, tipo_sustrato, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase) {
         try {
@@ -56,17 +56,30 @@ class Lotes {
         }
     }
 
+    //  Metodo para actualizar la fase del lote
+    static async actualizar_fase(id_lote, nuevaFase) {
+        try {
+            return await db.execute(`
+                UPDATE Lotes 
+                SET fase = ? 
+                WHERE id_lote = ?
+            `, [nuevaFase, id_lote]);
+        } catch (err) {
+            console.error("Error en actualizar_fase model:", err);
+            throw err;
+        }
+    }
     // Metodo para encontrar los inoculos activos
     static async fetch_inoculos_disponibles() {
         try {
             const [filas] = await db.execute(`
-                SELECT 
-                    id_inoculo, 
-                    codigo_fungivora, 
+                SELECT
+                    id_inoculo,
+                    codigo_fungivora,
                     especie,
                     cantidad_disponible,
                     unidad
-                FROM Inoculos 
+                FROM Inoculos
                 WHERE cantidad_disponible > 0
                 ORDER BY fecha DESC
             `);

@@ -121,3 +121,39 @@ exports.post_crear_inoculo = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.get_especie = async (req, res) => {
+    try {
+        const { id_inoculo } = req.query;
+        const especie = await Inoculo.obtenerEspecie(id_inoculo);
+        res.status(200).json({
+            success: true,
+            data: especie
+        });
+
+    } catch (error) {
+        console.error('Error al obtener respuesta:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener la especie del inóculo'
+        });
+    }
+}
+
+exports.get_codigo_fungivora = async (req, res) => {
+    try {
+        const { id_inoculo } = req.query;
+        const codigo = await Inoculo.obtenerCodigoFungivora(id_inoculo);
+        res.status(200).json({
+            success: true,
+            data: codigo
+        });
+
+    } catch (error) {
+        console.error('Error al obtener respuesta:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener el código del inóculo'
+        });
+    }
+}

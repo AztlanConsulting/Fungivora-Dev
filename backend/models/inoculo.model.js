@@ -27,6 +27,36 @@ module.exports = class Inoculo {
         `, [especie, tipo]);
     }
 
+    // Método para obtener la especie del inóculo por su ID
+    static async obtenerEspecie(id_inoculo) {
+        try {
+            const [filas] = await db.execute(`
+                SELECT especie
+                FROM Inoculos
+                WHERE id_inoculo = ?
+            `, [id_inoculo]);
+            return filas[0]?.especie;
+        } catch (err) {
+            console.error("Error en obtenerEspecie model:", err);
+            throw err;
+        }
+    }
+
+    // Método para obtener el codigo_fungivora del inóculo por su ID
+    static async obtenerCodigoFungivora(id_inoculo) {
+        try {
+            const [filas] = await db.execute(`
+                SELECT codigo_fungivora
+                FROM Inoculos
+                WHERE id_inoculo = ?
+            `, [id_inoculo]);
+            return filas[0]?.codigo_fungivora;
+        } catch (err) {
+            console.error("Error en obtenerCodigoFungivora model:", err);
+            throw err;
+        }
+    }
+
     /**
      * @description Obtiene los inóculos disponibles para ser usados como inóculo
      *              madre en la preparación de semillas. Solo devuelve registros de

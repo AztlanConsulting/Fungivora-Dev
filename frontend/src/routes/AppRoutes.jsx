@@ -1,7 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import {
     FirstPage, Login, Usuario, Inventario,
-     RegistrarMedio, Lotes, BibliotecaGenetica
+     RegistrarMedio, Lotes,
+    Lote, BibliotecaGenetica
 } from "../pages";
 import { MainLayout, RutaProtegida } from "../shared/components/layout";
 import FormAgar from "../pages/inoculos/agar/Formagar";
@@ -28,6 +29,7 @@ export default function AppRoutes() {
 
                 {/* Ruta lotes */}
                 <Route path="/lotes" element={<Lotes />} />
+                <Route path="/lotes/detalle/:id_lote" element={<Lote />} />
 
                 {/* Rutas inventario */}
                 <Route path="/inventario" element={<Inventario />} />

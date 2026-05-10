@@ -1,5 +1,5 @@
 const Lotes = require('../models/lotes.model');
-const Categoria = require('../models/categoria.model'); 
+const Categoria = require('../models/categoria.model');
 const crypto = require('crypto');
 
 /*
@@ -11,7 +11,7 @@ Metodo que hace una llamada al modelo para obtener la info necesaria
 exports.get_batches = async (req, res) => {
     try {
         const lotes = await Lotes.fetch_all();
-        
+
         res.status(200).json({
             success: true,
             data: lotes
@@ -19,7 +19,7 @@ exports.get_batches = async (req, res) => {
 
     } catch (err) {
         console.error("Error en get_batches controller:", err);
-        
+
         res.status(500).json({
             success: false,
             message: "Hubo un error al recuperar los lotes",
@@ -86,7 +86,7 @@ exports.get_ubicaciones = async (req, res) => {
 exports.get_inoculos_activos = async (req, res) => {
     try {
         const inoculos = await Lotes.fetch_inoculos_disponibles();
-        
+
         res.status(200).json({
             success: true,
             data: inoculos
@@ -109,7 +109,7 @@ Metodo que añade la información de lotes a la tabla
 exports.post_batch = async (req, res) => {
     try {
         const { ubicacion_lote, tipo_sustrato, id_inoculo, fecha_lote } = req.body;
-        
+
         const inoculos = await Lotes.fetch_inoculos_disponibles();
         const inoculoSeleccionado = inoculos.find(i => i.id_inoculo == id_inoculo);
 
@@ -143,13 +143,13 @@ exports.post_batch = async (req, res) => {
         const fase = "Inoculación";
 
         await Lotes.crear_lote(
-            id_lote, 
+            id_lote,
             id_inoculo,
-            tipo_sustrato, 
-            codigo_fungivora, 
-            fecha_lote, 
-            ubicacion_lote, 
-            activo, 
+            tipo_sustrato,
+            codigo_fungivora,
+            fecha_lote,
+            ubicacion_lote,
+            activo,
             fase
         );
 
@@ -162,5 +162,29 @@ exports.post_batch = async (req, res) => {
     } catch (error) {
         console.error("Error en post_batch:", error);
         res.status(500).json({ success: false, error: 'Error interno' });
+    }
+};
+
+/**
+ * Actualizar Fase del Lote
+ * Permite actualizar la fase de un lote específico
+ * @param {string} id_lote - El ID del lote a actualizar
+ * @param {string} nuevaFase - La nueva fase a asignar al lote
+ */
+exports.actualizar_fase = async (req, res) => {
+    try {
+        const { id_lote, nuevaFase } = req.body;
+        await Lotes.actualizar_fase(id_lote, nuevaFase);
+
+        res.status(200).json({
+            success: true,
+            message: 'Fase del lote actualizada con éxito'
+        });
+    } catch (error) {
+        console.error("Error en actualizar_fase controller:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al actualizar la fase del lote'
+        });
     }
 };
