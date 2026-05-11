@@ -64,19 +64,20 @@ const useLotes = () => {
         return () => clearInterval(intervalo); 
     }, [fetchLotes]);
 
-    const addLote = async (nuevoLote) => {
-        try {
-            const res = await loteService.addLote(nuevoLote);
-            if (res.success) {
-                await fetchLotes(); 
-                return true;
-            }
-        } catch (err) {
-            console.error("Error al crear:", err);
+    // En useLotes.js
+const addLote = async (nuevoLote) => {
+    try {
+        const res = await loteService.addLote(nuevoLote);
+        // Si el servicio ya devuelve el json, devuélvelo tal cual
+        if (res.success) {
+            await fetchLotes();
         }
-        return false;
-    };
-
+        return res; // Devuelve el objeto completo {success: true, id: ...}
+    } catch (err) {
+        console.error("Error al crear:", err);
+        return { success: false, message: "Error de conexión" };
+    }
+};
     return { datos, sustratos, ubicaciones, especies, cargando, error, addLote, refresh: fetchLotes };
 };
 

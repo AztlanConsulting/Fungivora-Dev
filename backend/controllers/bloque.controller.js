@@ -66,7 +66,10 @@ exports.post_bloques = async (req, res) => {
     try {
         const { id_lote, produccion, peso_gr, contenedor, cantidad } = req.body;
 
-        // Validaciones básicas
+        // Validaciones estrictas
+        if (!produccion) {
+            return res.status(400).json({ success: false, message: "Debe especificar el número de producción" });
+        }
         if (!id_lote || !cantidad || cantidad <= 0) {
             return res.status(400).json({ success: false, message: "Datos incompletos o cantidad inválida" });
         }
@@ -78,7 +81,7 @@ exports.post_bloques = async (req, res) => {
             const nuevoBloque = {
                 id_bloque: crypto.randomUUID(),
                 id_lote: id_lote,
-                produccion: produccion || 1,
+                produccion: produccion, // Ya no hay default || 1
                 peso_gr: peso_gr || 0,
                 contaminado: 0,
                 contenedor: contenedor
@@ -92,7 +95,7 @@ exports.post_bloques = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: `${cantidad} bloques creados exitosamente`,
+            message: `${cantidad} bloques creados exitosamente para la producción ${produccion}`,
             ids: bloquesGenerados
         });
 
@@ -101,7 +104,6 @@ exports.post_bloques = async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 };
-
 // Auxiliar para llenar el select de contenedores en el front
 exports.get_contenedores = async (req, res) => {
     try {

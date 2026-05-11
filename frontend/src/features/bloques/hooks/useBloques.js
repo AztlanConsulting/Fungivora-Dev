@@ -7,12 +7,18 @@ const useBloques = () => {
   const [cargando, setCargando] = useState(false);
 
   useEffect(() => {
-    const cargarContenedores = async () => {
+  const cargarContenedores = async () => {
+    try {
       const data = await bloqueService.getContenedores();
-      setContenedores(data.map(c => ({ value: c.opcion, label: c.opcion })));
-    };
-    cargarContenedores();
-  }, []);
+      // Asegurar que siempre sea un array
+      const lista = Array.isArray(data) ? data : (data.data || []);
+      setContenedores(lista.map(c => ({ value: c.opcion, label: c.opcion })));
+    } catch (e) {
+      console.error("Error cargando contenedores", e);
+    }
+  };
+  cargarContenedores();
+}, []);
 
   const agregarBloqueALista = (nuevoBloque) => {
     // nuevoBloque trae: { contenedor, peso_gr, produccion, cantidad }

@@ -43,7 +43,8 @@ function Lotes() {
   const [bloqueForm, setBloqueForm] = useState({ 
     contenedor: "", 
     peso_gr: "", 
-    cantidad: "1" 
+    cantidad: "1",
+    produccion: "1" 
   });
 
   const handleNuevaFila = (campo, valor) => {
@@ -63,6 +64,19 @@ function Lotes() {
   }
 };
 
+// Añade esto cerca de handleNuevaFila
+const handleBloqueForm = (campo, valor) => {
+  if (valor && typeof valor === 'object') {
+    if ('value' in valor) {
+      setBloqueForm((prev) => ({ ...prev, [campo]: String(valor.value) }));
+    } else if (valor.target) {
+      setBloqueForm((prev) => ({ ...prev, [campo]: valor.target.value }));
+    }
+  } else {
+    setBloqueForm((prev) => ({ ...prev, [campo]: valor || "" }));
+  }
+};
+
   const irAPasoBloques = () => {
     const { ubicacion_lote, tipo_sustrato, id_inoculo } = nuevaFila;
     if (!ubicacion_lote || !tipo_sustrato || !id_inoculo) {
@@ -77,51 +91,42 @@ function Lotes() {
   };
 
 const handleFinalizarRegistroCompleto = async () => {
-  if (bloquesTemporales.length === 0) {
-    setErrorValidacion("Debes añadir al menos un bloque a la lista");
-    return;
-  }
-
   try {
-    // 1. Formateo de fecha seguro
-    const mes = fecha.month.toString().padStart(2, '0');
-    const dia = fecha.day.toString().padStart(2, '0');
-    const fechaFormateada = `${fecha.year}-${mes}-${dia}`;
+    if (bloquesTemporales.length === 0) {
+      setErrorValidacion("Añade al menos un bloque");
+      return;
+    }
 
-    // 2. LIMPIEZA EXTREMA DE DATOS (Anti-Circular Structure)
-    // Convertimos todo a primitivos (strings/numbers) para romper referencias a objetos de React
     const datosParaEnviar = {
+      // Los IDs se envían como String para respetar el formato UUID
       id_inoculo: String(nuevaFila.id_inoculo),
       tipo_sustrato: String(nuevaFila.tipo_sustrato),
       ubicacion_lote: String(nuevaFila.ubicacion_lote),
-      fecha_lote: String(fechaFormateada),
+      fecha_lote: `${fecha.year}-${fecha.month}-${fecha.day}`,
       
-      // Mapeamos los bloques asegurando que no viajen objetos complejos
+      // La producción del lote (basada en el primer bloque o general)
+      produccion: Number(bloquesTemporales[0]?.produccion) || 1, 
+
       bloques: bloquesTemporales.map(b => ({
-        // Si b.contenedor es un objeto de un Select, extraemos .value, si no, b.contenedor directamente
-        contenedor: String(b.contenedor?.value || b.contenedor || ""),
-        peso_gr: Number(b.peso_gr) || 0,
-        cantidad: Number(b.cantidad) || 1,
-        // Si tu backend espera 'produccion', lo enviamos como número (default 1)
-        produccion: Number(b.produccion) || 1 
+        contenedor: String(b.contenedor), // Texto plano
+        peso_gr: Number(b.peso_gr) || 0,   // Número
+        cantidad: Number(b.cantidad) || 1, // Número
+        produccion: Number(b.produccion) || 1 // Número
       }))
     };
 
-    // Log para depuración antes de enviar
-    console.log("Datos listos para enviar al service:", datosParaEnviar);
+    console.log("Enviando a API:", datosParaEnviar);
 
-    const exito = await addLote(datosParaEnviar); 
-
-    if (exito) {
-      setVerFormulario(false);
-      setPaso(1);
-      limpiarLista();
-      setNuevaFila({ tipo_sustrato: "", ubicacion_lote: "", id_inoculo: "" });
-      setErrorValidacion(""); // Limpiamos errores
+    const respuesta = await addLote(datosParaEnviar);
+    
+    if (respuesta && (respuesta.success || respuesta.id_lote)) {
+      window.location.reload(); 
+    } else {
+      setErrorValidacion(respuesta?.message || "Error en el servidor");
     }
   } catch (err) {
-    console.error("Error en el flujo de guardado:", err);
-    setErrorValidacion("Error al procesar los datos. Revisa la consola.");
+    console.error("Error al enviar:", err);
+    setErrorValidacion("Error de conexión con el servidor");
   }
 };
 
@@ -277,22 +282,44 @@ const handleFinalizarRegistroCompleto = async () => {
                   </div>
 
                   <div className="max-h-[400px] overflow-y-auto">
-                    {bloquesTemporales.length === 0 ? (
-                      <div className="p-10 text-center"><Text variante="label">No has añadido bloques aún.</Text></div>
-                    ) : (
-                      bloquesTemporales.map((bloque) => (
-                        <div key={bloque.id_temp} className="grid grid-cols-2 md:grid-cols-4 border-b hover:bg-slate-50 items-center" style={{ borderColor: colorBordeHeader }}>
-                          <div className="px-6 py-4"><Text variante="option">{bloque.contenedor}</Text></div>
-                          <div className="px-6 py-4"><Text variante="option">{bloque.peso_gr}g</Text></div>
-                          <div className="px-4 py-4 hidden md:block"><Text variante="option">{bloque.cantidad}</Text></div>
-                          <div className="px-6 py-4 flex justify-end">
-                            <button onClick={() => handleEliminarBloque(bloque.id_temp)} className="text-red-400 hover:text-red-600 transition-colors">
-                              <HugeiconsIcon icon={CancelCircleIcon} size={20} />
-                            </button>
-                          </div>
-                        </div>
-                      ))
-                    )}
+                    {bloquesTemporales.map((bloque) => (
+  <div key={bloque.id_temp} className="grid grid-cols-2 md:grid-cols-4 border-b hover:bg-slate-50 items-center" style={{ borderColor: colorBordeHeader }}>
+    
+    {/* CORRECCIÓN: Validamos que bloque.contenedor no sea un objeto */}
+    <div className="px-6 py-4">
+  <Text variante="option">
+    {/* Si es objeto, intentamos mostrar 'label' o 'value', si no, el string */}
+    {typeof bloque.contenedor === 'object' 
+      ? (bloque.contenedor.label || bloque.contenedor.value) 
+      : bloque.contenedor}
+  </Text>
+</div>
+
+    <div className="px-6 py-4">
+      <Text variante="option">
+        {typeof bloque.peso_gr === 'object' ? '0' : bloque.peso_gr}g
+      </Text>
+    </div>
+
+    <div className="px-4 py-4 hidden md:block">
+      <Text variante="option">
+        {typeof bloque.cantidad === 'object' ? '0' : bloque.cantidad}
+      </Text>
+    </div>
+
+    <div className="px-6 py-4 hidden md:block">
+      <span className={`px-2 py-1 rounded text-[10px] font-bold ${bloque.produccion === "1" ? "bg-green-100 text-green-700" : "bg-purple-100 text-purple-700"}`}>
+        {Number(bloque.produccion) === 1 ? "PROD" : "EXP"}
+      </span>
+    </div>
+
+    <div className="px-6 py-4 flex justify-end">
+      <button onClick={() => handleEliminarBloque(bloque.id_temp)} className="text-red-400 hover:text-red-600 transition-colors">
+        <HugeiconsIcon icon={CancelCircleIcon} size={20} />
+      </button>
+    </div>
+  </div>
+))}
                   </div>
                 </div>
               </div>
@@ -372,24 +399,37 @@ const handleFinalizarRegistroCompleto = async () => {
 
                 <div className="flex flex-col gap-5">
                   <div className="flex flex-col gap-2">
-                    <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Contenedor</Text>
-                    <SelectField 
-                      options={contenedores} 
-                      placeholder="Tipo de bolsa/frasco"
-                      onChange={(opt) => {
-                        // Validamos que opt exista y extraemos solo el valor string
-                        const valorContenedor = opt?.value || opt?.target?.value || opt;
-                        setBloqueForm({ ...bloqueForm, contenedor: String(valorContenedor) });
-                      }} 
-                    />
-                  </div>
+  <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Contenedor</Text>
+  <SelectField 
+    options={contenedores} 
+    placeholder="Tipo de bolsa/frasco"
+    size="forms"
+    value={bloqueForm.contenedor} 
+    onChange={(opcion) => handleBloqueForm("contenedor", opcion)} 
+  />
+</div>
+
+{/* FINALIDAD */}
+<div className="flex flex-col gap-2">
+  <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Finalidad del Bloque</Text>
+  <SelectField
+    placeholder="Selecciona tipo"
+    size="forms"
+    options={[
+      { value: "1", label: "Producción" },
+      { value: "0", label: "Experimental" }
+    ]}
+    value={bloqueForm.produccion}
+    onChange={(opcion) => handleBloqueForm("produccion", opcion)}
+  />
+</div>
 
                   <div className="flex gap-4">
                     <div className="flex-1 flex flex-col gap-2">
                       <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Peso (gr)</Text>
                       <input 
                         type="number" 
-                        placeholder="0"
+                        placeholder="0.0"
                         value={bloqueForm.peso_gr}
                         className="border p-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100" 
                         onChange={(e) => setBloqueForm({...bloqueForm, peso_gr: e.target.value})} 
@@ -399,18 +439,41 @@ const handleFinalizarRegistroCompleto = async () => {
                       <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Cantidad</Text>
                       <input 
                         type="number" 
-                        placeholder="1"
+                        placeholder="0"
                         value={bloqueForm.cantidad}
                         className="border p-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100" 
                         onChange={(e) => setBloqueForm({...bloqueForm, cantidad: e.target.value})} 
                       />
                     </div>
                   </div>
+<Button variant="secundario" onClick={() => {
+    // Validación simple
+    if (!bloqueForm.contenedor || !bloqueForm.peso_gr) {
+      setErrorValidacion("Selecciona un contenedor y un peso válido.");
+      return;
+    }
 
-                  <Button variant="secundario" className="w-full flex items-center justify-center gap-2" onClick={() => agregarBloqueALista(bloqueForm)}>
-                    <HugeiconsIcon icon={Add01Icon} size={18} /> Añadir a la lista
-                  </Button>
+    // Los datos YA están limpios gracias a handleBloqueForm
+    const bloqueLimpio = {
+      contenedor: bloqueForm.contenedor,
+      peso_gr: String(bloqueForm.peso_gr),
+      cantidad: String(bloqueForm.cantidad || "1"),
+      produccion: bloqueForm.produccion
+    };
 
+    agregarBloqueALista(bloqueLimpio);
+    
+    // Resetear
+    setBloqueForm({ 
+      contenedor: "", 
+      peso_gr: "", 
+      cantidad: "1", 
+      produccion: "1" 
+    });
+    setErrorValidacion("");
+}}>
+  Añadir a la lista
+</Button>
                   <hr className="my-2 border-gray-100" />
 
                   {errorValidacion && (
