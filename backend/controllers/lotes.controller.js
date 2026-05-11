@@ -113,11 +113,6 @@ exports.post_batch = async (req, res) => {
         // Aquí asumimos que viene en el cuerpo principal para el lote completo
         const { ubicacion_lote, tipo_sustrato, id_inoculo, fecha_lote, bloques, produccion } = req.body;
 
-        // Validación de producción
-        if (produccion === undefined || produccion === null) {
-    return res.status(400).json({ success: false, message: "La producción es obligatoria" });
-}
-
         const inoculos = await Lotes.fetch_inoculos_disponibles();
         const inoculoSeleccionado = inoculos.find(i => i.id_inoculo == id_inoculo);
 
@@ -165,7 +160,7 @@ exports.post_batch = async (req, res) => {
                             id_bloque: crypto.randomUUID(),
                             id_lote: id_lote,
                             // PRIORIDAD: produccion del bloque individual o la del lote general
-                            produccion: b.produccion || produccion, 
+                            produccion: (b.produccion !== undefined) ? b.produccion : produccion,
                             peso_gr: b.peso_gr || 0,
                             contaminado: 0,
                             contenedor: b.contenedor

@@ -91,31 +91,34 @@ const handleBloqueForm = (campo, valor) => {
   };
 
 const handleFinalizarRegistroCompleto = async () => {
-  try {
+try {
     if (bloquesTemporales.length === 0) {
       setErrorValidacion("Añade al menos un bloque");
       return;
     }
 
+    // Aseguramos que tomamos el valor del primer bloque como referencia para el lote
+    const produccionLote = Number(bloquesTemporales[0].produccion);
+
     const datosParaEnviar = {
-      // Los IDs se envían como String para respetar el formato UUID
       id_inoculo: String(nuevaFila.id_inoculo),
       tipo_sustrato: String(nuevaFila.tipo_sustrato),
       ubicacion_lote: String(nuevaFila.ubicacion_lote),
       fecha_lote: `${fecha.year}-${fecha.month}-${fecha.day}`,
       
-      // La producción del lote (basada en el primer bloque o general)
-      produccion: Number(bloquesTemporales[0]?.produccion) || 1, 
+      // ENVIAR EL VALOR REAL:
+      produccion: produccionLote, 
 
       bloques: bloquesTemporales.map(b => ({
-        contenedor: String(b.contenedor), // Texto plano
-        peso_gr: Number(b.peso_gr) || 0,   // Número
-        cantidad: Number(b.cantidad) || 1, // Número
-        produccion: Number(b.produccion) || 1 // Número
+        contenedor: String(b.contenedor),
+        peso_gr: Number(b.peso_gr),
+        cantidad: Number(b.cantidad),
+        // IMPORTANTE: Asegurar que sea número
+        produccion: Number(b.produccion) 
       }))
     };
 
-    console.log("Enviando a API:", datosParaEnviar);
+    console.log("DATOS REALES A ENVIAR:", datosParaEnviar);
 
     const respuesta = await addLote(datosParaEnviar);
     
