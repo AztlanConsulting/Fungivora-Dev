@@ -23,7 +23,6 @@ function Lotes() {
   ];
 
   const navigate = useNavigate();
-
   const hoy = new Date();
   const [fecha, setFecha] = useState({
     day: hoy.getDate().toString().padStart(2, '0'),
@@ -32,14 +31,31 @@ function Lotes() {
   });
 
   const { datos, sustratos, ubicaciones, especies, cargando, error, addLote } = useLotes();
-
   const [verFormulario, setVerFormulario] = useState(false);
   const [nuevaFila, setNuevaFila] = useState({ tipo_sustrato: "", ubicacion_lote: "", id_inoculo: "" });
   const [errorValidacion, setErrorValidacion] = useState("");
-
+  const [codigoPrevisualizacion, setCodigoPrevisualizacion] = useState("");
   const [paso, setPaso] = useState(1);
   const { bloquesTemporales, contenedores, agregarBloqueALista, eliminarBloqueDeLista, limpiarLista } = useBloques();
   
+
+  useEffect(() => {
+    if (paso === 2 && nuevaFila.id_inoculo) {
+      const inoculo = especies.find(e => String(e.value) === String(nuevaFila.id_inoculo));
+      if (inoculo) {
+        const dd = String(fecha.day).padStart(2, '0');
+        const mm = String(fecha.month).padStart(2, '0');
+        const yy = fecha.year.toString().slice(-2);
+        setCodigoPrevisualizacion(`LC-XX-${dd}${mm}${yy}-X`);
+      }
+    }
+  }, [paso, nuevaFila.id_inoculo, fecha, especies]);
+
+  const ESTILOS_TIPO = {
+    produccion: { bg: "#DDEEE9", text: "#23916F" }, 
+    experimental: { bg: "#E9EAFF", text: "#272CBA" } 
+  };
+
   const [bloqueForm, setBloqueForm] = useState({ 
     contenedor: "", 
     peso_gr: "", 
@@ -75,15 +91,11 @@ function Lotes() {
   const irAPasoBloques = () => {
     const { ubicacion_lote, tipo_sustrato, id_inoculo } = nuevaFila;
     if (!ubicacion_lote || !tipo_sustrato || !id_inoculo) {
-      setErrorValidacion("Por favor, completa los datos del lote");
+      setErrorValidacion("Por favor, completa los datos");
       return;
     }
     setErrorValidacion("");
     setPaso(2);
-  };
-
-  const handleEliminarBloque = (id) => {
-    eliminarBloqueDeLista(id);
   };
 
   const handleFinalizarRegistroCompleto = async () => {
@@ -143,31 +155,34 @@ function Lotes() {
 
   const colorBordeHeader = "#F2F2FC";
   const gridLayout = "grid-cols-1 md:grid-cols-[1.2fr_1fr_1.1fr_1.2fr_1fr_0.5fr]";
-  // Grid específico para que coincida con la tabla de bloques visualmente
   const gridLayoutBloques = "grid-cols-1 md:grid-cols-[1.2fr_1fr_1.2fr_1.2fr_0.5fr]";
 
   return (
     <>
 
       <Base margen_arriba="mt-20 md:mt-20">
-        <div className="lg:hidden w-full mb-6">
-          <div
-            onClick={() => setVerFormulario(!verFormulario)}
-            className={`px-7 py-3 rounded-[15px] transition-all duration-300 cursor-pointer inline-flex items-center justify-center border-2 
-              ${verFormulario ? "bg-white border-[#3b3fb6] shadow-sm" : "bg-white border-gray-200"}`}
-          >
-            <Text variante="label" style={{ color: verFormulario ? colores.azul : "#6B7280", fontWeight: "500", fontSize: "14px" }}>
-              {verFormulario ? "Ver Lotes" : "Crear lote"}
-            </Text>
-          </div>
+      {/* BOTÓN DE ALTERNANCIA (SOLO MÓVIL) */}
+      <div className="lg:hidden w-full mb-6">
+        <div
+          onClick={() => setVerFormulario(!verFormulario)}
+          className={`px-7 py-3 rounded-[15px] transition-all duration-300 cursor-pointer inline-flex items-center justify-center border-2 
+            ${verFormulario ? "bg-white border-[#3b3fb6] shadow-sm" : "bg-white border-gray-200"}`}
+        >
+          <Text variante="label" style={{ color: verFormulario ? colores.azul : "#6B7280", fontWeight: "500", fontSize: "14px" }}>
+            {verFormulario 
+              ? (paso === 1 ? "Ver Lotes" : "Ver Bloques") 
+              : (paso === 1 ? "Crear lote" : "Crear bloque")
+            }
+          </Text>
         </div>
+      </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 items-stretch">
+        <div className="flex flex-col lg:flex-row gap-8 items-stretch relative">
           <div className={`w-full bg-white rounded-[32px] shadow-sm border p-4 md:p-8 md:pl-16 min-h-[500px] ${verFormulario ? "hidden" : "block"} lg:block`}>
 
             {paso === 1 ? (
               <>
-                    <Titulo>Lotes</Titulo>
+                <Titulo>Lotes</Titulo>
                 {cargando && datos.length === 0 ? (
                   <div className="flex justify-center items-center h-[400px]"><Text variante="medium">Cargando lotes...</Text></div>
                 ) : error ? (
@@ -182,19 +197,23 @@ function Lotes() {
                       ))}
                       <div className="px-6 py-4"></div>
                     </div>
+
+                    {/* LISTA DE LOTES */}
                     <div className="max-h-[605px] md:max-h-[550px] overflow-y-auto flex flex-col gap-3 md:gap-0">
                       {datos.map((lote) => {
                         const estiloFase = obtenerEstiloFase(lote.fase);
                         const fechaFormateada = new Date(lote.fecha_lote).toLocaleDateString();
+                        
                         return (
-                          <div key={lote.id_lote}>
+                          <div key={lote.id_lote} className="w-full">
+                            {/* VISTA DESKTOP - Solo visible en md en adelante */}
                             <div
                               onClick={() => handleVerDetalle(lote)}
                               className={`hidden md:grid ${gridLayout} cursor-pointer transition-all border-b hover:bg-slate-50`}
                               style={{ borderColor: colorBordeHeader, backgroundColor: 'white' }}
                             >
                               {columnas.map((col, i) => (
-                                <div key={i} className="px-6 py-5 flex items-center justify-start">
+                                <div key={i} className="px-6 py-5 flex items-center">
                                   {col.key === 'fase' ? (
                                     <div className="px-4 py-1 rounded-lg text-sm font-semibold" style={{ backgroundColor: estiloFase.bg, color: estiloFase.text }}>
                                       {lote[col.key]}
@@ -207,7 +226,31 @@ function Lotes() {
                                 </div>
                               ))}
                               <div className="py-4 flex justify-center items-center">
-                                <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} className="hover:opacity-80 transition-opacity" />
+                                <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
+                              </div>
+                            </div>
+
+                            {/* VISTA MÓVIL - Solo visible debajo de md */}
+                            <div
+                              onClick={() => handleVerDetalle(lote)}
+                              className="md:hidden p-5 rounded-2xl border bg-white shadow-sm flex flex-col gap-4 cursor-pointer mb-4"
+                              style={{ borderColor: colorBordeHeader }}
+                            >
+                              <div className="flex justify-between items-start">
+                                <Text variante="option" style={{ color: "black", fontWeight: '500', fontSize: '18px' }}>
+                                  {lote.codigo_fungivora}
+                                </Text>
+                                <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
+                              </div>
+                              <div className="grid grid-cols-2 gap-4 border-t pt-4" style={{ borderColor: colorBordeHeader }}>
+                                <Text variante="option" style={{ color: colores.gris, fontSize: '14px' }}>{lote.tipo_sustrato}</Text>
+                                <Text variante="option" style={{ color: colores.gris, fontSize: '14px' }}>{lote.ubicacion_lote}</Text>
+                                <div>
+                                  <span className="px-2 py-0.5 rounded-md text-[12px] font-semibold" style={{ backgroundColor: estiloFase.bg, color: estiloFase.text }}>
+                                    {lote.fase}
+                                  </span>
+                                </div>
+                                <Text variante="option" style={{ color: colores.gris, fontSize: '14px' }}>{fechaFormateada}</Text>
                               </div>
                             </div>
                           </div>
@@ -218,57 +261,122 @@ function Lotes() {
                 )}
               </>
             ) : (
-              
+              /* PASO 2: LISTA DE BLOQUES */
               <div className="animate-in fade-in duration-500">
-                 <Titulo>Bloques</Titulo>
+                <div className="flex flex-col">
+                  <Titulo>Bloques: {codigoPrevisualizacion}</Titulo>
+                </div>
 
                 <div className="flex flex-col md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
                   <div className={`hidden md:grid ${gridLayoutBloques}`} style={{ backgroundColor: colorBordeHeader }}>
                     <div className="px-6 py-4"><Text variante="medium" style={{ color: colores.azul, fontSize: "16px", fontWeight: '600' }}>Tamaño</Text></div>
-                    <div className="px-6 py-4"><Text variante="medium" style={{ color: colores.azul, fontSize: "16px", fontWeight: '600' }}>Peso (g)</Text></div>
-                    <div className="px-6 py-4"><Text variante="medium" style={{ color: colores.azul, fontSize: "16px",fontWeight: '600' }}>Clasificación</Text></div>
-                    <div className="px-6 py-4"><Text variante="medium" style={{ color: colores.azul, fontSize: "16px",fontWeight: '600' }}>Cantidad</Text></div>
-                    <div className="px-6 py-4 text-center"><Text variante="medium" style={{ color: colores.azul, fontSize: "16px", fontWeight: '600' }}>Eliminar</Text></div>
+                    <div className="px-8 py-4"><Text variante="medium" style={{ color: colores.azul, fontSize: "16px", fontWeight: '600' }}>Peso (g)</Text></div>
+                    <div className="px-9 py-4"><Text variante="medium" style={{ color: colores.azul, fontSize: "16px",fontWeight: '600' }}>Clasificación</Text></div>
+                    <div className="px-12 py-4"><Text variante="medium" style={{ color: colores.azul, fontSize: "16px",fontWeight: '600' }}>Cantidad</Text></div>
+                    <div className="px-8 py-4 text-center"><Text variante="medium" style={{ color: colores.azul, fontSize: "16px", fontWeight: '600' }}>Eliminar</Text></div>
                   </div>
 
-                  <div className="max-h-[400px] overflow-y-auto">
-                    {bloquesTemporales.map((bloque) => (
-                      <div key={bloque.id_temp} className={`grid ${gridLayoutBloques} border-b hover:bg-slate-50 items-center`} style={{ borderColor: colorBordeHeader }}>
-                        <div className="px-6 py-5">
-                          <Text variante="option" style={{ color: "black", fontSize: "15px", fontWeight: '600' }}>
-                            {typeof bloque.contenedor === 'object' ? (bloque.contenedor.label || bloque.contenedor.value) : bloque.contenedor}
-                          </Text>
+                  <div className="max-h-[605px] md:max-h-[550px] overflow-y-auto flex flex-col gap-3 md:gap-0">
+                    {bloquesTemporales.map((bloque) => {
+                      const esProd = Number(bloque.produccion) === 1;
+                      const estilo = esProd ? ESTILOS_TIPO.produccion : ESTILOS_TIPO.experimental;
+                      const nombreContenedor = typeof bloque.contenedor === 'object' 
+                        ? (bloque.contenedor.label || bloque.contenedor.value) 
+                        : bloque.contenedor;
+
+                      return (
+                        <div key={bloque.id_temp} className="w-full">
+                          
+                          {/* VISTA DESKTOP (Tabla) */}
+                          <div 
+                            className={`hidden md:grid ${gridLayoutBloques} border-b hover:bg-slate-50 items-center`} 
+                            style={{ borderColor: colorBordeHeader, backgroundColor: 'white' }}
+                          >
+                            <div className="px-6 py-5">
+                              <Text variante="option" style={{ color: "black", fontSize: "15px", fontWeight: '600' }}>
+                                {nombreContenedor}
+                              </Text>
+                            </div>
+                            <div className="px-6 py-5">
+                              <Text variante="option" style={{ color: "black", fontSize: "15px", fontWeight: '400' }}>
+                                {bloque.peso_gr}g
+                              </Text>
+                            </div>
+                            <div className="px-4 py-5">
+                              <span 
+                                className="px-2 py-1 rounded-md text-[11px] font-semibold tracking-wider border"
+                                style={{ backgroundColor: estilo.bg,  color: estilo.text, borderColor: estilo.border }}
+                              >
+                                {esProd ? "Producción" : "Experimental"}
+                              </span>
+                            </div>
+                            <div className="px-6 py-5">
+                              <Text variante="option" style={{ color: "black", fontSize: "15px", fontWeight: '400' }}>
+                                {bloque.cantidad} piezas
+                              </Text>
+                            </div>
+                            <div className="px-4 py-5 flex justify-between">
+                              <button 
+                                onClick={() => handleEliminarBloque(bloque.id_temp)} 
+                                className="text-[#3b3fb6] hover:opacity-70 transition-opacity"
+                              >
+                                <HugeiconsIcon icon={CancelCircleIcon} size={24} />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* VISTA MÓVIL (Tarjetas) */}
+                          <div 
+                            className="md:hidden p-5 rounded-2xl border bg-white shadow-sm flex flex-col gap-2 mx-2 mb-1"
+                            style={{ borderColor: colorBordeHeader }}
+                          >
+                            <div className="flex justify-between items-center">
+                              <div className="flex flex-col">
+                                <Text variante="option" style={{ color: "black", fontWeight: '600', fontSize: '16px' }}>
+                                  {nombreContenedor}
+                                </Text>
+                              </div>
+                              <button 
+                                onClick={() => handleEliminarBloque(bloque.id_temp)} 
+                                className="p-2 text-[#3b3fb6]"
+                              >
+                                <HugeiconsIcon icon={CancelCircleIcon} size={24} />
+                              </button>
+                            </div>
+
+                            <div className="flex justify-between items-center border-t pt-3" style={{ borderColor: colorBordeHeader }}>
+                              <Text variante="option" style={{ color: "black", fontWeight: '400', fontSize: '14px' }}>
+                                 {bloque.peso_gr}g - {bloque.cantidad} piezas
+                              </Text>
+                              <span 
+                                className="px-3 py-1 rounded-md text-[11px] font-semibold  border"
+                                style={{ backgroundColor: estilo.bg, color: estilo.text, borderColor: estilo.border }}
+                              >
+                                {esProd ? "Producción" : "Experimental"}
+                              </span>
+                            </div>
+                          </div>
+
                         </div>
-                        <div className="px-6 py-5">
-                          <Text variante="option" style={{ color: "black", fontSize: "15px", fontWeight: '400' }}>{bloque.peso_gr}</Text>
-                        </div>
-                        <div className="px-6 py-5">
-                          <span className={`px-3 py-1 rounded-md text-[12px] font-semibold ${Number(bloque.produccion) === 1 ? "bg-[#E8F5E9] text-[#2E7D32]" : "bg-[#F3E5F5] text-[#7B1FA2]"}`}>
-                            {Number(bloque.produccion) === 1 ? "Producción" : "Experimental"}
-                          </span>
-                        </div>
-                        <div className="px-6 py-5">
-                          <Text variante="option" style={{ color: "black", fontSize: "15px", fontWeight: '400' }}>{bloque.cantidad} piezas</Text>
-                        </div>
-                        <div className="px-6 py-5 flex justify-center">
-                          <button onClick={() => handleEliminarBloque(bloque.id_temp)} className="text-[#3b3fb6] hover:opacity-70 transition-opacity">
-                            <HugeiconsIcon icon={CancelCircleIcon} size={24} />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
+                    
                     {bloquesTemporales.length === 0 && (
-                        <div className="p-10 text-center"><Text variante="label" style={{color: colores.gris}}>No hay bloques añadidos aún.</Text></div>
+                      <div className="p-10 text-center">
+                        <Text variante="label" style={{color: colores.gris}}>No hay bloques añadidos aún.</Text>
+                      </div>
                     )}
                   </div>
                 </div>
               </div>
             )}
           </div>
-
+          <div className="flex flex-col lg:w-[440px]">
           <div className={`w-full lg:w-[440px] h-fit bg-white rounded-[32px] shadow-sm border p-8 flex flex-col ${verFormulario ? "block" : "hidden"} lg:block`}>
+
             {paso === 1 ? (
               <div className="flex flex-col gap-5">
+                <Titulo>Lotes</Titulo>
                 <div className="mb-3">
                   <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "22px" }}>Crear Lote</Text>
                 </div>
@@ -295,6 +403,7 @@ function Lotes() {
               </div>
             ) : (
               <div className="flex flex-col gap-5">
+                <Titulo>Bloques: {codigoPrevisualizacion}</Titulo>
                 <div className="mb-3 flex justify-between items-center">
                   <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "22px" }}>Crear Bloques</Text>
               </div>
@@ -320,33 +429,56 @@ function Lotes() {
                 </div>
                 {errorValidacion && <div className="text-center"><Text variante="label" style={{ color: "#E53E3E", fontWeight: "600" }}>{errorValidacion}</Text></div>}
                 <div className="flex justify-center pt-4">
-                  <Button variant="primario" size="lg" className="w-full" onClick={() => {
+                  <Button variant="cancelar" size="lg" className="w-full" onClick={() => {
                     if (!bloqueForm.contenedor || !bloqueForm.peso_gr) {
                       setErrorValidacion("Completa los campos del bloque");
                       return;
                     }
                     agregarBloqueALista({ ...bloqueForm });
-                    setBloqueForm({ contenedor: "", peso_gr: "", cantidad: "1", produccion: "1" });
+                    setBloqueForm({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
                     setErrorValidacion("");
                   }}>
                     Crear Bloque
-                  </Button>
-                  
-                 
+                  </Button>         
                 </div>
-
-                  <div className="flex gap-3 pt-4">
-                    <Button variant="cancelar" className="flex-1" onClick={() => setPaso(1)}>Cancelar</Button>
-                    <Button variant="registrar" className="flex-1" onClick={handleFinalizarRegistroCompleto}>Registrar</Button>
-                  </div>
               </div>
-              
+                            
             )}
-
-            
           </div>
-           
-        </div>
+              {/* BOTONES DE ACCIÓN FINAL (FUERA DEL CUADRO BLANCO) */}
+              {paso === 2 && (
+                <div 
+                  className={`
+                    flex flex-col md:flex-row 
+                    gap-4 mt-8 
+                    items-center md:justify-end 
+                    ${verFormulario ? "flex" : "hidden"} lg:flex
+                  `}
+                >
+                  {/* Botón Registrar: En móvil aparece arriba por defecto o con order-1 */}
+                  <div className="order-1 md:order-2">
+                    <Button 
+                      variant="registrar"
+                      onClick={handleFinalizarRegistroCompleto}
+                    >
+                      Registrar
+                    </Button> 
+                  </div>
+
+                  {/* Botón Cancelar: En móvil abajo (order-2), en desktop a la izquierda de registrar (order-1) */}
+                  <div className="order-2 md:order-1">
+                    <Button 
+                      variant="eliminar" 
+                      isOutline={true}
+                      onClick={() => setPaso(1)}
+                    >
+                      Cancelar
+                    </Button> 
+                  </div>
+                </div>
+              )}
+            </div> 
+        </div>  
       </Base>
     </>
   );
