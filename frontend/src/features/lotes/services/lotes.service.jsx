@@ -34,6 +34,17 @@ const loteService = {
     }
   },
 
+   getEspecies: async () => {
+    try {
+      const res = await fetch("/api/lotes/especies"); // Ruta de especies
+      if (!res.ok) throw new Error("Error al obtener especies");
+      return await res.json();
+    } catch (error) {
+      console.error("Error en getEspecies:", error);
+      return [];
+    }
+  },
+
   addLote: async (datosLote) => {
       try {
         // Ruta para crear

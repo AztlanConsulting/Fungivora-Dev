@@ -3,21 +3,21 @@ import React, { useState } from "react";
 import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
 import useEspecies from "../../../features/inoculos/hooks/useEspecies";
 import Titulo from "../../../shared/components/ui/basics/titulo";
-
+import SeleccionarInoculo from "../../../features/crear_inoculos/components/seleccionarInoculo"
 
 const FormAgar = () => {
   const [especie, setEspecie] = useState("");
   const { especies, loading, error } = useEspecies();
- 
+
   const opcionesEspecies = especies.map((esp) => ({
     value: esp.especie,
     label: esp.especie,
   }));
- 
+
   return (
     <div className="pt-24 px-8 md:px-12">
       <Titulo>Crear Inóculo — Agar</Titulo>
- 
+
       <SelectField
         value={especie}
         onChange={(e) => setEspecie(e.target.value)}
@@ -27,6 +27,9 @@ const FormAgar = () => {
         error={error}
         label="Especie"
       />
+
+      {/* Aquí usamos el componente SeleccionarInoculo */}
+      <SeleccionarInoculo />
     </div>
   );
 };

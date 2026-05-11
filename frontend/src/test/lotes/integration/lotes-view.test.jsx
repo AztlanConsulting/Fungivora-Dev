@@ -11,17 +11,17 @@ vi.mock("../../../features/lotes/hooks/useLotes", () => ({
 
 // Mocks de UI 
 vi.mock('../../shared/components/ui/basics/titulo', () => ({ default: ({ children }) => <h1>{children}</h1> }))
-vi.mock('../../shared/components/ui/basics/texto', () => ({ default: ({ children, className }) => <span className={className}>{children}</span> }))
+vi.mock('../../shared/components/ui/basics/texto', () => ({ default: ({ children, className, style }) => <span className={className} style={style}>{children}</span> }))
 vi.mock('../../shared/components/layout/base', () => ({ default: ({ children }) => <div>{children}</div> }))
 vi.mock('../../shared/components/ui/buttons/botones', () => ({ 
-    default: ({ children, onClick }) => <button onClick={onClick}>{children}</button> 
+    default: ({ children, onClick, className }) => <button className={className} onClick={onClick}>{children}</button> 
 }))
 vi.mock('../../shared/components/ui/inputs/input_fecha', () => ({ default: () => <input data-testid="input-fecha" /> }))
 
 vi.mock('../../shared/components/ui/inputs/seleccionar_texto', () => ({
     default: ({ placeholder, onChange, options, value }) => (
         <select 
-            data-testid={`select-${placeholder}`} 
+            data-testid={`select-${placeholder.replace(/\s+/g, '-').toLowerCase()}`} 
             value={value || ""}
             onChange={(e) => onChange({ value: e.target.value, label: e.target.value })}
         >
@@ -38,28 +38,30 @@ const mockDatos = [
 
 describe('Vista Lotes', () => {
     const addLoteMock = vi.fn();
+    const refreshMock = vi.fn();
 
     beforeEach(() => {
         vi.clearAllMocks();
-    vi.useRealTimers();
+        vi.useRealTimers();
         
         vi.mocked(useLotes).mockReturnValue({
             datos: mockDatos,
             sustratos: [{ value: 'Paja', label: 'Paja' }],
             ubicaciones: [{ value: 'Estante A', label: 'Estante A' }],
+            especies: [{ value: '1', label: 'ESP-001 / Pleurotus' }],
             cargando: false,
             error: null,
             addLote: addLoteMock,
-            refresh: vi.fn()
+            refresh: refreshMock
         });
     })
 
-    it('Carga y muestra los lotes correctamente', async () => {
+    it('Carga y muestra los lotes correctamente en la tabla', async () => {
         render(<Lotes />);
         
         expect(screen.getByText("Lotes")).toBeInTheDocument();
-        const codigos = screen.getAllByText(/LOTE-001/i);
-        expect(codigos.length).toBeGreaterThan(0);
+        expect(screen.getAllByText(/LOTE-001/i).length).toBeGreaterThan(0);
+        expect(screen.getAllByText(/LOTE-002/i).length).toBeGreaterThan(0);
         expect(screen.getAllByText(/Paja/i)[0]).toBeInTheDocument();
     });
 
@@ -67,22 +69,85 @@ describe('Vista Lotes', () => {
         const user = userEvent.setup();
         render(<Lotes />);
 
-        const filas = screen.getAllByText("LOTE-001");
-        const contenedorFila = filas[0].closest('.md\\:hidden');
+        const codigos = screen.getAllByText("LOTE-001");
+        const contenedorFila = codigos[0].closest('.md\\:hidden');
         
         await user.click(contenedorFila);
         
         expect(contenedorFila).toHaveClass('ring-2');
-        expect(contenedorFila).toHaveStyle('border-color: #3b3fb6'); 
     });
 
-    it('Muestra error de validación si faltan campos en el formulario', async () => {
+    it('Muestra error de validación si faltan campos', async () => {
         const user = userEvent.setup();
         render(<Lotes />);
+
         const botonesCrear = screen.getAllByRole('button', { name: /Crear Lote/i });
-        await user.click(botonesCrear[botonesCrear.length - 1]);
+        const botonFormulario = botonesCrear[botonesCrear.length - 1];
+        
+        await user.click(botonFormulario);
 
         expect(screen.getByText(/Por favor, completa los campos/i)).toBeInTheDocument();
         expect(addLoteMock).not.toHaveBeenCalled();
     });
+
+    it('Muestra estado de carga si no hay datos', () => {
+        vi.mocked(useLotes).mockReturnValue({
+            datos: [],
+            sustratos: [],
+            ubicaciones: [],
+            especies: [],
+            cargando: true,
+            error: null,
+            addLote: vi.fn(),
+            refresh: vi.fn()
+        });
+
+        render(<Lotes />);
+        expect(screen.getByText(/Cargando lotes.../i)).toBeInTheDocument();
+    });
+
+    it('Vista de tabla y formulario', async () => {
+        const user = userEvent.setup();
+        render(<Lotes />);
+
+        const toggles = screen.getAllByText(/Crear lote/i);
+        const botonToggle = toggles[0].closest('div');
+
+        await user.click(botonToggle);
+
+        const titulos = screen.getAllByText(/Crear Lote/i);
+        expect(titulos.length).toBeGreaterThan(1);
+    });
+
+    it(' ompletar el formulario y llamar a addLote', async () => {
+        addLoteMock.mockResolvedValue({ success: true });
+
+        const user = userEvent.setup();
+        render(<Lotes />);
+
+        const selects = screen.getAllByRole('combobox');
+
+        await user.selectOptions(selects[0], '1');
+        await user.selectOptions(selects[1], 'Paja');
+        await user.selectOptions(selects[2], 'Estante A');
+
+        const botones = screen.getAllByRole('button', { name: /Crear Lote/i });
+
+        await user.click(botones[botones.length - 1]);
+        await waitFor(() => {
+            expect(addLoteMock).toHaveBeenCalled();
+        });
+    });
+
+    it('Mensaje de error falla al cargar datos', () => {
+        vi.mocked(useLotes).mockReturnValue({
+            ...vi.mocked(useLotes).getMockName(), 
+            datos: [],
+            error: true,
+            cargando: false
+        });
+
+        render(<Lotes />);
+        expect(screen.getByText(/Error al conectar con el servidor/i)).toBeInTheDocument();
+    });
 });

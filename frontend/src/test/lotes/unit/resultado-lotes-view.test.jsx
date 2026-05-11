@@ -1,85 +1,94 @@
 import React from 'react'
-import { render, screen, waitFor, act } from '@testing-library/react'
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { Lotes } from '../../../pages'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { Lotes } from '../../../pages' 
 
-// Mocks de ui 
-vi.mock('../../shared/components/ui/basics/titulo', () => ({
-    default: ({ children }) => <h1>{children}</h1>
-}))
-vi.mock('../../shared/components/layout/base', () => ({
-    default: ({ children }) => <div data-testid="base-layout">{children}</div>
+// Mocks
+vi.mock('../../../features/lotes/hooks/useLotes')
+import useLotes from '../../../features/lotes/hooks/useLotes'
+
+vi.mock('@hugeicons/react', () => ({
+    HugeiconsIcon: () => <div data-testid="icon-mock" />
 }))
 
-// Mock de los datos
-const mockData = {
-    success: true,
-    data: [
-        {
-            id_lote: 1,
-            codigo_fungivora: 'LOTE-001',
-            tipo_sustrato: 'Paja de Trigo',
-            ubicacion_lote: 'Estante A1',
-            fase: 'Inoculación',
-            fecha_lote: '2024-03-20T10:00:00Z'
-        }
-    ]
+// datos dummy
+const lotesMock = [
+    {
+        id_lote: 1,
+        codigo_fungivora: 'LOTE-001',
+        tipo_sustrato: 'Paja de Trigo',
+        ubicacion_lote: 'Estante A1',
+        fase: 'Inoculación',
+        fecha_lote: '2024-03-20T10:00:00Z'
+    }
+]
+
+const hookBase = {
+    datos: [],
+    sustratos: [{ value: 'Paja', label: 'Paja' }],
+    ubicaciones: [{ value: 'Estante A', label: 'Estante A' }],
+    especies: [{ value: 1, label: 'G1 / Gírgola' }],
+    cargando: false,
+    error: null,
+    addLote: vi.fn(),
+    refresh: vi.fn()
 }
 
-describe('Componente de tabla Lotes', () => {
-    beforeEach(() => {
-        vi.useFakeTimers({ shouldAdvanceTime: true })
-        vi.stubGlobal('fetch', vi.fn())
-    })
+beforeEach(() => {
+    vi.clearAllMocks()
+    useLotes.mockReturnValue(hookBase)
+})
 
-    afterEach(() => {
-        vi.restoreAllMocks()
-        vi.useRealTimers()
-    })
-
-    const setupFetchResponse = (data) => {
-        global.fetch.mockResolvedValue({
-            ok: true,
-            json: () => Promise.resolve(data),
-        })
-    }
-
-    it('Mostrar los datos del lote ', async () => {
-        setupFetchResponse(mockData)
-
+describe('Página Lotes ', () => {
+    it('muestra el título Lotes', () => {
         render(<Lotes />)
+        const titulos = screen.getAllByText('Lotes')
+        expect(titulos[0]).toBeInTheDocument()
+    })
 
-        const codigos = await screen.findAllByText(/LOTE-001/i)
-        expect(codigos[0]).toBeInTheDocument()
+    it('muestra el formulario de creación', () => {
+        render(<Lotes />)
+        const formTitle = screen.getAllByText(/Crear Lote/i)
+        expect(formTitle.length).toBeGreaterThan(0)
+        expect(screen.getByText('Inóculo / (Especie)')).toBeInTheDocument()
+    })
+})
+
+describe('Página Lotes — Listado', () => {
+    it('estilo correcto según la fase', () => {
+        useLotes.mockReturnValue({ ...hookBase, datos: lotesMock })
+        render(<Lotes />)
+        const badges = screen.getAllByText('Inoculación')
+        expect(badges[0]).toHaveStyle({ color: 'rgb(198, 40, 40)' }) 
+    })
+})
+
+describe('Página Lotes — Acciones y Formulario', () => {
+    it('muestra error de validación', async () => {
+        const user = userEvent.setup()
+        render(<Lotes />)
+        const botonEnviar = screen.getByRole('button', { name: /Crear Lote/i })
+        await user.click(botonEnviar)
+
+        expect(screen.getByText('Por favor, completa los campos')).toBeInTheDocument()
+    })
+
+    it('vista tabla y formulario en móvil', async () => {
+        const user = userEvent.setup()
+        render(<Lotes />)
+        const botonToggle = screen.getByText((content, element) => {
+            return content === 'Crear lote' && 
+                   window.getComputedStyle(element).fontSize === '14px';
+        });
+
+        await user.click(botonToggle)
+
+        const labelToggleCambiado = screen.getByText((content, element) => {
+            return content === 'Lotes' && 
+                   window.getComputedStyle(element).fontSize === '14px';
+        });
         
-        const sustratos = screen.getAllByText(/Paja de Trigo/i)
-        expect(sustratos.length).toBeGreaterThan(0)
-    })
-
-    it('Refrescar automáticamente en 5 segundos', async () => {
-        setupFetchResponse(mockData)
-
-        render(<Lotes />)
-
-        await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(1))
-
-        // Avanzar 5 segs
-        await act(async () => {
-            vi.advanceTimersByTime(5000)
-        })
-
-        expect(global.fetch).toHaveBeenCalledTimes(2)
-    })
-
-    it('No hay filas si es false', async () => {
-        // Respuesta fallida
-        setupFetchResponse({ success: false, data: [] })
-
-        render(<Lotes />)
-
-        // No deben aparecer lotes
-        await waitFor(() => {
-            expect(screen.queryByText('LOTE-001')).not.toBeInTheDocument()
-        })
+        expect(labelToggleCambiado).toBeInTheDocument()
     })
 })

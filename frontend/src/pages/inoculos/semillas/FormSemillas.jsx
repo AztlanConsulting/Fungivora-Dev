@@ -1,30 +1,36 @@
 // frontend/src/pages/inoculos/semillas/FormSemilla.jsx
 import React, { useState } from "react";
-import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
-import useEspecies from "../../../features/inoculos/hooks/useEspecies";
+import SelectEspecie from "../../../features/inoculos/components/selecionar_especie";
+import SelectInoculo from "../../../features/inoculos/components/selecionar_inoculo";
 import Titulo from "../../../shared/components/ui/basics/titulo";
 
 const FormSemilla = () => {
   const [especie, setEspecie] = useState("");
-  const { especies, loading, error } = useEspecies();
+  const [inoculoId, setInoculoId] = useState("");
+  const [inoculoRaw, setInoculoRaw] = useState(null);
 
-  const opcionesEspecies = especies.map((esp) => ({
-    value: esp.especie,
-    label: esp.especie,
-  }));
+  const handleEspecieChange = (e) => {
+    setEspecie(e.target.value);
+    // Resetea el inóculo si cambia la especie
+    setInoculoId("");
+    setInoculoRaw(null);
+  };
 
   return (
     <div>
-      <Titulo>Crear Inóculo — Semilla</Titulo>
 
-      <SelectField
+      {/* Campo especie — usa SelectEspecie que maneja su propio fetch */}
+      <SelectEspecie
         value={especie}
-        onChange={(e) => setEspecie(e.target.value)}
-        placeholder="Selecciona una especie..."
-        options={opcionesEspecies}
-        loading={loading}
-        error={error}
-        label="Especie"
+        onChange={handleEspecieChange}
+      />
+
+      {/* Campo inóculo — se filtra automáticamente por la especie elegida */}
+      <SelectInoculo
+        especie={especie}
+        value={inoculoId}
+        onChange={(e) => setInoculoId(e.target.value)}
+        onRawChange={(raw) => setInoculoRaw(raw)}
       />
     </div>
   );

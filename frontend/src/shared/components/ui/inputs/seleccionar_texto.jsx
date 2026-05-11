@@ -1,4 +1,4 @@
-
+// frontend/src/shared/components/ui/inputs/seleccionar_texto.jsx
 import React from "react";
 import { colores } from "../basics/colores";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -13,6 +13,7 @@ const SelectField = ({
   loading = false,
   error = null,
   label = null,
+  disabled = false,
 }) => {
   const sizes = {
     forms: "w-80 md:w-[24rem]",
@@ -21,7 +22,7 @@ const SelectField = ({
     numero: "w-28 md:w-36",
   };
 
-  const textColor = value ? colores.gris : colores.gris;
+  const textColor = colores.gris;
 
   const clase = `${sizes[size]}
     border-2
@@ -36,6 +37,9 @@ const SelectField = ({
     : error
       ? error
       : placeholder;
+
+  // disabled es true si se recibe por prop O si está cargando
+  const isDisabled = disabled || loading;
 
   return (
     <div className="flex flex-col gap-2">
@@ -57,12 +61,13 @@ const SelectField = ({
             borderColor: colores.grisClaro,
             fontStyle: "italic",
           }}
-          disabled={loading}
+          disabled={isDisabled}
         >
           <option value="" disabled hidden>
             {placeholderText}
           </option>
 
+          {/* Se usa index en el key para evitar warnings con valores duplicados */}
           {options.map((op, index) => (
             <option key={`${op.value}-${index}`} value={op.value}>
               {op.label}
