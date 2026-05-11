@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react';
 import { LoteService } from '../services/lote.service';
 
-const useDetalleLote = (id_lote, id_inoculo_usado) => {
+const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
     const [bloques, setBloques] = useState([]);
     const [especie, setEspecie] = useState("");
     const [codigoInoculo, setCodigoInoculo] = useState("");
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
+    const fases = [
+        { label: "Inoculación" }, { label: "Colonización" }, { label: "Fructificación" },
+        { label: "Cosecha 1" }, { label: "Cosecha 2" }, { label: "Finalización" },
+    ];
+    const faseNum = fases.findIndex(f => f.label === faseInicial);
+    const [fase, setFase] = useState(faseNum !== -1 ? faseNum : 0);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -31,17 +37,18 @@ const useDetalleLote = (id_lote, id_inoculo_usado) => {
         fetchData();
     }, [id_lote, id_inoculo_usado]);
 
-    const guardarCambios = async (bloquesActualizados) => {
+    const guardarCambios = async (bloquesActualizados, nuevaFase) => {
         try {
+            const fase = fases[nuevaFase] ? fases[nuevaFase].label : "Inoculación";
+            await LoteService.updateFaseLote(id_lote, nuevaFase);
             await LoteService.updateBloquesMasivo(bloquesActualizados);
-            setBloques(bloquesActualizados);
             return { success: true };
         } catch (err) {
             return { success: false, error: err.message };
         }
     };
 
-    return { bloques, setBloques, especie, codigoInoculo, cargando, error, guardarCambios };
+    return { bloques, setBloques, fase, setFase, especie, codigoInoculo, cargando, error, guardarCambios, fases };
 };
 
 export default useDetalleLote;

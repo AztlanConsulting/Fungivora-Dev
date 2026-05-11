@@ -12,15 +12,16 @@ const DetalleLote = () => {
     const { id_lote } = useParams();
     const { state } = useLocation();
 
-    const { bloques, setBloques, especie, codigoInoculo, cargando, error, guardarCambios } = useDetalleLote(
+    const { bloques, setBloques, fase, setFase, especie, codigoInoculo, cargando, error, guardarCambios, fases } = useDetalleLote(
         id_lote,
-        state?.id_inoculo_usado
+        state?.id_inoculo_usado,
+        state?.fase
     );
 
-    const [fase, setFase] = useState(state?.fase || "Inoculación");
     const [busqueda, setBusqueda] = useState("");
     const [editado, setEditado] = useState(false);
 
+    // Cambio local de bloques contaminados
     const handleLocalToggleContaminado = (id_bloque) => {
         const nuevosBloques = bloques.map(bloque => {
             if (bloque.id_bloque === id_bloque) {
@@ -35,8 +36,14 @@ const DetalleLote = () => {
         setEditado(true);
     };
 
+    // Cambio local de fase
+    const handleLocalChangeFase = (nuevaFase) => {
+        setFase(nuevaFase);
+        setEditado(true);
+    }
+
     const onGuardar = async () => {
-        const resultado = await guardarCambios(bloques);
+        const resultado = await guardarCambios(bloques, fase);
         if (resultado.success) {
             setEditado(false);
             alert("Cambios sincronizados con éxito.");
@@ -45,10 +52,6 @@ const DetalleLote = () => {
         }
     };
 
-    const fases = [
-        { label: "Inoculación" }, { label: "Colonización" }, { label: "Fructificación" },
-        { label: "Cosecha 1" }, { label: "Cosecha 2" }, { label: "Finalización" },
-    ];
 
     const loteData = {
         fecha: state?.fecha ? new Date(state.fecha).toLocaleDateString('es-MX', {
@@ -84,7 +87,8 @@ const DetalleLote = () => {
                     }}
                 >
                     <Text variante='button' style={{ color: colores.azul }}>
-                        Guardar Cambios
+                        <span className="md:hidden">Guardar</span>
+                        <span className="hidden md:inline">Guardar Cambios</span>
                     </Text>
                 </button>
             )}
@@ -96,7 +100,7 @@ const DetalleLote = () => {
                     <SeccionFaseBuscar
                         fases={fases}
                         fase={fase}
-                        setFase={setFase}
+                        setFase={handleLocalChangeFase}
                         busqueda={busqueda}
                         setBusqueda={setBusqueda}
                     />
