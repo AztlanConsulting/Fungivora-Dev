@@ -1,4 +1,6 @@
 const Bloque = require('../models/bloque.model');
+const Categoria = require('../models/categoria.model');
+const crypto = require('crypto');
 
 /**
  * get_bloques_por_lote
@@ -58,3 +60,54 @@ exports.toggle_contaminado = async (req, res) => {
         });
     }
 }
+
+
+exports.post_bloques = async (req, res) => {
+    try {
+        const { id_lote, produccion, peso_gr, contenedor, cantidad } = req.body;
+
+        // Validaciones básicas
+        if (!id_lote || !cantidad || cantidad <= 0) {
+            return res.status(400).json({ success: false, message: "Datos incompletos o cantidad inválida" });
+        }
+
+        const promesas = [];
+        const bloquesGenerados = [];
+
+        for (let i = 0; i < cantidad; i++) {
+            const nuevoBloque = {
+                id_bloque: crypto.randomUUID(),
+                id_lote: id_lote,
+                produccion: produccion || 1,
+                peso_gr: peso_gr || 0,
+                contaminado: 0,
+                contenedor: contenedor
+            };
+            
+            bloquesGenerados.push(nuevoBloque.id_bloque);
+            promesas.push(Bloque.crear_bloque(nuevoBloque));
+        }
+
+        await Promise.all(promesas);
+
+        res.status(201).json({
+            success: true,
+            message: `${cantidad} bloques creados exitosamente`,
+            ids: bloquesGenerados
+        });
+
+    } catch (err) {
+        console.error("Error en post_bloques controller:", err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+// Auxiliar para llenar el select de contenedores en el front
+exports.get_contenedores = async (req, res) => {
+    try {
+        const [contenedores] = await Categoria.fetchOpciones('Contenedor', false);
+        res.status(200).json(contenedores);
+    } catch (error) {
+        res.status(500).json({ success: false, error: 'Error al obtener contenedores' });
+    }
+};

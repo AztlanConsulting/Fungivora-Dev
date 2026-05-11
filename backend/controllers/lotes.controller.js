@@ -1,5 +1,6 @@
 const Lotes = require('../models/lotes.model');
 const Categoria = require('../models/categoria.model');
+const Bloque = require('../models/bloque.model');
 const crypto = require('crypto');
 
 /*
@@ -108,7 +109,8 @@ Metodo que añade la información de lotes a la tabla
 */
 exports.post_batch = async (req, res) => {
     try {
-        const { ubicacion_lote, tipo_sustrato, id_inoculo, fecha_lote } = req.body;
+        // 1. Recibimos también el array de 'bloques' desde el body
+        const { ubicacion_lote, tipo_sustrato, id_inoculo, fecha_lote, bloques } = req.body;
 
         const inoculos = await Lotes.fetch_inoculos_disponibles();
         const inoculoSeleccionado = inoculos.find(i => i.id_inoculo == id_inoculo);
@@ -121,27 +123,23 @@ exports.post_batch = async (req, res) => {
         const [abreviaturaResult] = await Categoria.fetchAbreviaturaPorNombre(inoculoSeleccionado.especie);
         const abreviatura = abreviaturaResult[0].abreviatura_opcion;
 
-        // Formato de la fecha
+        // Formato de la fecha para el código
         const fechaParaCodigo = new Date(fecha_lote);
         const dd = String(fechaParaCodigo.getUTCDate()).padStart(2, '0');
         const mm = String(fechaParaCodigo.getUTCMonth() + 1).padStart(2, '0');
         const yy = fechaParaCodigo.getUTCFullYear().toString().slice(-2);
         const fechaStr = `${dd}${mm}${yy}`;
 
-        // Formato del código
         const prefijoBase = `LC-${abreviatura}-${fechaStr}`;
-
-        // Contador para el último número
         const cantidadGrupo = await Lotes.count_lotes_similares(prefijoBase);
         const nuevoNumero = cantidadGrupo + 1;
-
-        // Código final
         const codigo_fungivora = `${prefijoBase}-${nuevoNumero}`;
 
         const id_lote = crypto.randomUUID();
         const activo = 1;
         const fase = "Inoculación";
 
+        // 2. CREAR EL LOTE
         await Lotes.crear_lote(
             id_lote,
             id_inoculo,
@@ -153,15 +151,42 @@ exports.post_batch = async (req, res) => {
             fase
         );
 
+        // 3. CREAR LOS BLOQUES ASOCIADOS (Si existen)
+        if (bloques && Array.isArray(bloques)) {
+            const promesasBloques = [];
+
+            for (const b of bloques) {
+                // Iteramos según la 'cantidad' que el usuario puso en esa fila
+                const numBloques = Number(b.cantidad) || 1;
+                
+                for (let i = 0; i < numBloques; i++) {
+                    promesasBloques.push(
+                        Bloque.crear_bloque({
+                            id_bloque: crypto.randomUUID(),
+                            id_lote: id_lote, // Usamos el ID que acabamos de generar arriba
+                            produccion: b.produccion || 1,
+                            peso_gr: b.peso_gr || 0,
+                            contaminado: 0,
+                            contenedor: b.contenedor
+                        })
+                    );
+                }
+            }
+
+            // Esperamos a que todos los bloques se inserten
+            await Promise.all(promesasBloques);
+        }
+
         res.status(201).json({
             success: true,
+            message: "Lote y bloques creados exitosamente",
             codigo: codigo_fungivora,
             id: id_lote
         });
 
     } catch (error) {
         console.error("Error en post_batch:", error);
-        res.status(500).json({ success: false, error: 'Error interno' });
+        res.status(500).json({ success: false, error: 'Error interno al crear el lote y sus bloques' });
     }
 };
 

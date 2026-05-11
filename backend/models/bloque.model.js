@@ -44,6 +44,21 @@ class Bloque {
             throw err;
         }
     }
+
+    static async crear_bloque(nuevoBloque) {
+        try {
+            const { id_bloque, id_lote, produccion, peso_gr, contaminado, contenedor } = nuevoBloque;
+            return await db.execute(`
+                INSERT INTO Bloques (
+                    id_bloque, id_lote, produccion, peso_gr, contaminado, contenedor
+                ) 
+                VALUES (?, ?, ?, ?, ?, ?)
+            `, [id_bloque, id_lote, produccion, peso_gr, contaminado, contenedor]);
+        } catch (err) {
+            console.error("Error en crear_bloque model:", err);
+            throw err;
+        }
+    }
 }
 
 module.exports = Bloque;
