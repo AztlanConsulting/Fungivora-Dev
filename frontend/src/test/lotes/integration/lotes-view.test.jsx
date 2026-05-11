@@ -105,4 +105,49 @@ describe('Vista Lotes', () => {
         render(<Lotes />);
         expect(screen.getByText(/Cargando lotes.../i)).toBeInTheDocument();
     });
+
+    it('Vista de tabla y formulario', async () => {
+        const user = userEvent.setup();
+        render(<Lotes />);
+
+        const toggles = screen.getAllByText(/Crear lote/i);
+        const botonToggle = toggles[0].closest('div');
+
+        await user.click(botonToggle);
+
+        const titulos = screen.getAllByText(/Crear Lote/i);
+        expect(titulos.length).toBeGreaterThan(1);
+    });
+
+    it(' ompletar el formulario y llamar a addLote', async () => {
+        addLoteMock.mockResolvedValue({ success: true });
+
+        const user = userEvent.setup();
+        render(<Lotes />);
+
+        const selects = screen.getAllByRole('combobox');
+
+        await user.selectOptions(selects[0], '1');
+        await user.selectOptions(selects[1], 'Paja');
+        await user.selectOptions(selects[2], 'Estante A');
+
+        const botones = screen.getAllByRole('button', { name: /Crear Lote/i });
+
+        await user.click(botones[botones.length - 1]);
+        await waitFor(() => {
+            expect(addLoteMock).toHaveBeenCalled();
+        });
+    });
+
+    it('Mensaje de error falla al cargar datos', () => {
+        vi.mocked(useLotes).mockReturnValue({
+            ...vi.mocked(useLotes).getMockName(), 
+            datos: [],
+            error: true,
+            cargando: false
+        });
+
+        render(<Lotes />);
+        expect(screen.getByText(/Error al conectar con el servidor/i)).toBeInTheDocument();
+    });
 });
