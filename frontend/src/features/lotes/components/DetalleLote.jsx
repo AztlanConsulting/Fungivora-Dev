@@ -12,9 +12,9 @@ const DetalleLote = () => {
     const { id_lote } = useParams();
     const { state } = useLocation();
 
-    const { bloques, setBloques, especie, codigoInoculo, cargando, error, guardarCambios } = useDetalleLote(
+    const { bloques, setBloques, especie, codigoInoculo, codigoLoteBD, cargando, error, guardarCambios } = useDetalleLote(
         id_lote,
-        state?.id_inoculo_usado
+        state?.id_inoculo
     );
 
     const [fase, setFase] = useState(state?.fase || "Inoculación");
@@ -50,13 +50,14 @@ const DetalleLote = () => {
         { label: "Cosecha 1" }, { label: "Cosecha 2" }, { label: "Finalización" },
     ];
 
-    const loteData = {
-        fecha: state?.fecha ? new Date(state.fecha).toLocaleDateString('es-MX', {
-            day: '2-digit', month: 'long', year: 'numeric'
-        }) : 'Sin fecha',
+   const loteData = {
+        fecha: state?.fecha_lote 
+            ? new Date(state.fecha_lote).toLocaleDateString('es-MX', {
+                day: '2-digit', month: 'long', year: 'numeric'
+            }) : 'Sin fecha',
         especie: cargando ? 'Cargando...' : especie || 'S/N',
-        sustrato: state?.sustrato || 'No especificado',
-        ubicacion: state?.ubicacion || 'Sin ubicación',
+        sustrato: state?.tipo_sustrato || 'No especificado',
+        ubicacion: state?.ubicacion_lote || 'Sin ubicación', 
         inoculo: cargando ? 'Cargando...' : codigoInoculo || 'S/N'
     };
 
@@ -65,9 +66,12 @@ const DetalleLote = () => {
         b.contenedor?.toLowerCase().includes(busqueda.toLowerCase())
     ) || [];
 
+// Cambia el orden de prioridad para que use el código de la lista anterior primero
+const codigoParaTabla = state?.codigo_fungivora || codigoLoteBD || "";
+
     return (
         <>
-            <Titulo>Lote: {state?.codigo || 'Detalle'}</Titulo>
+            <Titulo>Lote: {state?.codigo_fungivora || 'Detalle'}</Titulo>
 
             {editado && (
                 <button
@@ -110,7 +114,7 @@ const DetalleLote = () => {
                             bloques={bloquesFiltrados}
                             loading={cargando}
                             onToggleContaminado={handleLocalToggleContaminado}
-                            codigo_lote={state?.codigo || 'Lote'}
+                            codigo_lote={codigoParaTabla}
                         />
                     </div>
                 </div>

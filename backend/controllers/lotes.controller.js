@@ -206,3 +206,15 @@ exports.actualizar_fase = async (req, res) => {
         });
     }
 };
+
+exports.get_batch_by_id = async (req, res) => {
+    const { id_lote } = req.query;
+    try {
+        // Ejemplo con una consulta SQL o Sequelize
+        // SELECT codigo FROM lotes WHERE id_lote = ?
+        const lote = await Lote.findOne({ where: { id_lote: id_lote } }); 
+        res.json(lote);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};

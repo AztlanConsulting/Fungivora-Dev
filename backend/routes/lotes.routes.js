@@ -19,4 +19,6 @@ router.get('/ubicaciones', controller.get_ubicaciones);
 // Obtener todos los inoculos activos
 router.get('/especies', controller.get_inoculos_activos);
 
+router.get('/detalle', controller.get_batch_by_id);
+
 module.exports = router;
