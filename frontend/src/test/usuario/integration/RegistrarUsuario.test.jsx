@@ -52,7 +52,7 @@ beforeEach(() => {
     vi.spyOn(console, 'error').mockImplementation(() => {})
     global.fetch = vi.fn()
     localStorage.setItem('token', 'test-token');
-     fetch.mockResolvedValueOnce({
+     fetch.mockResolvedValue({
         ok: true,
         json: async () => ({ msg: 'Autorizado'}),
      })
@@ -107,19 +107,21 @@ describe('RegistrarUsuario  — renderizado base', () => {
 })
 //--------------estados de error-------------------------
 
-describe('RegistrarUsuario  — estados de error', () => {
-    it('muestra mensaje de error si no hay token', async () => {
+describe('RegistrarUsuario - redirecciones por permisos', () => {
+
+    it('redirige a /login si no existe token', async () =>{
         localStorage.clear()
 
         renderVista()
-        
-        const errorMsg = await screen.findByText(/No eres un usuario, redirigiendo a login/i)
-        expect(errorMsg).toBeInTheDocument()
+
+        await waitFor(() => {
+            expect(mockNavigate).toHaveBeenCalledWith('/login', { replace: true})
+
         })
+        expect(localStorage.getItem('token')).toBeNull()
+    })
 
-
-    //mensaje de autorizacion
-    it('muestra mensaje de error si el backend responde que no esta autorizado', async () => {
+    it('redirige a /first si no es autorizado', async () =>{
         global.fetch.mockReset()
         global.fetch.mockResolvedValueOnce({
             ok: true,
@@ -127,22 +129,39 @@ describe('RegistrarUsuario  — estados de error', () => {
         })
 
         renderVista()
+        
+        await waitFor(() => {
+            expect(mockNavigate).toHaveBeenCalledWith('/first', { replace: true})
 
-        const errorMsg = await screen.findByText(/No eres un usuario autorizado, redirigiendo a login/i)
-        expect(errorMsg).toBeInTheDocument()
-
+        })
+        expect(localStorage.getItem('token')).toBe('test-token')
     })
 
-    //error de conexcion
-    it('muestra mensaje cuando no hay conexion', async() => {
+    it('redirige a /login y limpia token cuando hay error de conexion', async () =>{
         global.fetch.mockReset()
         global.fetch.mockRejectedValueOnce(new Error("Network Error"))
- 
+
         renderVista()
 
-        const errorMsg = await screen.findByText(/Error de conexion, vuelva a iniciar secci/i)
-        expect(errorMsg).toBeInTheDocument()    })
+        await waitFor(() => {
+            expect(mockNavigate).toHaveBeenCalledWith('/login', { replace: true})
+
+        })
+        expect(localStorage.getItem('token')).toBeNull()
+    })
+
+     it('no renderiza la vista hasta verificar rol', () =>{
+        global.fetch.mockReset()
+        global.fetch.mockImplementation(() => new Promise(() => {}))
+
+        renderVista()
+
+        expect(screen.queryByText('Crear Usuario')).not.toBeInTheDocument()
+    })
+
+
 })
+
 //--------------Validaciones del formulario-------------------------
 
 describe('RegistrarUsuario  — validaciones del formulario', () => {
@@ -151,6 +170,8 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
     it('muestra error si hay campos vacios al registrar', async () => {
         const user = userEvent.setup()
         renderVista()
+
+        await screen.findByText('Crear Usuario')
 
         const botonRegistrar = screen.getByRole('button', { name: /registrar/i})
         await user.click(botonRegistrar)
@@ -163,6 +184,8 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
     it('muestra error si el correo no tiene un formato valido', async () => {
         const user = userEvent.setup()
         renderVista()
+
+        await screen.findByText('Crear Usuario')
         
         const inputs= screen.getAllByPlaceholderText(/Escribe/i)
 
@@ -182,6 +205,8 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
     it('muestra error si la contresena tiene espacios', async () => {
         const user = userEvent.setup()
         renderVista()
+
+        await screen.findByText('Crear Usuario')
         
         const inputs= screen.getAllByPlaceholderText(/Escribe/i)
 
@@ -201,6 +226,8 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
     it('muestra error usuario contiene caracteres especiales', async () => {
         const user = userEvent.setup()
         renderVista()
+
+        await screen.findByText('Crear Usuario')
         
         const inputs= screen.getAllByPlaceholderText(/Escribe/i)
 
@@ -220,6 +247,8 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
     it('muestra error si la contrasena exede mas de 20 caracteres', async () => {
         const user = userEvent.setup()
         renderVista()
+
+        await screen.findByText('Crear Usuario')
         
         const inputs= screen.getAllByPlaceholderText(/Escribe/i)
 
@@ -239,6 +268,8 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
     it('muestra error si las contrasena no coinciden', async () => {
         const user = userEvent.setup()
         renderVista()
+
+        await screen.findByText('Crear Usuario')
         
         const inputs= screen.getAllByPlaceholderText(/Escribe/i)
 
@@ -264,6 +295,8 @@ describe('RegistrarUsuario — flujo modal', () => {
         const user = userEvent.setup()
         renderVista()
 
+        await screen.findByText('Crear Usuario')
+
         await user.click(screen.getByRole('button', { name: /cancelar/i }))
         expect(screen.getByTestId('modal-confirmacion')).toBeInTheDocument()
     })
@@ -272,6 +305,8 @@ describe('RegistrarUsuario — flujo modal', () => {
     it('cierra el modal al cancelar', async () => {
         const user = userEvent.setup()
         renderVista()
+
+        await screen.findByText('Crear Usuario')
 
         await user.click(screen.getByRole('button', { name: /cancelar/i }))
 
@@ -286,6 +321,8 @@ describe('RegistrarUsuario — flujo modal', () => {
         const user = userEvent.setup()
         renderVista()
 
+        await screen.findByText('Crear Usuario')
+
         await user.click(screen.getByRole('button', { name: /cancelar/i }))
         await user.click(screen.getByRole('button', { name: /confirmar/i }))
 
@@ -298,6 +335,8 @@ describe('RegistrarUsuario — flujo modal', () => {
     it('cierra el modal tras confirmar', async () => {
         const user = userEvent.setup()
         renderVista()
+
+        await screen.findByText('Crear Usuario')
 
         await user.click(screen.getByRole('button', { name: /cancelar/i }))
         await user.click(screen.getByRole('button', { name: /confirmar/i }))
@@ -314,6 +353,13 @@ describe('RegistrarUsuario — flujo de registro exitoso', () => {
 
         //cierra el modal al confirmmar
     it('navega a /usuario tras registro exitoso', async () => {
+        fetch.mockReset()
+
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ msg: 'Autorizado', id: 42 })
+        })
+        
         fetch.mockResolvedValueOnce({
             ok: true,
             json: async () => ({ msg: 'Usuario creado', id: 42 })
@@ -321,6 +367,9 @@ describe('RegistrarUsuario — flujo de registro exitoso', () => {
 
     const user = userEvent.setup()
         renderVista()
+
+        await screen.findByText('Crear Usuario')
+
     const inputs = screen.getAllByPlaceholderText(/Escribe/i)
         await user.type(inputs[0], 'juanperez')
         await user.type(inputs[1], 'correo@test.com')

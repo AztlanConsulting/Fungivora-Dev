@@ -55,8 +55,9 @@ exports.post_registro = async (req, res, next) => {
         return res.status(409).json({msg: "Hay un usuario registrado con ese Nombre, agregue otro nombre"});
     }
 
-    //Hasheo de contraseñas usando bcrypt
-    const contrasenaHash = await bcrypt.hash(contrasena, 10);
+    //Hasheo de contraseñas usando bcrypt, se normaliza primero para adaptar la ñ
+    const contrasenaNormalizada = contrasena.normalize("NFC");
+    const contrasenaHash = await bcrypt.hash(contrasenaNormalizada, 10);
 
     //Creaccion del Registro
     const registro = await Usuario.anadir({

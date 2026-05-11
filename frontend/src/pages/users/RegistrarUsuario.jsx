@@ -19,41 +19,46 @@ const navigate = useNavigate();
 const [accionPendiente, setAccionPendiente] = useState(null);
 const [isModalOpen, setIsModalOpen] = useState(false);
 const [error, setError] = useState("");
+const [verificando, setVerificando] = useState(true);
 
 useEffect(() => {
 
   //Verifica el usuario si es admin y restringe su acceso
   //Asistencia de la IA para entender y como implementar estructuracion
-  const verificarAdmin = async () => {
-    const token = localStorage.getItem("token");
+  const verificaAdmin = async () => {
+    const token = localStorage.getItem("token")
 
     if (!token) {
-      setError("No eres un usuario, redirigiendo a login")
-      setTimeout(() => navigate("/login"), 2000);
+      localStorage.removeItem("token");
+      navigate("/login", { replace: true})
       return;
     }
 
-    try{
-      const response = await fetch("/api/usuario/registrar_usuario",{
+    try {
+      const response =await fetch("/api/usuario/registrar_usuario", {
         method: "GET",
         headers: { "Authorization": token},
         cache: "no-store",
-      });
-    
+    });
+
     const data = await response.json();
 
-    if (data.msg !== "Autorizado"){
-      setError("No eres un usuario autorizado, redirigiendo a login")
-      setTimeout(() => navigate("/login"), 2000);
+    if(data.msg !== "Autorizado"){
+      navigate("/first", { replace: true });
+      return;
     }
-    } catch(err){
+    setVerificando(false);
+
+    }
+    catch (err) {
       console.error("Error al verificar permisos", err);
-      setError("Error de conexion, vuelva a iniciar seccion");
-      setTimeout(() => navigate("/login"), 2000);
+      localStorage.removeItem("token");
+    navigate("/login", { replace: true });
       }
     };
-    verificarAdmin();
-}, []);
+    verificaAdmin();
+  }, [navigate]);
+
 
 //Handle del registro de usario y sus errores
 const handleRegistrarClick = () => {
@@ -83,7 +88,7 @@ const handleRegistrarClick = () => {
   }
 
   //Validación: de carecteres en contrasenas
-  if (!/^[a-zA-Z0-9]+$/.test(valcontrasena)) {
+  if (!/^[a-zA-Z0-9ñÑ]+$/.test(valcontrasena)) {
     setError("La contraseña solo puede contener letras y números.");
     return;
   }
@@ -143,11 +148,17 @@ const handleConfirm = async () => {
   //Respuesta de la db y si fue exitosa o no
   const data = await response.json();
 
-  if (data.msg === "No autorizado" || data.msg === "Token inválido") {
-    setError("No eres un usuario autorizado vuelva a iniciar sesion");
+  if (data.msg === "Token inválido") {
     setAccionPendiente(null);
+    localStorage.removeItem("token");
     navigate("/login");
     return
+  }
+
+  if (data.msg === "No autorizado"){
+    setAccionPendiente(null);
+    navigate("/first", { replace: true });
+    return;
   }
 
   if (!response.ok) {
@@ -165,6 +176,10 @@ const handleConfirm = async () => {
 }
 
 };
+
+ if (verificando){
+  return null
+ }
 
   return (
     <Base margen_arriba="mt-8 md:mt-[vh]">
