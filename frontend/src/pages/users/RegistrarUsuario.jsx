@@ -246,9 +246,9 @@ const handleConfirm = async () => {
     <AlertaError detalle={error} />
 
     {/* Botones de registro y cancelar*/}
-    <div className="flex justify-end gap-2 mt-auto">
-        <div className="flex justify-end gap-2 mt-8">
-            <Button 
+    {/* Asistencia de la IA para comandos especificos de Tailwind como los md, [&_button], entre otros*/}
+<div className="flex flex-col items-stretch md:flex-row md:items-stretch md:justify-end gap-3 mt-auto pt-8 [&_button]:w-full max-md:[&_button]:py-5 md:[&_button]:w-auto md:[&_button]:min-w-[180px]">    
+  <Button 
                 variant="registrar" 
                 isOutline={true} 
                 onClick={handleRegistrarClick}>
@@ -260,7 +260,6 @@ const handleConfirm = async () => {
                 onClick={handleCancelarClick}>
             Cancelar
             </Button>
-        </div>
     </div>
 
     {/* Modulo del pop up de confirmar*/}
