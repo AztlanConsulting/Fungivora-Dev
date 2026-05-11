@@ -40,7 +40,7 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
     const guardarCambios = async (bloquesActualizados, nuevaFase) => {
         try {
             const fase = fases[nuevaFase] ? fases[nuevaFase].label : "Inoculación";
-            await LoteService.updateFaseLote(id_lote, nuevaFase);
+            await LoteService.updateFaseLote(id_lote, fase);
             await LoteService.updateBloquesMasivo(id_lote, bloquesActualizados);
             return { success: true };
         } catch (err) {
