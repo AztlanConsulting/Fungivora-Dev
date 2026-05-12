@@ -11,6 +11,11 @@ const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, hand
   // Validar el número
   const validarNumero = (valor) => {
     let limpio = valor.replace(/[^0-9.]/g, "");
+
+    if (limpio.startsWith("0")) {
+      limpio = limpio.substring(1);
+    }
+    
     if (limpio.length > 5) {
       limpio = limpio.slice(0, 5);
     }

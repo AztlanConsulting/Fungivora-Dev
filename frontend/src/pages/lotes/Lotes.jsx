@@ -84,11 +84,20 @@ function Lotes() {
 
   // Agregar el bloque y su validación
   const handleAgregarBloque = () => {
-    if (!bloqueForm.contenedor || !bloqueForm.peso_gr) {
+    if (!bloqueForm.contenedor || !bloqueForm.peso_gr || !bloqueForm.cantidad) {
       setErrorValidacion("Completa los campos del bloque");
       return;
     }
+
+    const peso = parseFloat(bloqueForm.peso_gr);
+    const cantidad = parseFloat(bloqueForm.cantidad);
+
+    if (isNaN(peso) || peso <= 0 || isNaN(cantidad) || cantidad <= 0) {
+      setErrorValidacion("Ingresa un número válido y mayor a cero");
+      return;
+    }
     agregarBloqueALista({ ...bloqueForm });
+    
     setBloqueForm({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
     setErrorValidacion("");
   };
