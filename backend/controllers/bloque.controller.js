@@ -30,33 +30,27 @@ exports.get_bloques_por_lote = async (req, res) => {
     }
 };
 
-exports.toggle_contaminado = async (req, res) => {
+/**
+ * Actualización masiva de bloques de un lote
+ * Permite actualizar múltiples bloques de un lote en una sola operación
+ * @param {string} id_lote - El ID del lote al que pertenecen los bloques
+ * @param {Array} bloques - Un array de objetos con la información de los bloques a actualizar
+ */
+exports.actualizar_bloques_masivo = async (req, res) => {
     try {
-        const { ids } = req.body;
-
-        if (!ids || !Array.isArray(ids)) {
-            return res.status(400).json({
-                success: false,
-                message: "Debes enviar un array de ids"
-            });
-        }
-
-        const resultados = await Promise.all(
-            ids.map(id => Bloque.toggle_contaminado(id))
-        );
+        const { id_lote } = req.query;
+        const { bloques } = req.body;
+        await Bloque.actualizar_bloques_masivo(id_lote, bloques);
 
         res.status(200).json({
             success: true,
-            data: resultados
+            message: 'Bloques del lote actualizados con éxito'
         });
-
-    } catch (err) {
-        console.error("Error en toggle_contaminado controller:", err);
-
+    } catch (error) {
+        console.error("Error en actualizar_bloques_masivo controller:", error);
         res.status(500).json({
             success: false,
-            message: "Hubo un error al actualizar los bloques",
-            error: err.message
+            message: 'Error al actualizar los bloques del lote'
         });
     }
 }

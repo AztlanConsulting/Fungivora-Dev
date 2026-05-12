@@ -27,12 +27,16 @@ export const LoteService = {
         return data.data;
     },
 
-    /** WIP
+    updateFaseLote: async (id_lote, nuevaFase) => {
+        return await api.put(`/lotes/fase?id_lote=${id_lote}`, { nuevaFase });
+    },
+
+    /**
      * Actualización masiva de bloques (ejemplo para actualizar el estado de contaminado)
      * Endpoint: /bloques/masivo (PUT)
     */
-    updateBloquesMasivo: async (bloques) => {
-        return await api.put(`/bloques/masivo`, { bloques });
+    updateBloquesMasivo: async (id_lote, bloques) => {
+        return await api.put(`/bloques/masivo?id_lote=${id_lote}`, { bloques });
     },
 
     /**

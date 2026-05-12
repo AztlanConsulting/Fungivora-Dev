@@ -32,17 +32,27 @@ class Bloque {
         }
     }
 
-    static async toggle_contaminado(id_bloque) {
+    // Metodo para actualización masiva de bloques de un lote
+    static async actualizar_bloques_masivo(id_lote, bloques) {
+        const connection = await db.getConnection();
         try {
-            const [resultado] = await db.execute(`
-                UPDATE Bloques
-                SET contaminado = 1 - contaminado
-                WHERE id_bloque = ?
-            `, [id_bloque]);
-            return resultado;
+            await connection.beginTransaction();
+
+            for (const bloque of bloques) {
+                const { id_bloque, contaminado } = bloque;
+                await connection.execute(`
+                        UPDATE Bloques 
+                        SET contaminado = ? 
+                        WHERE id_bloque = ? AND id_lote = ?
+                    `, [contaminado, id_bloque, id_lote]);
+            }
+            await connection.commit();
         } catch (err) {
-            console.error("Error en actualizar_contaminados:", err);
+            await connection.rollback();
+            console.error("Error en actualizar_bloques_masivo model:", err);
             throw err;
+        } finally {
+            connection.release();
         }
     }
 
