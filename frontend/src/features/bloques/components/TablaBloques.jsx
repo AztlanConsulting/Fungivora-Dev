@@ -55,7 +55,7 @@ const TablaBloques = ({ codigo, bloques, onEliminar, estilosTipo, gridLayout, co
                       <button onClick={() => onEliminar(bloque.id_temp)} className="p-2 text-[#3b3fb6]"><HugeiconsIcon icon={CancelCircleIcon} size={24} /></button>
                     </div>
                     <div className="flex justify-between items-center border-t pt-3" style={{ borderColor: colorBordeHeader }}>
-                      <Text variante="option" style={{ fontSize: '14px' }}>{bloque.peso_gr}g - {bloque.cantidad} piezas</Text>
+                      <Text variante="option" style={{color: colores.gris, fontSize: '14px' }}>{bloque.peso_gr}g - {bloque.cantidad} piezas</Text>
                       <span className="px-3 py-1 rounded-md text-[11px] font-semibold border" style={{ backgroundColor: estilo.bg, color: estilo.text }}>
                         {esProd ? "Producción" : "Experimental"}
                       </span>

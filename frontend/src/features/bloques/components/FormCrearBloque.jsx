@@ -9,15 +9,15 @@ import Button from "../../../shared/components/ui/buttons/botones";
 const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, handleBloqueForm, onAgregar, error }) => {
 
   // Validar el número
-  const validarNumero = (valor) => {
+  const validarNumero = (valor, limite) => {
     let limpio = valor.replace(/[^0-9.]/g, "");
 
     if (limpio.startsWith("0")) {
       limpio = limpio.substring(1);
     }
-    
-    if (limpio.length > 5) {
-      limpio = limpio.slice(0, 5);
+
+    if (limpio.length > limite) {
+      limpio = limpio.slice(0, limite);
     }
     const partes = limpio.split(".");
     if (partes.length > 2) {
@@ -28,18 +28,20 @@ const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, hand
       limpio = parseFloat(limpio).toFixed(2);
     }
 
+    if (limpio === ".") return "";
+
     return limpio;
   };
 
   // Número para peso
   const handleChangePeso = (e) => {
-    const valorValidado = validarNumero(e.target.value);
+    const valorValidado = validarNumero(e.target.value, 6);
     setBloqueForm({ ...bloqueForm, peso_gr: valorValidado });
   };
 
   // Número para centidad
   const handleChangeCantidad = (e) => {
-    const valorValidado = validarNumero(e.target.value);
+    const valorValidado = validarNumero(e.target.value, 2);
     setBloqueForm({ ...bloqueForm, cantidad: valorValidado });
   };
   return (

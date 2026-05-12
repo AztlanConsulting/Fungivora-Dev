@@ -47,6 +47,7 @@ function Lotes() {
   const [paso, setPaso] = useState(1);
   const { bloquesTemporales, contenedores, agregarBloqueALista, eliminarBloqueDeLista } = useBloques();
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [guardando, setGuardando] = useState(false);
 
   useEffect(() => {
     // Obtener el código de lote
@@ -96,6 +97,14 @@ function Lotes() {
       setErrorValidacion("Ingresa un número válido y mayor a cero");
       return;
     }
+
+    const cantidadAcumulada = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad), 0);
+
+    if (cantidadAcumulada + cantidad > 100) { 
+      setErrorValidacion(`Límite excedido. Total acumulado: ${cantidadAcumulada}. No puedes superar 100 unidades.`);
+      return;
+    }
+
     agregarBloqueALista({ ...bloqueForm });
     
     setBloqueForm({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
@@ -114,6 +123,11 @@ function Lotes() {
 
   // Guardar todo el registro completo
   const handleFinalizarRegistroCompleto = async () => {
+    if (guardando || bloquesTemporales.length === 0) return;
+
+    setGuardando(true); 
+    setErrorValidacion("");
+
     if (bloquesTemporales.length === 0) {
       setErrorValidacion("Añade al menos un bloque");
       return;
@@ -124,10 +138,19 @@ function Lotes() {
       produccion: Number(bloquesTemporales[0].produccion),
       bloques: bloquesTemporales.map(b => ({ ...b, peso_gr: Number(b.peso_gr), cantidad: Number(b.cantidad), produccion: Number(b.produccion) }))
     };
-    const respuesta = await addLote(datosParaEnviar);
-    if (respuesta?.success || respuesta?.id_lote) window.location.reload();
-    else setErrorValidacion(respuesta?.message || " Error en el servidor");
-  };
+    try {
+      const respuesta = await addLote(datosParaEnviar);
+      if (respuesta?.success || respuesta?.id_lote) {
+        window.location.reload();
+      } else {
+        setErrorValidacion(respuesta?.message || "Error en el servidor");
+        setGuardando(false);
+      }
+    } catch (err) {
+      setErrorValidacion("Error de conexión");
+      setGuardando(false);
+    }
+ };
 
   // Colores de las fases
   const obtenerEstiloFase = (fase) => {
@@ -138,6 +161,8 @@ function Lotes() {
     if (f.includes("fructificación")) return { bg: "#fff5cc", text: "#c7a200" };
     return { bg: "#F5F5F5", text: "#616161" };
   };
+
+  const totalUnidadesBloques = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad || 0), 0);
 
   return (
     <Base margen_arriba="mt-20 md:mt-20">
@@ -225,7 +250,13 @@ function Lotes() {
           {paso === 2 && (
             <div className={`flex flex-col md:flex-row gap-4 mt-8 items-center md:justify-end ${verFormulario ? "flex" : "hidden"} lg:flex`}>
               <div className="order-1 md:order-2">
-                <Button variant="registrar" onClick={previsualizarRegistro}>Registrar</Button> 
+                <Button 
+                    variant="registrar" 
+                    onClick={previsualizarRegistro}
+                    disabled={guardando}
+                  >
+                    {guardando ? "Cargando..." : "Registrar"}
+                  </Button> 
               </div>
               <div className="order-2 md:order-1">
                 <Button variant="eliminar" isOutline={true} onClick={() => setPaso(1)}>Cancelar</Button> 
@@ -238,13 +269,14 @@ function Lotes() {
      {/* Modal para confirmar el registro*/}
       <ModalConfirmacion
         visible={mostrarModal}
-        titulo="¿Confirmar registro de lote?"
-        descripcion={`Se registrará el lote con ${bloquesTemporales.length} bloques.`}
+        titulo={guardando ? "Guardando lote..." : "¿Confirmar registro de lote?"} 
+        descripcion={`Se registrará el lote con ${totalUnidadesBloques} bloques.`}
         textoConfirmar="Registrar"
         textoCancelar="Cancelar"
         icon={CheckmarkCircle02Icon}
         onConfirm={handleFinalizarRegistroCompleto}
-        onCancel={() => setMostrarModal(false)}
+        onCancel={() => !guardando && setMostrarModal(false)}
+        deshabilitarConfirmar={guardando}
       /> 
     </Base>
   );
