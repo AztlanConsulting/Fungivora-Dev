@@ -8,6 +8,7 @@ import useLotes from "../../features/lotes/hooks/useLotes";
 import useBloques from "../../features/bloques/hooks/useBloques";
 import Button from "../../shared/components/ui/buttons/botones";
 import ModalConfirmacion from "../../shared/components/ui/popups/modal_confirmacion"; 
+import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
 
 // Iconos
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -48,6 +49,7 @@ function Lotes() {
   const { bloquesTemporales, contenedores, agregarBloqueALista, eliminarBloqueDeLista } = useBloques();
   const [mostrarModal, setMostrarModal] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
 
   useEffect(() => {
     // Obtener el código de lote
@@ -127,6 +129,7 @@ function Lotes() {
 
     setGuardando(true); 
     setErrorValidacion("");
+    setMostrarModal(false);
 
     if (bloquesTemporales.length === 0) {
       setErrorValidacion("Añade al menos un bloque");
@@ -140,15 +143,32 @@ function Lotes() {
     };
     try {
       const respuesta = await addLote(datosParaEnviar);
+
       if (respuesta?.success || respuesta?.id_lote) {
-        window.location.reload();
+        setAlerta({
+          visible: true,
+          variante: "exito",
+          mensaje: "Lote y bloques registrados exitosamente"
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+
       } else {
-        setErrorValidacion(respuesta?.message || "Error en el servidor");
         setGuardando(false);
+        setAlerta({
+          visible: true,
+          variante: "error",
+          mensaje: "Error al guardar: " + (respuesta?.message || "Error desconocido")
+        });
       }
     } catch (err) {
-      setErrorValidacion("Error de conexión");
       setGuardando(false);
+      setAlerta({
+        visible: true,
+        variante: "error",
+        mensaje: "Error de conexión con el servidor"
+      });
     }
  };
 
@@ -266,10 +286,17 @@ function Lotes() {
         </div> 
       </div>  
 
+      <ModalAlerta
+                visible={alerta.visible}
+                variante={alerta.variante}
+                mensaje={alerta.mensaje}
+                onClose={() => setAlerta({ ...alerta, visible: false })}
+            />
+
      {/* Modal para confirmar el registro*/}
       <ModalConfirmacion
         visible={mostrarModal}
-        titulo={guardando ? "Guardando lote..." : "¿Confirmar registro de lote?"} 
+        titulo={"¿Confirmar registro de lote?"} 
         descripcion={`Se registrará el lote con ${totalUnidadesBloques} bloques.`}
         textoConfirmar="Registrar"
         textoCancelar="Cancelar"
