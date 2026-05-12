@@ -24,6 +24,7 @@ export { default as Stepper } from "./others/stepper";
 
 // Popups
 export { default as ModalConfirmacion } from "./popups/modal_confirmacion";
+export { default as ModalAlerta } from "./popups/ModalAlerta";
 
 // Templates
 export { default as Notas } from "./templates/notas";

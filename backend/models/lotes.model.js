@@ -97,8 +97,8 @@ class Lotes {
                 SELECT COUNT(*) as total 
                 FROM Lotes 
                 WHERE codigo_fungivora LIKE ?
-            `, [`${prefijo}-%`]); 
-            
+            `, [`${prefijo}-%`]);
+
             return result[0].total;
         } catch (err) {
             console.error("Error en count_lotes_similares:", err);
@@ -128,7 +128,7 @@ class Lotes {
             return filas;
         } catch (err) {
             console.error("Error en fetch_all lotes:", err);
-            throw err; 
+            throw err;
         }
     }
 }

@@ -19,4 +19,7 @@ router.get('/ubicaciones', controller.get_ubicaciones);
 // Obtener todos los inoculos activos
 router.get('/especies', controller.get_inoculos_activos);
 
+// Actualizar la fase del lote
+router.put('/fase', controller.actualizar_fase);
+
 module.exports = router;
