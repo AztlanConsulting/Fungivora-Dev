@@ -3,6 +3,7 @@ import { LoteService } from '../services/lote.service';
 
 const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
     const [bloques, setBloques] = useState([]);
+    const [bloquesIniciales, setBloquesIniciales] = useState([]);
     const [especie, setEspecie] = useState("");
     const [codigoInoculo, setCodigoInoculo] = useState("");
     const [cargando, setCargando] = useState(true);
@@ -13,6 +14,7 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
     ];
     const faseNum = fases.findIndex(f => f.label === faseInicial);
     const [fase, setFase] = useState(faseNum !== -1 ? faseNum : 0);
+    const [faseInicialNum, setFaseInicialNum] = useState(faseNum !== -1 ? faseNum : 0);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -25,11 +27,13 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
                     id_inoculo_usado ? LoteService.getEspecieByLote(id_inoculo_usado) : Promise.resolve("S/N")
                 ]);
                 setBloques(resBloques.data || []);
+                setBloquesIniciales(resBloques.data || []);
                 setCodigoInoculo(resCodigo);
                 setEspecie(resEspecie);
             } catch (err) {
                 setError(err.message);
                 setBloques([]);
+                setBloquesIniciales([]);
             } finally {
                 setCargando(false);
             }
@@ -52,7 +56,13 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
         }
     };
 
-    return { bloques, setBloques, fase, setFase, especie, codigoInoculo, cargando, error, getFase, guardarCambios, fases };
+    return {
+        bloques, setBloques, bloquesIniciales, setBloquesIniciales,
+        fase, setFase, faseInicialNum, setFaseInicialNum,
+        especie, codigoInoculo,
+        cargando, error, getFase, guardarCambios,
+        fases
+    };
 };
 
 export default useDetalleLote;

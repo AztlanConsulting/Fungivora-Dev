@@ -13,7 +13,13 @@ const DetalleLote = () => {
     const { id_lote } = useParams();
     const { state } = useLocation();
 
-    const { bloques, setBloques, fase, setFase, especie, codigoInoculo, cargando, error, getFase, guardarCambios, fases } = useDetalleLote(
+    const {
+        bloques, setBloques, bloquesIniciales, setBloquesIniciales,
+        fase, setFase, faseInicialNum, setFaseInicialNum,
+        especie, codigoInoculo,
+        cargando, error, getFase, guardarCambios,
+        fases
+    } = useDetalleLote(
         id_lote,
         state?.id_inoculo_usado,
         state?.fase
@@ -23,6 +29,22 @@ const DetalleLote = () => {
     const [editado, setEditado] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
+
+    const handleLocalChanges = (nuevosBloques = bloques, nuevaFase = fase) => {
+        // Verificar cambio de fase
+        const faseModificada = nuevaFase !== faseInicialNum;
+
+        // Verificar cambios en bloques
+        const bloquesModificados = nuevosBloques.some((bloque, index) => {
+            const bloqueInicial = bloquesIniciales[index];
+
+            return (
+                bloque.contaminado !== bloqueInicial?.contaminado
+            );
+        });
+
+        setEditado(faseModificada || bloquesModificados);
+    };
 
     // Cambio local de bloques contaminados
     const handleLocalToggleContaminado = (id_bloque) => {
@@ -36,13 +58,13 @@ const DetalleLote = () => {
             return bloque;
         });
         setBloques(nuevosBloques);
-        setEditado(true);
+        handleLocalChanges(nuevosBloques, fase);
     };
 
     // Cambio local de fase
     const handleLocalChangeFase = (nuevaFase) => {
         setFase(nuevaFase);
-        setEditado(true);
+        handleLocalChanges(bloques, nuevaFase);
     }
 
     const onGuardar = async () => {
