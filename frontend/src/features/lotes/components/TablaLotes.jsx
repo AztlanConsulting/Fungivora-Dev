@@ -4,11 +4,13 @@ import { colores } from "../../../shared/components/ui/basics/colores";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { CancelCircleIcon } from '@hugeicons/core-free-icons';
 
+// Tabla para poder vizualizar los lotes
 const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayout, colorBordeHeader }) => {
   return (
     <div className="flex flex-col md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
       <div className={`hidden md:grid ${gridLayout}`} style={{ backgroundColor: colorBordeHeader }}>
         {columnas.map((col, i) => (
+          // Header
           <div key={i} className="px-6 py-4">
             <Text variante="medium" style={{ color: colores.azul, fontSize: "16px", fontWeight: '600' }}>{col.label}</Text>
           </div>
@@ -23,7 +25,7 @@ const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayo
 
           return (
             <div key={lote.id_lote} className="w-full">
-              {/* DESKTOP */}
+              {/* Vista de desktop */}
               <div
                 onClick={() => onVerDetalle(lote)}
                 className={`hidden md:grid ${gridLayout} cursor-pointer transition-all border-b hover:bg-slate-50`}
@@ -47,7 +49,7 @@ const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayo
                 </div>
               </div>
 
-              {/* MOBILE */}
+              {/* Vista de movil */}
               <div
                 onClick={() => onVerDetalle(lote)}
                 className="md:hidden p-5 rounded-2xl border bg-white shadow-sm flex flex-col gap-4 cursor-pointer mb-4 mx-2"

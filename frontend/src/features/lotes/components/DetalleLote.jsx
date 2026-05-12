@@ -8,6 +8,7 @@ import { Titulo, Text } from '../../../shared/components/ui';
 import { colores } from '../../../shared/components/ui/basics/colores';
 import { Base } from '../../../shared/components/layout';
 
+// Detalle de cada lote con toda su información
 const DetalleLote = () => {
     const { id_lote } = useParams();
     const { state } = useLocation();
@@ -66,61 +67,60 @@ const DetalleLote = () => {
         b.contenedor?.toLowerCase().includes(busqueda.toLowerCase())
     ) || [];
 
-// Cambia el orden de prioridad para que use el código de la lista anterior primero
-const codigoParaTabla = state?.codigo_fungivora || codigoLoteBD || "";
 
-    return (
-        <>
-            <Titulo>Lote: {state?.codigo_fungivora || 'Detalle'}</Titulo>
+    const codigoParaTabla = state?.codigo_fungivora || codigoLoteBD || "";
+        return (
+            <>
+                <Titulo>Lote: {state?.codigo_fungivora || 'Detalle'}</Titulo>
 
-            {editado && (
-                <button
-                    onClick={onGuardar}
-                    className={`
-                                fixed bottom-20 right-10 md:bottom-10 md:right-16
-                                z-50 w-40 h-8 md:w-52 md:h-10 text-base md:text-lg
-                                rounded-full flex items-center justify-center shadow-lg
-                                transition-opacity hover:opacity-80 active:scale-95
-                            `}
-                    style={{
-                        backgroundColor: "#FFFFFF",
-                        border: `2px solid ${colores.azul}`
-                    }}
-                >
-                    <Text variante='button' style={{ color: colores.azul }}>
-                        Guardar Cambios
-                    </Text>
-                </button>
-            )}
+                {editado && (
+                    <button
+                        onClick={onGuardar}
+                        className={`
+                                    fixed bottom-20 right-10 md:bottom-10 md:right-16
+                                    z-50 w-40 h-8 md:w-52 md:h-10 text-base md:text-lg
+                                    rounded-full flex items-center justify-center shadow-lg
+                                    transition-opacity hover:opacity-80 active:scale-95
+                                `}
+                        style={{
+                            backgroundColor: "#FFFFFF",
+                            border: `2px solid ${colores.azul}`
+                        }}
+                    >
+                        <Text variante='button' style={{ color: colores.azul }}>
+                            Guardar Cambios
+                        </Text>
+                    </button>
+                )}
 
-            <Base margen_arriba="mt-16 md:mt-8">
-                <div className="p-6 flex flex-col gap-8">
-                    <BannerLote data={loteData} />
+                <Base margen_arriba="mt-16 md:mt-8">
+                    <div className="p-6 flex flex-col gap-8">
+                        <BannerLote data={loteData} />
 
-                    <SeccionFaseBuscar
-                        fases={fases}
-                        fase={fase}
-                        setFase={setFase}
-                        busqueda={busqueda}
-                        setBusqueda={setBusqueda}
-                    />
-
-                    <div className="flex flex-col gap-4">
-                        {error && (
-                            <div className="text-red-500 px-2 font-medium">Error: {error}</div>
-                        )}
-
-                        <TablaBloques
-                            bloques={bloquesFiltrados}
-                            loading={cargando}
-                            onToggleContaminado={handleLocalToggleContaminado}
-                            codigo_lote={codigoParaTabla}
+                        <SeccionFaseBuscar
+                            fases={fases}
+                            fase={fase}
+                            setFase={setFase}
+                            busqueda={busqueda}
+                            setBusqueda={setBusqueda}
                         />
+
+                        <div className="flex flex-col gap-4">
+                            {error && (
+                                <div className="text-red-500 px-2 font-medium">Error: {error}</div>
+                            )}
+
+                            <TablaBloques
+                                bloques={bloquesFiltrados}
+                                loading={cargando}
+                                onToggleContaminado={handleLocalToggleContaminado}
+                                codigo_lote={codigoParaTabla}
+                            />
+                        </div>
                     </div>
-                </div>
-            </Base>
-        </>
-    );
-};
+                </Base>
+            </>
+        );
+    };
 
 export default DetalleLote;

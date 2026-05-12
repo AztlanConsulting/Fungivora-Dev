@@ -7,6 +7,7 @@ router.get('/', controller.get_batches);
 
 // Ruta para crear lotes
 router.post('/crear', controller.post_batch);
+
 // Ruta para actualizar la fase de un lote
 router.put('/fase', controller.actualizar_fase);
 
@@ -19,6 +20,7 @@ router.get('/ubicaciones', controller.get_ubicaciones);
 // Obtener todos los inoculos activos
 router.get('/especies', controller.get_inoculos_activos);
 
+// Ruta para encontrar los bloques por id de lote
 router.get('/detalle', controller.get_batch_by_id);
 
 module.exports = router;

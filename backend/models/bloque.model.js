@@ -10,6 +10,7 @@ class Bloque {
         this.contenedor = contenedor;
     }
 
+    // Metodo para encontrar los bloques por el lote
     static async fetch_por_lote(id_lote) {
         try {
             const [filas] = await db.execute(`
@@ -45,6 +46,7 @@ class Bloque {
         }
     }
 
+    // Metodo para insertar los datos de bloque
     static async crear_bloque(nuevoBloque) {
         try {
             const { id_bloque, id_lote, produccion, peso_gr, contaminado, contenedor } = nuevoBloque;

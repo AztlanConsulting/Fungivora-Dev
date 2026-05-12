@@ -62,40 +62,42 @@ exports.toggle_contaminado = async (req, res) => {
 }
 
 
+/**
+ * post_bloques
+ * Registra un nuevo bloque ligado un lote
+ * Metodo que hace un insert con la información de los bloques
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.post_bloques = async (req, res) => {
     try {
         const { id_lote, produccion, peso_gr, contenedor, cantidad } = req.body;
 
-        // Validaciones estrictas
-        if (!produccion) {
-            return res.status(400).json({ success: false, message: "Debe especificar el número de producción" });
-        }
-        if (!id_lote || !cantidad || cantidad <= 0) {
+        if (!produccion || !id_lote || !cantidad || cantidad <= 0) {
             return res.status(400).json({ success: false, message: "Datos incompletos o cantidad inválida" });
         }
 
-        const promesas = [];
+        const data = [];
         const bloquesGenerados = [];
 
         for (let i = 0; i < cantidad; i++) {
             const nuevoBloque = {
                 id_bloque: crypto.randomUUID(),
                 id_lote: id_lote,
-                produccion: produccion, // Ya no hay default || 1
+                produccion: produccion, 
                 peso_gr: peso_gr || 0,
-                contaminado: 0,
+                contaminado: 0, // por default 0 - no esta contaminado
                 contenedor: contenedor
             };
             
             bloquesGenerados.push(nuevoBloque.id_bloque);
-            promesas.push(Bloque.crear_bloque(nuevoBloque));
+            data.push(Bloque.crear_bloque(nuevoBloque));
         }
 
-        await Promise.all(promesas);
+        await Promise.all(data);
 
         res.status(201).json({
             success: true,
-            message: `${cantidad} bloques creados exitosamente para la producción ${produccion}`,
             ids: bloquesGenerados
         });
 
@@ -104,7 +106,12 @@ exports.post_bloques = async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 };
-// Auxiliar para llenar el select de contenedores en el front
+
+/*
+* get_contenedores
+* Obtiene todas los contenedoress de la tabla de categorias
+* Funciona al tener el fetch por 'Contenedor'
+*/
 exports.get_contenedores = async (req, res) => {
     try {
         const [contenedores] = await Categoria.fetchOpciones('Contenedor', false);

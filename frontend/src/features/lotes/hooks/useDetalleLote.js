@@ -5,7 +5,7 @@ const useDetalleLote = (id_lote, id_inoculo_usado) => {
     const [bloques, setBloques] = useState([]);
     const [especie, setEspecie] = useState("");
     const [codigoInoculo, setCodigoInoculo] = useState("");
-    const [codigoLoteBD, setCodigoLoteBD] = useState(null); // Para guardar el código real
+    const [codigoLoteBD, setCodigoLoteBD] = useState(null); 
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
 
@@ -21,21 +21,13 @@ const useDetalleLote = (id_lote, id_inoculo_usado) => {
                     id_inoculo_usado ? LoteService.getEspecieByLote(id_inoculo_usado) : Promise.resolve("S/N")
                 ]);
 
-                // 1. Definimos la variable 'lista' para poder usarla
+                // Obtener todos los datos de los bloques y lote
                 const listaObtenida = resBloques.data || [];
-
-                console.log("Datos de bloques recibidos:", listaObtenida);
                 
                 setBloques(listaObtenida);
                 setCodigoInoculo(resCodigo);
                 setEspecie(resEspecie);
-
-                // 2. Extraemos el código del lote del primer bloque encontrado
-                // Asegúrate que tu API devuelva 'codigo_lote' en el objeto del bloque
-                // Dentro del useEffect del hook, cuando recibes los datos:
                     if (listaObtenida.length > 0) {
-                        // Busca cómo se llama el campo en tu BD. Si no viene, 
-                        // asegúrate que LoteService.getBloquesByLote lo incluya en el JOIN de la consulta SQL.
                         const codigoEncontrado = listaObtenida[0].codigo_lote || "LC-DESCONOCIDO-000000"; 
                         setCodigoLoteBD(codigoEncontrado);
                     }
@@ -59,8 +51,7 @@ const useDetalleLote = (id_lote, id_inoculo_usado) => {
             return { success: false, error: err.message };
         }
     };
-
-    // 3. ¡IMPORTANTE! Debes retornar codigoLoteBD para que el componente lo vea
+    
     return { 
         bloques, 
         setBloques, 

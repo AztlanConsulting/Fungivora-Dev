@@ -109,10 +109,10 @@ Metodo que añade la información de lotes a la tabla
 */
 exports.post_batch = async (req, res) => {
     try {
-        // 1. Extraemos produccion del body principal (o de cada bloque si prefieres)
-        // Aquí asumimos que viene en el cuerpo principal para el lote completo
+        // Request de los datos
         const { ubicacion_lote, tipo_sustrato, id_inoculo, fecha_lote, bloques, produccion } = req.body;
 
+        // Recuperar los inculos
         const inoculos = await Lotes.fetch_inoculos_disponibles();
         const inoculoSeleccionado = inoculos.find(i => i.id_inoculo == id_inoculo);
 
@@ -120,22 +120,32 @@ exports.post_batch = async (req, res) => {
             return res.status(400).json({ success: false, message: "Inóculo no encontrado" });
         }
 
-        // ... (Tu código de abreviatura y fecha se mantiene igual) ...
+        // Generación del código
+
+        // Abreviatura del inoculo
         const [abreviaturaResult] = await Categoria.fetchAbreviaturaPorNombre(inoculoSeleccionado.especie);
         const abreviatura = abreviaturaResult[0].abreviatura_opcion;
+
+        // Fecha para el código
         const fechaParaCodigo = new Date(fecha_lote);
         const dd = String(fechaParaCodigo.getUTCDate()).padStart(2, '0');
         const mm = String(fechaParaCodigo.getUTCMonth() + 1).padStart(2, '0');
         const yy = fechaParaCodigo.getUTCFullYear().toString().slice(-2);
         const fechaStr = `${dd}${mm}${yy}`;
+
+        // Forma inicial del código
         const prefijoBase = `LC-${abreviatura}-${fechaStr}`;
+
+        // Contar cuantos lotes hay con dicho prefijo
         const cantidadGrupo = await Lotes.count_lotes_similares(prefijoBase);
         const nuevoNumero = cantidadGrupo + 1;
+
+        // Código completo
         const codigo_fungivora = `${prefijoBase}-${nuevoNumero}`;
 
         const id_lote = crypto.randomUUID();
 
-        // 2. CREAR EL LOTE
+        // Crear el lote
         await Lotes.crear_lote(
             id_lote,
             id_inoculo,
@@ -144,13 +154,14 @@ exports.post_batch = async (req, res) => {
             fecha_lote,
             ubicacion_lote,
             1, // activo
-            "Inoculación" // fase
+            "Inoculación" // fase por default
         );
 
-        // 3. CREAR LOS BLOQUES ASOCIADOS
+        // Crear bloques con la relación
         if (bloques && Array.isArray(bloques)) {
             const promesasBloques = [];
 
+            // Ciclos para tener tantos bloques como estos sean añadidos
             for (const b of bloques) {
                 const numBloques = Number(b.cantidad) || 1;
                 
@@ -159,7 +170,6 @@ exports.post_batch = async (req, res) => {
                         Bloque.crear_bloque({
                             id_bloque: crypto.randomUUID(),
                             id_lote: id_lote,
-                            // PRIORIDAD: produccion del bloque individual o la del lote general
                             produccion: (b.produccion !== undefined) ? b.produccion : produccion,
                             peso_gr: b.peso_gr || 0,
                             contaminado: 0,
@@ -207,14 +217,38 @@ exports.actualizar_fase = async (req, res) => {
     }
 };
 
+/**
+ * Obtener el lote por el id
+ * Permite encontrar el id del lote seleccionado
+ * @param {string} id_lote - El ID del lote 
+ */
 exports.get_batch_by_id = async (req, res) => {
     const { id_lote } = req.query;
     try {
-        // Ejemplo con una consulta SQL o Sequelize
-        // SELECT codigo FROM lotes WHERE id_lote = ?
         const lote = await Lote.findOne({ where: { id_lote: id_lote } }); 
         res.json(lote);
     } catch (error) {
         res.status(500).send(error.message);
+    }
+};
+
+/**
+ * Obtener las especies y luego el inoculo
+ * Permite encontrar las especies relacionadas con los inóculos
+ * @param {string} inoculos - Los inoculos en la base
+ */
+exports.get_especies_unicas = async (req, res) => {
+    try {
+        const inoculos = await Lotes.fetch_inoculos_disponibles();
+        
+        // Especies sin repetir
+        const especiesUnicas = [...new Set(inoculos.map(i => i.especie))];
+
+        res.status(200).json({
+            success: true,
+            data: especiesUnicas
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error al obtener especies' });
     }
 };

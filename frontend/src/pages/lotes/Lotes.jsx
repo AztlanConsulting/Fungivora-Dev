@@ -7,14 +7,20 @@ import { colores } from "../../shared/components/ui/basics/colores";
 import useLotes from "../../features/lotes/hooks/useLotes";
 import useBloques from "../../features/bloques/hooks/useBloques";
 import Button from "../../shared/components/ui/buttons/botones";
+import ModalConfirmacion from "../../shared/components/ui/popups/modal_confirmacion"; 
 
-// NUEVOS COMPONENTES MODULARES
+// Iconos
+import { HugeiconsIcon } from '@hugeicons/react';
+import { CheckmarkCircle02Icon} from '@hugeicons/core-free-icons';
+
+// Componentes de Tablas y Forms
 import TablaLotes from "../../features/lotes/components/TablaLotes";
 import TablaBloques from "../../features/bloques/components/TablaBloques";
 import FormCrearLote from "../../features/lotes/components/FormCrearLote";
 import FormCrearBloque from "../../features/bloques/components/FormCrearBloque";
 
 function Lotes() {
+
   const columnas = [
     { label: "Código de Lote", key: "codigo_fungivora" },
     { label: "Sustrato", key: "tipo_sustrato" },
@@ -23,6 +29,7 @@ function Lotes() {
     { label: "Fecha", key: "fecha_lote" }
   ];
 
+  // Tener la fecha de hoy en el input
   const navigate = useNavigate();
   const hoy = new Date();
   const [fecha, setFecha] = useState({
@@ -31,15 +38,18 @@ function Lotes() {
     year: hoy.getFullYear().toString()
   });
 
-  const { datos, sustratos, ubicaciones, especies, cargando, error, addLote } = useLotes();
+  const { datos, sustratos, ubicaciones, especies, especiesDisponibles,
+  getInoculosPorEspecie, cargando, error, addLote } = useLotes();
   const [verFormulario, setVerFormulario] = useState(false);
-  const [nuevaFila, setNuevaFila] = useState({ tipo_sustrato: "", ubicacion_lote: "", id_inoculo: "" });
+  const [nuevaFila, setNuevaFila] = useState({ especie: "", tipo_sustrato: "", ubicacion_lote: "", id_inoculo: "" });
   const [errorValidacion, setErrorValidacion] = useState("");
   const [codigoPrevisualizacion, setCodigoPrevisualizacion] = useState("");
   const [paso, setPaso] = useState(1);
   const { bloquesTemporales, contenedores, agregarBloqueALista, eliminarBloqueDeLista } = useBloques();
+  const [mostrarModal, setMostrarModal] = useState(false);
 
   useEffect(() => {
+    // Obtener el código de lote
     if (paso === 2 && nuevaFila.id_inoculo) {
       const dd = String(fecha.day).padStart(2, '0');
       const mm = String(fecha.month).padStart(2, '0');
@@ -48,18 +58,21 @@ function Lotes() {
     }
   }, [paso, nuevaFila.id_inoculo, fecha]);
 
-  const ESTILOS_TIPO = {
+  // Colores para podruccion y experimental
+  const colores_tipo = {
     produccion: { bg: "#DDEEE9", text: "#23916F" }, 
     experimental: { bg: "#E9EAFF", text: "#272CBA" } 
   };
 
   const [bloqueForm, setBloqueForm] = useState({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
 
+  // Que cambie el valor de los inputs de select
   const handleInputChange = (setter) => (campo, valor) => {
     const value = (valor && typeof valor === 'object' && 'value' in valor) ? String(valor.value) : (valor?.target ? valor.target.value : valor);
     setter((prev) => ({ ...prev, [campo]: value || "" }));
   };
 
+  // Cambiar de lotes a bloques en el registro
   const irAPasoBloques = () => {
     if (!nuevaFila.ubicacion_lote || !nuevaFila.tipo_sustrato || !nuevaFila.id_inoculo) {
       setErrorValidacion("Por favor, completa los datos");
@@ -69,6 +82,7 @@ function Lotes() {
     setPaso(2);
   };
 
+  // Agregar el bloque y su validación
   const handleAgregarBloque = () => {
     if (!bloqueForm.contenedor || !bloqueForm.peso_gr) {
       setErrorValidacion("Completa los campos del bloque");
@@ -79,6 +93,17 @@ function Lotes() {
     setErrorValidacion("");
   };
 
+  // Obligar a añadir al menos 1 bloque
+  const previsualizarRegistro = () => {
+    if (bloquesTemporales.length === 0) {
+      setErrorValidacion("Añade al menos un bloque");
+      return;
+    }
+    setErrorValidacion("");
+    setMostrarModal(true);
+  };
+
+  // Guardar todo el registro completo
   const handleFinalizarRegistroCompleto = async () => {
     if (bloquesTemporales.length === 0) {
       setErrorValidacion("Añade al menos un bloque");
@@ -95,6 +120,7 @@ function Lotes() {
     else setErrorValidacion(respuesta?.message || " Error en el servidor");
   };
 
+  // Colores de las fases
   const obtenerEstiloFase = (fase) => {
     const f = fase?.toLowerCase() || "";
     if (f.includes("cosecha")) return { bg: "#E8F5E9", text: "#2E7D32" };
@@ -106,31 +132,31 @@ function Lotes() {
 
   return (
     <Base margen_arriba="mt-20 md:mt-20">
-{/* BOTÓN DE ALTERNANCIA (SOLO MÓVIL) - Ajustado */}
-<div className="lg:hidden flex justify-start mb-6"> {/* Usa justify-center si prefieres centrarlo */}
-  <div
-    onClick={() => setVerFormulario(!verFormulario)}
-    className={`px-5 py-2 rounded-[12px] border-2 bg-white transition-all active:scale-95 cursor-pointer shadow-sm
-      ${verFormulario ? "border-[#3b3fb6]" : "border-gray-200"}`}
-  >
-    <Text 
-      variante="label" 
-      style={{ 
-        color: verFormulario ? colores.azul : "#6B7280", 
-        fontWeight: "600",
-        fontSize: "13px" // Un poco más pequeño para que no se vea tosco
-      }}
-    >
-      {verFormulario 
-        ? (paso === 1 ? "Ver Lotes" : "Ver Bloques") 
-        : (paso === 1 ? "Crear lote" : "Crear bloque")
-      }
-    </Text>
-  </div>
-</div>
+      {/* Botón para cambiar del forms a la vista de tabla*/}
+    <div className="lg:hidden flex justify-start mb-6">
+      <div
+        onClick={() => setVerFormulario(!verFormulario)}
+        className={`px-5 py-2 rounded-[12px] border-2 bg-white transition-all active:scale-95 cursor-pointer shadow-sm
+          ${verFormulario ? "border-[#3b3fb6]" : "border-gray-200"}`}
+      >
+        <Text 
+          variante="label" 
+          style={{ 
+            color: verFormulario ? colores.azul : "#6B7280", 
+            fontWeight: "600",
+            fontSize: "13px"
+          }}
+        >
+          {verFormulario 
+            ? (paso === 1 ? "Ver Lotes" : "Ver Bloques") 
+            : (paso === 1 ? "Crear lote" : "Crear bloque")
+          }
+        </Text>
+      </div>
+    </div>
 
       <div className="flex flex-col lg:flex-row gap-8 items-stretch relative">
-        {/* LADO IZQUIERDO: TABLAS */}
+        {/* Componente de las tablas*/}
         <div className={`w-full bg-white rounded-[32px] shadow-sm border p-4 md:p-8 md:pl-16 min-h-[500px] ${verFormulario ? "hidden" : "block"} lg:block`}>
           {paso === 1 ? (
             <>
@@ -152,7 +178,7 @@ function Lotes() {
               codigo={codigoPrevisualizacion}
                 bloques={bloquesTemporales} 
                 onEliminar={eliminarBloqueDeLista}
-                estilosTipo={ESTILOS_TIPO}
+                estilosTipo={colores_tipo}
                 gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1fr_1.2fr_1.2fr_0.5fr]"
                 colorBordeHeader="#F2F2FC"
               />
@@ -160,14 +186,22 @@ function Lotes() {
           )}
         </div>
 
-        {/* LADO DERECHO: FORMULARIOS */}
+        {/* Componentes de formularios*/}
         <div className="flex flex-col lg:w-[440px]">
           <div className={`w-full bg-white rounded-[32px] shadow-sm border p-8 ${verFormulario ? "block" : "hidden"} lg:block`}>
             {paso === 1 ? (
               <FormCrearLote 
-                especies={especies} sustratos={sustratos} ubicaciones={ubicaciones}
-                nuevaFila={nuevaFila} fecha={fecha} setFecha={setFecha}
-                handleNuevaFila={handleInputChange(setNuevaFila)} onSiguiente={irAPasoBloques} error={errorValidacion}
+                especiesDisponibles={especiesDisponibles} 
+                getInoculosPorEspecie={getInoculosPorEspecie}
+                especies={especies} 
+                sustratos={sustratos} 
+                ubicaciones={ubicaciones}
+                nuevaFila={nuevaFila} 
+                fecha={fecha} 
+                setFecha={setFecha}
+                handleNuevaFila={handleInputChange(setNuevaFila)} 
+                onSiguiente={irAPasoBloques} 
+                error={errorValidacion}
               />
             ) : (
               <FormCrearBloque 
@@ -178,10 +212,11 @@ function Lotes() {
             )}
           </div>
 
+        {/* Botones de registrar y cancelar*/}
           {paso === 2 && (
             <div className={`flex flex-col md:flex-row gap-4 mt-8 items-center md:justify-end ${verFormulario ? "flex" : "hidden"} lg:flex`}>
               <div className="order-1 md:order-2">
-                <Button variant="registrar" onClick={handleFinalizarRegistroCompleto}>Registrar</Button> 
+                <Button variant="registrar" onClick={previsualizarRegistro}>Registrar</Button> 
               </div>
               <div className="order-2 md:order-1">
                 <Button variant="eliminar" isOutline={true} onClick={() => setPaso(1)}>Cancelar</Button> 
@@ -189,7 +224,19 @@ function Lotes() {
             </div>
           )}
         </div> 
-      </div>   
+      </div>  
+
+     {/* Modal para confirmar el registro*/}
+      <ModalConfirmacion
+        visible={mostrarModal}
+        titulo="¿Confirmar registro de lote?"
+        descripcion={`Se registrará el lote con ${bloquesTemporales.length} bloques.`}
+        textoConfirmar="Registrar"
+        textoCancelar="Cancelar"
+        icon={CheckmarkCircle02Icon}
+        onConfirm={handleFinalizarRegistroCompleto}
+        onCancel={() => setMostrarModal(false)}
+      /> 
     </Base>
   );
 }

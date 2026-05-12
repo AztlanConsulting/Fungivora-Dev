@@ -69,6 +69,7 @@ class Lotes {
             throw err;
         }
     }
+    
     // Metodo para encontrar los inoculos activos
     static async fetch_inoculos_disponibles() {
         try {

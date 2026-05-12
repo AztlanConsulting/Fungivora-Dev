@@ -1,5 +1,5 @@
 const bloqueService = {
-  // Obtener tipos de contenedores desde categorías
+  // Obtener contenedores
   getContenedores: async () => {
     try {
       const res = await fetch("/api/bloques/contenedores");
@@ -11,11 +11,10 @@ const bloqueService = {
     }
   },
 
-  // Guardar todo el conjunto (Lote + Bloques)
-  // Nota: Aquí podrías enviar ambos en una sola petición si tu backend lo soporta
+  // Guardar lotes con los bloques
   registrarTodo: async (datosLote, listaBloques) => {
     try {
-      // 1. Creamos el lote primero
+      // Crear lote
       const resLote = await fetch("/api/lotes/crear", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -25,13 +24,13 @@ const bloqueService = {
 
       if (!dataLote.success) throw new Error("Error al crear el lote");
 
-      // 2. Creamos los bloques usando el ID que nos devolvió el lote
+      // Crear bloques
       const resBloques = await fetch("/api/bloques/crear", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          id_lote: dataLote.id, // El UUID generado en el backend
-          ...listaBloques // Aquí enviamos la info agrupada
+          id_lote: dataLote.id,
+          ...listaBloques 
         }),
       });
 

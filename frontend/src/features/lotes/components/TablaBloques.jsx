@@ -9,30 +9,26 @@ const colorBordeDestacado = '#7F7FD5';
 
 const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, codigo_lote }) => {
 
-const generarCodigoBloque = (codigoLote, indice) => {
-    if (!codigoLote) return `BC-B${indice + 1}`;
-    
-    // 1. Limpiamos espacios
-    let base = codigoLote.trim();
+    // Generar unicamente de modo vizual el código para el bloque
+    const generarCodigoBloque = (codigoLote, indice) => {
+        if (!codigoLote) return `BC-B${indice + 1}`;
+        
+        let base = codigoLote.trim();
 
-    // 2. Si el código trae un guion y número al final (ej: -1), se lo quitamos
-    // para que al poner el índice del bloque no se vea repetido.
-    const partes = base.split('-');
-    if (partes.length > 3) {
-        partes.pop(); // Quita el último elemento (el -1 del lote)
-        base = partes.join('-');
-    }
+        const partes = base.split('-');
+        if (partes.length > 3) {
+            partes.pop(); 
+            base = partes.join('-');
+        }
 
-    // 3. Cambiamos LC por BC
-    if (base.toUpperCase().startsWith('LC')) {
-        base = 'BC' + base.substring(2);
-    } else if (!base.toUpperCase().startsWith('BC')) {
-        base = 'BC-' + base;
-    }
+        if (base.toUpperCase().startsWith('LC')) {
+            base = 'BC' + base.substring(2);
+        } else if (!base.toUpperCase().startsWith('BC')) {
+            base = 'BC-' + base;
+        }
 
-    // 4. Retornamos: BC-LE-100522-1 (donde el final es el index del bloque)
-    return `${base}-${indice + 1}`;
-};
+        return `${base}-${indice + 1}`;
+    };
 
     const renderEtiqueta = (esProduccion) => {
         const esProd = esProduccion === 1 || esProduccion === true;
@@ -98,12 +94,13 @@ const generarCodigoBloque = (codigoLote, indice) => {
                         </div>
                     ) : (
                         bloques.map((bloque, index) => {
+                            // Inserta el código vizual
                             const codigoVisual = generarCodigoBloque(codigo_lote, index);
                             const pesoLimpio = parseFloat(bloque.peso_gr || 0).toFixed(0);
 
                             return (
                                 <div key={bloque.id_bloque || index} className="relative">
-                                    {/* VISTA MÓVIL */}
+                                    {/* Vista movil */}
                                     <div className="md:hidden p-5 flex flex-col gap-2 bg-white border-b border-gray-100">
                                         <Text variante="body" style={{ fontWeight: '600', color: colores.azul }}>
                                             {codigoVisual}
@@ -123,7 +120,7 @@ const generarCodigoBloque = (codigoLote, indice) => {
                                         </div>
                                     </div>
 
-                                    {/* VISTA DESKTOP */}
+                                    {/* Vista desktop */}
                                     <div className="hidden md:grid grid-cols-5 px-8 py-4 gap-4 items-center transition-colors hover:bg-slate-50 bg-white"
                                          style={{ borderBottom: index === bloques.length - 1 ? 'none' : '1px solid #F0F0F0' }}>
                                         <Text variante="body" style={{ fontWeight: '600', color: '#1A1A40' }}>{codigoVisual}</Text>
