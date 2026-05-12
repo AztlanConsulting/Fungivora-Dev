@@ -44,3 +44,16 @@ exports.get_opciones = async (req, res, next) => {
         });
     }
 };
+
+/** Obtiene todos los inserts de la tabla "Categorias"
+ */
+
+exports.get_categorias_completo = async (req, res) => {
+  try {
+    const [rows] = await Categoria.fetchTodasLasCategorias();
+    res.status(200).json({ success: true, data: rows });
+  } catch (error) {
+    console.error("Error al obtener Categorias:", error);
+    res.status(500).json({ success: false, message: "Error al obtener categorías" });
+  }
+};
