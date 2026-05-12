@@ -1,22 +1,19 @@
-import api from '../../../shared/utils/api'
+import api from '../../../shared/utils/api';
 
 const inoculoService = {
-    getEspecies: async () => {
-        const res = await fetch("/api/inoculos/especies");
-        const json = await res.json();
-        return json;
-    },
 
-    getAllEspecies: async () => api.get("/categorias/opciones?categoria=Especies&abreviado=false"),
+    getEspecies: async () => api.get('/inoculos/especies'),
+
+    getAllEspecies: async () => api.get('/categorias/opciones?categoria=Especies&abreviado=false'),
+
     getDatosInoculo: async (especie, tipoInoculo) =>
         api.get(`/inoculos/filtrado?especie=${especie}&tipo=${tipoInoculo}`),
+
+    getInoculosParaSemilla: async () => {
+        const res = await api.get('/inoculos/semilla');
+        return res.data;
+    },
+
 };
 
 export default inoculoService;
-
-export const fetchInoculosParaSemilla = async () => {
-    const res = await fetch("/api/inoculos/semilla");
-    if (!res.ok) throw new Error('Error al obtener los inóculos para semilla');
-    const json = await res.json();
-    return json.data;
-};

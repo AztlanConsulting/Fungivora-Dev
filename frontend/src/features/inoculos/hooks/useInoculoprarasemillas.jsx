@@ -37,7 +37,7 @@ const useInoculoParaSemilla = (especie) => {
             .filter((ino) => ino.especie === especie)
             .map((ino) => ({
                 value: ino.id_inoculo,
-                label: `${ino.codigo_fungivora} — ${ino.tipo} (${ino.cantidad_disponible} ${ino.unidad})`,
+                label: ino.codigo_fungivora,
                 stockBajo: ino.cantidad_disponible <= ino.stock_recomendado,
                 raw: ino,
             }))
