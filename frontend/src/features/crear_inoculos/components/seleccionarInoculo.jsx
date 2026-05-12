@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SelectField from '../../../shared/components/ui/inputs/seleccionar_texto';
+import SelectField from '../../inputs/seleccionar_texto';
 
 /**
  * Componente que demuestra cómo usar SelectField
