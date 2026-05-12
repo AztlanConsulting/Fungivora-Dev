@@ -59,6 +59,19 @@ const loteService = {
           throw error;
       }
   },
+
+  deleteLote: async (id_lote) => {
+      try {
+        // Ruta del id a eliminar
+          const res = await fetch(`/api/lotes/${id_lote}`, {
+              method: "DELETE",
+          });
+          return await res.json();
+      } catch (error) {
+          console.error("Error al eliminar lote:", error);
+          throw error;
+      }
+  },
 };
 
 export default loteService;
