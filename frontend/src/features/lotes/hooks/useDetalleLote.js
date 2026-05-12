@@ -37,6 +37,10 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
         fetchData();
     }, [id_lote, id_inoculo_usado]);
 
+    const getFase = (id_fase) => {
+        return fases[id_fase] ? fases[id_fase].label : "Desconocida";
+    };
+
     const guardarCambios = async (bloquesActualizados, nuevaFase) => {
         try {
             const fase = fases[nuevaFase] ? fases[nuevaFase].label : "Inoculación";
@@ -48,7 +52,7 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
         }
     };
 
-    return { bloques, setBloques, fase, setFase, especie, codigoInoculo, cargando, error, guardarCambios, fases };
+    return { bloques, setBloques, fase, setFase, especie, codigoInoculo, cargando, error, getFase, guardarCambios, fases };
 };
 
 export default useDetalleLote;
