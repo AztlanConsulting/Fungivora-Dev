@@ -64,21 +64,19 @@ const useLotes = () => {
     }, [fetchLotes, cargarCatalogos]);
 
     // Función para filtrar inóculos basada en el nombre de la especie
-// En useLotes.js
+    const getInoculosPorEspecie = useCallback((especieNombre) => {
+        const regexCodigoValido = /^[A-Z].G-[A-Z]{2,3}-\d+/;
 
-const getInoculosPorEspecie = useCallback((especieNombre) => {
-    const regexCodigoValido = /^[A-Z].G-[A-Z]{2,3}-\d+/;
-
-    return inoculosRaw
-        .filter(i => 
-            i.especie === especieNombre && 
-            regexCodigoValido.test(i.codigo_fungivora) // <-- FILTRO DE FORMATO
-        )
-        .map(i => ({
-            value: i.id_inoculo,
-            label: i.codigo_fungivora 
-        }));
-}, [inoculosRaw]);
+        return inoculosRaw
+            .filter(i => 
+                i.especie === especieNombre && 
+                regexCodigoValido.test(i.codigo_fungivora) 
+            )
+            .map(i => ({
+                value: i.id_inoculo,
+                label: i.codigo_fungivora 
+            }));
+    }, [inoculosRaw]);
 
     const addLote = async (nuevoLote) => {
         try {
