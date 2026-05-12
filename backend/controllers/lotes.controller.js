@@ -253,3 +253,35 @@ exports.get_especies_unicas = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error al obtener especies' });
     }
 };
+
+/*
+* delete_batch
+* Elimina un lote y todos sus bloques asociados por ID
+*/
+exports.delete_batch = async (req, res) => {
+    try {
+        const { id_lote } = req.params;
+
+        if (!id_lote) {
+            return res.status(400).json({ success: false, message: "ID de lote no proporcionado" });
+        }
+
+        const result = await Lotes.eliminar_lote(id_lote);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ success: false, message: "Lote no encontrado" });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Lote y sus bloques asociados eliminados con éxito'
+        });
+    } catch (error) {
+        console.error("Error en delete_batch controller:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al eliminar el lote',
+            error: error.message
+        });
+    }
+};
