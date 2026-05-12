@@ -166,7 +166,13 @@ const DetalleLote = () => {
                 visible={isModalOpen}
                 icon={CheckmarkCircle02Icon}
                 titulo="¿Confirmar cambios?"
-                descripcion={"Nueva Fase: " + getFase(fase) + " | Bloques contaminados: " + bloques.filter(b => b.contaminado === 1).length}
+                descripcion={
+                    <>
+                        <span className="font-semibold">Nueva Fase:</span> {getFase(fase)}
+                        <br />
+                        <span className="font-semibold">Bloques contaminados:</span> {bloques.filter(b => b.contaminado === 1).length}
+                    </>
+                }
                 onConfirm={onGuardar}
                 onCancel={() => setIsModalOpen(false)}
                 textoConfirmar="Confirmar"
