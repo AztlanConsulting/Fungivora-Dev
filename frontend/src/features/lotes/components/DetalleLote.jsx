@@ -4,23 +4,49 @@ import useDetalleLote from '../hooks/useDetalleLote';
 import BannerLote from '../components/BannerLote';
 import TablaBloques from '../components/TablaBloques';
 import SeccionFaseBuscar from '../components/SeccionFaseBuscar';
-import { Titulo, Text } from '../../../shared/components/ui';
+import { Titulo, Text, ModalConfirmacion, ModalAlerta } from '../../../shared/components/ui';
 import { colores } from '../../../shared/components/ui/basics/colores';
 import { Base } from '../../../shared/components/layout';
+import { CheckmarkCircle02Icon } from '@hugeicons/core-free-icons';
 
 const DetalleLote = () => {
     const { id_lote } = useParams();
     const { state } = useLocation();
 
-    const { bloques, setBloques, especie, codigoInoculo, cargando, error, guardarCambios } = useDetalleLote(
+    const {
+        bloques, setBloques, bloquesIniciales, setBloquesIniciales,
+        fase, setFase, faseInicialNum, setFaseInicialNum,
+        especie, codigoInoculo,
+        cargando, error, getFase, guardarCambios,
+        fases
+    } = useDetalleLote(
         id_lote,
-        state?.id_inoculo_usado
+        state?.id_inoculo_usado,
+        state?.fase
     );
 
-    const [fase, setFase] = useState(state?.fase || "Inoculación");
     const [busqueda, setBusqueda] = useState("");
     const [editado, setEditado] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
 
+    const handleLocalChanges = (nuevosBloques = bloques, nuevaFase = fase) => {
+        // Verificar cambio de fase
+        const faseModificada = nuevaFase !== faseInicialNum;
+
+        // Verificar cambios en bloques
+        const bloquesModificados = nuevosBloques.some((bloque, index) => {
+            const bloqueInicial = bloquesIniciales[index];
+
+            return (
+                bloque.contaminado !== bloqueInicial?.contaminado
+            );
+        });
+
+        setEditado(faseModificada || bloquesModificados);
+    };
+
+    // Cambio local de bloques contaminados
     const handleLocalToggleContaminado = (id_bloque) => {
         const nuevosBloques = bloques.map(bloque => {
             if (bloque.id_bloque === id_bloque) {
@@ -32,23 +58,34 @@ const DetalleLote = () => {
             return bloque;
         });
         setBloques(nuevosBloques);
-        setEditado(true);
+        handleLocalChanges(nuevosBloques, fase);
     };
 
+    // Cambio local de fase
+    const handleLocalChangeFase = (nuevaFase) => {
+        setFase(nuevaFase);
+        handleLocalChanges(bloques, nuevaFase);
+    }
+
     const onGuardar = async () => {
-        const resultado = await guardarCambios(bloques);
+        setIsModalOpen(false);
+        const resultado = await guardarCambios(bloques, fase);
         if (resultado.success) {
             setEditado(false);
-            alert("Cambios sincronizados con éxito.");
+            setAlerta({
+                visible: true,
+                variante: "exito",
+                mensaje: "Cambios guardados exitosamente"
+            });
         } else {
-            alert("Error al guardar: " + resultado.error);
+            setAlerta({
+                visible: true,
+                variante: "error",
+                mensaje: "Error al guardar: " + resultado.error
+            });
         }
     };
 
-    const fases = [
-        { label: "Inoculación" }, { label: "Colonización" }, { label: "Fructificación" },
-        { label: "Cosecha 1" }, { label: "Cosecha 2" }, { label: "Finalización" },
-    ];
 
     const loteData = {
         fecha: state?.fecha ? new Date(state.fecha).toLocaleDateString('es-MX', {
@@ -71,7 +108,7 @@ const DetalleLote = () => {
 
             {editado && (
                 <button
-                    onClick={onGuardar}
+                    onClick={() => setIsModalOpen(true)}
                     className={`
                                 fixed bottom-20 right-10 md:bottom-10 md:right-16
                                 z-50 w-40 h-8 md:w-52 md:h-10 text-base md:text-lg
@@ -84,7 +121,8 @@ const DetalleLote = () => {
                     }}
                 >
                     <Text variante='button' style={{ color: colores.azul }}>
-                        Guardar Cambios
+                        <span className="md:hidden">Guardar</span>
+                        <span className="hidden md:inline">Guardar Cambios</span>
                     </Text>
                 </button>
             )}
@@ -96,7 +134,7 @@ const DetalleLote = () => {
                     <SeccionFaseBuscar
                         fases={fases}
                         fase={fase}
-                        setFase={setFase}
+                        setFase={handleLocalChangeFase}
                         busqueda={busqueda}
                         setBusqueda={setBusqueda}
                     />
@@ -115,6 +153,31 @@ const DetalleLote = () => {
                     </div>
                 </div>
             </Base>
+
+            <ModalAlerta
+                visible={alerta.visible}
+                variante={alerta.variante}
+                mensaje={alerta.mensaje}
+                onClose={() => setAlerta({ ...alerta, visible: false })}
+            />
+
+            {/* MODAL */}
+            <ModalConfirmacion
+                visible={isModalOpen}
+                icon={CheckmarkCircle02Icon}
+                titulo="¿Confirmar cambios?"
+                descripcion={
+                    <>
+                        <span className="font-semibold">Nueva Fase:</span> {getFase(fase)}
+                        <br />
+                        <span className="font-semibold">Bloques contaminados:</span> {bloques.filter(b => b.contaminado === 1).length}
+                    </>
+                }
+                onConfirm={onGuardar}
+                onCancel={() => setIsModalOpen(false)}
+                textoConfirmar="Confirmar"
+                textoCancelar="Cancelar"
+            />
         </>
     );
 };
