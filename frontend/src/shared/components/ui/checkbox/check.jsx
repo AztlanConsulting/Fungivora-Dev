@@ -16,15 +16,15 @@ muestra una marca de correcto al seleccionarse
 
 const Checkbox = ({ isChecked = false, 
     onChange, 
-    variant = "Basico", 
+    variant = "basico", 
     disabled = false,
     }) => {
 
     const[isFocused, setIsFocused] = useState(false);
 
     const variants = {
-        Basico: colores.azul,
-        Obscuro: colores.azulClaro,
+        basico: colores.azul,
+        obscuro: colores.azulObscuro,
         exito: colores.verdeAccent
     };
 
@@ -36,6 +36,9 @@ const Checkbox = ({ isChecked = false,
     return (
         <button
             type="button"
+            role="checkbox"
+            aria-checked={isChecked}
+            aria-disabled={disabled}
             onClick={() => !disabled && onChange?.(!isChecked)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
@@ -48,7 +51,7 @@ const Checkbox = ({ isChecked = false,
                 
             `}
             style ={{
-                boxShadow: isFocused ? `0 0 0 4px ${mainColor}40` : "none",
+                boxShadow: isFocused && !disabled ? `0 0 0 4px ${mainColor}40` : "none",
                 width: "32px",
                 height: "32px"
             }}
@@ -56,7 +59,7 @@ const Checkbox = ({ isChecked = false,
 
         <HugeiconsIcon 
             icon={iconData} 
-            size={42} 
+            size={28} 
             color={mainColor} 
             variant="stroke" 
         />
