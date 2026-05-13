@@ -6,5 +6,6 @@ const categoriaController = require('../controllers/categoria.controller');
 router.get('/', categoriaController.get_categorias)
 // GET /api/categorias/opciones
 router.get('/opciones', categoriaController.get_opciones);
-
+// GET /api/categorias/todas
+router.get("/todas", categoriaController.get_categorias_completo);
 module.exports = router;

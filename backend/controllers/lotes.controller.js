@@ -173,7 +173,8 @@ exports.post_batch = async (req, res) => {
  */
 exports.actualizar_fase = async (req, res) => {
     try {
-        const { id_lote, nuevaFase } = req.body;
+        const { id_lote } = req.query;
+        const { nuevaFase } = req.body;
         await Lotes.actualizar_fase(id_lote, nuevaFase);
 
         res.status(200).json({

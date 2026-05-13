@@ -1,26 +1,25 @@
-// frontend/src/features/inoculos/hooks/useInoculoParaSemilla.js
 import { useState, useEffect } from 'react';
-import { fetchInoculosParaSemilla } from '../services/inoculo.service';
+import inoculoService from '../services/inoculo.service';
 
-/**
- * Obtiene los inóculos disponibles (Agar + Medio Líquido, stock > 0)
- * y los filtra por la especie que el usuario haya seleccionado en el form.
- *
- * @param {string} especie - Valor del campo especie del formulario.
- * @returns {{ opciones: Array, loading: boolean, error: string|null }}
- */
+/*
+* useInoculoParaSemilla
+Obtiene los inoculos disponibles (Agar + Medio Liquido, stock > 0)
+y los filtra por la especie que el usuario haya seleccionado en el form
+@param {string} especie - Valor del campo especie del formulario
+@returns {{ opciones: Array, loading: boolean, error: string|null }}
+*/
 const useInoculoParaSemilla = (especie) => {
     const [todos, setTodos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Carga única al montar — trae todos los disponibles
+    // Carga unica al montar — trae todos los disponibles
     useEffect(() => {
         const cargar = async () => {
             setLoading(true);
             setError(null);
             try {
-                const data = await fetchInoculosParaSemilla();
+                const data = await inoculoService.getInoculosParaSemilla();
                 setTodos(data);
             } catch (err) {
                 setError('No se pudieron cargar los inóculos disponibles.');
@@ -36,10 +35,11 @@ const useInoculoParaSemilla = (especie) => {
         ? todos
             .filter((ino) => ino.especie === especie)
             .map((ino) => ({
-                value: ino.id_inoculo,
-                label: ino.codigo_fungivora,
+                value:    ino.id_inoculo,
+                codigo:   ino.codigo_fungivora,
+                label:    ino.codigo_fungivora,
                 stockBajo: ino.cantidad_disponible <= ino.stock_recomendado,
-                raw: ino,
+                raw:      ino,
             }))
         : [];
 
