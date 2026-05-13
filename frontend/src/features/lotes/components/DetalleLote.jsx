@@ -9,6 +9,7 @@ import { colores } from '../../../shared/components/ui/basics/colores';
 import { Base } from '../../../shared/components/layout';
 import { CheckmarkCircle02Icon } from '@hugeicons/core-free-icons';
 
+// Detalle de cada lote con toda su información
 const DetalleLote = () => {
     const { id_lote } = useParams();
     const { state } = useLocation();
@@ -16,11 +17,12 @@ const DetalleLote = () => {
     const {
         bloques, setBloques, bloquesIniciales, setBloquesIniciales,
         fase, setFase, faseInicialNum, setFaseInicialNum,
-        especie, codigoInoculo,
+        especie, codigoInoculo, codigoLoteBD,
         cargando, error, getFase, guardarCambios,
         fases
     } = useDetalleLote(
         id_lote,
+        state?.id_inoculo,
         state?.id_inoculo_usado,
         state?.fase
     );
@@ -87,13 +89,14 @@ const DetalleLote = () => {
     };
 
 
-    const loteData = {
-        fecha: state?.fecha ? new Date(state.fecha).toLocaleDateString('es-MX', {
-            day: '2-digit', month: 'long', year: 'numeric'
-        }) : 'Sin fecha',
+   const loteData = {
+        fecha: state?.fecha_lote 
+            ? new Date(state.fecha_lote).toLocaleDateString('es-MX', {
+                day: '2-digit', month: 'long', year: 'numeric'
+            }) : 'Sin fecha',
         especie: cargando ? 'Cargando...' : especie || 'S/N',
-        sustrato: state?.sustrato || 'No especificado',
-        ubicacion: state?.ubicacion || 'Sin ubicación',
+        sustrato: state?.tipo_sustrato || 'No especificado',
+        ubicacion: state?.ubicacion_lote || 'Sin ubicación', 
         inoculo: cargando ? 'Cargando...' : codigoInoculo || 'S/N'
     };
 
@@ -102,10 +105,11 @@ const DetalleLote = () => {
         b.contenedor?.toLowerCase().includes(busqueda.toLowerCase())
     ) || [];
 
-    return (
-        <>
-            <Titulo>Lote: {state?.codigo || 'Detalle'}</Titulo>
 
+    const codigoParaTabla = state?.codigo_fungivora || codigoLoteBD || "";
+        return (
+            <>
+                <Titulo>Lote: {state?.codigo_fungivora || 'Detalle'}</Titulo>
             {editado && (
                 <button
                     onClick={() => setIsModalOpen(true)}
@@ -127,31 +131,31 @@ const DetalleLote = () => {
                 </button>
             )}
 
-            <Base margen_arriba="mt-16 md:mt-8">
-                <div className="p-6 flex flex-col gap-8">
-                    <BannerLote data={loteData} />
+                <Base margen_arriba="mt-16 md:mt-8">
+                    <div className="p-6 flex flex-col gap-8">
+                        <BannerLote data={loteData} />
 
-                    <SeccionFaseBuscar
-                        fases={fases}
-                        fase={fase}
-                        setFase={handleLocalChangeFase}
-                        busqueda={busqueda}
-                        setBusqueda={setBusqueda}
-                    />
-
-                    <div className="flex flex-col gap-4">
-                        {error && (
-                            <div className="text-red-500 px-2 font-medium">Error: {error}</div>
-                        )}
-
-                        <TablaBloques
-                            bloques={bloquesFiltrados}
-                            loading={cargando}
-                            onToggleContaminado={handleLocalToggleContaminado}
-                            codigo_lote={state?.codigo || 'Lote'}
+                        <SeccionFaseBuscar
+                            fases={fases}
+                            fase={fase}
+                            setFase={handleLocalChangeFase}
+                            busqueda={busqueda}
+                            setBusqueda={setBusqueda}
                         />
+
+                        <div className="flex flex-col gap-4">
+                            {error && (
+                                <div className="text-red-500 px-2 font-medium">Error: {error}</div>
+                            )}
+
+                            <TablaBloques
+                                bloques={bloquesFiltrados}
+                                loading={cargando}
+                                onToggleContaminado={handleLocalToggleContaminado}
+                                codigo_lote={codigoParaTabla}
+                            />
+                        </div>
                     </div>
-                </div>
             </Base>
 
             <ModalAlerta

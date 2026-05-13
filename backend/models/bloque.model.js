@@ -10,6 +10,7 @@ class Bloque {
         this.contenedor = contenedor;
     }
 
+    // Metodo para encontrar los bloques por el lote
     static async fetch_por_lote(id_lote) {
         try {
             const [filas] = await db.execute(`
@@ -55,6 +56,21 @@ class Bloque {
         }
     }
 
+    // Metodo para insertar los datos de bloque
+    static async crear_bloque(nuevoBloque) {
+        try {
+            const { id_bloque, id_lote, produccion, peso_gr, contaminado, contenedor } = nuevoBloque;
+            return await db.execute(`
+                INSERT INTO Bloques (
+                    id_bloque, id_lote, produccion, peso_gr, contaminado, contenedor
+                ) 
+                VALUES (?, ?, ?, ?, ?, ?)
+            `, [id_bloque, id_lote, produccion, peso_gr, contaminado, contenedor]);
+        } catch (err) {
+            console.error("Error en crear_bloque model:", err);
+            throw err;
+        }
+    }
 }
 
 module.exports = Bloque;
