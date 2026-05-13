@@ -37,5 +37,14 @@ export const LoteService = {
     */
     updateBloquesMasivo: async (id_lote, bloques) => {
         return await api.put(`/bloques/masivo?id_lote=${id_lote}`, { bloques });
-    }
+    },
+
+    /**
+     * Obtiene el detalle de los lotes por id
+     * Endpoint: /lotes/detalle?id_lote=...
+     */
+    getDetalleLote: async (id_lote) => {
+        const response = await api.get(`/lotes/detalle?id_lote=${id_lote}`);
+        return response.data; 
+    },
 };
