@@ -30,4 +30,31 @@ module.exports = class Categoria {
             ORDER BY ${campo} ASC
         `, [categoria]);
     }
+
+    /**
+     * @description Obtiene la abreviatura de una opción específica basada en su nombre
+     * @param {string} nombreEspecie - El nombre de la especie (ej. 'Pleurotus ostreatus')
+     * @returns {Promise} - Retorna el resultado de la ejecución del query
+     */
+    static fetchAbreviaturaPorNombre(nombreEspecie) {
+        return db.execute(`
+            SELECT abreviatura_opcion 
+            FROM Categorias 
+            WHERE nombre_categoria = 'Especies' AND nombre_opcion = ?
+            LIMIT 1
+        `, [nombreEspecie]);
+    }
+
+    /**
+     * @description Obtiene todos los inserts de la tabla "Categorias"
+     * @returns {Promise} - Retorna el resultado de la ejecución del query
+     */
+
+    static fetchTodasLasCategorias() {
+        return db.execute(`
+        SELECT *
+        FROM Categorias
+        ORDER BY nombre_categoria ASC, nombre_opcion ASC`
+        );
+    }
 };

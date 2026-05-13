@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { colores } from "../ui/basics/colores";
 import Text from "../ui/basics/texto";
 import ModalConfirmacion from "../ui/popups/modal_confirmacion";
-import useLogout from '../../../features/hooks/useLogout';
+import useLogout from '../../../features/logout/hooks/useLogout';
 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Home07FreeIcons, BookOpenTextFreeIcons, PackageIcon, MushroomIcon, Logout02Icon, Door01Icon } from '@hugeicons/core-free-icons';

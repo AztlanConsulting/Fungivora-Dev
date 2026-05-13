@@ -1,18 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import Base from "../../shared/components/layout/base";
 import Titulo from "../../shared/components/ui/basics/titulo";
 import Text from "../../shared/components/ui/basics/texto";
 import { colores } from "../../shared/components/ui/basics/colores";
 import useLotes from "../../features/lotes/hooks/useLotes";
-import SelectField from "../../shared/components/ui/inputs/seleccionar_texto";
-import InputFecha from "../../shared/components/ui/inputs/input_fecha";
+import useBloques from "../../features/bloques/hooks/useBloques";
 import Button from "../../shared/components/ui/buttons/botones";
+import ModalConfirmacion from "../../shared/components/ui/popups/modal_confirmacion"; 
+import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
 
+// Iconos
 import { HugeiconsIcon } from '@hugeicons/react';
-import { CancelCircleIcon } from '@hugeicons/core-free-icons';
+import { CheckmarkCircle02Icon} from '@hugeicons/core-free-icons';
+
+// Componentes de Tablas y Forms
+import TablaLotes from "../../features/lotes/components/TablaLotes";
+import TablaBloques from "../../features/bloques/components/TablaBloques";
+import FormCrearLote from "../../features/lotes/components/FormCrearLote";
+import FormCrearBloque from "../../features/bloques/components/FormCrearBloque";
 
 function Lotes() {
-  // Nombres de las columnas
+
   const columnas = [
     { label: "Código de Lote", key: "codigo_fungivora" },
     { label: "Sustrato", key: "tipo_sustrato" },
@@ -20,255 +29,283 @@ function Lotes() {
     { label: "Estado", key: "fase" },
     { label: "Fecha", key: "fecha_lote" }
   ];
-  
-  const [fecha, setFecha] = useState({ day: "", month: "", year: "" });
-  const { datos, cargando, error, addLote } = useLotes();
-  const [filaSeleccionada, setFilaSeleccionada] = useState(null);
+
+  // Tener la fecha de hoy en el input
+  const navigate = useNavigate();
+  const hoy = new Date();
+  const [fecha, setFecha] = useState({
+    day: hoy.getDate().toString().padStart(2, '0'),
+    month: (hoy.getMonth() + 1).toString().padStart(2, '0'),
+    year: hoy.getFullYear().toString()
+  });
+
+  const { datos, sustratos, ubicaciones, especies, especiesDisponibles,
+  getInoculosPorEspecie, cargando, error, addLote } = useLotes();
   const [verFormulario, setVerFormulario] = useState(false);
-  const [nuevaFila, setNuevaFila] = useState({ tipo_sustrato: "", ubicacion_lote: "" });
+  const [nuevaFila, setNuevaFila] = useState({ especie: "", tipo_sustrato: "", ubicacion_lote: "", id_inoculo: "" });
   const [errorValidacion, setErrorValidacion] = useState("");
+  const [codigoPrevisualizacion, setCodigoPrevisualizacion] = useState("");
+  const [paso, setPaso] = useState(1);
+  const { bloquesTemporales, contenedores, agregarBloqueALista, eliminarBloqueDeLista } = useBloques();
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [guardando, setGuardando] = useState(false);
+  const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
 
-  // Opciones fijas para Ubicación
-  const opcionesUbicacion = [
-    { value: "Granja", label: "Granja" },
-    { value: "Laboratorio", label: "Laboratorio" }
-  ];
+  useEffect(() => {
+    // Obtener el código de lote
+    if (paso === 2 && nuevaFila.id_inoculo) {
+      const dd = String(fecha.day).padStart(2, '0');
+      const mm = String(fecha.month).padStart(2, '0');
+      const yy = fecha.year.toString().slice(-2);
+      setCodigoPrevisualizacion(`LC-XX-${dd}${mm}${yy}-X`);
+    }
+  }, [paso, nuevaFila.id_inoculo, fecha]);
 
-  const handleNuevaFila = (campo, valor) => {
-    const valorLimpio = valor?.target ? valor.target.value : (valor?.value || valor);
-    
-    setNuevaFila((prev) => ({ ...prev, [campo]: valorLimpio }));
+  // Colores para podruccion y experimental
+  const colores_tipo = {
+    produccion: { bg: "#DDEEE9", text: "#23916F" }, 
+    experimental: { bg: "#E9EAFF", text: "#272CBA" } 
   };
 
-  const handleGuardarLote = async () => {
-    const { ubicacion_lote } = nuevaFila;
-    
-    // Validación (actualmente solo ubicación)
-    if (!ubicacion_lote) {
-      setErrorValidacion("Por favor, selecciona una ubicación");
+  const [bloqueForm, setBloqueForm] = useState({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+
+  // Que cambie el valor de los inputs de select
+  const handleInputChange = (setter) => (campo, valor) => {
+    const value = (valor && typeof valor === 'object' && 'value' in valor) ? String(valor.value) : (valor?.target ? valor.target.value : valor);
+    setter((prev) => ({ ...prev, [campo]: value || "" }));
+  };
+
+  // Cambiar de lotes a bloques en el registro
+  const irAPasoBloques = () => {
+    if (!nuevaFila.ubicacion_lote || !nuevaFila.tipo_sustrato || !nuevaFila.id_inoculo) {
+      setErrorValidacion("Por favor, completa los datos");
       return;
     }
-    
     setErrorValidacion("");
-    
-    // Objeto a nuevaFila 
-    const exito = await addLote(nuevaFila);
-    
-    if (exito) {
-      setNuevaFila({ tipo_sustrato: "", ubicacion_lote: "" });
-      setVerFormulario(false);
-    }
+    setPaso(2);
   };
 
-  // Estilos para la fase
+  // Agregar el bloque y su validación
+  const handleAgregarBloque = () => {
+    if (!bloqueForm.contenedor || !bloqueForm.peso_gr || !bloqueForm.cantidad) {
+      setErrorValidacion("Completa los campos del bloque");
+      return;
+    }
+
+    const peso = parseFloat(bloqueForm.peso_gr);
+    const cantidad = parseFloat(bloqueForm.cantidad);
+
+    if (isNaN(peso) || peso <= 0 || isNaN(cantidad) || cantidad <= 0) {
+      setErrorValidacion("Ingresa un número válido y mayor a cero");
+      return;
+    }
+
+    const cantidadAcumulada = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad), 0);
+
+    if (cantidadAcumulada + cantidad > 100) { 
+      setErrorValidacion(`Límite excedido. Total acumulado: ${cantidadAcumulada}. No puedes superar 100 unidades.`);
+      return;
+    }
+
+    agregarBloqueALista({ ...bloqueForm });
+    
+    setBloqueForm({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+    setErrorValidacion("");
+  };
+
+  // Obligar a añadir al menos 1 bloque
+  const previsualizarRegistro = () => {
+    if (bloquesTemporales.length === 0) {
+      setErrorValidacion("Añade al menos un bloque");
+      return;
+    }
+    setErrorValidacion("");
+    setMostrarModal(true);
+  };
+
+  // Guardar todo el registro completo
+  const handleFinalizarRegistroCompleto = async () => {
+    if (guardando || bloquesTemporales.length === 0) return;
+
+    setGuardando(true); 
+    setErrorValidacion("");
+    setMostrarModal(false);
+
+    if (bloquesTemporales.length === 0) {
+      setErrorValidacion("Añade al menos un bloque");
+      return;
+    }
+    const datosParaEnviar = {
+      ...nuevaFila,
+      fecha_lote: `${fecha.year}-${fecha.month}-${fecha.day}`,
+      produccion: Number(bloquesTemporales[0].produccion),
+      bloques: bloquesTemporales.map(b => ({ ...b, peso_gr: Number(b.peso_gr), cantidad: Number(b.cantidad), produccion: Number(b.produccion) }))
+    };
+    try {
+      const respuesta = await addLote(datosParaEnviar);
+
+      if (respuesta?.success || respuesta?.id_lote) {
+        setAlerta({
+          visible: true,
+          variante: "exito",
+          mensaje: "Lote y bloques registrados exitosamente"
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+
+      } else {
+        setGuardando(false);
+        setAlerta({
+          visible: true,
+          variante: "error",
+          mensaje: "Error al guardar: " + (respuesta?.message || "Error desconocido")
+        });
+      }
+    } catch (err) {
+      setGuardando(false);
+      setAlerta({
+        visible: true,
+        variante: "error",
+        mensaje: "Error de conexión con el servidor"
+      });
+    }
+ };
+
+  // Colores de las fases
   const obtenerEstiloFase = (fase) => {
     const f = fase?.toLowerCase() || "";
     if (f.includes("cosecha")) return { bg: "#E8F5E9", text: "#2E7D32" };
     if (f.includes("inoculación")) return { bg: "#FFEBEE", text: "#C62828" };
     if (f.includes("colonización")) return { bg: "#FFF3E0", text: "#EF6C00" };
-    if (f.includes("finalización") || f.includes("finalizado")) return { bg: "#E3F2FD", text: "#1565C0" };
     if (f.includes("fructificación")) return { bg: "#fff5cc", text: "#c7a200" };
     return { bg: "#F5F5F5", text: "#616161" };
   };
 
-  // Color del header
-  const colorBordeHeader = "#F2F2FC";
-
-  const gridLayout = "grid-cols-1 md:grid-cols-[1.2fr_1fr_1.1fr_1.2fr_1fr_0.5fr]";
+  const totalUnidadesBloques = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad || 0), 0);
 
   return (
-    <>
-      <Titulo>Lotes</Titulo>
+    <Base margen_arriba="mt-20 md:mt-20">
+      {/* Botón para cambiar del forms a la vista de tabla*/}
+    <div className="lg:hidden flex justify-start mb-6">
+      <div
+        onClick={() => setVerFormulario(!verFormulario)}
+        className={`px-5 py-2 rounded-[12px] border-2 bg-white transition-all active:scale-95 cursor-pointer shadow-sm
+          ${verFormulario ? "border-[#3b3fb6]" : "border-gray-200"}`}
+      >
+        <Text 
+          variante="label" 
+          style={{ 
+            color: verFormulario ? colores.azul : "#6B7280", 
+            fontWeight: "600",
+            fontSize: "13px"
+          }}
+        >
+          {verFormulario 
+            ? (paso === 1 ? "Ver Lotes" : "Ver Bloques") 
+            : (paso === 1 ? "Crear lote" : "Crear bloque")
+          }
+        </Text>
+      </div>
+    </div>
 
-      <Base margen_arriba="mt-20 md:mt-20">
-        {/* Boton de moviles para abrir el forms */}
-        <div className="lg:hidden w-full mb-6">
-          <div
-            onClick={() => setVerFormulario(!verFormulario)}
-            className={`px-7 py-3 rounded-[15px] transition-all duration-300 cursor-pointer inline-flex items-center justify-center border-2 
-              ${verFormulario
-                ? "bg-white border-[#3b3fb6] shadow-sm"
-                : "bg-white border-gray-200 hover:border-gray-300"}`}
-          >
-            <Text
-              variante="label"
-              style={{
-                color: verFormulario ? colores.azul : "#6B7280",
-                fontWeight: "500",
-                fontSize: "14px",
-                letterSpacing: "0.5px"
-              }}
-            >
-              {verFormulario ? "Lotes" : "Crear lote"}
-            </Text>
-          </div>
+      <div className="flex flex-col lg:flex-row gap-8 items-stretch relative">
+        {/* Componente de las tablas*/}
+        <div className={`w-full bg-white rounded-[32px] shadow-sm border p-4 md:p-8 md:pl-16 min-h-[500px] ${verFormulario ? "hidden" : "block"} lg:block`}>
+          {paso === 1 ? (
+            <>
+              <Titulo>Lotes</Titulo>
+              {cargando ? <Text>Cargando...</Text> : (
+                <TablaLotes 
+                  datos={datos} 
+                  columnas={columnas} 
+                  onVerDetalle={(lote) => navigate(`/lotes/detalle/${lote.id_lote}`, { state: lote })}
+                  obtenerEstiloFase={obtenerEstiloFase}
+                  gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1fr_1.1fr_1.2fr_1fr_0.5fr]"
+                  colorBordeHeader="#F2F2FC"
+                />
+              )}
+            </>
+          ) : (
+            <div className="animate-in fade-in duration-500">
+              <TablaBloques 
+              codigo={codigoPrevisualizacion}
+                bloques={bloquesTemporales} 
+                onEliminar={eliminarBloqueDeLista}
+                estilosTipo={colores_tipo}
+                gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1fr_1.2fr_1.2fr_0.5fr]"
+                colorBordeHeader="#F2F2FC"
+              />
+            </div>
+          )}
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 items-stretch">
-          {/* Contenedor Principal de la Tabla */}
-          <div className={`w-full bg-white rounded-[32px] shadow-sm border p-4 md:p-8 md:pl-16 min-h-[500px] ${verFormulario ? "hidden" : "block"} lg:block`}>
-            {cargando && datos.length === 0 ? (
-              <div className="flex justify-center items-center h-[400px]">
-                <Text variante="medium">Cargando lotes...</Text>
-              </div>
-            ) : error ? (
-              <div className="flex justify-center items-center h-[400px]">
-                <Text variante="medium" style={{ color: 'red' }}>Error al conectar con el servidor</Text>
-              </div>
+        {/* Componentes de formularios*/}
+        <div className="flex flex-col lg:w-[440px]">
+          <div className={`w-full bg-white rounded-[32px] shadow-sm border p-8 ${verFormulario ? "block" : "hidden"} lg:block`}>
+            {paso === 1 ? (
+              <FormCrearLote 
+                especiesDisponibles={especiesDisponibles} 
+                getInoculosPorEspecie={getInoculosPorEspecie}
+                especies={especies} 
+                sustratos={sustratos} 
+                ubicaciones={ubicaciones}
+                nuevaFila={nuevaFila} 
+                fecha={fecha} 
+                setFecha={setFecha}
+                handleNuevaFila={handleInputChange(setNuevaFila)} 
+                onSiguiente={irAPasoBloques} 
+                error={errorValidacion}
+              />
             ) : (
-              <div className="flex flex-col md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
-                {/* Header Desktop */}
-                <div className={`hidden md:grid ${gridLayout}`} style={{ backgroundColor: colorBordeHeader }}>
-                  {columnas.map((col, i) => (
-                    <div key={i} className="px-6 py-4">
-                      <Text variante="medium" style={{ color: colores.azul, fontSize: "16px", fontWeight: '600' }}>{col.label}</Text>
-                    </div>
-                  ))}
-                  <div className="px-6 py-4"></div>
-                </div>
-
-                {/* Contenedor de datos */}
-                <div className="max-h-[605px] md:max-h-[550px] overflow-y-auto bg-transparent md:bg-white flex flex-col gap-3 md:gap-0">
-                  {datos.map((lote) => {
-                    const esSeleccionado = filaSeleccionada === lote.id_lote;
-                    const fechaFormateada = new Date(lote.fecha_lote).toLocaleDateString();
-                    const estiloFase = obtenerEstiloFase(lote.fase);
-
-                    return (
-                      <div key={lote.id_lote} onClick={() => setFilaSeleccionada(lote.id_lote)}>
-                        {/* Vista Móvil */}
-                        <div 
-                          className={`md:hidden p-5 rounded-2xl border bg-white shadow-sm flex flex-col gap-4 transition-all ${esSeleccionado ? 'ring-2' : ''}`}
-                          style={{ 
-                            borderColor: esSeleccionado ? colores.azul : colorBordeHeader,
-                            boxShadow: esSeleccionado ? `0 4px 15px rgba(0,0,0,0.08)` : '0 2px 4px rgba(0,0,0,0.04)'
-                          }}
-                        >
-                          <div className="flex justify-between items-start">
-                            <Text variante="option" style={{ color: colores.black, fontWeight: '500', fontSize: '18px' }}>
-                              {lote.codigo_fungivora}
-                            </Text>
-                            <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} className="cursor-pointer" />
-                          </div>
-                          <div className="grid grid-cols-2 gap-4 border-t pt-4" style={{ borderColor: colorBordeHeader }}>
-                            <Text variante="option" style={{ color: colores.gris, fontSize: '14px' }}>{lote.tipo_sustrato}</Text>
-                            <Text variante="option" style={{ color: colores.gris, fontSize: '14px' }}>{lote.ubicacion_lote}</Text>
-                            <div>
-                              <span className="px-2 py-0.5 rounded-md text-[12px] font-medium" 
-                                style={{ backgroundColor: estiloFase.bg, color: estiloFase.text }}>
-                                {lote.fase}
-                              </span>
-                            </div>
-                            <Text variante="option" style={{color: colores.gris, fontSize: '14px' }}>{fechaFormateada}</Text>
-                          </div>
-                        </div>
-
-                        {/* Vista Desktop */}
-                        <div
-                          className={`hidden md:grid ${gridLayout} cursor-pointer transition-all relative ${esSeleccionado ? 'z-10' : 'border-b'}`}
-                          style={{ 
-                            borderColor: colorBordeHeader,
-                            boxShadow: esSeleccionado ? `inset 0 0 0 2px ${colores.azul}` : 'none',
-                            backgroundColor: 'white'
-                          }}
-                        >
-                          {columnas.map((col, i) => (
-                            <div key={i} className="px-6 py-5 flex items-center justify-start">
-                              {col.key === 'fase' ? (
-                                <div 
-                                  className="px-4 py-1 rounded-lg inline-block text-sm font-semibold" 
-                                  style={{ backgroundColor: estiloFase.bg, color: estiloFase.text }}
-                                >
-                                  {lote[col.key]}
-                                </div>
-                              ) : (
-                                <Text 
-                                  variante="option" 
-                                  style={{ 
-                                    color: "black", 
-                                    fontSize: "15px", 
-                                    fontWeight: col.key === 'codigo_fungivora' ? '600' : '400',
-                                    textAlign: 'left'
-                                  }}
-                                >
-                                  {col.key === 'fecha_lote' ? fechaFormateada : lote[col.key]}
-                                </Text>
-                              )}
-                            </div>
-                          ))}
-                          <div className="py-4 flex justify-between items-start mb-3">
-                            <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} className="cursor-pointer hover:opacity-80 transition-opacity" />
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+              <FormCrearBloque 
+                codigo={codigoPrevisualizacion} contenedores={contenedores}
+                bloqueForm={bloqueForm} setBloqueForm={setBloqueForm}
+                handleBloqueForm={handleInputChange(setBloqueForm)} onAgregar={handleAgregarBloque} error={errorValidacion}
+              />
             )}
           </div>
 
-          {/* Formulario de añadir */}
-          <div className={`w-full lg:w-[440px] h-fit bg-white rounded-[32px] shadow-sm border p-8 flex flex-col ${verFormulario ? "block" : "hidden"} lg:block`}>
-            <div className="mb-8">
-              <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "22px" }}>Crear Lote</Text>
-            </div>
-
-            <div className="flex flex-col gap-5">
-              <div className="flex flex-col gap-2">
-                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Especie</Text>
-                <SelectField
-                  placeholder="Selecciona especie"
-                  size="forms"
-                />
+        {/* Botones de registrar y cancelar*/}
+          {paso === 2 && (
+            <div className={`flex flex-col md:flex-row gap-4 mt-8 items-center md:justify-end ${verFormulario ? "flex" : "hidden"} lg:flex`}>
+              <div className="order-1 md:order-2">
+                <Button 
+                    variant="registrar" 
+                    onClick={previsualizarRegistro}
+                    disabled={guardando}
+                  >
+                    {guardando ? "Cargando..." : "Registrar"}
+                  </Button> 
               </div>
-
-              <div className="flex flex-col gap-2">
-                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Sustrato</Text>
-                <SelectField
-                  placeholder="Selecciona un sustrato"
-                  size="forms"
-                />
-              </div>
-
-              {/* Seleccionar ubicación*/}
-              <div className="flex flex-col gap-2">
-                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Ubicación</Text>
-                <SelectField
-                  placeholder="Selecciona un ubicación"
-                  size="forms"
-                  options={opcionesUbicacion}
-                  value={nuevaFila.ubicacion_lote}
-                  onChange={(opcion) => handleNuevaFila("ubicacion_lote", opcion)} 
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Fecha</Text>
-                <InputFecha value={fecha} onChange={setFecha} />
+              <div className="order-2 md:order-1">
+                <Button variant="eliminar" isOutline={true} onClick={() => setPaso(1)}>Cancelar</Button> 
               </div>
             </div>
+          )}
+        </div> 
+      </div>  
 
-            {errorValidacion && (
-              <div className="text-center mt-4">
-                <Text variante="label" style={{ color: "#E53E3E", fontWeight: "600" }}>{errorValidacion}</Text>
-              </div>
-            )}
+      <ModalAlerta
+                visible={alerta.visible}
+                variante={alerta.variante}
+                mensaje={alerta.mensaje}
+                onClose={() => setAlerta({ ...alerta, visible: false })}
+            />
 
-            <div className="flex justify-center pt-4">
-              <Button
-                variant="primario"
-                size="lg"
-                className="w-full"
-                onClick={handleGuardarLote}
-              >
-                Crear Lote
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Base>
-    </>
+     {/* Modal para confirmar el registro*/}
+      <ModalConfirmacion
+        visible={mostrarModal}
+        titulo={"¿Confirmar registro de lote?"} 
+        descripcion={`Se registrará el lote con ${totalUnidadesBloques} bloques.`}
+        textoConfirmar="Registrar"
+        textoCancelar="Cancelar"
+        icon={CheckmarkCircle02Icon}
+        onConfirm={handleFinalizarRegistroCompleto}
+        onCancel={() => !guardando && setMostrarModal(false)}
+        deshabilitarConfirmar={guardando}
+      /> 
+    </Base>
   );
 }
 

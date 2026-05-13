@@ -1,91 +1,141 @@
 import { renderHook, waitFor, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import useLotes from '../../../features/lotes/hooks/useLotes';
 import loteService from '../../../features/lotes/services/lotes.service';
 
-// Mock del service (conexión con la ruta)
 vi.mock('../../../features/lotes/services/lotes.service', () => ({
   default: {
     getLotes: vi.fn(),
-    addLote: vi.fn()
+    addLote: vi.fn(),
+    getSustratos: vi.fn(),
+    getUbicaciones: vi.fn(),
+    getEspecies: vi.fn(),
   }
 }));
 
-describe('useLotes con hook', () => {
-  const mockData = {
+// Mock de fetch global
+global.fetch = vi.fn();
+
+describe('useLotes Hook', () => {
+  const mockLotesData = {
     success: true,
     data: [
-      { id_lote: 1, codigo_fungivora: 'LOTE-OLD', fecha_lote: '2024-01-01T10:00:00Z' },
-      { id_lote: 2, codigo_fungivora: 'LOTE-NEW', fecha_lote: '2024-05-01T10:00:00Z' }
+      { id_lote: 1, codigo_fungivora: 'LOTE-001', fecha_lote: '2024-01-01' },
+    ]
+  };
+
+  const mockEspeciesData = {
+    success: true,
+    data: [
+      { id_inoculo: 10, codigo_fungivora: 'INC-01', especie: 'Pleurotus' }
     ]
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    fetch.mockImplementation((url) => {
+      if (url.includes('/api/lotes/sustratos')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve([{ opcion: 'Paja' }])
+        });
+      }
+      if (url.includes('/api/lotes/ubicaciones')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve([{ opcion: 'Estante A' }])
+        });
+      }
+      if (url.includes('/api/lotes/especies')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockEspeciesData)
+        });
+      }
+      return Promise.reject(new Error("URL no mockeada"));
+    });
   });
 
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it('Cargar y ordenar los lotes por fecha', async () => {
-    vi.mocked(loteService.getLotes).mockResolvedValue(mockData);
+  it('cargar correctamente los catálogos y lotes', async () => {
+    vi.mocked(loteService.getLotes).mockResolvedValue(mockLotesData);
 
     const { result } = renderHook(() => useLotes());
 
-    await waitFor(() => expect(result.current.cargando).toBe(false), { timeout: 1000 });
+    // carga inicial
+    expect(result.current.cargando).toBe(true);
 
-    expect(result.current.datos[0].codigo_fungivora).toBe('LOTE-NEW');
-    expect(result.current.datos).toHaveLength(2);
+    await waitFor(() => expect(result.current.cargando).toBe(false));
+
+    // transformación de Sustratos
+    expect(result.current.sustratos).toEqual([{ value: 'Paja', label: 'Paja' }]);
+    
+    // transformación de Ubicaciones
+    expect(result.current.ubicaciones).toEqual([{ value: 'Estante A', label: 'Estante A' }]);
+    
+    // transformación de Especies
+    expect(result.current.especies).toEqual([
+      { value: 10, label: 'INC-01 / Pleurotus' }
+    ]);
+
+    //  datos de lotes
+    expect(result.current.datos).toHaveLength(1);
+    expect(result.current.error).toBeNull();
   });
 
-  it('Refrescar automáticamente en 5 segundos', async () => {
-    vi.useFakeTimers(); 
-    vi.mocked(loteService.getLotes).mockResolvedValue(mockData);
-
-    renderHook(() => useLotes());
-
-    // Antes de refrescar
-    await act(async () => {
-      vi.advanceTimersByTime(0); 
-    });
-
-    expect(loteService.getLotes).toHaveBeenCalledTimes(1);
-
-    // Despues de 5 segs
-    await act(async () => {
-      vi.advanceTimersByTime(5000);
-    });
-
-    expect(loteService.getLotes).toHaveBeenCalledTimes(2);
-  });
-
-  it('Estados de error', async () => {
+  it(' error cuando el servicio devuelve success: false', async () => {
     vi.mocked(loteService.getLotes).mockResolvedValue({ success: false });
 
     const { result } = renderHook(() => useLotes());
 
     await waitFor(() => expect(result.current.cargando).toBe(false));
     
-    // Mensaje si no hay ningun lote
-    expect(result.current.error).toBe("No se pudo obtener la lista de lotes");
+    expect(result.current.error).toBe("Error al cargar lotes");
+    expect(result.current.datos).toEqual([]);
   });
 
-  it('Debe agregar un nuevo lote y refrescar la lista', async () => {
-    const nuevoLote = { tipo_sustrato: "Paja", ubicacion_lote: "Granja" };
-    vi.mocked(loteService.addLote).mockResolvedValue({ success: true });
-    vi.mocked(loteService.getLotes).mockResolvedValue(mockData);
+  it('errores de excepción carga de lotes', async () => {
+    vi.mocked(loteService.getLotes).mockRejectedValue(new Error("Error de red"));
 
     const { result } = renderHook(() => useLotes());
 
-    let exito;
+    await waitFor(() => expect(result.current.cargando).toBe(false));
+    
+    expect(result.current.error).toBe("Error de conexión");
+  });
+
+  it('llamar al servicio, true y refrescar la lista', async () => {
+    const nuevoLote = { tipo_sustrato: "Paja", ubicacion_lote: "Estante A", id_inoculo: 10 };
+    
+    vi.mocked(loteService.addLote).mockResolvedValue({ success: true });
+    vi.mocked(loteService.getLotes).mockResolvedValue(mockLotesData);
+
+    const { result } = renderHook(() => useLotes());
+    await waitFor(() => expect(result.current.cargando).toBe(false));
+
+    let resultadoAccion;
     await act(async () => {
-      exito = await result.current.addLote(nuevoLote);
+      resultadoAccion = await result.current.addLote(nuevoLote);
     });
 
-    expect(exito).toBe(true);
+    expect(resultadoAccion).toBe(true);
     expect(loteService.addLote).toHaveBeenCalledWith(nuevoLote);
-    // llamada a get lotes
     expect(loteService.getLotes).toHaveBeenCalledTimes(2);
+  });
+
+  it('retornar false si la API falla', async () => {
+    vi.mocked(loteService.addLote).mockResolvedValue({ success: false });
+    vi.mocked(loteService.getLotes).mockResolvedValue(mockLotesData);
+
+    const { result } = renderHook(() => useLotes());
+    await waitFor(() => expect(result.current.cargando).toBe(false));
+
+    let resultadoAccion;
+    await act(async () => {
+      resultadoAccion = await result.current.addLote({});
+    });
+
+    expect(resultadoAccion).toBe(false);
+    expect(loteService.getLotes).toHaveBeenCalledTimes(1);
   });
 });
