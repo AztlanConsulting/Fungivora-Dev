@@ -159,56 +159,64 @@ exports.get_codigo_fungivora = async (req, res) => {
 }
 
 
-exports.post_nueva_semilla = async (req, res) => {
+exports.post_nueva_semilla = async (req, res, next) => {
+    /* Los datos que llegan de la vista */
+    const {
+        codigos, composicion, especie, 
+        fecha, origen, mijo, nota, tamano 
+    } = req.body;
+
+    const db = require('../util/db');
+    const connection = await db.getConnection();
+    await connection.beginTransaction();
+
     try {
-        const {
-            codigos, composicion, especie, 
-            fecha, origen, mijo, nota, tamano 
-        } = req.body;
+        const origenId = await Inoculo.getInoculoId(origen);
 
-        const db = require('../util/db');
-        const connection = await db.getConnection();
-        await connection.beginTransaction();
+        /* Busca llenar los mismos datos para todos los inoculos creados*/
+        for (const codigo of codigos) {
+            const inoculoId = await Inoculo.insertInoculo({
+                id_inoculo_usado: origenId,
+                cantidad_usada: Number(composicion.cantInoculo),
+                codigo_fungivora: codigo,
+                tipo: 'semilla',
+                especie: especie,
+                fecha: fecha,
+                cantidad_disponible: 0,
+                unidad: 'gramos',
+                stock_recomendado: 100}, connection);
 
-        try {
-            const origenId = await Inoculo.getInoculoId(origen);
+            /* Tabla intermedia */
+            for(const ingrediente in composicion) {
+                const ingredienteId = Inoculo.getIngredienteId(ingrediente);
 
-            for (const codigo of codigos) {
-                const inoculoId = await Inoculo.insertInoculo({
-                    id_inoculo_usado: origenId,
-                    cantidad_usada: Number(composicion.cantInoculo),
-                    codigo_fungivora: codigo,
-                    tipo: 'semilla',
-                    especie: especie,
+                await Inoculo.insertIngrediente({
+                    inoculoId: inoculoId,
+                    ingredienteId: ingredienteId,
+                    cantidad: Number(composicion[ingrediente])
+                }, connection);
+
+                /* Actualiza materiales usados */
+                await Inoculo.updateInsumo({
+                    ingredienteId: ingredienteId,
+                    cantidad: Number(composicion[ingrediente])
+                }, connection);
+
+                /* Log de materiales */
+                await Inoculo.insertLog({
+                    ingredienteId: ingredienteId,
+                    cantidad: Number(composicion[ingrediente]),
                     fecha: fecha,
-                    cantidad_disponible: 0,
-                    unidad: 'gramos',
-                    stock_recomendado: 100}, connection);
-
-                for(const ingrediente in composicion) {
-                    const ingredienteId = Inoculo.getIngredienteId(ingrediente);
-
-                    await Inoculo.insertIngrediente({
-                        inoculoId: inoculoId,
-                        ingredienteId: ingredienteId,
-                        cantidad: Number(composicion[ingrediente])
-                    })
-                }
-
-                await Inoculo.insertBitacora({ inoculoId, fecha, nota }, connection);
-
+                    tipo: 'Out'
+                }, connection);
             }
-        } catch (error) {
-            await connection.rollback();
 
-            if (error.message === 'STOCK_INSUFICIENTE') {
-                return res.status(422).json({
-                    success: false,
-                    message: 'Stock insuficiente para uno o más ingredientes'
-                });
-            }
-            next(error);
+            await Inoculo.insertBitacora({ inoculoId, fecha, nota }, connection);
         }
+
+        await connection.commit();
+        res.status(201).json({ success: true, message: 'Inóculo creado exitosamente' });
+
     } catch (error) {
         await connection.rollback();
 
@@ -219,5 +227,7 @@ exports.post_nueva_semilla = async (req, res) => {
             });
         }
         next(error);
+    } finally {
+        if (connection) connection.release();
     }
 }
