@@ -157,3 +157,67 @@ exports.get_codigo_fungivora = async (req, res) => {
         });
     }
 }
+
+
+exports.post_nueva_semilla = async (req, res) => {
+    try {
+        const {
+            codigos, composicion, especie, 
+            fecha, origen, mijo, nota, tamano 
+        } = req.body;
+
+        const db = require('../util/db');
+        const connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        try {
+            const origenId = await Inoculo.getInoculoId(origen);
+
+            for (const codigo of codigos) {
+                const inoculoId = await Inoculo.insertInoculo({
+                    id_inoculo_usado: origenId,
+                    cantidad_usada: Number(composicion.cantInoculo),
+                    codigo_fungivora: codigo,
+                    tipo: 'semilla',
+                    especie: especie,
+                    fecha: fecha,
+                    cantidad_disponible: 0,
+                    unidad: 'gramos',
+                    stock_recomendado: 100}, connection);
+
+                for(const ingrediente in composicion) {
+                    const ingredienteId = Inoculo.getIngredienteId(ingrediente);
+
+                    await Inoculo.insertIngrediente({
+                        inoculoId: inoculoId,
+                        ingredienteId: ingredienteId,
+                        cantidad: Number(composicion[ingrediente])
+                    })
+                }
+
+                await Inoculo.insertBitacora({ inoculoId, fecha, nota }, connection);
+
+            }
+        } catch (error) {
+            await connection.rollback();
+
+            if (error.message === 'STOCK_INSUFICIENTE') {
+                return res.status(422).json({
+                    success: false,
+                    message: 'Stock insuficiente para uno o más ingredientes'
+                });
+            }
+            next(error);
+        }
+    } catch (error) {
+        await connection.rollback();
+
+        if (error.message === 'STOCK_INSUFICIENTE') {
+            return res.status(422).json({
+                success: false,
+                message: 'Stock insuficiente para uno o más ingredientes'
+            });
+        }
+        next(error);
+    }
+}
