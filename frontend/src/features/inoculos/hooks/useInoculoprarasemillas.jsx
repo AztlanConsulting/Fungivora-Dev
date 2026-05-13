@@ -1,4 +1,3 @@
-// frontend/src/features/inoculos/hooks/useInoculoParaSemilla.js
 import { useState, useEffect } from 'react';
 import { fetchInoculosParaSemilla } from '../services/inoculo.service';
 
@@ -37,6 +36,7 @@ const useInoculoParaSemilla = (especie) => {
             .filter((ino) => ino.especie === especie)
             .map((ino) => ({
                 value: ino.id_inoculo,
+                codigo: ino.codigo_fungivora,
                 label: `${ino.codigo_fungivora} — ${ino.tipo} (${ino.cantidad_disponible} ${ino.unidad})`,
                 stockBajo: ino.cantidad_disponible <= ino.stock_recomendado,
                 raw: ino,

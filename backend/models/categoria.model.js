@@ -44,4 +44,17 @@ module.exports = class Categoria {
             LIMIT 1
         `, [nombreEspecie]);
     }
+
+    /**
+     * @description Obtiene todos los inserts de la tabla "Categorias"
+     * @returns {Promise} - Retorna el resultado de la ejecución del query
+     */
+
+    static fetchTodasLasCategorias() {
+        return db.execute(`
+        SELECT *
+        FROM Categorias
+        ORDER BY nombre_categoria ASC, nombre_opcion ASC`
+        );
+    }
 };

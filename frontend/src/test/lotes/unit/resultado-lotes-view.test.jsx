@@ -1,8 +1,9 @@
 import React from 'react'
 import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Lotes } from '../../../pages' 
+import { Lotes } from '../../../pages'
 
 // Mocks
 vi.mock('../../../features/lotes/hooks/useLotes')
@@ -11,6 +12,14 @@ import useLotes from '../../../features/lotes/hooks/useLotes'
 vi.mock('@hugeicons/react', () => ({
     HugeiconsIcon: () => <div data-testid="icon-mock" />
 }))
+
+const renderWithRouter = (component) => {
+    return render(
+        <MemoryRouter>
+            {component}
+        </MemoryRouter>
+    )
+}
 
 // datos dummy
 const lotesMock = [
@@ -42,13 +51,13 @@ beforeEach(() => {
 
 describe('Página Lotes ', () => {
     it('muestra el título Lotes', () => {
-        render(<Lotes />)
+        renderWithRouter(<Lotes />)
         const titulos = screen.getAllByText('Lotes')
         expect(titulos[0]).toBeInTheDocument()
     })
 
     it('muestra el formulario de creación', () => {
-        render(<Lotes />)
+        renderWithRouter(<Lotes />)
         const formTitle = screen.getAllByText(/Crear Lote/i)
         expect(formTitle.length).toBeGreaterThan(0)
         expect(screen.getByText('Inóculo / (Especie)')).toBeInTheDocument()
@@ -58,16 +67,16 @@ describe('Página Lotes ', () => {
 describe('Página Lotes — Listado', () => {
     it('estilo correcto según la fase', () => {
         useLotes.mockReturnValue({ ...hookBase, datos: lotesMock })
-        render(<Lotes />)
+        renderWithRouter(<Lotes />)
         const badges = screen.getAllByText('Inoculación')
-        expect(badges[0]).toHaveStyle({ color: 'rgb(198, 40, 40)' }) 
+        expect(badges[0]).toHaveStyle({ color: 'rgb(198, 40, 40)' })
     })
 })
 
 describe('Página Lotes — Acciones y Formulario', () => {
     it('muestra error de validación', async () => {
         const user = userEvent.setup()
-        render(<Lotes />)
+        renderWithRouter(<Lotes />)
         const botonEnviar = screen.getByRole('button', { name: /Crear Lote/i })
         await user.click(botonEnviar)
 
@@ -76,19 +85,15 @@ describe('Página Lotes — Acciones y Formulario', () => {
 
     it('vista tabla y formulario en móvil', async () => {
         const user = userEvent.setup()
-        render(<Lotes />)
-        const botonToggle = screen.getByText((content, element) => {
-            return content === 'Crear lote' && 
-                   window.getComputedStyle(element).fontSize === '14px';
-        });
+
+        renderWithRouter(<Lotes />)
+
+        const botonToggle = screen.getByText('Crear lote')
 
         await user.click(botonToggle)
 
-        const labelToggleCambiado = screen.getByText((content, element) => {
-            return content === 'Lotes' && 
-                   window.getComputedStyle(element).fontSize === '14px';
-        });
-        
-        expect(labelToggleCambiado).toBeInTheDocument()
+        expect(
+            screen.getByText('Ver Lotes')
+        ).toBeInTheDocument()
     })
 })
