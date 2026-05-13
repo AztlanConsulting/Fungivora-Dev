@@ -1,6 +1,5 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
 const Usuario = require('../models/usuario.model');
 
 exports.get_login = (req, res) => {
@@ -25,10 +24,10 @@ exports.post_login = async (req, res) => {
                 msg: "El usuario o correo no están registrados"
             });
         }
+        
+        const coinciden = await bcrypt.compare(contrasena, user.contrasena_usuario);
 
-        console.log("Comparando:", user.contrasena_usuario, "con", contrasena);
-
-        if (user.contrasena_usuario !== contrasena) {
+        if (!coinciden) {
             return res.status(401).json({ 
                 error: "password",
                 msg: "Contraseña incorrecta"
