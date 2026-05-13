@@ -1,0 +1,233 @@
+@startuml Arquitectura Feature Inoculos
+!theme plain
+skinparam sequenceMessageAlign center
+skinparam shadowing false
+skinparam defaultFontSize 12
+
+actor "Usuario" as User #F5F5F5
+
+box "UI — features/inoculos/ui/" #E3F2FD
+  participant "crearAgar.jsx\n<<Page>>" as Page
+end box
+
+box "Hooks — features/inoculos/hooks/" #FFF3E0
+  collections "<<Hooks>>"  as H
+end box
+
+box "Services — features/inoculos/services/" #FCE4EC
+  participant "especies.service.js\n<<Service>>"  as SE
+  participant "inoculos.service.js\n<<Service>>"  as SI
+end box
+
+box "API — backend/inoculos/" #E8F5E9
+  Collections "routes + controllers + models"         as API
+  participant "SQL\n<<BD>>"                            as DB
+end box
+
+note over Page
+  Componentes:
+  seleccionar_especie · seleccionarInoculo
+  cardIngredientes · inputNotas
+  input_fecha · botones
+
+end note
+
+note over H
+  Hooks:
+  useEspecies · useInoculos
+  useIngredientes · useFormInoculo
+end note
+
+note over API
+  1. /routes/ inoculos.routes
+  2. /controllers/ inoculos.controller
+  3. /models/ inoculos.model
+end note
+' ══════════════════════════
+' PASO 1 — carga inicial
+' ══════════════════════════
+activate Page
+
+User -> Page : abre vista
+activate H
+
+Page -> H   : useEspecies()
+H   -> SE   : getEspecies()
+activate SE
+SE   -> API  : HTTP GET /api/inoculos/especies
+activate API
+API  -> API : 1. get_especies()
+API -> API   : 2. fetchEspecies()
+API   -> DB   : 3. SELECT * FROM especies
+activate DB
+DB   --> API  : 3. rows
+deactivate DB
+API   --> API: 2. Especie[]
+API --> API : 1. 200 OK
+API  --> SE  : JSON
+deactivate API
+SE   --> H  : Especie[]
+deactivate SE
+H   --> Page: { especies, loading }
+deactivate H
+
+note right of Page
+  type especie = {
+    nombre, abreviatura
+  }
+end note
+
+Page -> H   : useInoculos()
+H   -> SI   : getInoculos()
+activate SI
+SI   -> API  : HTTP GET /api/inoculos
+activate API
+API  -> API : 1. get_inoculos()
+API --> API   : 2. fetchInoculos()
+API   -> DB   : 3. SELECT id_inoculo, codigo_fungivora, \ntipo, especie, fecha, cantidad_disponible \nFROM Inoculos
+activate DB
+DB   --> API  : 3. rows
+deactivate DB
+API   --> API: 2. Inoculo[]
+API --> API : 1. 200 OK
+API  --> SI  : JSON
+deactivate API
+SI   --> H  : Inoculo[]
+deactivate SI
+H   --> Page: { inoculos, loading }
+deactivate H
+
+note right of Page
+  type inoculos = {
+    id, codigo, tipo, especie, 
+    fecha, cantidad_disponible
+  }
+end note
+
+Page -> H   : useIngredientes()
+H   -> SI   : getCantidadIngredientes()
+activate SI
+SI   -> API  : HTTP GET /api/inoculos/cantidad_ingredientes
+activate API
+API  -> API : 1. getCantidadIngredientes()
+API -> API   : 2. fetchCantidadIngredientes()
+API   -> DB   : 3. SELECT id, nombre, cantidad FROM Insumos \nWHERE nombre = 'Peptona' \nAND nombre = 'Extracto de Malta' \nAND nombre = 'Agua destilada' \nAND nombre = 'Miel' \n AND nombre = 'Jarabe de maíz'
+activate DB
+DB   --> API  : 3. rows
+deactivate DB
+API   --> API: 2. Ingredientes[]
+API --> SI  : 1. 200 OK
+deactivate API
+SI   --> H  : Ingredientes[]
+deactivate SI
+H   --> Page: { ingredientes, loading }
+deactivate H
+
+note right of Page
+  type ingredientes = {
+    id, nombre, cantidad
+  }
+end note
+
+note right of Page
+  selector especie: habilitado
+  selector inóculo: bloqueado
+end note
+
+Page -> Page : inoculosFiltrados =\ninoculos.filter(agar|espora)
+
+note right of Page
+  al cargar, muestra solo inóculos
+  tipo "Agar" o "Espora"
+end note
+
+' ══════════════════════════
+' PASO 2 — selecciona especie
+' ══════════════════════════
+User -> Page : selecciona especie
+Page -> Page : inoculosFiltrados =\ninoculos.filter(especieId)
+note right of Page
+  selector inóculo: habilitado
+end note
+
+' ══════════════════════════
+' PASO 3 — selecciona inóculo
+' ══════════════════════════
+User -> Page  : selecciona inóculo
+Page -> Page  : addingrediente
+note right of Page
+  cardIngredientes genera
+  una fila en ingredientes
+  { nombre, cantidad, unidad }
+end note
+
+' ══════════════════════════
+' PASO 4 — edita form
+' ══════════════════════════
+User -> Page : edita cantidad\nde un ingrediente
+
+alt cantidad ingresada > stock disponible
+  Page --> User : input en rojo\n"Sin stock suficiente"
+  note right of Page
+    botón Guardar: deshabilitado
+  end note
+else cantidad válida
+  Page -> Page : actualiza estado\ninterno del form
+  note right of Page
+    InoculoForm = {
+      inoculoId, especieId,
+      ingredientes[], nota, fecha
+    }
+  end note
+end
+
+' ══════════════════════════
+' PASO 5 — guardar
+' ══════════════════════════
+User  -> Page : click "Guardar"
+Page  -> H   : handleSubmit()
+activate H
+note right of H
+  loading = true
+  botón muestra spinner
+end note
+
+H    -> SI   : createRegistroInoculo(form)
+activate SI
+SI    -> API  : HTTP POST /api/inoculos/crear
+activate API
+API   -> API : create_registro(body)
+
+API  -> API   : insertRegistro(data)
+
+note over API, DB
+  BEGIN TRANSACTION
+end note
+
+activate DB
+API    -> DB   : INSERT INTO Inoculos
+DB    --> API  : ok
+API     -> DB   : INSERT INTO Ingredientes
+DB    --> API  : ok
+API    -> DB   : INSERT INTO Bitacora_inoculos
+DB    --> API  : ok
+API    -> DB   : UPDATE Insumos
+DB    --> API  : ok
+API    -> DB   : INSERT INTO Logs_ins_outs
+DB    --> API  : ok
+
+note over API, DB
+  COMMIT
+end note
+
+deactivate DB
+API    --> API : RegistroInoculo
+API  --> API  : 201 Created
+API   --> SI   : JSON
+deactivate API
+SI    --> Page  : registro guardado
+deactivate SI
+Page  --> User  : confirmación visual
+deactivate Page
+
+@enduml
