@@ -1,4 +1,6 @@
 const Bloque = require('../models/bloque.model');
+const Categoria = require('../models/categoria.model');
+const crypto = require('crypto');
 
 /**
  * get_bloques_por_lote
@@ -50,5 +52,65 @@ exports.actualizar_bloques_masivo = async (req, res) => {
             success: false,
             message: 'Error al actualizar los bloques del lote'
         });
+    }
+}
+
+
+/**
+ * post_bloques
+ * Registra un nuevo bloque ligado un lote
+ * Metodo que hace un insert con la información de los bloques
+ * @param {*} req 
+ * @param {*} res 
+ */
+exports.post_bloques = async (req, res) => {
+    try {
+        const { id_lote, produccion, peso_gr, contenedor, cantidad } = req.body;
+
+        if (!produccion || !id_lote || !cantidad || cantidad <= 0) {
+            return res.status(400).json({ success: false, message: "Datos incompletos o cantidad inválida" });
+        }
+
+        const data = [];
+        const bloquesGenerados = [];
+
+        for (let i = 0; i < cantidad; i++) {
+            const nuevoBloque = {
+                id_bloque: crypto.randomUUID(),
+                id_lote: id_lote,
+                produccion: produccion, 
+                peso_gr: peso_gr || 0,
+                contaminado: 0, // por default 0 - no esta contaminado
+                contenedor: contenedor
+            };
+            
+            bloquesGenerados.push(nuevoBloque.id_bloque);
+            data.push(Bloque.crear_bloque(nuevoBloque));
+        }
+
+        await Promise.all(data);
+
+        res.status(201).json({
+            success: true,
+            ids: bloquesGenerados
+        });
+
+    } catch (err) {
+        console.error("Error en post_bloques controller:", err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+/*
+* get_contenedores
+* Obtiene todas los contenedoress de la tabla de categorias
+* Funciona al tener el fetch por 'Contenedor'
+*/
+exports.get_contenedores = async (req, res) => {
+    try {
+        const [contenedores] = await Categoria.fetchOpciones('Contenedor', false);
+        res.status(200).json(contenedores);
+    } catch (error) {
+        res.status(500).json({ success: false, error: 'Error al obtener contenedores' });
     }
 };
