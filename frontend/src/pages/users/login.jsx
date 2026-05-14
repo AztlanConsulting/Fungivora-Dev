@@ -37,7 +37,7 @@ const Login = () => {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem("token", data.token);
-        window.location.href = "/first"; 
+        window.location.href = "/home";
       } else {
         setError("Usuario y/o contraseña incorrectos");
       }
@@ -65,7 +65,7 @@ const Login = () => {
       <div className="relative z-10 w-full md:w-1/2 flex justify-center items-center p-6">
         <div className="w-full max-w-lg rounded-[3rem] bg-white p-8 sm:p-12 shadow-2xl overflow-y-auto max-h-[90vh]">
           <form onSubmit={handleLogin} className="flex flex-col items-start w-full">
-            
+
             {/* Titulos */}
             <div className="w-full text-center mb-10">
               <Text variante="title" style={{ color: colores.azul }}>Devora</Text>
@@ -75,7 +75,7 @@ const Login = () => {
             </div>
 
             <div className="flex flex-col gap-8 w-full items-stretch">
-              
+
               {/* Usuario */}
               <div className="flex flex-col gap-3 w-full">
                 <div className="flex items-center gap-2">
@@ -99,7 +99,7 @@ const Login = () => {
                   <HugeiconsIcon icon={Key01Icon} size={20} className="text-gray-500" />
                   <Text variante="label" style={{ color: colores.gris }}>Contraseña</Text>
                 </div>
-                
+
                 <div className="relative w-full flex items-center">
                   <Input
                     type={showPassword ? "text" : "password"}
@@ -113,9 +113,9 @@ const Login = () => {
                     className="absolute right-4 md:right-12 flex items-center justify-center cursor-pointer select-none"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    <HugeiconsIcon 
-                        icon={showPassword ? ViewIcon : ViewOffIcon} 
-                        size={20} 
+                    <HugeiconsIcon
+                      icon={showPassword ? ViewIcon : ViewOffIcon}
+                      size={20}
                     />
                   </div>
                 </div>

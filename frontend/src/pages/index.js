@@ -1,4 +1,5 @@
 export { default as FirstPage } from "./home/First_Page";
+export { default as HomePage } from "./home/HomePage";
 export { default as RegistrarMedio } from "./inoculos/NewMedio";
 export { default as Inventario } from "./inventario/inventario";
 export { default as Lotes } from "./lotes/Lotes";
