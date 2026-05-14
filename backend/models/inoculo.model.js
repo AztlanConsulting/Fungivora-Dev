@@ -172,20 +172,4 @@ module.exports = class Inoculo {
             VALUES (?, ?, ?, ?)
         `, [ingredienteId, cantidad, fecha, tipo]);
     }
-
-    static async getInoculoId ({ codigo_fungivora }, connection) {
-        await connection.execute(`
-            SELECT id_inoculo
-            FROM Inoculos
-            WHERE codigo_fungivora = ?
-            `, [codigo_fungivora]);
-    }
-
-    static async getIngredienteId ({ nombre }, connection) {
-        await connection.execute(`
-            SELECT id_insumo
-            FROM Insumos
-            WHERE nombre = ?
-            `, [nombre]);
-    }
 };
