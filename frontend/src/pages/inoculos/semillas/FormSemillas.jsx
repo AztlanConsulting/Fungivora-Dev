@@ -9,6 +9,7 @@ import Button        from "../../../shared/components/ui/buttons/botones";
 
 import { EntradaLista } from "../../../features/crear_inoculos/components/seleccionar_cantidades";
 import ResumenSemilla   from "../../../features/crear_inoculos/components/ResumenSemilla";
+import insumosService from "../../../features/crear_inoculos/services/inoculos.service";
 
 import useEspecies            from "../../../features/inoculos/hooks/useEspecies";
 import useCategorias          from "../../../features/crear_inoculos/hooks/useCategorias";
@@ -82,18 +83,40 @@ const FormSemillas = () => {
     });
   }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias]);
 
-  const handleRegistrar = () => {
-    console.log({
-      codigos,
-      especie,
-      inoculo,
-      mijo,
-      tamano,
-      composicion: valoresComposicion,
-      cantidad,
-      fecha,
-      nota,
-    });
+  const handleRegistrar = async () => {
+    try {
+      const datos = {
+        codigo_fungivora: codigos[0],
+        tipo: TIPO_CREACION,
+        especie: especie,
+        fecha: fecha.iso || new Date().toISOString().split('T')[0],
+        cantidad_disponible: cantidad,
+        unidad: "gr",
+        stock_recomendado: 100,
+        nota: nota,
+
+        inoculo_usado: {
+          id: inoculoSeleccionado?.raw?.id ?? null,
+          cantidad: Number(valoresComposicion.cantInoculo) || 0,
+        },
+
+        ingredientes: itemsComposicion
+          .filter((item) => item.tipo === "ingrediente" && item.id != null)
+          .map((ing) => ({
+            id: ing.id,
+            cantidad: Number(ing.value) || 0,
+        })),
+      };
+
+      console.log("Datos hacia backend:", datos);
+
+      const respuesta = await insumosService.postSemilla(datos);
+      alert("Semilla registrada con exito!");
+
+    } catch (error) {
+      console.error("Error en el registro:", error);
+      alert(`Error: ${error.message}`);
+    }
   };
 
   return (
