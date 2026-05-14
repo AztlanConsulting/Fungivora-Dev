@@ -42,7 +42,6 @@ const useIngredientesSemilla = ({
 
   // Sincronizar cuando el usuario cambia tamaño o tipo de inóculo
   useEffect(() => {
-    console.log("[useIngredientesSemilla] sugeridos cambió:", sugeridos, "| tamano:", tamano, "| tipoInoculo:", tipoInoculo);
     setCantMijo(sugeridos.mijo);
     setCantAgua(sugeridos.agua);
     setCantInoculo(sugeridos.inoculo);
