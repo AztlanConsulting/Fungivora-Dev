@@ -6,6 +6,7 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
     const [bloquesIniciales, setBloquesIniciales] = useState([]);
     const [especie, setEspecie] = useState("");
     const [codigoInoculo, setCodigoInoculo] = useState("");
+    const [codigoLoteBD, setCodigoLoteBD] = useState(null); 
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
     const fases = [
@@ -19,6 +20,7 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
     useEffect(() => {
         const fetchData = async () => {
             if (!id_lote) return;
+            console.log("ID del lote recibido en el hook:", id_lote);
             setCargando(true);
             try {
                 const [resBloques, resCodigo, resEspecie] = await Promise.all([
@@ -26,10 +28,19 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
                     id_inoculo_usado ? LoteService.getCodigoInoculo(id_inoculo_usado) : Promise.resolve("N/A"),
                     id_inoculo_usado ? LoteService.getEspecieByLote(id_inoculo_usado) : Promise.resolve("S/N")
                 ]);
-                setBloques(resBloques.data || []);
+
+                // Obtener todos los datos de los bloques y lote
+                const listaObtenida = resBloques.data || [];
+                
+                setBloques(listaObtenida);
                 setBloquesIniciales(resBloques.data || []);
                 setCodigoInoculo(resCodigo);
                 setEspecie(resEspecie);
+                    if (listaObtenida.length > 0) {
+                        const codigoEncontrado = listaObtenida[0].codigo_lote || "LC-DESCONOCIDO-000000"; 
+                        setCodigoLoteBD(codigoEncontrado);
+                    }
+
             } catch (err) {
                 setError(err.message);
                 setBloques([]);
@@ -59,7 +70,7 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
     return {
         bloques, setBloques, bloquesIniciales, setBloquesIniciales,
         fase, setFase, faseInicialNum, setFaseInicialNum,
-        especie, codigoInoculo,
+        especie, codigoInoculo, codigoLoteBD, 
         cargando, error, getFase, guardarCambios,
         fases
     };
