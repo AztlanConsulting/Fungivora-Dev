@@ -12,7 +12,7 @@ import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
 
 // Iconos
 import { HugeiconsIcon } from '@hugeicons/react';
-import { CheckmarkCircle02Icon} from '@hugeicons/core-free-icons';
+import { CheckmarkCircle02Icon, CancelCircleIcon} from '@hugeicons/core-free-icons';
 
 // Componentes de Tablas y Forms
 import TablaLotes from "../../features/lotes/components/TablaLotes";
@@ -40,7 +40,7 @@ function Lotes() {
   });
 
   const { datos, sustratos, ubicaciones, especies, especiesDisponibles,
-  getInoculosPorEspecie, cargando, error, addLote } = useLotes();
+  getInoculosPorEspecie, cargando, error, addLote, deleteLote } = useLotes();
   const [verFormulario, setVerFormulario] = useState(false);
   const [nuevaFila, setNuevaFila] = useState({ especie: "", tipo_sustrato: "", ubicacion_lote: "", id_inoculo: "" });
   const [errorValidacion, setErrorValidacion] = useState("");
@@ -50,6 +50,8 @@ function Lotes() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
+  const [loteAEliminar, setLoteAEliminar] = useState(null);
+  const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
 
   useEffect(() => {
     // Obtener el código de lote
@@ -182,6 +184,42 @@ function Lotes() {
     return { bg: "#F5F5F5", text: "#616161" };
   };
 
+  // Modal para confirmar eliminar
+  const prepararEliminacion = (lote) => {
+      setLoteAEliminar(lote);
+      setMostrarModalEliminar(true);
+  };
+
+  // Confirmar eliminar el lote
+  const confirmarEliminarLote = async () => {
+      if (!loteAEliminar) return;
+      
+      setGuardando(true);
+      try {
+          const res = await deleteLote(loteAEliminar.id_lote);
+          
+          if (res.success) {
+              setAlerta({ 
+                  visible: true, 
+                  variante: "exito", 
+                  mensaje: "Lote eliminado correctamente" 
+              });
+          } else {
+              setAlerta({ 
+                  visible: true, 
+                  variante: "error", 
+                  mensaje: res.message || "No se pudo eliminar" 
+              });
+          }
+      } catch (err) {
+          setAlerta({ visible: true, variante: "error", mensaje: "Error de red" });
+      } finally {
+          setGuardando(false);
+          setMostrarModalEliminar(false);
+          setLoteAEliminar(null);
+      }
+  };
+
   const totalUnidadesBloques = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad || 0), 0);
 
   return (
@@ -218,6 +256,7 @@ function Lotes() {
               {cargando ? <Text>Cargando...</Text> : (
                 <TablaLotes 
                   datos={datos} 
+                  onEliminar={prepararEliminacion}
                   columnas={columnas} 
                   onVerDetalle={(lote) => navigate(`/lotes/detalle/${lote.id_lote}`, { state: lote })}
                   obtenerEstiloFase={obtenerEstiloFase}
@@ -305,6 +344,17 @@ function Lotes() {
         onCancel={() => !guardando && setMostrarModal(false)}
         deshabilitarConfirmar={guardando}
       /> 
+      <ModalConfirmacion
+          visible={mostrarModalEliminar}
+          titulo={"¿Eliminar este lote?"} 
+          descripcion={`Se eliminará el lote ${loteAEliminar?.codigo_fungivora} y sus bloques asociados permanentemente.`}
+          textoConfirmar="Eliminar"
+          textoCancelar="Cancelar"
+           icon={CancelCircleIcon}
+          onConfirm={confirmarEliminarLote}
+          onCancel={() => setMostrarModalEliminar(false)}
+          deshabilitarConfirmar={guardando}
+      />
     </Base>
   );
 }
