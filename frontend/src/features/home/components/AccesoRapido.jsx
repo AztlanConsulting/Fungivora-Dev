@@ -1,7 +1,10 @@
 import React from 'react';
 import { Text } from '../../../shared/components/ui';
+import { useNavigate } from 'react-router-dom';
 
 const AccesoRapido = ({ label, ruta, color, acento }) => {
+    const navigate = useNavigate();
+
     return (
         <button
             onClick={() => navigate(ruta)}

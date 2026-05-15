@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text } from '../../../shared/components/ui';
 import { colores } from '../../../shared/components/ui/basics/colores';
+import { HugeiconsIcon } from '@hugeicons/react';
 import FilaCheck from './FilaCheck';
 
 
@@ -9,8 +10,8 @@ const PanelLista = ({ icono, titulo, items, checked, onToggle, onVerTodo }) => {
         <div className="bg-white rounded-2xl p-5 flex-1 min-w-0 shadow-sm">
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                    <span className="text-lg">{icono}</span>
-                    <Text variante="subtitle" style={{ color: colores.negro, fontWeight: 600 }}>
+                    {icono}
+                    <Text variante="subtitle" style={{ color: colores.azul, fontWeight: 600 }}>
                         {titulo}
                     </Text>
                 </div>

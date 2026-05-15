@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Clock01Icon, PackageIcon } from '@hugeicons/core-free-icons';
 import { Titulo, Text } from '../../../shared/components/ui';
 import { colores } from '../../../shared/components/ui/basics/colores';
 import { Base } from '../../../shared/components/layout';
@@ -16,15 +18,15 @@ const PantallaPrincipalView = () => {
 
     // Datos de ejemplo 
     const lotesRevisar = [
-        { id: 1, nombre: 'Lote Shiitake A', fecha: '12/06/2025' },
-        { id: 2, nombre: 'Lote Oyster B', fecha: '14/06/2025' },
-        { id: 3, nombre: 'Lote Reishi C', fecha: '18/06/2025' },
-        { id: 4, nombre: 'Lote Enoki D', fecha: '20/06/2025' },
+        { id: 1, nombre: 'Lote HE A', fecha: '12/06/2025' },
+        { id: 2, nombre: 'Lote ML B', fecha: '14/06/2025' },
+        { id: 3, nombre: 'Lote HE C', fecha: '18/06/2025' },
+        { id: 4, nombre: 'Lote PA D', fecha: '20/06/2025' },
     ];
 
     const inventarioBajo = [
-        { id: 1, nombre: 'Agar nutritivo', fecha: '10/06/2025' },
-        { id: 2, nombre: 'Medio líquido WP', fecha: '11/06/2025' },
+        { id: 1, nombre: 'Agar', fecha: '10/06/2025' },
+        { id: 2, nombre: 'Medio líquido', fecha: '11/06/2025' },
         { id: 3, nombre: 'Semilla centeno', fecha: '13/06/2025' },
         { id: 4, nombre: 'Bolsas 3 lb', fecha: '15/06/2025' },
     ];
@@ -36,10 +38,10 @@ const PantallaPrincipalView = () => {
     };
 
     const RUTAS_RAPIDAS = [
-        { label: 'Crear Agar', ruta: '/inoculos/crear/agar', color: '#EDE9FF', acento: colores.azul },
-        { label: 'Crear Medio Líquido', ruta: '/inoculos/crear/medio-liquido', color: '#EDE9FF', acento: colores.azul },
-        { label: 'Crear Semilla', ruta: '/inoculos/crear/semilla', color: '#E6F5EE', acento: '#3DB87A' },
-        { label: 'Crear Lote', ruta: '/lotes', color: '#FFF3E8', acento: '#F28C38' },
+        { label: 'Crear Agar', ruta: '/inoculos/crear/agar', color: '#ffffff', acento: colores.azul },
+        { label: 'Crear Medio Líquido', ruta: '/inoculos/crear/medio-liquido', color: '#ffffff', acento: '#b43db8' },
+        { label: 'Crear Semilla', ruta: '/inoculos/crear/semilla', color: '#ffffff', acento: '#3DB87A' },
+        { label: 'Crear Lote', ruta: '/lotes', color: '#ffffff', acento: '#F28C38' },
     ];
 
     // Estado checkboxes 
@@ -60,7 +62,14 @@ const PantallaPrincipalView = () => {
                     {/* Fila 1 — Lotes por revisar + Inventario bajo */}
                     <div className="flex flex-col md:flex-row gap-4">
                         <PanelLista
-                            icono="⏰"
+                            icono={
+                                <HugeiconsIcon
+                                    icon={Clock01Icon}
+                                    size={22}
+                                    color={colores.azul}
+                                    strokeWidth={2}
+                                />
+                            }
                             titulo="Lotes por revisar"
                             items={lotesRevisar}
                             checked={checkedLotes}
@@ -68,7 +77,14 @@ const PantallaPrincipalView = () => {
                             onVerTodo={() => navigate('/lotes')}
                         />
                         <PanelLista
-                            icono="📦"
+                            icono={
+                                <HugeiconsIcon
+                                    icon={PackageIcon}
+                                    size={22}
+                                    color={colores.azul}
+                                    strokeWidth={2}
+                                />
+                            }
                             titulo="Inventario bajo"
                             items={inventarioBajo}
                             checked={checkedInv}
