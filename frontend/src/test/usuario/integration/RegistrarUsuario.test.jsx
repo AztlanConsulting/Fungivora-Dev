@@ -39,7 +39,6 @@ vi.mock('../../../shared/components/ui/popups/modal_confirmacion', () => ({
   }
 }));
 
-//--------------Mock de useNavagate-------------------------
 
 const mockNavigate = vi.fn()
 vi.mock('react-router-dom', async (importOriginal) => {
@@ -70,8 +69,7 @@ const renderVista = () =>
     )
 
 
-//--------------Renderizado base-------------------------
-
+//Verifica el renderizado
 describe('RegistrarUsuario  — renderizado base', () => {
     it('muestra el título de la vista', async () => {
         renderVista()
@@ -105,8 +103,8 @@ describe('RegistrarUsuario  — renderizado base', () => {
         })
     })
 })
-//--------------estados de error-------------------------
 
+//Revisa los errores
 describe('RegistrarUsuario - redirecciones por permisos', () => {
 
     it('redirige a /login si no existe token', async () =>{
@@ -162,11 +160,10 @@ describe('RegistrarUsuario - redirecciones por permisos', () => {
 
 })
 
-//--------------Validaciones del formulario-------------------------
-
+//validacion del formulario
 describe('RegistrarUsuario  — validaciones del formulario', () => {
     
-    //muiestra errir si no hay campos vacios
+    //muestra errir si no hay campos vacios
     it('muestra error si hay campos vacios al registrar', async () => {
         const user = userEvent.setup()
         renderVista()
@@ -176,8 +173,10 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
         const botonRegistrar = screen.getByRole('button', { name: /registrar/i})
         await user.click(botonRegistrar)
 
-        const errorMsg = await screen.findByText(/Llena todos los campos/i)
-        expect(errorMsg).toBeInTheDocument()
+        await waitFor(() => {
+            expect(screen.getByText(/Llena todos los campos/i)).toBeInTheDocument()
+        })
+
     })
 
     //el correo no es valido por no cumplir el formato
@@ -197,8 +196,9 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
         const botonRegistrar = screen.getByRole('button', { name: /registrar/i})
         await user.click(botonRegistrar)
 
-        const errorMsg = await screen.findByText(/Inserte un correo valido/i)
-        expect(errorMsg).toBeInTheDocument()
+        await waitFor(() => {
+            expect(screen.getByText(/Inserte un correo valido/i)).toBeInTheDocument()
+        })
     })
 
     //Verifica espacios en la contraseña
@@ -218,8 +218,9 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
         const botonRegistrar = screen.getByRole('button', { name: /registrar/i})
         await user.click(botonRegistrar)
 
-        const errorMsg = await screen.findByText(/La contraseña no puede contener espacios/i)
-        expect(errorMsg).toBeInTheDocument()
+        await waitFor(() => {
+            expect(screen.getByText(/La contraseña no puede contener espacios/i)).toBeInTheDocument()
+        })
     })
 
     //error si hay caracteres especiales en usuario
@@ -239,8 +240,9 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
         const botonRegistrar = screen.getByRole('button', { name: /registrar/i})
         await user.click(botonRegistrar)
 
-        const errorMsg = await screen.findByText(/El usuario solo puede contener letras o números, sin espacios al inicio o final/i)        
-        expect(errorMsg).toBeInTheDocument()
+        await waitFor(() => {
+            expect(screen.getByText(/El usuario solo puede contener letras o números, sin espacios al inicio o final/i)).toBeInTheDocument()
+        })
     })
 
     //error si la contraseña exede mas de 20 caracteres
@@ -260,8 +262,9 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
         const botonRegistrar = screen.getByRole('button', { name: /registrar/i})
         await user.click(botonRegistrar)
 
-        const errorMsg = await screen.findByText(/La contraseña no puede superar 20 caracteres/i)
-        expect(errorMsg).toBeInTheDocument()
+        await waitFor(() => {
+            expect(screen.getByText(/La contraseña no puede superar 20 caracteres/i)).toBeInTheDocument()
+        })
     })
 
         //error si las contraseñas no coiciden
@@ -281,13 +284,14 @@ describe('RegistrarUsuario  — validaciones del formulario', () => {
         const botonRegistrar = screen.getByRole('button', { name: /registrar/i})
         await user.click(botonRegistrar)
 
-        const errorMsg = await screen.findByText(/Las contraseñas no coinciden, verifica que sean iguales/i)
-        expect(errorMsg).toBeInTheDocument()
+        await waitFor(() => {
+            expect(screen.getByText(/Las contraseñas no coinciden, verifica que sean iguales/i)).toBeInTheDocument()
+        })
     })
 }) 
 
-//--------------Flujo del modal-------------------------
 
+//Flujo de modal
 describe('RegistrarUsuario — flujo modal', () => {
 
     //el modal al cancelar
@@ -347,8 +351,8 @@ describe('RegistrarUsuario — flujo modal', () => {
     })
 })
 
-//--------------Flujo del registro exitoso-------------------------
 
+//Verifica el caso de exito del flujo
 describe('RegistrarUsuario — flujo de registro exitoso', () => {
 
         //cierra el modal al confirmmar

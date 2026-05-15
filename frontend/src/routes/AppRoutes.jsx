@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import {
     FirstPage, Login, Usuario, Inventario, 
-    RegistrarInsumo, RegistrarMedio, Lotes,
+    RegistrarMedio, Lotes,
     Lote, BibliotecaGenetica, RegistrarUsuario
 } from "../pages";
 import { MainLayout, RutaProtegida } from "../shared/components/layout";

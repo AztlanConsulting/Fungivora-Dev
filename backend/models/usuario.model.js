@@ -30,6 +30,19 @@ class Usuario {
     );
     return registro;
   };
+
+  //Fetch para comprobar el usuario y correo
+   static fetch_copiados = async (nombre, correo) => {
+    const [filas] = await db.execute(
+      `SELECT nombre_usuario, correo_usuario
+       FROM Usuarios
+       WHERE LOWER(TRIM(nombre_usuario))= LOWER(TRIM(?))
+       OR LOWER(TRIM(correo_usuario)) = LOWER(TRIM(?))`,
+      [nombre, correo]
+    );
+    return filas[0];
+
+   };
 }
 
 module.exports = Usuario;

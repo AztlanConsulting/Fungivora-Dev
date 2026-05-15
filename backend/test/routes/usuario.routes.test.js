@@ -3,8 +3,8 @@ const request = require('supertest');
 // Mockea db y metrics ANTES de importar app
 jest.mock('../../util/db');
 
-{/* Metrics es mockeado debido a que sin el
-    mock, Jest intentaría inicializar Grafana */}
+// Metrics es mockeado porque sin el mock,
+// Jest intentaría inicializar Grafana
 jest.mock('../../config/metrics', () => ({
     register: {
         contentType: 'text/plain',
@@ -39,13 +39,11 @@ describe('POST /api/usuario/anadir', () => {
     });
 
 
-    // ─── Casos exitosos ───────────────────────────────────────────────────────
-
     //Caso exitoso de registro
     it('responde 201 cuando hay registro exitoso', async () => {
         
         const registroNuevo= { insertId: 42}
-        Usuario.fetch_one.mockResolvedValue(null);
+        Usuario.fetch_copiados.mockResolvedValue(null);
         bcrypt.hash.mockResolvedValue('hashedpassword')
         Usuario.anadir.mockResolvedValue(registroNuevo);
 
@@ -61,8 +59,6 @@ describe('POST /api/usuario/anadir', () => {
             msg: 'Usuario creado', id: 42 
         });
     });
-
-    // ─── Casos de error ───────────────────────────────────────────────────────
 
     //Los campos estan vacios
     it('responde 400 si faltan todos los campos', async () => {
@@ -89,7 +85,7 @@ describe('POST /api/usuario/anadir', () => {
             nombre_usuario: 'Juanfalso'             
         };
 
-        Usuario.fetch_one.mockResolvedValueOnce(usuarioExistente);
+        Usuario.fetch_copiados.mockResolvedValueOnce(usuarioExistente);
         
 
         const res = await request (app)
@@ -102,13 +98,13 @@ describe('POST /api/usuario/anadir', () => {
 
         expect(res.statusCode).toBe(409);
         expect(res.body).toMatchObject({
-                msg: 'Hay un usuario registrado con ese correo, agregue otro correo'
+                msg: 'Ya existe un usuario con este correo, agregue otro correo'
         });
     });
 
     //La DB falla
     it('responde 500 si la DB falla', async () => {
-        Usuario.fetch_one.mockRejectedValue(new Error('Connection lost'));
+        Usuario.fetch_copiados.mockRejectedValue(new Error('Connection lost'));
         
         const res = await request (app)
             .post('/api/usuario/anadir')
@@ -124,11 +120,10 @@ describe('POST /api/usuario/anadir', () => {
         });
     });
 
-    // ─── Formato de respuesta ─────────────────────────────────────────────────
-
+    //Manda las respuestas
     it('responde con Content-Type application/json', async () => {
         const registroNuevo = {insertId: 1 };
-        Usuario.fetch_one.mockResolvedValue(null);
+        Usuario.fetch_copiados.mockResolvedValue(null);
         bcrypt.hash.mockResolvedValue('hashedpassword')
         Usuario.anadir.mockResolvedValue(registroNuevo);
 

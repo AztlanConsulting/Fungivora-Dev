@@ -1,6 +1,5 @@
-
 const bcrypt = require('bcrypt');
-const { post_registro } = require('../../controllers/nuevo_usuario.controller');
+const { post_registro } = require('../../controllers/usuario.controller');
 
 // Mockea el modelo
 jest.mock('../../models/usuario.model');
@@ -28,13 +27,11 @@ describe('usuario.controller — post_registro', () => {
         console.error.mockRestore();
     });
 
-    // ─── Casos de exitosos ───────────────────────────────────────────────────────
-
     //El registro de nuevo usuario es exitoso
     it('responde 201 cuando hay registro exitoso', async () => {
         
         const registroNuevo= { insertId: 42}
-        Usuario.fetch_one.mockResolvedValue(null);
+        Usuario.fetch_copiados.mockResolvedValue(null);
         bcrypt.hash.mockResolvedValue('hashedpassword')
         Usuario.anadir.mockResolvedValue(registroNuevo);
 
@@ -53,7 +50,6 @@ describe('usuario.controller — post_registro', () => {
         });
     });
 
-    // ─── Casos de error ───────────────────────────────────────────────────────
 
     //Los campos estan vacios
     it('responde 400 si faltan todos los campos', async () => {
@@ -62,7 +58,6 @@ describe('usuario.controller — post_registro', () => {
             {nombre_usuario: '', 
             correo_usuario: '', 
             contrasena: ''}};
-;
         const res = mockRes();
 
         await post_registro (req, res);
@@ -75,8 +70,6 @@ describe('usuario.controller — post_registro', () => {
 
     //el nombre es muy largo, sobrepasando mas de 100 caracteres
     it('responde 400 si el nombre tiene mas de 100 caracteres', async () => {
-        // Caso límite: la tabla existe y la query funciona, pero no hay registros.
-
         const req = { body: {
             nombre_usuario: 'a'.repeat(101,),
             correo_usuario: 'juan@test.com',
@@ -137,7 +130,7 @@ describe('usuario.controller — post_registro', () => {
             correo_usuario: 'juan@test.com', 
             nombre_usuario: 'Juanfalso'             
         };
-        Usuario.fetch_one.
+        Usuario.fetch_copiados.
         mockResolvedValueOnce(usuarioExistente);
 
         const req = { body: {
@@ -151,21 +144,18 @@ describe('usuario.controller — post_registro', () => {
 
         expect(res.status).toHaveBeenCalledWith(409);
         expect(res.json).toHaveBeenCalledWith({ 
-            msg: 'Hay un usuario registrado con ese correo, agregue otro correo' 
+            msg: 'Ya existe un usuario con este correo, agregue otro correo' 
         });
     });
 
     //El usuario ya existe
     it('responde 409 si el usuario ya está registrado', async () => {
 
-        const usuarioExistente = { 
+        Usuario.fetch_copiados.mockResolvedValue({  
             id: 1, 
             correo_usuario: 'spam@test.com', 
             nombre_usuario: 'Juanperez'             
-        };
-        Usuario.fetch_one
-        .mockResolvedValueOnce(null)
-        .mockResolvedValueOnce(usuarioExistente);
+        });
 
         const req = { body: {
             nombre_usuario: 'Juanperez',
@@ -178,13 +168,13 @@ describe('usuario.controller — post_registro', () => {
 
         expect(res.status).toHaveBeenCalledWith(409);
         expect(res.json).toHaveBeenCalledWith({ 
-            msg: 'Hay un usuario registrado con ese Nombre, agregue otro nombre' 
+            msg: 'Ya existe un usuario con este nombre, use otro nombre' 
         });
     });
 
     //Error con el fetchg y la DB
-    it('responde 500 si la DB lanza un error en fetch_one', async () => {
-        Usuario.fetch_one.mockRejectedValue(new Error('Connection lost'));
+    it('responde 500 si la DB lanza un error en fetch_copiados', async () => {
+        Usuario.fetch_copiados.mockRejectedValue(new Error('Connection lost'));
 
         const req = { body: {
             nombre_usuario: 'Juanperez',
@@ -203,7 +193,7 @@ describe('usuario.controller — post_registro', () => {
 
     //bycrypt falla
     it('responde 500 si falla bycrypt', async () => {
-        Usuario.fetch_one.mockResolvedValue(null);
+        Usuario.fetch_copiados.mockResolvedValue(null);
         bcrypt.hash.mockRejectedValue(new Error('Hash error'))
         
         const req = { body: {
@@ -224,7 +214,7 @@ describe('usuario.controller — post_registro', () => {
     //Hubo algun error con el registro
     it('responde 500 si falla el registro', async () => {
         
-        Usuario.fetch_one.mockResolvedValue(null);
+        Usuario.fetch_copiados.mockResolvedValue(null);
         bcrypt.hash.mockResolvedValue('hashedpassword');
         Usuario.anadir.mockRejectedValue(new Error('Insert faield'));
 
@@ -242,22 +232,5 @@ describe('usuario.controller — post_registro', () => {
             msg: 'Error al registrar usuario' 
         });
     });
-
-    //error con la DB
-    it('responde 500 si la DB falla y manda error en la consola', async () => {
-        Usuario.fetch_one.mockRejectedValue(new Error('Timeout'));
-        
-        const req = { body: {
-            nombre_usuario: 'Juanperez',
-            correo_usuario: 'juan@test.com',
-            contrasena: '123'
-        }};
-        const res = mockRes();
-        await post_registro(req, res);
-
-        expect(console.error).toHaveBeenCalledWith(
-            'Error en Registro vuelva a intentarlo más tarde', 
-        expect.any(Error)
-     );
-    });
+    
 });

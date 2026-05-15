@@ -1,181 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Titulo from "../../shared/components/ui/basics/titulo";
 import Base from "../../shared/components/layout/base";
-import Text from "../../shared/components/ui/basics/texto";
 import Input from "../../shared/components/ui/inputs/input_texto";
 import Button from "../../shared/components/ui/buttons/botones";
 import ModalConfirmacion from "../../shared/components/ui/popups/modal_confirmacion";
 import AlertaError from "../../shared/components/ui/basics/error";
-import { useNavigate } from "react-router-dom";
+import useRegistrarUsuario from "../../features/user/hooks/useRegistrarUsuario";
 
+//llama a todos los datos, estados y servicos de la vista
 const RegistrarUsuario = () => {
-
-//Estados de los imputs, tambien permite que no se vea la contraseña Y LA NAVEGACION DE LOS BOTONES
-const [valusuario, setValusuario] = useState("");
-const [valcorreo, setValcorreo] = useState("");
-const [valcontrasena, setValcontrasena] = useState("");
-const [valverifica, setValverifica] = useState("");
-const navigate = useNavigate();
-const [accionPendiente, setAccionPendiente] = useState(null);
-const [isModalOpen, setIsModalOpen] = useState(false);
-const [error, setError] = useState("");
-const [verificando, setVerificando] = useState(true);
-
-useEffect(() => {
-
-  //Verifica el usuario si es admin y restringe su acceso
-  //Asistencia de la IA para entender y como implementar estructuracion
-  const verificaAdmin = async () => {
-    const token = localStorage.getItem("token")
-
-    if (!token) {
-      localStorage.removeItem("token");
-      navigate("/login", { replace: true})
-      return;
-    }
-
-    try {
-      const response =await fetch("/api/usuario/registrar_usuario", {
-        method: "GET",
-        headers: { "Authorization": token},
-        cache: "no-store",
-    });
-
-    const data = await response.json();
-
-    if(data.msg !== "Autorizado"){
-      navigate("/first", { replace: true });
-      return;
-    }
-    setVerificando(false);
-
-    }
-    catch (err) {
-      console.error("Error al verificar permisos", err);
-      localStorage.removeItem("token");
-    navigate("/login", { replace: true });
-      }
-    };
-    verificaAdmin();
-  }, [navigate]);
-
-
-//Handle del registro de usario y sus errores
-const handleRegistrarClick = () => {
-
-  // Validación: que no estén vacías
-  if ((!valusuario || !valcorreo || !valcontrasena || !valverifica)) {
-    setError("Llena todos los campos.");
-    return;
-  }
-
-   // Validación: de carecteres en correo
-  if (!/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/.test(valcorreo)) {
-    setError("Inserte un correo valido (ejemplo: ejemplo@mail.com).");
-    return;
-  }
-
-  // Validación: no se esta usando espacios en contrseñas
- if (/\s/.test(valcontrasena) || /\s/.test(valverifica)) {
-    setError("La contraseña no puede contener espacios");
-    return;
-  }
-
-  // Validación: no se esta usando espacios innecesarios y de caracteres en usuario
-  if (!/^[\p{L}\p{N}]+([ ][\p{L}\p{N}]+)*$/u.test(valusuario)) {
-    setError("El usuario solo puede contener letras o números, sin espacios al inicio o final")
-    return;
-  }
-
-  //Validación: de carecteres en contrasenas
-  if (!/^[a-zA-Z0-9ñÑ]+$/.test(valcontrasena)) {
-    setError("La contraseña solo puede contener letras y números.");
-    return;
-  }
-
-  // Validación: de limite de contraseñas
-  if (valcontrasena.length > 20){
-    setError("La contraseña no puede superar 20 caracteres.");
-    return;
-  }
-
-  // Validación: De contraseñas iguales
-  if (valcontrasena !== valverifica) {
-    setError("Las contraseñas no coinciden, verifica que sean iguales.");
-    return;
-  }
-
-  setError("");
-  setAccionPendiente("registrar");
-  setIsModalOpen(true);
-};
-
-//Handle de cancelar el registro
-const handleCancelarClick = () => {
-  setAccionPendiente("cancelar");
-  setIsModalOpen(true);
-};
-
-//Handle de la confirmacion y la conexcion 
-const handleConfirm = async () => {
-  setIsModalOpen(false); 
-
-  if (accionPendiente === "cancelar"){
-    setAccionPendiente(null);
-    navigate("/usuario")
-    return;
-  }
-
- try{
-
-  //se encarga de mandar el post
-
-  const token = localStorage.getItem("token");
-  const response = await fetch("/api/usuario/anadir", {
-    method: "POST",
-    headers: { 
-      "Content-Type": "application/json",
-      "Authorization": token,
-      cache: "no-store"
-    },
-    body: JSON.stringify({
-
-      nombre_usuario: valusuario,
-      correo_usuario: valcorreo,
-      contrasena: valcontrasena,
-    }),
-  });
-  //Respuesta de la db y si fue exitosa o no
-  const data = await response.json();
-
-  if (data.msg === "Token inválido") {
-    setAccionPendiente(null);
-    localStorage.removeItem("token");
-    navigate("/login");
-    return
-  }
-
-  if (data.msg === "No autorizado"){
-    setAccionPendiente(null);
-    navigate("/first", { replace: true });
-    return;
-  }
-
-  if (!response.ok) {
-    setError(data.msg);
-    setAccionPendiente(null)
-    return;
-  }
-
-  setAccionPendiente(null);
-  navigate("/usuario");
-} catch (err) {
-  console.error("error de red", err);
-  setError("Hubo un error con la conexion, intenta otra vez");
-  setAccionPendiente(null)
-}
-
-};
+  const {
+    valusuario, setValusuario,
+    valcorreo, setValcorreo,
+    valcontrasena, setValcontrasena,
+    valverifica, setValverifica,
+    error, setError,
+    isModalOpen,
+    verificando,
+    handleRegistrarClick,
+    handleCancelarClick,
+    handleConfirm,
+    handleCancelarModal,
+  } = useRegistrarUsuario();
 
  if (verificando){
   return null
@@ -268,7 +114,7 @@ const handleConfirm = async () => {
         titulo="¿Confirmar Registro?"
         descripcion="Si confirmas se guardaran todos los datos como estan."
         onConfirm={handleConfirm}
-        onCancel={() => setIsModalOpen(false)}
+        onCancel={handleCancelarModal}
         textoConfirmar="Confirmar"
     >
     </ModalConfirmacion>

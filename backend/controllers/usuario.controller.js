@@ -44,15 +44,13 @@ exports.post_registro = async (req, res, next) => {
     const nombreCorreccion = nombre_usuario.trim();
     const correoCorreccion = correo_usuario.trim().toLowerCase();
 
-    //varifica duplicados de correos
-    const dobleCorreo =await Usuario.fetch_one(correoCorreccion);
-    if (dobleCorreo) {
-        return res.status(409).json({msg: "Hay un usuario registrado con ese correo, agregue otro correo"});
-    }
-    //verifica duplicados de usuarios
-    const dobleUsuario =await Usuario.fetch_one(nombreCorreccion);
-    if (dobleUsuario) {
-        return res.status(409).json({msg: "Hay un usuario registrado con ese Nombre, agregue otro nombre"});
+    //verifica duplicados 
+    const existente = await Usuario.fetch_copiados(nombreCorreccion, correoCorreccion)
+    if (existente){
+        if (existente.correo_usuario.toLowerCase() === correoCorreccion){
+            return res.status(409).json({ msg: "Ya existe un usuario con este correo, agregue otro correo"})
+        }
+        return res.status(409).json({ msg: "Ya existe un usuario con este nombre, use otro nombre"})
     }
 
     //Hasheo de contraseñas usando bcrypt, se normaliza primero para adaptar la ñ
