@@ -84,41 +84,55 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax }) => {
 
 export const EntradaLista = ({ items = [] }) => {
   return (
-    <div className="w-full max-h-[780px] lg:flex-1 bg-white rounded-[32px] shadow-sm border pb-8 p-6 md:p-8 flex flex-col">
-      
+    <div className="w-full lg:flex-1 bg-white rounded-[32px] shadow-sm border pb-8 p-6 md:p-8 flex flex-col">
+
       <div className="mb-6">
         <Text variante="medium">Composición</Text>
       </div>
 
-      <div className="flex flex-col md:flex-row justify-evenly items-center flex-1 bg-[#FEFEFB] rounded-[32px] shadow-sm border overflow-hidden">
+      <div className="flex flex-col md:flex-row justify-evenly items-center flex-1 bg-[#FEFEFB] rounded-[32px] shadow-sm border overflow-hidden py-4 md:py-0">
         {items.map((item, index) => (
           <React.Fragment key={index}>
-            <EntradaCard
-              nombre={item.nombre}
-              unidad={item.unidad}
-              value={item.value}
-              onChange={item.onChange}
-              cantMax={item.cantidad}
-            />
 
-            
-            {index < items.length - 1 && (  
-                <div className="relative flex items-center justify-center self-stretch mx-4">
-                    
-                    <div 
-                    className="hidden md:block w-[1px] h-full" 
-                    style={{ backgroundColor: colores.grisClaro }} 
-                    />
+            {/* Card — centrada en mobile, normal en desktop */}
+            <div className="w-full md:w-auto flex justify-center items-center">
+              <EntradaCard
+                nombre={item.nombre}
+                unidad={item.unidad}
+                value={item.value}
+                onChange={item.onChange}
+                cantMax={item.cantidad}
+              />
+            </div>
 
-                    <div className="absolute md:flex items-center justify-center">
-                    <Text variante="medium" style={{ color: colores.azul, lineHeight: 0, fontSize: "22px"}}>
-                        +
-                    </Text>
-                    </div>
+            {index < items.length - 1 && (
+              <div className="flex items-center justify-center w-3/4 md:w-auto md:self-stretch mx-auto md:mx-4">
 
-                    <div className="block md:hidden h-[1px] w-full" style={{ backgroundColor: colores.grisClaro }} />
+                {/* Línea vertical — solo desktop */}
+                <div
+                  className="hidden md:block w-[1px] h-full"
+                  style={{ backgroundColor: colores.grisClaro }}
+                />
+
+                {/* + con líneas a los lados — solo mobile */}
+                <div className="flex md:hidden items-center w-full gap-3">
+                  <div className="flex-1 h-[1px]" style={{ backgroundColor: colores.grisClaro }} />
+                  <Text variante="medium" style={{ color: colores.azul, fontSize: "22px", lineHeight: 1 }}>
+                    +
+                  </Text>
+                  <div className="flex-1 h-[1px]" style={{ backgroundColor: colores.grisClaro }} />
                 </div>
-                )}
+
+                {/* + solo — solo desktop (sobre la línea vertical) */}
+                <div className="hidden md:flex absolute items-center justify-center">
+                  <Text variante="medium" style={{ color: colores.azul, lineHeight: 0, fontSize: "22px" }}>
+                    +
+                  </Text>
+                </div>
+
+              </div>
+            )}
+
           </React.Fragment>
         ))}
       </div>
