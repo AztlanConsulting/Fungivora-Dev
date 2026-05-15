@@ -68,6 +68,7 @@ exports.post_crear_inoculo = async (req, res, next) => {
         fecha,
         cantidad_disponible, 
         unidad, 
+        num_repeticiones,
         nota, 
         stock_recomendado,
         inoculo_usado, 
@@ -79,50 +80,47 @@ exports.post_crear_inoculo = async (req, res, next) => {
     await connection.beginTransaction();
 
     try {
-        const inoculoId = await Inoculo.insertInoculo({
-            id_inoculo_usado: inoculo_usado.id,
-            cantidad_usada: inoculo_usado.cantidad,
-            codigo_fungivora, tipo, especie, fecha,
-            cantidad_disponible, unidad, stock_recomendado
-        }, connection);
+        for (let i = 1; i <= num_repeticiones && i <= 15; i++) {
+            const codigo_actual = i > 1 ? `${codigo_fungivora}-${i}` :  `${codigo_fungivora}-${"1"}`;
 
-        for (const ingrediente of ingredientes) {
-            await Inoculo.insertIngrediente({
-                inoculoId,
-                ingredienteId: ingrediente.id,
-                cantidad: ingrediente.cantidad
+            const inoculoId = await Inoculo.insertInoculo({
+                id_inoculo_usado: inoculo_usado.id,
+                cantidad_usada: inoculo_usado.cantidad,
+                codigo_fungivora: codigo_actual,
+                tipo, especie, fecha,
+                cantidad_disponible, unidad, stock_recomendado
             }, connection);
-        }
 
-        await Inoculo.insertBitacora({ inoculoId, fecha, nota }, connection);
+            for (const ingrediente of ingredientes) {
+                await Inoculo.insertIngrediente({
+                    inoculoId,
+                    ingredienteId: ingrediente.id,
+                    cantidad: ingrediente.cantidad
+                }, connection);
+            }
 
-        for (const ingrediente of ingredientes) {
-            await Inoculo.updateInsumo({
-                ingredienteId: ingrediente.id,
-                cantidad: ingrediente.cantidad
+            await Inoculo.insertBitacora({ inoculoId, fecha, nota }, connection);
+
+            for (const ingrediente of ingredientes) {
+                await Inoculo.updateInsumo({
+                    ingredienteId: ingrediente.id,
+                    cantidad: ingrediente.cantidad
+                }, connection);
+            }
+
+            await Inoculo.updateInoculo({ 
+                cantidad_disponible: inoculo_usado.cantidad, 
+                id: inoculo_usado.id 
             }, connection);
+
+            for (const ingrediente of ingredientes) {
+                await Inoculo.insertLog({
+                    ingredienteId: ingrediente.id,
+                    cantidad: ingrediente.cantidad,
+                    fecha, tipo: 'Out'
+                }, connection);
+            }
         }
-
-        await Inoculo.updateInoculo({ 
-            cantidad_disponible: inoculo_usado.cantidad, 
-            id: inoculo_usado.id 
-        }, connection);
-
-        for (const ingrediente of ingredientes) {
-            await Inoculo.insertLog({
-                ingredienteId: ingrediente.id,
-                cantidad: ingrediente.cantidad,
-                fecha, tipo: 'Out'
-            }, connection);
-        }
-
-        console.log('DEBUG crear inoculo:', {
-            cantidad_disponible,
-            inoculo_usado,
-            ingredientes
-        });
-
-await connection.commit();
 
         await connection.commit();
         res.status(201).json({ success: true, message: 'Inóculo creado exitosamente' });
