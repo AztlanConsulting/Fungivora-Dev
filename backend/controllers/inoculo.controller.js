@@ -62,9 +62,16 @@ exports.get_inoculos_para_semilla = async (req, res, next) => {
  */
 exports.post_crear_inoculo = async (req, res, next) => {
     const {
-        codigo_fungivora, tipo, especie, fecha,
-        cantidad_disponible, nota, unidad, stock_recomendado,
-        inoculo_usado, ingredientes
+        codigo_fungivora,
+        tipo, 
+        especie, 
+        fecha,
+        cantidad_disponible, 
+        unidad, 
+        nota, 
+        stock_recomendado,
+        inoculo_usado, 
+        ingredientes
     } = req.body;
 
     const db = require('../util/db');
@@ -96,7 +103,10 @@ exports.post_crear_inoculo = async (req, res, next) => {
             }, connection);
         }
 
-        await Inoculo.updateInoculo({ id: inoculoId, cantidad_disponible }, connection);
+        await Inoculo.updateInoculo({ 
+            cantidad_disponible: inoculo_usado.cantidad, 
+            id: inoculo_usado.id 
+        }, connection);
 
         for (const ingrediente of ingredientes) {
             await Inoculo.insertLog({
@@ -105,6 +115,14 @@ exports.post_crear_inoculo = async (req, res, next) => {
                 fecha, tipo: 'Out'
             }, connection);
         }
+
+        console.log('DEBUG crear inoculo:', {
+            cantidad_disponible,
+            inoculo_usado,
+            ingredientes
+        });
+
+await connection.commit();
 
         await connection.commit();
         res.status(201).json({ success: true, message: 'Inóculo creado exitosamente' });
