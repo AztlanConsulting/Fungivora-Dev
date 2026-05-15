@@ -1,4 +1,3 @@
-// frontend/src/features/inoculos/hooks/useEspecies.js
 import { useState, useEffect } from "react";
 import inoculoService from "../services/inoculo.service";
 
@@ -10,10 +9,10 @@ const useEspecies = () => {
     useEffect(() => {
         const fetchEspecies = async () => {
             try {
-                const json = await inoculoService.getEspecies();
+                const json = await inoculoService.getAllEspecies();
 
                 if (json.success) {
-                    setEspecies(json.data);
+                    setEspecies(json.data.map ((item) => ({especie:item.opcion})));
                 } else {
                     setError("No se pudieron cargar las especies");
                 }
