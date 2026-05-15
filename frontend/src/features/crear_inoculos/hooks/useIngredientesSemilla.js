@@ -27,7 +27,7 @@ const useIngredientesSemilla = ({
 
   const sugeridos = useMemo(() => {
     const ml = BOLSAS[tamano];
-    if (!ml && !tipoInoculo) return { mijo: "", agua: "", inoculo: "" };
+    if (!ml) return { mijo: "", agua: "", inoculo: "" };
 
     return {
       mijo: String(TAMANOS_COMPOSICION.cantIngredientes[ml].mijo),
