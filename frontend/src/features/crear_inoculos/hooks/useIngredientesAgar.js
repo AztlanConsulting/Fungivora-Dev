@@ -14,7 +14,7 @@ const normalizarUnidad = (unidad = "") => {
  * Gestiona los ingredientes de un agar:
  *   Agua · Peptona · Extracto de Malta · Inóculo
  */
-const useIngredientesAgar = ({ inoculoDisponible = 0 }) => {
+const useIngredientesAgar = ({ inoculoDisponible = 0, codigoInoculo = "", tipoInoculo = ""  }) => {
   const [insumos,  setInsumos]  = useState([]);
   const [loading,  setLoading]  = useState(true);
   const [error,    setError]    = useState(null);
@@ -73,7 +73,7 @@ const useIngredientesAgar = ({ inoculoDisponible = 0 }) => {
       cantidad: parseFloat(extractoInsumo?.cantidad) || 500,
     },
     {
-      nombre:   "Inóculo",
+      nombre: codigoInoculo || "Inóculo",
       unidad:   "ml",
       value:    inoculoCant,
       onChange: (e) => setInoculoCant(e.target.value),

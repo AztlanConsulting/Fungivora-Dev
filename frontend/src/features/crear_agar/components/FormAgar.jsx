@@ -84,6 +84,9 @@ const FormAgar = () => {
     });
   };
 
+  // Agrega este log justo antes del return
+console.log({ inoculo, inoculos, inoculoSeleccionado, codigoInoculo });
+
   return (
     <>
       <Titulo>Crear Agar</Titulo>

@@ -101,6 +101,8 @@ const FormSemillas = () => {
       nota,
     });
   };
+  // Agrega este log justo antes del return
+console.log({ inoculo, inoculos, inoculoSeleccionado, codigoInoculo });
 
   return (
     <>
