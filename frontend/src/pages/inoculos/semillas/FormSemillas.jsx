@@ -1,18 +1,18 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
-import SelectField   from "../../../shared/components/ui/inputs/seleccionar_texto";
-import InputFecha    from "../../../shared/components/ui/inputs/input_fecha";
+import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
+import InputFecha from "../../../shared/components/ui/inputs/input_fecha";
 import InputCantidad from "../../../shared/components/ui/inputs/input_cantidad";
-import InputNota     from "../../../shared/components/ui/inputs/input_nota";
-import Button        from "../../../shared/components/ui/buttons/botones";
+import InputNota from "../../../shared/components/ui/inputs/input_nota";
+import Button from "../../../shared/components/ui/buttons/botones";
 
 import { EntradaLista } from "../../../features/crear_inoculos/components/seleccionar_cantidades";
-import ResumenSemilla   from "../../../features/crear_inoculos/components/ResumenSemilla";
+import ResumenSemilla from "../../../features/crear_inoculos/components/ResumenSemilla";
 import insumosService from "../../../features/crear_inoculos/services/inoculos.service";
 
-import useEspecies            from "../../../features/inoculos/hooks/useEspecies";
-import useCategorias          from "../../../features/crear_inoculos/hooks/useCategorias";
+import useEspecies from "../../../features/inoculos/hooks/useEspecies";
+import useCategorias from "../../../features/crear_inoculos/hooks/useCategorias";
 import useInoculoParaSemillas from "../../../features/inoculos/hooks/useInoculoprarasemillas";
 import useIngredientesSemilla from "../../../features/crear_inoculos/hooks/useIngredientesSemilla";
 
@@ -21,45 +21,51 @@ import {
   normalizarTipoInoculo,
 } from "../../../features/crear_inoculos/utils/generarCodigoInoculo";
 
-import Titulo       from "../../../shared/components/ui/basics/titulo";
-import Text         from "../../../shared/components/ui/basics/texto";
-import { Base }     from "../../../shared/components/layout";
-import { colores }  from "../../../shared/components/ui/basics/colores";
+import Titulo from "../../../shared/components/ui/basics/titulo";
+import Text from "../../../shared/components/ui/basics/texto";
+import { Base } from "../../../shared/components/layout";
+import { colores } from "../../../shared/components/ui/basics/colores";
 
 const TIPO_CREACION = "semilla";
 
 const OPCIONES_TAMANO = [
-  { value: "chico",   label: "Chico"   },
+  { value: "chico", label: "Chico" },
   { value: "mediano", label: "Mediano" },
-  { value: "grande",  label: "Grande"  },
+  { value: "grande", label: "Grande" },
 ];
 
 const FormSemillas = () => {
   const navigate = useNavigate();
 
-  const [especie,  setEspecie]  = useState("");
-  const [inoculo,  setInoculo]  = useState("");
-  const [mijo,     setMijo]     = useState("");
-  const [tamano,   setTamano]   = useState("");
+  const [especie, setEspecie] = useState("");
+  const [inoculo, setInoculo] = useState("");
+  const [mijo, setMijo] = useState("");
+  const [tamano, setTamano] = useState("");
   const [cantidad, setCantidad] = useState(1);
-  const [fecha,    setFecha]    = useState({});
-  const [nota,     setNota]     = useState("");
+  const [fecha, setFecha] = useState({});
+  const [nota, setNota] = useState("");
 
-  const { especies,  loading: loadingEspecies,  error: errorEspecies  } = useEspecies();
+  const { especies, loading: loadingEspecies, error: errorEspecies } = useEspecies();
   const { opciones: inoculos, loading: loadingInoculos, error: errorInoculos } = useInoculoParaSemillas(especie);
   const { categorias, loading: loadingCategorias } = useCategorias();
 
   const inoculoSeleccionado = (inoculos ?? []).find((ino) => ino.codigo === inoculo);
-  const tipoInoculo         = normalizarTipoInoculo(inoculoSeleccionado?.raw?.tipo);
-  const inoculoDisponible   = inoculoSeleccionado?.raw?.cantidad_disponible ?? 0;
-  const codigoInoculo       = inoculoSeleccionado?.codigo ?? "";
+  const tipoInoculo = normalizarTipoInoculo(inoculoSeleccionado?.raw?.tipo);
+  const inoculoDisponible = inoculoSeleccionado?.raw?.cantidad_disponible ?? 0;
+  const codigoInoculo = inoculoSeleccionado?.codigo ?? "";
 
   const {
     items: itemsComposicion,
     valores: valoresComposicion,
     opcionesMijo,
     loading: loadingInsumos,
-  } = useIngredientesSemilla({ inoculoDisponible, tipoMijo: mijo, codigoInoculo });
+  } = useIngredientesSemilla({
+    inoculoDisponible,
+    tipoMijo: mijo,
+    codigoInoculo,
+    tamano,
+    tipoInoculo,
+  });
 
   const opcionesEspecies = especies.map((esp) => ({
     value: esp.especie,
@@ -74,7 +80,7 @@ const FormSemillas = () => {
   const codigos = useMemo(() => {
     if (loadingCategorias) return [];
     return generarCodigos({
-      tipoCreacion:  TIPO_CREACION,
+      tipoCreacion: TIPO_CREACION,
       tipoInoculo,
       nombreEspecie: especie,
       categorias,
