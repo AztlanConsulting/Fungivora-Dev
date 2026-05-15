@@ -9,9 +9,9 @@ import { fetchInoculos } from '../services/inoculo.service';
  * Semilla  → puede usar: Agar, Medio Líquido, Semilla
  */
 const TIPOS_PERMITIDOS = {
-    agar: ['agar', 'medio liquido', 'semilla', 'prima'],
-    'medio liquido': ['agar', 'medio liquido'],
-    semilla: ['agar', 'medio liquido', 'semilla'],
+    agar:         ['agar', 'medio liquido', 'semilla', 'prima'],
+    medioliquido: ['agar', 'medio liquido'],
+    semilla:      ['agar', 'medio liquido', 'semilla'],
 };
 
 const normalizar = (texto = '') =>

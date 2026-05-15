@@ -12,6 +12,8 @@ import useEspecies                 from "../../inoculos/hooks/useEspecies";
 import useInoculoParaSemillas      from "../../inoculos/hooks/useInoculoprarasemillas";
 import useIngredientesMedioLiquido from "../hooks/useIngredientesMedioLiquido";
 
+const TIPO_CREACION = "medioLiquido";
+
 const OPCIONES_CARBOHIDRATO = [
   { value: "miel",        label: "Miel" },
   { value: "jarabe_maiz", label: "Jarabe de maíz" },
@@ -23,7 +25,7 @@ const CrearMedioLiquido = () => {
   const [carbohidrato, setCarbohidrato] = useState("");
 
   const { especies, loading: loadingEspecies, error: errorEspecies } = useEspecies();
-  const { opciones: inoculos, loading: loadingInoculos, error: errorInoculos } = useInoculoParaSemillas(especie);
+  const { opciones: inoculos, loading: loadingInoculos, error: errorInoculos } = useInoculoParaSemillas(especie, TIPO_CREACION);
 
   const inoculoSeleccionado = (inoculos ?? []).find((ino) => ino.codigo === inoculo);
   const inoculoDisponible = inoculoSeleccionado?.raw?.cantidad_disponible ?? 0;
