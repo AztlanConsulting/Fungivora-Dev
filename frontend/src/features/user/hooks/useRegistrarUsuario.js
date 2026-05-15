@@ -18,8 +18,9 @@ const useRegistrarUsuario=() => {
 
     //estado de efectos, donde se hara la validacion y verificacion de los datos
     useEffect(() => {
-        //verifica el usuario y si esta autorizado }
+        //verifica el usuario y si esta autorizado 
         const verifica = async () => {
+            //toma el token de local storage y se encarga de la verificacion de que si hay token y que hacer en ese caso
             const token = localStorage.getItem("token");
             if (!token) {
                 localStorage.removeItem("token");
@@ -27,6 +28,7 @@ const useRegistrarUsuario=() => {
                 return;
             }
             try {
+                //lee el token y describe que hacer en caso de que si el usuario no es autorizado
                 const data = await registrarUsuarioService.verificarAdmin();
                 if (!data || data.msg !== "Autorizado"){
                     navigate("/first", { replace: true});

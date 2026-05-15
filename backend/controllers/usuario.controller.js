@@ -40,7 +40,8 @@ exports.post_registro = async (req, res, next) => {
         return res.status(400).json({ msg: "Ingrese un correo valido"});
     }
 
-    //toma el usuario y correo a que sean minusculas y sin espacios para comparativas 
+    //toma el usuario y correo a que sean minusculas y sin espacios para comparativas
+    //son necesarias para estandarizar el correo y el usuario de espacios inecesarios, y en el caso del correo, volverlos minusculas tambien en caso que pasen del frontend
     const nombreCorreccion = nombre_usuario.trim();
     const correoCorreccion = correo_usuario.trim().toLowerCase();
 
@@ -57,7 +58,7 @@ exports.post_registro = async (req, res, next) => {
     const contrasenaNormalizada = contrasena.normalize("NFC");
     const contrasenaHash = await bcrypt.hash(contrasenaNormalizada, 10);
 
-    //Creaccion del Registro
+    //Creacion del Registro
     const registro = await Usuario.anadir({
         nombre_usuario: nombreCorreccion,
         correo_usuario: correoCorreccion,
