@@ -12,7 +12,7 @@ const normalizarUnidad = (unidad = "") => {
 
 /**
  * Gestiona los ingredientes de un agar:
- *   Agua · Peptona · Extracto de Malta · Inóculo
+ *   Agua · Agar agar · Peptona · Extracto de Malta · Inóculo
  */
 const useIngredientesAgar = ({ inoculoDisponible = 0, codigoInoculo = "", tipoInoculo = ""  }) => {
   const [insumos,  setInsumos]  = useState([]);
