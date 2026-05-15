@@ -13,7 +13,7 @@ import ResumenSemilla   from "../../crear_inoculos/components/ResumenSemilla";
 import useEspecies            from "../../inoculos/hooks/useEspecies";
 import useCategorias          from "../../crear_inoculos/hooks/useCategorias";
 import useInoculoParaSemillas from "../../inoculos/hooks/useInoculoprarasemillas";
-import useIngredientesSemilla from "../../crear_inoculos/hooks/useIngredientesSemilla";
+import useIngredientesAgar from "../../crear_inoculos/hooks/useIngredientesAgar";
 
 import {
   generarCodigos,
@@ -49,7 +49,7 @@ const FormAgar = () => {
     items: itemsComposicion,
     valores: valoresComposicion,
     loading: loadingInsumos,
-  } = useIngredientesSemilla({ inoculoDisponible, codigoInoculo });
+  } = useIngredientesAgar({ inoculoDisponible, codigoInoculo });
 
   const opcionesEspecies = especies.map((esp) => ({
     value: esp.especie,
