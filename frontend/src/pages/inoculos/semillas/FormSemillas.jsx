@@ -92,8 +92,8 @@ const FormSemillas = () => {
   }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias]);
 
   const handleRegistrar = async () => {
-    console.log(cantidad);
     try {
+      /* Molde creado por archivo type para mandar correctamente al endpoint */
       for(const codigo in codigos) {
         const datos = {
           codigo_fungivora: codigos[codigo],
@@ -121,6 +121,8 @@ const FormSemillas = () => {
         console.log("Datos hacia backend:", datos);
 
         const respuesta = await insumosService.postSemilla(datos);
+
+        /* TODO: hay que cambiar esto por un mini Popup y un redirect a biblioteca genetica */
         alert("Semilla registrada con exito!");
       }
     } catch (error) {
