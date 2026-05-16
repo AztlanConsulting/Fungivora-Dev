@@ -88,6 +88,19 @@ const useLotes = () => {
         }
     };
 
+    
+    const deleteLote = async (id_lote) => {
+        try {
+            const res = await loteService.deleteLote(id_lote);
+            if (res.success) {
+                setDatos(prevDatos => prevDatos.filter(lote => lote.id_lote !== id_lote));
+            }
+            return res;
+        } catch (err) {
+            return { success: false, message: "Error al intentar eliminar" };
+        }
+    };
+
     return { 
         datos, 
         sustratos, 
@@ -97,6 +110,7 @@ const useLotes = () => {
         cargando, 
         error, 
         addLote, 
+        deleteLote,
         refresh: fetchLotes 
     };
 };

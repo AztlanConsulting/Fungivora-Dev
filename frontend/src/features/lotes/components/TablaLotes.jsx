@@ -5,7 +5,14 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { CancelCircleIcon } from '@hugeicons/core-free-icons';
 
 // Tabla para poder vizualizar los lotes
-const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayout, colorBordeHeader }) => {
+const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayout, colorBordeHeader, onEliminar }) => {
+
+  // Eliminar el lote
+  const handleEliminarClick = (e, lote) => {
+    e.stopPropagation();
+    onEliminar(lote);
+  };
+
   return (
     <div className="flex flex-col md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
       <div className={`hidden md:grid ${gridLayout}`} style={{ backgroundColor: colorBordeHeader }}>
@@ -45,8 +52,13 @@ const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayo
                   </div>
                 ))}
                 <div className="py-4 flex justify-center items-center">
-                  <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
-                </div>
+                  <button 
+                      onClick={(e) => handleEliminarClick(e, lote)}
+                      className="hover:scale-110 transition-transform p-2"
+                  >
+                      <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
+                  </button>
+                  </div>
               </div>
 
               {/* Vista de movil */}
@@ -56,8 +68,10 @@ const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayo
                 style={{ borderColor: colorBordeHeader }}
               >
                 <div className="flex justify-between items-start">
-                  <Text variante="option" style={{ color: "black", fontWeight: '500', fontSize: '18px' }}>{lote.codigo_fungivora}</Text>
-                  <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
+                    <Text variante="option" style={{ color: "black", fontWeight: '500', fontSize: '18px' }}>{lote.codigo_fungivora}</Text>
+                    <button onClick={(e) => handleEliminarClick(e, lote)}>
+                        <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
+                    </button>
                 </div>
                 <div className="grid grid-cols-2 gap-4 border-t pt-4" style={{ borderColor: colorBordeHeader }}>
                   <Text variante="option" style={{ color: colores.gris, fontSize: '14px' }}>{lote.tipo_sustrato}</Text>
