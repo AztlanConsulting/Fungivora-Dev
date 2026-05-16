@@ -132,6 +132,29 @@ class Lotes {
             throw err;
         }
     }
+
+    // Metodo para eliminar un lote y sus bloques
+    static async eliminar_lote(id_lote) {
+        const connection = await db.getConnection();
+        try {
+            await connection.beginTransaction();
+
+            // Bloques asociados
+            await connection.execute('DELETE FROM Bloques WHERE id_lote = ?', [id_lote]);
+
+            // Lote
+            const [result] = await connection.execute('DELETE FROM Lotes WHERE id_lote = ?', [id_lote]);
+
+            await connection.commit();
+            return result;
+        } catch (err) {
+            await connection.rollback();
+            console.error("Error en eliminar_lote model:", err);
+            throw err;
+        } finally {
+            connection.release();
+        }
+    }
 }
 
 module.exports = Lotes;
