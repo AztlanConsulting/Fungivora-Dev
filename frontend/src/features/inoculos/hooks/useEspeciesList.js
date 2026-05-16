@@ -22,7 +22,6 @@ const useEspeciesList = () => {
             try {
                 setLoading(true);
                 const response = await inoculoService.getAllEspecies();
-                console.log("RESPUESTA CATEGORIAS:", response);
                 const lista = (response?.data ?? []).map((item) => ({
                     value: item.opcion,
                     label: item.opcion,
