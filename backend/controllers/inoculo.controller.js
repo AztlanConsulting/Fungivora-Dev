@@ -96,7 +96,7 @@ exports.post_crear_inoculo = async (req, res, next) => {
             }, connection);
         }
 
-        await Inoculo.updateInoculo({ id: inoculoId, cantidad_disponible }, connection);
+        await Inoculo.updateInoculo({ id: inoculo_usado.id, cantidad_disponible: inoculo_usado.cantidad }, connection);
 
         for (const ingrediente of ingredientes) {
             await Inoculo.insertLog({
