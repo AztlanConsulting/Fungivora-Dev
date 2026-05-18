@@ -1,13 +1,19 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Text } from '../../../shared/components/ui';
 import { colores } from '../../../shared/components/ui/basics/colores';
 
 const FilaCheck = ({ item, checked, onToggle }) => {
     return (
         <div className="flex items-center justify-between py-2 border-b last:border-b-0 border-gray-100">
-            <Text variante="body" style={{ color: colores.negro }}>
-                {item.nombre}
-            </Text>
+            <Link
+                to={item.ruta}
+                className="hover:opacity-70 transition-opacity"
+            >
+                <Text variante="body" style={{ color: colores.negro }}>
+                    {item.nombre}
+                </Text>
+            </Link>
             <div className="flex items-center gap-3">
                 <Text variante="small" style={{ color: colores.gris }}>
                     {item.fecha}

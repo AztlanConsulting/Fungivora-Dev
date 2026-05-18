@@ -17,18 +17,27 @@ const PantallaPrincipalView = () => {
     const navigate = useNavigate();
 
     // Datos de ejemplo 
+    // ruta: /lotes/detalle/id
     const lotesRevisar = [
-        { id: 1, nombre: 'Lote HE A', fecha: '12/06/2025' },
+        { id: 1, nombre: 'Lote HE A', fecha: '12/06/2025', ruta: '/lotes/detalle/1' },
         { id: 2, nombre: 'Lote ML B', fecha: '14/06/2025' },
         { id: 3, nombre: 'Lote HE C', fecha: '18/06/2025' },
         { id: 4, nombre: 'Lote PA D', fecha: '20/06/2025' },
+        { id: 5, nombre: 'Lote HE A', fecha: '12/06/2025' },
+        { id: 6, nombre: 'Lote ML B', fecha: '14/06/2025' },
+        { id: 7, nombre: 'Lote HE C', fecha: '18/06/2025' },
+        { id: 8, nombre: 'Lote PA D', fecha: '20/06/2025' },
     ];
 
     const inventarioBajo = [
-        { id: 1, nombre: 'Agar', fecha: '10/06/2025' },
+        { id: 1, nombre: 'Agar', fecha: '10/06/2025', ruta: '/inoculos' },
         { id: 2, nombre: 'Medio líquido', fecha: '11/06/2025' },
         { id: 3, nombre: 'Semilla centeno', fecha: '13/06/2025' },
         { id: 4, nombre: 'Bolsas 3 lb', fecha: '15/06/2025' },
+        { id: 5, nombre: 'Agar', fecha: '10/06/2025' },
+        { id: 6, nombre: 'Medio líquido', fecha: '11/06/2025' },
+        { id: 7, nombre: 'Semilla centeno', fecha: '13/06/2025' },
+        { id: 8, nombre: 'Bolsas 3 lb', fecha: '15/06/2025' },
     ];
 
     const resumen = {
@@ -108,7 +117,7 @@ const PantallaPrincipalView = () => {
                                     Resumen general
                                 </Text>
                                 <Text variante="small" style={{ color: colores.gris }}>
-                                    Actividad del último año
+                                    Actividad actual
                                 </Text>
                             </div>
                             <div className="flex gap-3 flex-1">
