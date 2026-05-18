@@ -139,8 +139,8 @@ const DetalleLote = () => {
                             fases={fases}
                             fase={fase}
                             setFase={handleLocalChangeFase}
-                            busqueda={busqueda}
-                            setBusqueda={setBusqueda}
+                            //busqueda={busqueda}
+                            //setBusqueda={setBusqueda}
                         />
 
                         <div className="flex flex-col gap-4">

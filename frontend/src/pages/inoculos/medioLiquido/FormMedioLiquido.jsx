@@ -3,6 +3,7 @@ import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto"
 import useEspecies from "../../../features/inoculos/hooks/useEspecies";
 import useInoculoParaSemilla from "../../../features/inoculos/hooks/useInoculoprarasemillas";
 import Titulo from "../../../shared/components/ui/basics/titulo";
+import CrearMedioLiquido from "../../../features/crear_inoculos/components/CrearMedioLiquido";
 
 const FormMedioLiquido = () => {
   const [especie, setEspecie] = useState("");
@@ -27,7 +28,7 @@ const FormMedioLiquido = () => {
   };
 
   return (
-    <div className="pt-24 px-8 md:px-12">
+    <div className="min-h-screen pt-24 px-8 md:px-12">
       <Titulo>Crear Inoculo — Medio Liquido</Titulo>
 
       {/* Seleccion de especie */}
@@ -58,6 +59,8 @@ const FormMedioLiquido = () => {
         error={errorInoculo}
         disabled={!especie || (opciones.length === 0 && !loadingInoculo)}
       />
+
+      <CrearMedioLiquido />
     </div>
   );
 };

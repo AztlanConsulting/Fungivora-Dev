@@ -14,6 +14,11 @@ const inoculoService = {
         return res.data;
     },
 
+    getInoculos: async () => {
+        const res = await api.get('/inoculos/');
+        return res.data;
+    },
+
 };
 
 export default inoculoService;

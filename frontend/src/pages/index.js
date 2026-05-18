@@ -1,6 +1,5 @@
 export { default as FirstPage } from "./home/First_Page";
-export { default as RegistrarMedio } from "./inoculos/NewMedio";
-export { default as Inventario } from "./inventario/inventario";
+export { default as Inventario } from "./inventario/Inventario";
 export { default as Lotes } from "./lotes/Lotes";
 export { default as Lote } from "./lotes/Lote";
 export { default as Pruebas } from "./tests/pruba_componentes";
