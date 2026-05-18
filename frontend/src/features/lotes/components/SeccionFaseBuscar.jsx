@@ -15,10 +15,11 @@ const SeccionFaseBuscar = ({ fases, fase, setFase, busqueda, setBusqueda }) => {
                     colorTheme="azul"
                 />
             </div>
-
+            {/* 
             <div className="w-full lg:w-1/3">
                 <BarraBusqueda value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
             </div>
+            */}
         </div>
     );
 };
