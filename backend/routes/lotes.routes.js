@@ -29,4 +29,7 @@ router.put('/fase', controller.actualizar_fase);
 // Ruta para eliminar un lote
 router.delete('/:id_lote', controller.delete_batch);
 
+// Ruta para revision de lotes
+router.put('/revision', controller.revisar_lotes);
+
 module.exports = router;

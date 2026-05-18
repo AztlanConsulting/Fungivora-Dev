@@ -69,7 +69,7 @@ class Lotes {
             throw err;
         }
     }
-    
+
     // Metodo para encontrar los inoculos activos
     static async fetch_inoculos_disponibles() {
         try {
@@ -153,6 +153,27 @@ class Lotes {
             throw err;
         } finally {
             connection.release();
+        }
+    }
+
+    // Método para revisar varios lotes
+    static async revision_lotes(ids) {
+        try {
+            if (!ids || ids.length === 0) {
+                return;
+            }
+
+            // (?, ?, ?, ...)
+            const placeholders = ids.map(() => '?').join(',');
+
+            await db.execute(`
+                UPDATE Lotes
+                SET fecha_ultima_revision = NOW()
+                WHERE id_lote IN (${placeholders})
+            `, ids);
+        } catch (err) {
+            console.error("Error en revision_lotes:", err);
+            throw err;
         }
     }
 }
