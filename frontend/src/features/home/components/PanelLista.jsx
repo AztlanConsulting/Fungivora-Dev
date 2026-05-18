@@ -9,8 +9,11 @@ const PanelLista = ({
     items,
     checked,
     onToggle,
-    onVerTodo
+    onRevisar,
+    onVerTodo,
+    mostrarChecks
 }) => {
+    const seleccionados = Object.values(checked).some(Boolean);
     return (
         <div className="bg-white rounded-2xl p-5 flex-1 min-w-0 shadow-sm">
             <div className="flex items-center justify-between mb-3">
@@ -29,15 +32,31 @@ const PanelLista = ({
                     </svg>
                 </button>
             </div>
-            <div className="max-h-[160px] overflow-y-auto pr-1">
+            <div className="max-h-[160px] overflow-y-auto pr-5">
                 {items.map(item => (
                     <FilaCheck
                         key={item.id}
                         item={item}
                         checked={!!checked[item.id]}
                         onToggle={onToggle}
+                        mostrarCheck={mostrarChecks}
                     />
                 ))}
+            </div>
+            <div className="flex justify-end">
+                {seleccionados && (
+                    <button
+                        onClick={onRevisar}
+                        className="mt-3 px-3 py-1 text-sm rounded-full hover:bg-blue-50 transition-colors"
+                        style={{
+                            color: colores.azul,
+                            backgroundColor: "#FFFFFF",
+                            border: `1px solid ${colores.azul}`
+                        }}
+                    >
+                        Marcar como revisado
+                    </button>
+                )}
             </div>
         </div>
     );

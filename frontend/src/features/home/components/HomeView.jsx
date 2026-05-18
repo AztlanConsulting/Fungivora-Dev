@@ -8,6 +8,7 @@ import { Base } from '../../../shared/components/layout';
 import AccesoRapido from './AccesoRapido';
 import MetricaCard from './MetricaCard';
 import PanelLista from './PanelLista';
+import useHome from '../hooks/useHome';
 
 /**
  * Vista principal / Dashboard de Devora.
@@ -16,34 +17,22 @@ import PanelLista from './PanelLista';
 const PantallaPrincipalView = () => {
     const navigate = useNavigate();
 
-    // Datos de ejemplo 
-    // ruta: /lotes/detalle/id
-    const lotesRevisar = [
-        { id: 1, nombre: 'Lote HE A', fecha: '12/06/2025', ruta: '/lotes/detalle/1' },
-        { id: 2, nombre: 'Lote ML B', fecha: '14/06/2025' },
-        { id: 3, nombre: 'Lote HE C', fecha: '18/06/2025' },
-        { id: 4, nombre: 'Lote PA D', fecha: '20/06/2025' },
-        { id: 5, nombre: 'Lote HE A', fecha: '12/06/2025' },
-        { id: 6, nombre: 'Lote ML B', fecha: '14/06/2025' },
-        { id: 7, nombre: 'Lote HE C', fecha: '18/06/2025' },
-        { id: 8, nombre: 'Lote PA D', fecha: '20/06/2025' },
-    ];
+    const {
+        dashboard,
+        loading,
+        error,
+        revisarLotes
+    } = useHome();
 
-    const inventarioBajo = [
-        { id: 1, nombre: 'Agar', fecha: '10/06/2025', ruta: '/inoculos' },
-        { id: 2, nombre: 'Medio líquido', fecha: '11/06/2025' },
-        { id: 3, nombre: 'Semilla centeno', fecha: '13/06/2025' },
-        { id: 4, nombre: 'Bolsas 3 lb', fecha: '15/06/2025' },
-        { id: 5, nombre: 'Agar', fecha: '10/06/2025' },
-        { id: 6, nombre: 'Medio líquido', fecha: '11/06/2025' },
-        { id: 7, nombre: 'Semilla centeno', fecha: '13/06/2025' },
-        { id: 8, nombre: 'Bolsas 3 lb', fecha: '15/06/2025' },
-    ];
+    // Datos del hook
+    const cards = dashboard?.cards || {};
+
+    const listas = dashboard?.listas || {};
 
     const resumen = {
-        lotesActivos: 15,
-        bloquesExitosos: 30,
-        bloquesContaminados: 30,
+        lotesActivos: cards.lotesActivos,
+        bloquesNoContaminados: cards.bloquesNoContaminados,
+        bloquesContaminados: cards.bloquesContaminados,
     };
 
     const RUTAS_RAPIDAS = [
@@ -59,6 +48,24 @@ const PantallaPrincipalView = () => {
 
     const toggleLote = (id) => setCheckedLotes(prev => ({ ...prev, [id]: !prev[id] }));
     const toggleInv = (id) => setCheckedInv(prev => ({ ...prev, [id]: !prev[id] }));
+
+    const handleRevisarLotes = async () => {
+        try {
+            // Obtener ids marcados
+            const idsSeleccionados = Object.keys(checkedLotes)
+                .filter(id => checkedLotes[id]);
+            // Evitar llamada vacía
+            if (idsSeleccionados.length === 0) {
+                return;
+            }
+            // Hook
+            await revisarLotes(idsSeleccionados);
+            // Limpiar checks
+            setCheckedLotes({});
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     // Render 
     return (
@@ -80,10 +87,12 @@ const PantallaPrincipalView = () => {
                                 />
                             }
                             titulo="Lotes por revisar"
-                            items={lotesRevisar}
+                            items={listas.lotesRevision || []}
                             checked={checkedLotes}
                             onToggle={toggleLote}
+                            onRevisar={handleRevisarLotes}
                             onVerTodo={() => navigate('/lotes')}
+                            mostrarChecks={true}
                         />
                         <PanelLista
                             icono={
@@ -95,10 +104,11 @@ const PantallaPrincipalView = () => {
                                 />
                             }
                             titulo="Inventario bajo"
-                            items={inventarioBajo}
+                            items={listas.inventarioBajo || []}
                             checked={checkedInv}
                             onToggle={toggleInv}
                             onVerTodo={() => navigate('/inventario')}
+                            mostrarChecks={false}
                         />
                     </div>
 
@@ -122,7 +132,7 @@ const PantallaPrincipalView = () => {
                             </div>
                             <div className="flex gap-3 flex-1">
                                 <MetricaCard valor={resumen.lotesActivos} label="Lotes activos" />
-                                <MetricaCard valor={resumen.bloquesExitosos} label="Bloques exitosos" />
+                                <MetricaCard valor={resumen.bloquesNoContaminados} label="Bloques saludables" />
                                 <MetricaCard valor={resumen.bloquesContaminados} label="Bloques contaminados" />
                             </div>
                         </div>
