@@ -5,7 +5,7 @@ import * as service from '../../../features/inoculos/services/inoculo.service'
 
 // Mock del service
 vi.mock('../../../features/inoculos/services/inoculo.service', () => ({
-    fetchInoculosParaSemilla: vi.fn(),
+    fetchInoculos: vi.fn(),
 }))
 
 const inoculosMock = [
@@ -47,7 +47,7 @@ describe('useInoculoParaSemilla', () => {
     // ─── Estado inicial ───────────────────────────────────────────────────────
 
     it('inicia con loading true y opciones vacías', () => {
-        service.fetchInoculosParaSemilla.mockReturnValue(new Promise(() => {}))
+        service.fetchInoculos.mockReturnValue(new Promise(() => {}))
 
         const { result } = renderHook(() => useInoculoParaSemilla(''))
 
@@ -59,7 +59,7 @@ describe('useInoculoParaSemilla', () => {
     // ─── Sin especie seleccionada ─────────────────────────────────────────────
 
     it('retorna opciones vacías cuando no hay especie seleccionada', async () => {
-        service.fetchInoculosParaSemilla.mockResolvedValue(inoculosMock)
+        service.fetchInoculos.mockResolvedValue(inoculosMock)
 
         const { result } = renderHook(() => useInoculoParaSemilla(''))
 
@@ -71,7 +71,7 @@ describe('useInoculoParaSemilla', () => {
     // ─── Carga exitosa con filtro por especie ─────────────────────────────────
 
     it('filtra los inóculos por la especie seleccionada', async () => {
-        service.fetchInoculosParaSemilla.mockResolvedValue(inoculosMock)
+        service.fetchInoculos.mockResolvedValue(inoculosMock)
 
         const { result } = renderHook(() => useInoculoParaSemilla('Shiitake'))
 
@@ -84,7 +84,7 @@ describe('useInoculoParaSemilla', () => {
     })
 
     it('retorna opciones vacías si la especie no tiene inóculos disponibles', async () => {
-        service.fetchInoculosParaSemilla.mockResolvedValue(inoculosMock)
+        service.fetchInoculos.mockResolvedValue(inoculosMock)
 
         const { result } = renderHook(() => useInoculoParaSemilla('Reishi'))
 
@@ -94,7 +94,7 @@ describe('useInoculoParaSemilla', () => {
     })
 
     it('el label de cada opción incluye código, tipo, cantidad y unidad', async () => {
-        service.fetchInoculosParaSemilla.mockResolvedValue(inoculosMock)
+        service.fetchInoculos.mockResolvedValue(inoculosMock)
 
         const { result } = renderHook(() => useInoculoParaSemilla('Shiitake'))
 
@@ -109,7 +109,7 @@ describe('useInoculoParaSemilla', () => {
     // ─── Stock bajo ───────────────────────────────────────────────────────────
 
     it('marca stockBajo como true cuando cantidad <= stock_recomendado', async () => {
-        service.fetchInoculosParaSemilla.mockResolvedValue(inoculosMock)
+        service.fetchInoculos.mockResolvedValue(inoculosMock)
 
         const { result } = renderHook(() => useInoculoParaSemilla('Shiitake'))
 
@@ -122,7 +122,7 @@ describe('useInoculoParaSemilla', () => {
     })
 
     it('raw contiene el objeto completo del inóculo', async () => {
-        service.fetchInoculosParaSemilla.mockResolvedValue(inoculosMock)
+        service.fetchInoculos.mockResolvedValue(inoculosMock)
 
         const { result } = renderHook(() => useInoculoParaSemilla('Shiitake'))
 
@@ -134,7 +134,7 @@ describe('useInoculoParaSemilla', () => {
     // ─── Error de conexión ────────────────────────────────────────────────────
 
     it('guarda el error cuando el service lanza una excepción', async () => {
-        service.fetchInoculosParaSemilla.mockRejectedValue(new Error('Error de red'))
+        service.fetchInoculos.mockRejectedValue(new Error('Error de red'))
 
         const { result } = renderHook(() => useInoculoParaSemilla('Shiitake'))
 

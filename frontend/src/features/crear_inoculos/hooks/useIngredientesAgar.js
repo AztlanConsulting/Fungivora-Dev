@@ -12,14 +12,15 @@ const normalizarUnidad = (unidad = "") => {
 
 /**
  * Gestiona los ingredientes de un agar:
- *   Agua · Peptona · Extracto de Malta · Inóculo
+ *   Agua · Agar agar · Peptona · Extracto de Malta · Inóculo
  */
-const useIngredientesAgar = ({ inoculoDisponible = 0 }) => {
+const useIngredientesAgar = ({ inoculoDisponible = 0, codigoInoculo = "", tipoInoculo = ""  }) => {
   const [insumos,  setInsumos]  = useState([]);
   const [loading,  setLoading]  = useState(true);
   const [error,    setError]    = useState(null);
 
   const [agua,       setAgua]       = useState("");
+  const [agaragar,   setAgaragar]   = useState("");
   const [peptona,    setPeptona]    = useState("");
   const [extracto,   setExtracto]   = useState("");
   const [inoculoCant, setInoculoCant] = useState("");
@@ -38,6 +39,7 @@ const useIngredientesAgar = ({ inoculoDisponible = 0 }) => {
     insumos.find((i) => i.nombre.toLowerCase().includes(nombre.toLowerCase()));
 
   const aguaInsumo     = buscar("agua");
+  const agaragarInsumo = buscar("agaragar");
   const peptonaInsumo  = buscar("peptona");
   const extractoInsumo = buscar("extracto");
 
@@ -48,6 +50,13 @@ const useIngredientesAgar = ({ inoculoDisponible = 0 }) => {
       value:    agua,
       onChange: (e) => setAgua(e.target.value),
       cantidad: parseFloat(aguaInsumo?.cantidad) || 5000,
+    },
+    {
+      nombre:   "Agar agar",
+      unidad:   normalizarUnidad(agaragarInsumo?.unidad) || "ml",
+      value:    agaragar,
+      onChange: (e) => setAgaragar(e.target.value),
+      cantidad: parseFloat(agaragarInsumo?.cantidad) || 500,
     },
     {
       nombre:   "Peptona",
@@ -64,7 +73,7 @@ const useIngredientesAgar = ({ inoculoDisponible = 0 }) => {
       cantidad: parseFloat(extractoInsumo?.cantidad) || 500,
     },
     {
-      nombre:   "Inóculo",
+      nombre: codigoInoculo || "Inóculo",
       unidad:   "ml",
       value:    inoculoCant,
       onChange: (e) => setInoculoCant(e.target.value),
@@ -74,7 +83,7 @@ const useIngredientesAgar = ({ inoculoDisponible = 0 }) => {
 
   return {
     items,
-    valores: { agua, peptona, extracto, inoculoCant },
+    valores: { agua, agaragar, peptona, extracto, inoculoCant },
     loading,
     error,
   };

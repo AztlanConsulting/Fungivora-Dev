@@ -19,7 +19,6 @@ const SeleccionarInoculo = () => {
 
   // Manejador de cambio
   const handleChange = (e) => {
-    console.log('Inóculo seleccionado:', e.target.value);
     setInoculoSeleccionado(e.target.value);
   };
 
