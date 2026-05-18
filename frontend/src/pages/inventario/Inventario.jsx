@@ -7,6 +7,7 @@ import useInsumos from "../../features/inventario/hooks/useInsumos";
 import Input from "../../shared/components/ui/inputs/input_texto";
 import SelectField from "../../shared/components/ui/inputs/seleccionar_texto";
 import Button from "../../shared/components/ui/buttons/botones";
+import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
 
 // Iconos
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -33,6 +34,11 @@ const Inventario = () => {
   const [modalEdicion, setModalEdicion] = useState({ visible: false, insumo: null });
   const [ajusteCantidad, setAjusteCantidad] = useState("");
   const [tipoOperacion, setTipoOperacion] = useState("incremento");
+  const [alerta, setAlerta] = useState({ visible: false, mensaje: "", variante: "exito" });
+
+  const lanzarAlerta = (mensaje, variante = "exito") => {
+    setAlerta({ visible: true, mensaje, variante });
+  };
 
   // Modal para la cantidad
   const abrirModalEdicion = (item) => {
@@ -68,6 +74,9 @@ const Inventario = () => {
     if (exito) {
       setModalEdicion({ visible: false, insumo: null });
       setAjusteCantidad("");
+      lanzarAlerta("¡Stock actualizado correctamente!", "exito"); 
+    } else {
+      lanzarAlerta("Error al actualizar el inventario", "error");
     }
   };
 
@@ -87,23 +96,57 @@ const Inventario = () => {
 
   // Agregar un nueva fila
   const handleNuevaFila = (campo, valor) => {
+    if (campo === "nombre") {
+      if (valor.length > 100) return;
+    }
+
+    if (campo === "cantidad" || campo === "stock_recomendado") {
+      const valorEstandarizado = valor.replace(",", ".");
+      const regex = /^[0-9]*(\.?[0-9]{0,2})?$/;
+      
+      if (!regex.test(valorEstandarizado) || valorEstandarizado.length > 7) return;
+      
+      setNuevaFila((prev) => ({ ...prev, [campo]: valorEstandarizado }));
+      return;
+    }
+    
     setNuevaFila((prev) => ({ ...prev, [campo]: valor }));
   };
 
   // Que se guarde en insumo con todos los campos
-  const handleGuardarInsumo = async () => {
-    const { nombre, cantidad, stock_recomendado, unidad } = nuevaFila;
-    if (!nombre.trim() || !cantidad || !stock_recomendado || !unidad) {
-      setErrorValidacion("Por favor, completa todos los campos");
-      return;
-    }
-    setErrorValidacion("");
-    const exito = await addInsumo(nuevaFila);
-    if (exito) {
-      setNuevaFila({ nombre: "", cantidad: "", stock_recomendado: "", unidad: "" });
-      setVerFormulario(false);
-    }
-  };
+  const handleGuardarInsumo = async () => {
+    const { nombre, cantidad, stock_recomendado, unidad } = nuevaFila;
+
+    if (!nombre.trim() || !cantidad || !stock_recomendado || !unidad) {
+      setErrorValidacion("Por favor, completa todos los campos");
+      return;
+    }
+
+    const cantNum = parseFloat(cantidad);
+    const recNum = parseFloat(stock_recomendado);
+
+    if (cantNum < 0 || recNum <= 0) {
+      setErrorValidacion("El stock recomendado debe ser mayor a 0");
+      return;
+    }
+
+    setErrorValidacion("");
+    
+    const exito = await addInsumo(nuevaFila);
+    
+    if (exito) {
+      setNuevaFila({ 
+        nombre: "", 
+        cantidad: "", 
+        stock_recomendado: "",
+        unidad: "" 
+      });
+      setVerFormulario(false);
+          lanzarAlerta("Insumo creado con éxito", "exito");
+        } else {
+          lanzarAlerta("No se pudo crear el insumo", "error"); 
+        }
+    };
 
   const gridLayout = "grid-cols-1 md:grid-cols-[1.5fr_1.8fr_1fr_1fr]";
 
@@ -260,7 +303,7 @@ const Inventario = () => {
           </div>
 
           {/* Formulario de añadir */}
-          <div className={`w-full lg:w-[440px] h-[550px] bg-white rounded-[32px] shadow-sm border p-8 flex flex-col ${verFormulario ? "block" : "hidden"} lg:block`}>
+          <div className={`w-full lg:w-[440px] h-fit bg-white rounded-[32px] shadow-sm border p-8 flex flex-col ${verFormulario ? "block" : "hidden"} lg:block`}>
             <div className="mb-8">
               <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "22px" }}>Crear Insumo</Text>
             </div>
@@ -278,7 +321,7 @@ const Inventario = () => {
               <div className="flex flex-col gap-2">
                 <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Stock Actual</Text>
                 <Input
-                  variante="numero"
+                  variante="texto"
                   placeholder="0.00"
                   value={nuevaFila.cantidad}
                   onChange={(e) => handleNuevaFila("cantidad", e.target.value)}
@@ -288,7 +331,7 @@ const Inventario = () => {
               <div className="flex flex-col gap-2">
                 <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Stock Recomendado </Text>
                 <Input
-                  variante="numero"
+                  variante="texto"
                   placeholder="0.00"
                   value={nuevaFila.stock_recomendado}
                   onChange={(e) => handleNuevaFila("stock_recomendado", e.target.value)}
@@ -372,9 +415,12 @@ const Inventario = () => {
                     placeholder="0.00"
                     value={ajusteCantidad}
                     onChange={(e) => {
-                      setAjusteCantidad(e.target.value);
-                      if (errorModal) setErrorModal(""); 
-                    }}
+                      const valor = e.target.value;
+                      const regex = /^[0-9]*\.?[0-9]*$/;
+                      if (regex.test(valor) && valor.length <= 6) {
+                        setAjusteCantidad(valor);
+                        if (errorModal) setErrorModal(""); 
+                      }}}
                   />
                 </div>
               </div>
@@ -399,6 +445,12 @@ const Inventario = () => {
           </div>
         )}
       </Base>
+    <ModalAlerta
+        visible={alerta.visible}
+        variante={alerta.variante}
+        mensaje={alerta.mensaje}
+        onClose={() => setAlerta({ ...alerta, visible: false })}
+      />
     </>
   );
 };
