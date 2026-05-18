@@ -20,7 +20,7 @@ exports.fetch_dashboard = async (req, res, next) => {
         const lotesFormateados = lotesRevision.map(lote => ({
             id: lote.id_lote,
             nombre: lote.codigo_fungivora,
-            detalle: lote.fecha_lote,
+            detalle: new Date(lote.fecha_lote).toLocaleDateString('es-MX'),
             ruta: `/lotes/detalle/${lote.id_lote}`
         }));
 
@@ -28,8 +28,8 @@ exports.fetch_dashboard = async (req, res, next) => {
         const inventarioFormateado = inventarioBajo.map(insumo => ({
             id: insumo.id_insumo,
             nombre: insumo.nombre,
-            detalle: `${insumo.cantidad} ${insumo.unidad}`,
-            ruta: `/inventario`
+            detalle: `${parseFloat(insumo.cantidad)} ${insumo.unidad}`,
+            ruta: null
         }));
 
         return res.status(200).json({
