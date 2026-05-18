@@ -9,6 +9,8 @@ import Button from "../../../shared/components/ui/buttons/botones";
 
 import { EntradaLista } from "../../../features/crear_inoculos/components/seleccionar_cantidades";
 import ResumenSemilla from "../../../features/crear_inoculos/components/ResumenSemilla";
+import insumosService from "../../../features/crear_inoculos/services/inoculos.service";
+import { BOLSAS } from "../../../features/crear_inoculos/types/inoculos.type";
 
 import useEspecies from "../../../features/inoculos/hooks/useEspecies";
 import useCategorias from "../../../features/crear_inoculos/hooks/useCategorias";
@@ -52,6 +54,7 @@ const FormSemillas = () => {
   const tipoInoculo = normalizarTipoInoculo(inoculoSeleccionado?.raw?.tipo);
   const inoculoDisponible = inoculoSeleccionado?.raw?.cantidad_disponible ?? 0;
   const codigoInoculo = inoculoSeleccionado?.codigo ?? "";
+  const cantidadFinal = BOLSAS[tamano] ?? cantidad;
 
   const {
     items: itemsComposicion,
@@ -88,18 +91,44 @@ const FormSemillas = () => {
     });
   }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias]);
 
-  const handleRegistrar = () => {
-    console.log({
-      codigos,
-      especie,
-      inoculo,
-      mijo,
-      tamano,
-      composicion: valoresComposicion,
-      cantidad,
-      fecha,
-      nota,
-    });
+  const handleRegistrar = async () => {
+    try {
+      /* Molde creado por archivo type para mandar correctamente al endpoint */
+      for(const codigo in codigos) {
+        const datos = {
+          codigo_fungivora: codigos[codigo],
+          tipo: TIPO_CREACION,
+          especie: especie,
+          fecha: `${fecha.year}-${String(fecha.month).padStart(2, "0")}-${String(fecha.day).padStart(2, "0")}`,
+          cantidad_disponible: cantidadFinal,
+          unidad: "gr",
+          stock_recomendado: 100,
+          nota: nota,
+
+          inoculo_usado: {
+            id: inoculoSeleccionado?.raw?.id_inoculo ?? null,
+            cantidad: Number(valoresComposicion.cantInoculo) || 0,
+          },
+
+          ingredientes: itemsComposicion
+            .filter((item) => item.tipo === "ingrediente" && item.id != null)
+            .map((ing) => ({
+              id: ing.id,
+              cantidad: Number(ing.value) || 0,
+          })),
+        };
+
+        console.log("Datos hacia backend:", datos);
+
+        const respuesta = await insumosService.postSemilla(datos);
+
+        /* TODO: hay que cambiar esto por un mini Popup y un redirect a biblioteca genetica */
+        alert("Semilla registrada con exito!");
+      }
+    } catch (error) {
+      console.error("Error en el registro:", error);
+      alert(`Error: ${error.message}`);
+    }
   };
 
   return (
