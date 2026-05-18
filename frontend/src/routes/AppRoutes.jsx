@@ -1,12 +1,10 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import {
-    FirstPage, HomePage, Login,
-    Usuario, Inventario,
-    RegistrarMedio, Lotes,
-    Lote, BibliotecaGenetica
+    FirstPage, HomePage, Login, Usuario, Inventario,
+    Lotes, Lote, BibliotecaGenetica
 } from "../pages";
 import { MainLayout, RutaProtegida } from "../shared/components/layout";
-import FormAgar from "../pages/inoculos/agar/Formagar";
+import CrearAgar from "../pages/inoculos/agar/CrearAgar";
 import FormMedioLiquido from "../pages/inoculos/medioLiquido/FormMedioLiquido";
 import FormSemilla from "../pages/inoculos/semillas/FormSemillas";
 
@@ -35,13 +33,12 @@ export default function AppRoutes() {
 
                 {/* Rutas inventario */}
                 <Route path="/inventario" element={<Inventario />} />
-                <Route path="/inventario/micelio/crear" element={<RegistrarMedio />} />
 
                 {/* Rutas biblioteca genetica */}
                 <Route path="/inoculos" element={<BibliotecaGenetica />} />
 
                 {/* Rutas inóculos */}
-                <Route path="/inoculos/crear/agar" element={<FormAgar />} />
+                <Route path="/inoculos/crear/agar" element={<CrearAgar />} />
                 <Route path="/inoculos/crear/medio-liquido" element={<FormMedioLiquido />} />
                 <Route path="/inoculos/crear/semilla" element={<FormSemilla />} />
 
