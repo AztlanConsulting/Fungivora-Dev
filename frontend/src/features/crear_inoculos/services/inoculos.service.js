@@ -11,16 +11,14 @@ const insumosService = {
     },
 
     /*
-    Registra los datos del form de nueva semilla
-    TODO: Esto se puede adaptar a que sea un molde global para todos los crear
-    El molde se ecnuentra en feature/crear_inoculo/semilla/services/inculos.type.ts
+    Registra los datos del form de nuevo inoculo
     */
-    postSemilla: async (datosSemilla: RegistroSemilla) => {
+    postInoculo: async (datosInoculo: RegistroSemilla) => {
         try {
             const respuesta = await fetch('/api/inoculos/crear', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(datosSemilla),
+            body: JSON.stringify(datosInoculo),
             });
 
             const resultado = await respuesta.json();
@@ -31,7 +29,7 @@ const insumosService = {
 
             return resultado;
         } catch (error) {
-            console.error("Error en registrar semilla:", error);
+            console.error("Error en registrar inoculo:", error);
             throw error;
         }
     }
