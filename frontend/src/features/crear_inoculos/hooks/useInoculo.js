@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { fetchInoculos } from '../services/inoculo.service';
+import insumosService from '../services/inoculos.service'; 
 
 /**
  * Reglas de tipos permitidos por destino:
@@ -28,7 +28,7 @@ const normalizar = (texto = '') =>
  * @param {string} tipoDestino  - Tipo del inóculo destino (ej: 'semilla', 'agar', 'medio liquido').
  * @returns {{ opciones: Array, loading: boolean, error: string|null }}
  */
-const useInoculoParaSemilla = (especie, tipoDestino) => {
+const useInoculo = (especie, tipoDestino) => {
     const [todos, setTodos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -39,8 +39,8 @@ const useInoculoParaSemilla = (especie, tipoDestino) => {
             setLoading(true);
             setError(null);
             try {
-                const data = await fetchInoculos();
-                setTodos(data);
+                const data = await insumosService.fetchInoculos();
+                setTodos(data.data || []); 
             } catch (err) {
                 setError('No se pudieron cargar los inóculos disponibles.');
             } finally {
@@ -72,4 +72,4 @@ const useInoculoParaSemilla = (especie, tipoDestino) => {
     return { opciones, loading, error };
 };
 
-export default useInoculoParaSemilla;
+export default useInoculo;

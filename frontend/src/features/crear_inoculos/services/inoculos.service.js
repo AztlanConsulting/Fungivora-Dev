@@ -30,7 +30,12 @@ const insumosService = {
             console.error("Error en registrar inoculo:", error);
             throw error;
         }
-    }
+    },
+
+    fetchInoculos: async () => {
+        const res = await fetch("/api/inoculos/");
+        return await res.json();
+        }
 }
 
 export default insumosService;

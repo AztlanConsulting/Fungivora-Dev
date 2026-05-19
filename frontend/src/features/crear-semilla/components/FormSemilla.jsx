@@ -7,20 +7,20 @@ import InputCantidad from "../../../shared/components/ui/inputs/input_cantidad";
 import InputNota from "../../../shared/components/ui/inputs/input_nota";
 import Button from "../../../shared/components/ui/buttons/botones";
 
-import { EntradaLista } from "../../../features/crear_inoculos/components/seleccionar_cantidades";
-import ResumenSemilla from "../../../features/crear_inoculos/components/ResumenSemilla";
-import insumosService from "../../../features/crear_inoculos/services/inoculos.service";
-import { BOLSAS } from "../../../features/crear_inoculos/types/inoculos.type";
-import { crearInoculoDTO } from "../../../features/crear_inoculos/dto/crearInoculoDto";
+import { EntradaLista } from "../../crear_inoculos/components/seleccionar_cantidades";
+import ResumenSemilla from "../../crear_inoculos/components/ResumenSemilla";
+import insumosService from "../../crear_inoculos/services/inoculos.service";
+import { BOLSAS } from "../../crear_inoculos/types/inoculos.type";
+import { crearInoculoDTO } from "../../crear_inoculos/dto/crearInoculoDto";
 
-import useEspecies from "../../../features/inoculos/hooks/useEspecies";
-import useCategorias from "../../../features/crear_inoculos/hooks/useCategorias";
-import useInoculoParaSemillas from "../../../features/inoculos/hooks/useInoculoprarasemillas";
-import useIngredientesSemilla from "../../../features/crear_inoculos/hooks/useIngredientesSemilla";
+import useEspecies from "../../inoculos/hooks/useEspecies";
+import useCategorias from "../../crear_inoculos/hooks/useCategorias";
+import useInoculo from "../../crear_inoculos/hooks/useInoculo";
+import useIngredientesSemilla from "../../crear_inoculos/hooks/useIngredientesSemilla";
 import {
   generarCodigos,
   normalizarTipoInoculo,
-} from "../../../features/crear_inoculos/utils/generarCodigoInoculo";
+} from "../../crear_inoculos/utils/generarCodigoInoculo";
 
 import Titulo from "../../../shared/components/ui/basics/titulo";
 import Text from "../../../shared/components/ui/basics/texto";
@@ -47,7 +47,7 @@ const FormSemillas = () => {
   const [nota, setNota] = useState("");
 
   const { especies, loading: loadingEspecies, error: errorEspecies } = useEspecies();
-  const { opciones: inoculos, loading: loadingInoculos, error: errorInoculos } = useInoculoParaSemillas(especie, TIPO_CREACION);
+  const { opciones: inoculos, loading: loadingInoculos, error: errorInoculos } = useInoculo(especie, TIPO_CREACION);
   const { categorias, loading: loadingCategorias } = useCategorias();
 
   const inoculoSeleccionado = (inoculos ?? []).find((ino) => ino.codigo === inoculo);
