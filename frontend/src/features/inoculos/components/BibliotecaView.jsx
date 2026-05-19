@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Titulo, Text } from '../../../shared/components/ui';
 import { colores } from '../../../shared/components/ui/basics/colores';
 import { Base } from '../../../shared/components/layout';
@@ -9,12 +9,19 @@ import { Add01Icon } from '@hugeicons/core-free-icons';
 import useEspeciesList from '../hooks/useEspeciesList';
 import InoculoCard from './InoculoCard';
 import ModalCrearInoculo from './ModalCrearInoculo';
+import ModalAlerta from '../../../shared/components/ui/popups/ModalAlerta';
 
 /**
  * Vista principal del módulo de inóculos.
  * Renderiza una card por cada especie devuelta por getAllEspecies.
  */
 const BibliotecaView = () => {
+    const location = useLocation();
+    const [alerta, setAlerta] = useState(
+        location.state?.alerta
+            ? { ...location.state.alerta, visible: true }
+            : { visible: false, variante: "exito", mensaje: "" }
+    );
     const { especies, loading, error } = useEspeciesList();
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -85,6 +92,13 @@ const BibliotecaView = () => {
                 onConfirm={handleConfirmarCrear}
                 onCancel={() => setModalVisible(false)}
             />
+            <ModalAlerta
+                visible={alerta.visible}
+                variante={alerta.variante}
+                mensaje={alerta.mensaje}
+                onClose={() => setAlerta((a) => ({ ...a, visible: false }))}
+            />
+
         </>
     );
 };

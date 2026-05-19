@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 
 import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
 import InputFecha from "../../../shared/components/ui/inputs/input_fecha";
@@ -99,16 +99,6 @@ const FormSemillas = () => {
     });
   }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias]);
 
-  const resetForm = () => {
-    setEspecie("");
-    setInoculo("");
-    setMijo("");
-    setTamano("");
-    setCantidad(1);
-    setFecha({});
-    setNota("");
-};
-
   const handleRegistrar = async () => {
     setRegistrando(true);
     try {
@@ -125,12 +115,15 @@ const FormSemillas = () => {
         itemsComposicion,
         });
         
+        // En handleRegistrar — primero el navigate con state, sin setAlerta
         await insumosService.postInoculo(datos);
-        resetForm();
-        setAlerta({
-            visible: true,
-            variante: "exito",
-            mensaje: "Semillas registradas con éxito",
+        navigate("/inoculos", {
+            state: {
+                alerta: {
+                    variante: "exito",
+                    mensaje: `Semillas registradas con éxito — ${codigos[0]}`,
+                }
+            }
         });
 
     } catch (error) {
@@ -208,7 +201,7 @@ const FormSemillas = () => {
                 </div>
               </div>
 
-              <EntradaLista items={itemsComposicion} />
+              <EntradaLista items={itemsComposicion} repeticiones={cantidad} />
 
               <div className="bg-white rounded-[32px] shadow-sm border p-6 md:p-8 flex flex-col gap-6">
 
@@ -256,8 +249,7 @@ const FormSemillas = () => {
           </div>
         </div>
       </Base>
-
-        <ModalAlerta
+      <ModalAlerta
             visible={alerta.visible}
             variante={alerta.variante}
             mensaje={alerta.mensaje}

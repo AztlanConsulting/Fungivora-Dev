@@ -4,7 +4,7 @@ import Text from "../../../shared/components/ui/basics/texto";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { PlusSignIcon } from '@hugeicons/core-free-icons';
 
-const EntradaCard = ({ nombre, unidad, value, onChange, cantMax }) => {
+const EntradaCard = ({ nombre, unidad, value, onChange, cantMax, repeticiones = 1 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [cantError, setError] = useState(false);
   
@@ -17,6 +17,8 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax }) => {
     border: cantError ? `1px solid ${colores.rojo}` : "none"
   };
 
+  const maxPorUnidad = cantMax > 0 ? +(cantMax / repeticiones).toFixed(2) : 0;
+
   const manejarCambio = (e) => {
     const val = e.target.value;
     const regex = /^\d*[.,]?\d{0,2}$/;
@@ -25,9 +27,9 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax }) => {
       const numValor = parseFloat(val.replace(',', '.'));
 
       if (!isNaN(numValor)) {
-        if (numValor > cantMax) {
+        if (numValor > maxPorUnidad) {
           setError(true);
-          e.target.value = cantMax.toString();
+          e.target.value = maxPorUnidad.toString();
           onChange(e);
 
           setTimeout(() => setError(false), 5000)
@@ -74,7 +76,7 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax }) => {
         </div>
         <div className={`relative md:absolute -bottom-1 mb-2 left-2 transition-opacity duration-300 ${cantError ? "opacity-100" : "opacity-0"}`}>
           <span style={{ color: "red", fontSize: "10px", fontWeight: "600" }}>
-            Máximo disponible: {cantMax}
+            Máximo disponible: {maxPorUnidad}
           </span>
         </div>
     </div>
@@ -82,7 +84,7 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax }) => {
   );
 };
 
-export const EntradaLista = ({ items = [] }) => {
+export const EntradaLista = ({ items = [], repeticiones = 1 }) => {
   return (
     <div className="w-full max-h-[780px] lg:flex-1 bg-white rounded-[32px] shadow-sm border pb-8 p-6 md:p-8 flex flex-col">
       
@@ -99,6 +101,7 @@ export const EntradaLista = ({ items = [] }) => {
               value={item.value}
               onChange={item.onChange}
               cantMax={item.cantidad}
+              repeticiones={repeticiones}
             />
 
             
