@@ -4,10 +4,7 @@ class Dashboard {
     static async fetch_lotes_revision() {
         try {
             const [filas] = await db.execute(`
-                SELECT
-                    id_lote,
-                    codigo_fungivora,
-                    fecha_lote
+                SELECT *
                 FROM Lotes
                 WHERE activo = 1
                 AND DATEDIFF(

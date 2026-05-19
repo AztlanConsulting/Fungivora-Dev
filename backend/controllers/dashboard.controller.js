@@ -24,6 +24,8 @@ exports.fetch_dashboard = async (req, res, next) => {
             ruta: `/lotes/detalle/${lote.id_lote}`
         }));
 
+        const lotesSinFormato = lotesRevision;
+
         // Formatear inventario
         const inventarioFormateado = inventarioBajo.map(insumo => ({
             id: insumo.id_insumo,
@@ -42,7 +44,9 @@ exports.fetch_dashboard = async (req, res, next) => {
             listas: {
                 lotesRevision: lotesFormateados,
                 inventarioBajo: inventarioFormateado
-            }
+            },
+
+            lotes: lotesRevision
         });
     } catch (err) {
         console.error("Error en fetch_dashboard:", err);
