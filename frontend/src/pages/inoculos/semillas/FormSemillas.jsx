@@ -94,7 +94,7 @@ const FormSemillas = () => {
   const handleRegistrar = async () => {
     try {
         const datos = crearInoculoDTO({
-        codigo: codigoInoculo,
+        codigo: codigos[0],
         tipo: TIPO_CREACION,
         especie,
         fecha,
