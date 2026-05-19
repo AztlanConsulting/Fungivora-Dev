@@ -236,10 +236,10 @@ const FormSemillas = () => {
             <Button variant="cancelar" isOutline onClick={() => navigate(-1)}>
               Cancelar
             </Button>
-            <Button 
-                variant="registrar" 
+            <Button
+                variant="registrar"
                 onClick={handleRegistrar}
-                disabled={registrando}
+                disabled={registrando || !tamano}
               >
               {registrando ? "Registrando..." : "Registrar"}
             </Button>
