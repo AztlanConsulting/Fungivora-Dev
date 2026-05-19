@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 
 import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
 import InputFecha from "../../../shared/components/ui/inputs/input_fecha";
@@ -125,12 +125,15 @@ const FormSemillas = () => {
         itemsComposicion,
         });
         
+        // En handleRegistrar — primero el navigate con state, sin setAlerta
         await insumosService.postInoculo(datos);
-        resetForm();
-        setAlerta({
-            visible: true,
-            variante: "exito",
-            mensaje: "Semillas registradas con éxito",
+        navigate("/inoculos", {
+            state: {
+                alerta: {
+                    variante: "exito",
+                    mensaje: `Semillas registradas con éxito — ${codigos[0]}`,
+                }
+            }
         });
 
     } catch (error) {
