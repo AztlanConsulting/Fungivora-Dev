@@ -6,6 +6,7 @@ import InputFecha from "../../../shared/components/ui/inputs/input_fecha";
 import InputCantidad from "../../../shared/components/ui/inputs/input_cantidad";
 import InputNota from "../../../shared/components/ui/inputs/input_nota";
 import Button from "../../../shared/components/ui/buttons/botones";
+import ModalAlerta from "../../../shared/components/ui/popups/ModalAlerta";
 
 import { EntradaLista } from "../../crear_inoculos/components/seleccionar_cantidades";
 import ResumenSemilla from "../../crear_inoculos/components/ResumenSemilla";
@@ -49,6 +50,8 @@ const FormSemillas = () => {
   const { especies, loading: loadingEspecies, error: errorEspecies } = useEspecies();
   const { opciones: inoculos, loading: loadingInoculos, error: errorInoculos } = useInoculo(especie, TIPO_CREACION);
   const { categorias, loading: loadingCategorias } = useCategorias();
+  const [registrando, setRegistrando] = useState(false);
+  const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
 
   const inoculoSeleccionado = (inoculos ?? []).find((ino) => ino.codigo === inoculo);
   const tipoInoculo = normalizarTipoInoculo(inoculoSeleccionado?.raw?.tipo);
@@ -91,7 +94,18 @@ const FormSemillas = () => {
     });
   }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias]);
 
+  const resetForm = () => {
+    setEspecie("");
+    setInoculo("");
+    setMijo("");
+    setTamano("");
+    setCantidad(1);
+    setFecha({});
+    setNota("");
+};
+
   const handleRegistrar = async () => {
+    setRegistrando(true);
     try {
         const datos = crearInoculoDTO({
         codigo: codigos[0],
@@ -105,17 +119,24 @@ const FormSemillas = () => {
         valoresComposicion,
         itemsComposicion,
         });
+        
+        await insumosService.postInoculo(datos);
+        resetForm();
+        setAlerta({
+            visible: true,
+            variante: "exito",
+            mensaje: "Semillas registradas con éxito",
+        });
 
-        console.log("Datos hacia backend:", datos);
-
-        const respuesta = await insumosService.postInoculo(datos);
-
-        /* TODO: hay que cambiar esto por un mini Popup y un redirect a biblioteca genetica */
-        alert("Semilla registrada con exito!");
-      
     } catch (error) {
       console.error("Error en el registro:", error);
-      alert(`Error: ${error.message}`);
+      setAlerta({
+            visible: true,
+            variante: "error",
+            mensaje: error.message || "Ocurrió un error al registrar",
+        });
+    } finally {
+        setRegistrando(false);
     }
   };
 
@@ -220,13 +241,23 @@ const FormSemillas = () => {
             <Button variant="cancelar" isOutline onClick={() => navigate(-1)}>
               Cancelar
             </Button>
-            <Button variant="registrar" onClick={handleRegistrar}>
-              Registrar
+            <Button 
+                variant="registrar" 
+                onClick={handleRegistrar}
+                disabled={registrando}
+              >
+              {registrando ? "Registrando..." : "Registrar"}
             </Button>
           </div>
-
         </div>
       </Base>
+
+        <ModalAlerta
+            visible={alerta.visible}
+            variante={alerta.variante}
+            mensaje={alerta.mensaje}
+            onClose={() => setAlerta((a) => ({ ...a, visible: false }))}
+        />
     </>
   );
 };
