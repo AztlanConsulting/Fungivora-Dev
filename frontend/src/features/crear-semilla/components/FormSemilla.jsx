@@ -122,7 +122,7 @@ const FormSemillas = () => {
             state: {
                 alerta: {
                     variante: "exito",
-                    mensaje: `Registro con éxito de: ${codigos.base}`,
+                    mensaje: `Registro con éxito de : ${codigos.base}`,
                 }
             }
         });
