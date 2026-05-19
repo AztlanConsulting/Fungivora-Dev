@@ -13,7 +13,7 @@ const mockConnection = {
 jest.mock('../../../util/db', () => ({
     getConnection: jest.fn(),
 }));
-const db = require('../../util/db');
+const db = require('../../../util/db');
 
 const mockRes = () => {
     const res = {};

@@ -1,18 +1,18 @@
 const request = require('supertest');
 
-jest.mock('../../util/db');
+jest.mock('../../../util/db');
 
-jest.mock('../../config/metrics', () => ({
+jest.mock('../../../config/metrics', () => ({
     register: {
         contentType: 'text/plain',
         metrics: jest.fn().mockResolvedValue(''),
     },
 }));
 
-jest.mock('../../models/inoculo.model');
-const Inoculo = require('../../models/inoculo.model');
+jest.mock('../../../models/inoculo.model');
+const Inoculo = require('../../../models/inoculo.model');
 
-const app = require('../../app');
+const app = require('../../../app');
 
 describe('GET /api/inoculos/cantidad-ingredientes', () => {
 
