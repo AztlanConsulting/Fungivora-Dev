@@ -181,7 +181,7 @@ const FormSemillas = () => {
                     <SelectField
                       value={tamano}
                       onChange={(e) => setTamano(e.target.value)}
-                      placeholder="Selecciona tamano"
+                      placeholder="Selecciona tamaño"
                       options={OPCIONES_TAMANO}
                     />
                   </div>
