@@ -22,7 +22,7 @@ const insumosService = {
             const resultado = await respuesta.json();
 
             if (!resultado.success) {
-                throw new Error(resultado.message || "Error al crear el lote");
+                throw new Error(resultado.message || "Error al crear el/los inóculos");
             }
 
             return resultado;

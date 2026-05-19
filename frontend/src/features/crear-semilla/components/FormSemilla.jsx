@@ -44,7 +44,12 @@ const FormSemillas = () => {
   const [mijo, setMijo] = useState("");
   const [tamano, setTamano] = useState("");
   const [cantidad, setCantidad] = useState(1);
-  const [fecha, setFecha] = useState({});
+  const hoy = new Date();
+    const [fecha, setFecha] = useState({
+        day:   String(hoy.getDate()).padStart(2, "0"),
+        month: String(hoy.getMonth() + 1).padStart(2, "0"),
+        year:  String(hoy.getFullYear()),
+    });
   const [nota, setNota] = useState("");
 
   const { especies, loading: loadingEspecies, error: errorEspecies } = useEspecies();
