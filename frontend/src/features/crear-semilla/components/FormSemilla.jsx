@@ -99,16 +99,6 @@ const FormSemillas = () => {
     });
   }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias]);
 
-  const resetForm = () => {
-    setEspecie("");
-    setInoculo("");
-    setMijo("");
-    setTamano("");
-    setCantidad(1);
-    setFecha({});
-    setNota("");
-};
-
   const handleRegistrar = async () => {
     setRegistrando(true);
     try {
@@ -211,7 +201,7 @@ const FormSemillas = () => {
                 </div>
               </div>
 
-              <EntradaLista items={itemsComposicion} />
+              <EntradaLista items={itemsComposicion} repeticiones={cantidad} />
 
               <div className="bg-white rounded-[32px] shadow-sm border p-6 md:p-8 flex flex-col gap-6">
 
@@ -259,13 +249,6 @@ const FormSemillas = () => {
           </div>
         </div>
       </Base>
-
-        <ModalAlerta
-            visible={alerta.visible}
-            variante={alerta.variante}
-            mensaje={alerta.mensaje}
-            onClose={() => setAlerta((a) => ({ ...a, visible: false }))}
-        />
     </>
   );
 };
