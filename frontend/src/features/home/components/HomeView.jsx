@@ -10,6 +10,11 @@ import MetricaCard from './MetricaCard';
 import PanelLista from './PanelLista';
 import useHome from '../hooks/useHome';
 
+import accesoAgar from '../../../assets/images/acceso-agar.png';
+import accesoMedioLiquido from '../../../assets/images/acceso-medio-liquido.png';
+import accesoSemilla from '../../../assets/images/acceso-semilla.png';
+import accesoLote from '../../../assets/images/acceso-lote.png';
+
 /**
  * Vista principal / Dashboard de Devora.
  * Muestra lotes por revisar, inventario bajo, accesos rápidos y resumen general.
@@ -29,6 +34,8 @@ const PantallaPrincipalView = () => {
 
     const listas = dashboard?.listas || {};
 
+    const lotes = dashboard?.lotes || {};
+
     const resumen = {
         lotesActivos: cards.lotesActivos,
         bloquesNoContaminados: cards.bloquesNoContaminados,
@@ -36,10 +43,10 @@ const PantallaPrincipalView = () => {
     };
 
     const RUTAS_RAPIDAS = [
-        { label: 'Crear Agar', ruta: '/inoculos/crear/agar', color: '#ffffff', acento: colores.azul },
-        { label: 'Crear Medio Líquido', ruta: '/inoculos/crear/medio-liquido', color: '#ffffff', acento: '#b43db8' },
-        { label: 'Crear Semilla', ruta: '/inoculos/crear/semilla', color: '#ffffff', acento: '#3DB87A' },
-        { label: 'Crear Lote', ruta: '/lotes', color: '#ffffff', acento: '#F28C38' },
+        { label: 'Crear Agar', ruta: '/inoculos/crear/agar', color: '#ffffff', acento: colores.azul, imagen: accesoAgar },
+        { label: 'Crear Medio Líquido', ruta: '/inoculos/crear/medio-liquido', color: '#ffffff', acento: '#b43db8', imagen: accesoMedioLiquido },
+        { label: 'Crear Semilla', ruta: '/inoculos/crear/semilla', color: '#ffffff', acento: '#3DB87A', imagen: accesoSemilla },
+        { label: 'Crear Lote', ruta: '/lotes', color: '#ffffff', acento: '#F28C38', imagen: accesoLote },
     ];
 
     // Estado checkboxes 
@@ -88,6 +95,7 @@ const PantallaPrincipalView = () => {
                             }
                             titulo="Lotes por revisar"
                             items={listas.lotesRevision || []}
+                            lotes={lotes || []}
                             checked={checkedLotes}
                             onToggle={toggleLote}
                             onRevisar={handleRevisarLotes}

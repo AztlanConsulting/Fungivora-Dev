@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom';
 import { Text } from '../../../shared/components/ui';
 import { colores } from '../../../shared/components/ui/basics/colores';
 
-const FilaCheck = ({ item, checked, onToggle, mostrarCheck }) => {
+const FilaCheck = ({ item, lote, checked, onToggle, mostrarCheck }) => {
     return (
         <div className="flex items-center justify-between py-2 border-b last:border-b-0 border-gray-100">
             {item.ruta ? (
                 <Link
                     to={item.ruta}
+                    state={lote || null}
                     className="hover:opacity-70 transition-opacity"
                 >
                     <Text variante="body" style={{ color: colores.negro }}>

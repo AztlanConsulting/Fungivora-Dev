@@ -2,7 +2,7 @@ import React from 'react';
 import { Text } from '../../../shared/components/ui';
 import { useNavigate } from 'react-router-dom';
 
-const AccesoRapido = ({ label, ruta, color, acento }) => {
+const AccesoRapido = ({ label, ruta, color, acento, imagen }) => {
     const navigate = useNavigate();
 
     return (
@@ -11,12 +11,15 @@ const AccesoRapido = ({ label, ruta, color, acento }) => {
             className="rounded-2xl p-5 flex flex-col justify-between aspect-square hover:opacity-90 active:scale-95 transition-all shadow-sm"
             style={{ backgroundColor: color, minHeight: 160 }}
         >
-            {/* Placeholder ilustración */}
             <div
-                className="w-full flex-1 rounded-xl mb-3 flex items-center justify-center"
+                className="w-full flex-1 rounded-xl mb-3 flex items-center justify-center overflow-hidden"
                 style={{ backgroundColor: `${acento}22` }}
             >
-                <span className="text-4xl">🍄</span>
+                <img
+                    src={imagen}
+                    alt={label}
+                    className="w-full h-full object-cover"
+                />
             </div>
 
             <div className="flex items-center justify-between">

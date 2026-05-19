@@ -7,6 +7,7 @@ const PanelLista = ({
     icono,
     titulo,
     items,
+    lotes,
     checked,
     onToggle,
     onRevisar,
@@ -33,15 +34,22 @@ const PanelLista = ({
                 </button>
             </div>
             <div className="max-h-[160px] overflow-y-auto pr-5">
-                {items.map(item => (
-                    <FilaCheck
-                        key={item.id}
-                        item={item}
-                        checked={!!checked[item.id]}
-                        onToggle={onToggle}
-                        mostrarCheck={mostrarChecks}
-                    />
-                ))}
+                {items.map(item => {
+                    const lote = lotes?.find(
+                        lote => lote.id_lote === item.id
+                    );
+
+                    return (
+                        <FilaCheck
+                            key={item.id}
+                            item={item}
+                            lote={lote}
+                            checked={!!checked[item.id]}
+                            onToggle={onToggle}
+                            mostrarCheck={mostrarChecks}
+                        />
+                    );
+                })}
             </div>
             <div className="flex justify-end">
                 {seleccionados && (
