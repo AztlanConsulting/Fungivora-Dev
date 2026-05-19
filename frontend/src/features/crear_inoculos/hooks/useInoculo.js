@@ -58,12 +58,13 @@ const useInoculo = (especie, tipoDestino) => {
         return todos
             .filter((ino) =>
                 ino.especie === especie &&
+                ino.cantidad_disponible > 0 &&
                 tiposValidos.includes(normalizar(ino.tipo))
             )
             .map((ino) => ({
                 value: ino.id_inoculo,
                 codigo: ino.codigo_fungivora,
-                label: `${ino.codigo_fungivora} — ${ino.tipo} (${ino.cantidad_disponible} ${ino.unidad})`,
+                label: `${ino.codigo_fungivora} - (${ino.cantidad_disponible} ${ino.unidad})`,
                 stockBajo: ino.cantidad_disponible <= ino.stock_recomendado,
                 raw: ino,
             }));
