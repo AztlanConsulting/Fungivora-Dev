@@ -249,6 +249,12 @@ const FormSemillas = () => {
           </div>
         </div>
       </Base>
+      <ModalAlerta
+            visible={alerta.visible}
+            variante={alerta.variante}
+            mensaje={alerta.mensaje}
+            onClose={() => setAlerta((a) => ({ ...a, visible: false }))}
+        />
     </>
   );
 };
