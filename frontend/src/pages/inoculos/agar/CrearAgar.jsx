@@ -1,4 +1,4 @@
-import FormAgar from "../../../features/crear_agar/components/FormAgar";
+import FormAgar from "../../../features/crear-agar/components/FormAgar";
 
 const CrearAgar = () => {
   return (
