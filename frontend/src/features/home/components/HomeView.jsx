@@ -44,9 +44,9 @@ const PantallaPrincipalView = () => {
 
     const RUTAS_RAPIDAS = [
         { label: 'Crear Agar', ruta: '/inoculos/crear/agar', color: '#ffffff', acento: colores.azul, imagen: accesoAgar },
-        { label: 'Crear Medio Líquido', ruta: '/inoculos/crear/medio-liquido', color: '#ffffff', acento: '#b43db8', imagen: accesoMedioLiquido },
-        { label: 'Crear Semilla', ruta: '/inoculos/crear/semilla', color: '#ffffff', acento: '#3DB87A', imagen: accesoSemilla },
-        { label: 'Crear Lote', ruta: '/lotes', color: '#ffffff', acento: '#F28C38', imagen: accesoLote },
+        { label: 'Crear Medio Líquido', ruta: '/inoculos/crear/medio-liquido', color: '#ffffff', acento: '#5b9e41', imagen: accesoMedioLiquido },
+        { label: 'Crear Semilla', ruta: '/inoculos/crear/semilla', color: '#ffffff', acento: '#bb6631', imagen: accesoSemilla },
+        { label: 'Crear Lote', ruta: '/lotes', color: '#ffffff', acento: '#684cb6', imagen: accesoLote },
     ];
 
     // Estado checkboxes 
