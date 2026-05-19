@@ -13,6 +13,7 @@ import ResumenSemilla from "../../crear_inoculos/components/ResumenSemilla";
 import insumosService from "../../crear_inoculos/services/inoculos.service";
 import { BOLSAS } from "../../crear_inoculos/types/inoculos.type";
 import { crearInoculoDTO } from "../../crear_inoculos/dto/crearInoculoDto";
+import { traducirError } from "../../../shared/utils/traducirError";
 
 import useEspecies from "../../inoculos/hooks/useEspecies";
 import useCategorias from "../../crear_inoculos/hooks/useCategorias";
@@ -128,11 +129,7 @@ const FormSemillas = () => {
 
     } catch (error) {
       console.error("Error en el registro:", error);
-      setAlerta({
-            visible: true,
-            variante: "error",
-            mensaje: error.message || "Ocurrió un error al registrar",
-        });
+      setAlerta({ visible: true, ...traducirError(error) });
     } finally {
         setRegistrando(false);
     }

@@ -9,27 +9,30 @@ const insumosService = {
     },
 
     /*
-    Registra los datos del form de nuevo inoculo
+    Registra los datos del form de nuevo inoculo.
+    Lanza errores cuyo `.message` es un código conocido
     */
     postInoculo: async (datosInoculo) => {
+        let respuesta;
         try {
-            const respuesta = await fetch('/api/inoculos/crear', {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(datosInoculo),
+            respuesta = await fetch('/api/inoculos/crear', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(datosInoculo),
             });
-
-            const resultado = await respuesta.json();
-
-            if (!resultado.success) {
-                throw new Error(resultado.message || "Error al crear el/los inóculos");
-            }
-
-            return resultado;
-        } catch (error) {
-            console.error("Error en registrar inoculo:", error);
-            throw error;
+        } catch {
+            throw new Error("FAILED_FETCH");
         }
+
+        let resultado = {};
+        try { resultado = await respuesta.json(); } catch { /* body no es JSON */ }
+
+        if (!respuesta.ok || !resultado.success) {
+            // El backend envía el código en `message` (ej: "STOCK_INSUFICIENTE").
+            throw new Error(resultado.message || "ERROR_SERVIDOR");
+        }
+
+        return resultado;
     },
 
     fetchInoculos: async () => {
