@@ -11,12 +11,12 @@ import { EntradaLista } from "../../../features/crear_inoculos/components/selecc
 import ResumenSemilla from "../../../features/crear_inoculos/components/ResumenSemilla";
 import insumosService from "../../../features/crear_inoculos/services/inoculos.service";
 import { BOLSAS } from "../../../features/crear_inoculos/types/inoculos.type";
+import { crearInoculoDTO } from "../../../features/crear_inoculos/dto/crearInoculoDto";
 
 import useEspecies from "../../../features/inoculos/hooks/useEspecies";
 import useCategorias from "../../../features/crear_inoculos/hooks/useCategorias";
 import useInoculoParaSemillas from "../../../features/inoculos/hooks/useInoculoprarasemillas";
 import useIngredientesSemilla from "../../../features/crear_inoculos/hooks/useIngredientesSemilla";
-
 import {
   generarCodigos,
   normalizarTipoInoculo,
@@ -93,38 +93,26 @@ const FormSemillas = () => {
 
   const handleRegistrar = async () => {
     try {
-      /* Molde creado por archivo type para mandar correctamente al endpoint */
-      for(const codigo in codigos) {
-        const datos = {
-          codigo_fungivora: codigos[codigo],
-          tipo: TIPO_CREACION,
-          especie: especie,
-          fecha: `${fecha.year}-${String(fecha.month).padStart(2, "0")}-${String(fecha.day).padStart(2, "0")}`,
-          cantidad_disponible: cantidadFinal,
-          unidad: "gr",
-          stock_recomendado: 100,
-          nota: nota,
-
-          inoculo_usado: {
-            id: inoculoSeleccionado?.raw?.id_inoculo ?? null,
-            cantidad: Number(valoresComposicion.cantInoculo) || 0,
-          },
-
-          ingredientes: itemsComposicion
-            .filter((item) => item.tipo === "ingrediente" && item.id != null)
-            .map((ing) => ({
-              id: ing.id,
-              cantidad: Number(ing.value) || 0,
-          })),
-        };
+        const datos = crearInoculoDTO({
+        codigo: codigoInoculo,
+        tipo: TIPO_CREACION,
+        especie,
+        fecha,
+        cantidadFinal,
+        cantidad,
+        nota,
+        inoculoSeleccionado,
+        valoresComposicion,
+        itemsComposicion,
+        });
 
         console.log("Datos hacia backend:", datos);
 
-        const respuesta = await insumosService.postSemilla(datos);
+        const respuesta = await insumosService.postInoculo(datos);
 
         /* TODO: hay que cambiar esto por un mini Popup y un redirect a biblioteca genetica */
         alert("Semilla registrada con exito!");
-      }
+      
     } catch (error) {
       console.error("Error en el registro:", error);
       alert(`Error: ${error.message}`);

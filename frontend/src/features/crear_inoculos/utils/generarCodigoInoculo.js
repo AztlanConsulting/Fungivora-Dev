@@ -135,5 +135,5 @@ export const generarCodigos = ({
   }
 
   // Genera un código por cada repetición del lote
-  return Array.from({ length: cantidad }, (_, i) => `${base}-${i + 1}`);
+  return [base, ...Array.from({ length: cantidad }, (_, i) => `${base}-${i + 1}`)];
 };

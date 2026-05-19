@@ -1,5 +1,3 @@
-import { RegistroSemilla } from "../types/inoculos.type"
-
 const insumosService = {
     /*
     Consigue los insumos para los compoentes
@@ -13,7 +11,7 @@ const insumosService = {
     /*
     Registra los datos del form de nuevo inoculo
     */
-    postInoculo: async (datosInoculo: RegistroSemilla) => {
+    postInoculo: async (datosInoculo) => {
         try {
             const respuesta = await fetch('/api/inoculos/crear', {
             method: "POST",

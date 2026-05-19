@@ -4,6 +4,7 @@ export const crearInoculoDTO = ({
     especie,
     fecha,
     cantidadFinal,
+    cantidad,
     nota,
     inoculoSeleccionado,
     valoresComposicion,
@@ -29,7 +30,7 @@ export const crearInoculoDTO = ({
 
         stock_recomendado: 100,
 
-        num_repeticiones: ,
+        num_repeticiones: cantidad ,
 
         nota,
 
