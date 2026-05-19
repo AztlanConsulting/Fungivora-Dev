@@ -1,8 +1,8 @@
-const { get_especies, get_inoculos_filtrados } = require('../../controllers/inoculo.controller');
+const { get_especies, get_inoculos_filtrados } = require('../../../controllers/inoculo.controller');
 
 // Mockea el modelo
 jest.mock('../../models/inoculo.model');
-const Inoculo = require('../../models/inoculo.model');
+const Inoculo = require('../../../models/inoculo.model');
 
 // Helper que crea req/res falsos
 const mockRes = () => {
