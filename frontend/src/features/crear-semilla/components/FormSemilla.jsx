@@ -88,7 +88,7 @@ const FormSemillas = () => {
   }));
 
   const codigos = useMemo(() => {
-    if (loadingCategorias) return [];
+    if (loadingCategorias) return { base: "", lista: [] };
     return generarCodigos({
       tipoCreacion: TIPO_CREACION,
       tipoInoculo,
@@ -103,7 +103,7 @@ const FormSemillas = () => {
     setRegistrando(true);
     try {
         const datos = crearInoculoDTO({
-        codigo: codigos[0],
+        codigo: codigos.base,
         tipo: TIPO_CREACION,
         especie,
         fecha,
@@ -114,14 +114,14 @@ const FormSemillas = () => {
         valoresComposicion,
         itemsComposicion,
         });
-        
+
         // En handleRegistrar — primero el navigate con state, sin setAlerta
         await insumosService.postInoculo(datos);
         navigate("/inoculos", {
             state: {
                 alerta: {
                     variante: "exito",
-                    mensaje: `Semillas registradas con éxito — ${codigos[0]}`,
+                    mensaje: `Semillas registradas con éxito — ${codigos.base}`,
                 }
             }
         });
@@ -229,7 +229,7 @@ const FormSemillas = () => {
               especie={especie}
               codigoInoculo={codigoInoculo}
               composicion={itemsComposicion}
-              codigos={codigos}
+              codigos={codigos.lista}
               cantidad={cantidad}
             />
 

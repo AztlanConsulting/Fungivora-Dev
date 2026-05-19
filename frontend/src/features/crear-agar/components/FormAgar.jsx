@@ -62,7 +62,7 @@ const FormAgar = () => {
   }));
 
   const codigos = useMemo(() => {
-    if (loadingCategorias) return [];
+    if (loadingCategorias) return { base: "", lista: [] };
     return generarCodigos({
       tipoCreacion:  TIPO_CREACION,
       tipoInoculo,
@@ -155,7 +155,7 @@ const FormAgar = () => {
               especie={especie}
               codigoInoculo={codigoInoculo}
               composicion={itemsComposicion}
-              codigos={codigos}
+              codigos={codigos.lista}
               cantidad={cantidad}
             />
 
