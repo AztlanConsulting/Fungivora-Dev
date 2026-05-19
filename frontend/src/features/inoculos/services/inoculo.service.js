@@ -14,9 +14,3 @@ const inoculoService = {
 
 export default inoculoService;
 
-export const fetchInoculos = async () => {
-    const res = await fetch("/api/inoculos/");
-    if (!res.ok) throw new Error('Error al obtener los inóculos');
-    const json = await res.json();
-    return json.data;
-};

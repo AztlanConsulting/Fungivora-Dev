@@ -12,9 +12,9 @@ jest.mock('../../config/metrics', () => ({
 
 // Mockea el modelo para no tocar la DB real
 jest.mock('../../models/inoculo.model');
-const Inoculo = require('../../models/inoculo.model');
+const Inoculo = require('../../../models/inoculo.model');
 
-const app = require('../../app');
+const app = require('../../../app');
 
 describe('GET /api/inoculos/especies', () => {
 

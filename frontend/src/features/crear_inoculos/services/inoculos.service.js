@@ -1,5 +1,3 @@
-import { RegistroSemilla } from "../types/inoculos.type"
-
 const insumosService = {
     /*
     Consigue los insumos para los compoentes
@@ -11,30 +9,33 @@ const insumosService = {
     },
 
     /*
-    Registra los datos del form de nueva semilla
-    TODO: Esto se puede adaptar a que sea un molde global para todos los crear
-    El molde se ecnuentra en feature/crear_inoculo/semilla/services/inculos.type.ts
+    Registra los datos del form de nuevo inoculo
     */
-    postSemilla: async (datosSemilla: RegistroSemilla) => {
+    postInoculo: async (datosInoculo) => {
         try {
             const respuesta = await fetch('/api/inoculos/crear', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(datosSemilla),
+            body: JSON.stringify(datosInoculo),
             });
 
             const resultado = await respuesta.json();
 
             if (!resultado.success) {
-                throw new Error(resultado.message || "Error al crear el lote");
+                throw new Error(resultado.message || "Error al crear el/los inóculos");
             }
 
             return resultado;
         } catch (error) {
-            console.error("Error en registrar semilla:", error);
+            console.error("Error en registrar inoculo:", error);
             throw error;
         }
-    }
+    },
+
+    fetchInoculos: async () => {
+        const res = await fetch("/api/inoculos/");
+        return await res.json();
+        }
 }
 
 export default insumosService;

@@ -6,21 +6,22 @@ import InputFecha from "../../../shared/components/ui/inputs/input_fecha";
 import InputCantidad from "../../../shared/components/ui/inputs/input_cantidad";
 import InputNota from "../../../shared/components/ui/inputs/input_nota";
 import Button from "../../../shared/components/ui/buttons/botones";
+import ModalAlerta from "../../../shared/components/ui/popups/ModalAlerta";
 
-import { EntradaLista } from "../../../features/crear_inoculos/components/seleccionar_cantidades";
-import ResumenSemilla from "../../../features/crear_inoculos/components/ResumenSemilla";
-import insumosService from "../../../features/crear_inoculos/services/inoculos.service";
-import { BOLSAS } from "../../../features/crear_inoculos/types/inoculos.type";
+import { EntradaLista } from "../../crear_inoculos/components/seleccionar_cantidades";
+import ResumenSemilla from "../../crear_inoculos/components/ResumenSemilla";
+import insumosService from "../../crear_inoculos/services/inoculos.service";
+import { BOLSAS } from "../../crear_inoculos/types/inoculos.type";
+import { crearInoculoDTO } from "../../crear_inoculos/dto/crearInoculoDto";
 
-import useEspecies from "../../../features/inoculos/hooks/useEspecies";
-import useCategorias from "../../../features/crear_inoculos/hooks/useCategorias";
-import useInoculoParaSemillas from "../../../features/inoculos/hooks/useInoculoprarasemillas";
-import useIngredientesSemilla from "../../../features/crear_inoculos/hooks/useIngredientesSemilla";
-
+import useEspecies from "../../inoculos/hooks/useEspecies";
+import useCategorias from "../../crear_inoculos/hooks/useCategorias";
+import useInoculo from "../../crear_inoculos/hooks/useInoculo";
+import useIngredientesSemilla from "../../crear_inoculos/hooks/useIngredientesSemilla";
 import {
   generarCodigos,
   normalizarTipoInoculo,
-} from "../../../features/crear_inoculos/utils/generarCodigoInoculo";
+} from "../../crear_inoculos/utils/generarCodigoInoculo";
 
 import Titulo from "../../../shared/components/ui/basics/titulo";
 import Text from "../../../shared/components/ui/basics/texto";
@@ -43,12 +44,19 @@ const FormSemillas = () => {
   const [mijo, setMijo] = useState("");
   const [tamano, setTamano] = useState("");
   const [cantidad, setCantidad] = useState(1);
-  const [fecha, setFecha] = useState({});
+  const hoy = new Date();
+    const [fecha, setFecha] = useState({
+        day:   String(hoy.getDate()).padStart(2, "0"),
+        month: String(hoy.getMonth() + 1).padStart(2, "0"),
+        year:  String(hoy.getFullYear()),
+    });
   const [nota, setNota] = useState("");
 
   const { especies, loading: loadingEspecies, error: errorEspecies } = useEspecies();
-  const { opciones: inoculos, loading: loadingInoculos, error: errorInoculos } = useInoculoParaSemillas(especie, TIPO_CREACION);
+  const { opciones: inoculos, loading: loadingInoculos, error: errorInoculos } = useInoculo(especie, TIPO_CREACION);
   const { categorias, loading: loadingCategorias } = useCategorias();
+  const [registrando, setRegistrando] = useState(false);
+  const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
 
   const inoculoSeleccionado = (inoculos ?? []).find((ino) => ino.codigo === inoculo);
   const tipoInoculo = normalizarTipoInoculo(inoculoSeleccionado?.raw?.tipo);
@@ -91,43 +99,49 @@ const FormSemillas = () => {
     });
   }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias]);
 
+  const resetForm = () => {
+    setEspecie("");
+    setInoculo("");
+    setMijo("");
+    setTamano("");
+    setCantidad(1);
+    setFecha({});
+    setNota("");
+};
+
   const handleRegistrar = async () => {
+    setRegistrando(true);
     try {
-      /* Molde creado por archivo type para mandar correctamente al endpoint */
-      for(const codigo in codigos) {
-        const datos = {
-          codigo_fungivora: codigos[codigo],
-          tipo: TIPO_CREACION,
-          especie: especie,
-          fecha: `${fecha.year}-${String(fecha.month).padStart(2, "0")}-${String(fecha.day).padStart(2, "0")}`,
-          cantidad_disponible: cantidadFinal,
-          unidad: "gr",
-          stock_recomendado: 100,
-          nota: nota,
+        const datos = crearInoculoDTO({
+        codigo: codigos[0],
+        tipo: TIPO_CREACION,
+        especie,
+        fecha,
+        cantidadFinal,
+        cantidad,
+        nota,
+        inoculoSeleccionado,
+        valoresComposicion,
+        itemsComposicion,
+        });
+        
+        await insumosService.postInoculo(datos);
+        resetForm();
+        setAlerta({
+            visible: true,
+            variante: "exito",
+            mensaje: "Semillas registradas con éxito",
+        });
 
-          inoculo_usado: {
-            id: inoculoSeleccionado?.raw?.id_inoculo ?? null,
-            cantidad: Number(valoresComposicion.cantInoculo) || 0,
-          },
-
-          ingredientes: itemsComposicion
-            .filter((item) => item.tipo === "ingrediente" && item.id != null)
-            .map((ing) => ({
-              id: ing.id,
-              cantidad: Number(ing.value) || 0,
-          })),
-        };
-
-        console.log("Datos hacia backend:", datos);
-
-        const respuesta = await insumosService.postSemilla(datos);
-
-        /* TODO: hay que cambiar esto por un mini Popup y un redirect a biblioteca genetica */
-        alert("Semilla registrada con exito!");
-      }
     } catch (error) {
       console.error("Error en el registro:", error);
-      alert(`Error: ${error.message}`);
+      setAlerta({
+            visible: true,
+            variante: "error",
+            mensaje: error.message || "Ocurrió un error al registrar",
+        });
+    } finally {
+        setRegistrando(false);
     }
   };
 
@@ -232,13 +246,23 @@ const FormSemillas = () => {
             <Button variant="cancelar" isOutline onClick={() => navigate(-1)}>
               Cancelar
             </Button>
-            <Button variant="registrar" onClick={handleRegistrar}>
-              Registrar
+            <Button 
+                variant="registrar" 
+                onClick={handleRegistrar}
+                disabled={registrando}
+              >
+              {registrando ? "Registrando..." : "Registrar"}
             </Button>
           </div>
-
         </div>
       </Base>
+
+        <ModalAlerta
+            visible={alerta.visible}
+            variante={alerta.variante}
+            mensaje={alerta.mensaje}
+            onClose={() => setAlerta((a) => ({ ...a, visible: false }))}
+        />
     </>
   );
 };

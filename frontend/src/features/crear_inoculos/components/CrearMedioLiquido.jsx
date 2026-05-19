@@ -15,7 +15,7 @@ import ResumenSemilla   from "./ResumenSemilla";
 
 import useEspecies                 from "../../inoculos/hooks/useEspecies";
 import useCategorias               from "../hooks/useCategorias";
-import useInoculoParaSemillas      from "../../inoculos/hooks/useInoculoprarasemillas";
+import useInoculo      from "../../crear_inoculos/hooks/useInoculo";
 import useIngredientesMedioLiquido from "../hooks/useIngredientesMedioLiquido";
 
 import {
@@ -41,7 +41,7 @@ const CrearMedioLiquido = () => {
   const [nota,         setNota]         = useState("");
 
   const { especies,  loading: loadingEspecies,  error: errorEspecies  } = useEspecies();
-  const { opciones: inoculos, loading: loadingInoculos, error: errorInoculos } = useInoculoParaSemillas(especie, TIPO_CREACION);
+  const { opciones: inoculos, loading: loadingInoculos, error: errorInoculos } = useInoculo(especie, TIPO_CREACION);
   const { categorias, loading: loadingCategorias } = useCategorias();
 
   const inoculoSeleccionado = (inoculos ?? []).find((ino) => ino.codigo === inoculo);

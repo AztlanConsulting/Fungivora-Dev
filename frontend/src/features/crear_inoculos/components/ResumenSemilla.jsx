@@ -18,7 +18,7 @@ const ResumenSemilla = ({
   cantidad = 1,
 }) => {
   const codigoUnico   = codigos.length === 1 ? codigos[0] : null;
-  const varioscodigos = codigos.length > 1   ? codigos    : null;
+  const varioscodigos = codigos.length > 1   ? codigos.slice(1)    : null;
 
 
   const estiloEtiqueta = { color: colores.negro, fontWeight: 500 };
