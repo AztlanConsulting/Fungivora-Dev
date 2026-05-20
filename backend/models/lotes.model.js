@@ -75,14 +75,16 @@ class Lotes {
         try {
             const [filas] = await db.execute(`
                 SELECT
-                    id_inoculo,
-                    codigo_fungivora,
-                    especie,
-                    cantidad_disponible,
-                    unidad
-                FROM Inoculos
-                WHERE cantidad_disponible > 0
-                ORDER BY fecha DESC
+                    i.id_inoculo,
+                    i.codigo_fungivora,
+                    i.especie,
+                    i.cantidad_disponible,
+                    i.unidad,
+                    c.abreviatura_opcion AS abreviatura
+                FROM Inoculos i
+                LEFT JOIN Categorias c ON i.especie = c.nombre_opcion
+                WHERE i.cantidad_disponible > 0
+                ORDER BY i.fecha DESC
             `);
             return filas;
         } catch (err) {

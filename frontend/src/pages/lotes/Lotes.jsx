@@ -54,27 +54,26 @@ function Lotes() {
   const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
   const [loteAEliminar, setLoteAEliminar] = useState(null);
   const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
+  
+  useEffect(() => {
+      if (nuevaFila.id_inoculo && nuevaFila.especie) {
+        const opcionesInoculo = getInoculosPorEspecie(nuevaFila.especie);
+        const seleccionado = opcionesInoculo.find(
+          opt => String(opt.value) === String(nuevaFila.id_inoculo)
+        );
 
-useEffect(() => {
-  if (nuevaFila.id_inoculo && nuevaFila.especie) {
-    
-    const opcionesInoculo = getInoculosPorEspecie(nuevaFila.especie);
-    const seleccionado = opcionesInoculo.find(
-      opt => String(opt.value) === String(nuevaFila.id_inoculo)
-    );
+        if (seleccionado) {
+          const dd = String(fecha.day).padStart(2, '0');
+          const mm = String(fecha.month).padStart(2, '0');
+          const yy = fecha.year.toString().slice(-2);
+          const abreviatura = seleccionado.abreviatura || "XX";
 
-    if (seleccionado) {
-      const { abreviatura } = seleccionado;
-      const dd = String(fecha.day).padStart(2, '0');
-      const mm = String(fecha.month).padStart(2, '0');
-      const yy = fecha.year.toString().slice(-2);
-
-      setCodigoPrevisualizacion(`LC-${abreviatura || "XX"}-${dd}${mm}${yy}`);
-    } else {
-      setCodigoPrevisualizacion("");
-    }
-  }
-}, [nuevaFila.id_inoculo, nuevaFila.especie, fecha, getInoculosPorEspecie]);
+          setCodigoPrevisualizacion(`LC-${abreviatura}-${dd}${mm}${yy}`);
+        }
+      } else {
+        setCodigoPrevisualizacion("");
+      }
+    }, [nuevaFila.id_inoculo, nuevaFila.especie, fecha]);
 
   // Colores para podruccion y experimental
   const colores_tipo = {
