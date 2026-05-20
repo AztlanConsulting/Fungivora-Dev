@@ -3,6 +3,7 @@
 //   G  → Semilla (Grain)
 //   ML → Medio Líquido
 //   A  → Agar
+//   PA → Agar creado desde esporas (sello o suspensión), sin inóculo intermedio.
 //
 // Para Medio Líquido el prefijo es siempre "ML" independientemente del inóculo fuente,
 // ya que en ese flujo el origen no se codifica en el ID.
@@ -18,25 +19,31 @@ const MAPA_PREFIJOS = {
     semilla:      "ML",
   },
   agar: {
-    agar:         "A2A",
-    semilla:      "G2A",
-    medioLiquido: "L2A",
-    // "PA" es el fallback cuando no hay inóculo previo identificado.
+    agar:               "A2A",
+    semilla:            "G2A",
+    medioLiquido:       "L2A",
+    selloEsporas:       "PA",
+    esporasSuspendidas: "PA",
+    // "PA" también se usa como fallback cuando el origen es nulo o desconocido.
   },
 };
 
 /**
  * Normaliza el tipo de inóculo a la clave interna del mapa de prefijos.
  * @param {string | null | undefined} tipo 
- * @returns {"agar" | "semilla" | "medioLiquido" | null}
+ * @returns {"agar" | "semilla" | "medioLiquido" | "selloEsporas" | "esporasSuspendidas" | null}
  */
 export const normalizarTipoInoculo = (tipo) => {
   if (!tipo) return null;
   const t = tipo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   // Eliminar acentos para comparar "líquido" === "liquido"
 
-  if (t.includes("agar"))                              return "agar";
-  if (t.includes("semilla"))                           return "semilla";
+  // Orden importa: "sello" y "suspend" se chequean antes para evitar
+  // falsos positivos si "esporas" llegara a aparecer en otros tipos.
+  if (t.includes("sello"))                            return "selloEsporas";
+  if (t.includes("suspend"))                          return "esporasSuspendidas";
+  if (t.includes("agar"))                             return "agar";
+  if (t.includes("semilla"))                          return "semilla";
   if (t.includes("liquido") || t.includes("medio"))   return "medioLiquido";
 
   return null;
