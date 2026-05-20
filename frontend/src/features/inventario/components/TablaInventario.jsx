@@ -14,7 +14,7 @@ const columnasHeader = [
 
 const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSeleccionada, abrirModalEdicion, gridLayout }) => {
   
-  // Número de forma vizual mejor
+  // Número de forma visual mejor
   const formatearNumero = (valor) => {
     const numero = parseFloat(valor);
     if (isNaN(numero)) return "0.00";
@@ -23,6 +23,21 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(numero);
+  };
+
+  // Conversión cada 1000 ml/g a L/Kg
+  const renderizarCantidad = (cantidad, unidad) => {
+    const num = parseFloat(cantidad) || 0;
+    const uniNormalizada = unidad ? unidad.trim().toLowerCase() : "";
+
+    if ((uniNormalizada.startsWith("gramo") || uniNormalizada === "g") && num >= 1000) {
+      return `${formatearNumero(num / 1000)} Kilogramo(s)`;
+    }
+
+    if ((uniNormalizada.startsWith("mililitro") || uniNormalizada === "ml") && num >= 1000) {
+      return `${formatearNumero(num / 1000)} Litro(s)`;
+    }
+    return `${formatearNumero(num)} ${unidad}`;
   };
 
   // Estado por cantidad
@@ -70,7 +85,7 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                 </div>
                 <div className="px-8 py-4">
                   <Text variante="option" style={{ color: colores.black, fontWeight: "400", fontSize: "15px" }}>
-                    {formatearNumero(item.cantidad)} {item.unidad}
+                    {renderizarCantidad(item.cantidad, item.unidad)}
                   </Text>
                 </div>
                 <div className="px-8 py-4">
@@ -100,7 +115,7 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                       {estado.label}
                     </span>
                     <span className="text-[14px]" style={{ color: "black" }}>
-                      {formatearNumero(item.cantidad)} {item.unidad}
+                      {renderizarCantidad(item.cantidad, item.unidad)}
                     </span>
                   </div>
                 </div>

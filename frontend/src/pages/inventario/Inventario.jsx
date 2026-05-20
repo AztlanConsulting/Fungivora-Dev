@@ -35,12 +35,16 @@ const Inventario = () => {
     setModalEdicion({ visible: true, insumo: item });
     setAjusteCantidad("");
     setTipoOperacion("incremento");
+    setErrorModal("");
   };
 
   // Confirmar editar cantidad
   const handleConfirmarAjuste = async () => {
-    const cambio = parseFloat(ajusteCantidad.replace(',', '.'));
-    if (isNaN(cambio) || cambio <= 0) return;
+    const cambio = parseFloat(ajusteCantidad);
+    if (isNaN(cambio) || cambio <= 0) {
+      setErrorModal("Ingresa una cantidad válida");
+      return;
+    }
 
     const cantidadActual = parseFloat(modalEdicion.insumo.cantidad) || 0;
 
@@ -54,12 +58,25 @@ const Inventario = () => {
     }
   };
 
-  //Añadir nueva fila de insumo
+  // Manejar cambio de números en el ajuste
+  const handleCambioAjuste = (valor) => {
+    const valorEstandarizado = valor.replace(",", ".");
+    const regex = /^\d{0,6}(\.\d{0,2})?$/;
+
+    if (regex.test(valorEstandarizado)) {
+      setAjusteCantidad(valorEstandarizado);
+    }
+  };
+
+  // Añadir nueva fila de insumo (Mantiene sincronizada la misma regla del componente hijo)
   const handleNuevaFila = (campo, valor) => {
     if (campo === "cantidad" || campo === "stock_recomendado") {
       const valorEstandarizado = valor.replace(",", ".");
-      if (!/^[0-9]*(\.?[0-9]{0,2})?$/.test(valorEstandarizado)) return;
-      setNuevaFila(prev => ({ ...prev, [campo]: valorEstandarizado }));
+      const regex = /^\d{0,5}(\.\d{0,2})?$/;
+      
+      if (regex.test(valorEstandarizado)) {
+        setNuevaFila(prev => ({ ...prev, [campo]: valorEstandarizado }));
+      }
     } else {
       setNuevaFila(prev => ({ ...prev, [campo]: valor }));
     }
@@ -75,6 +92,7 @@ const Inventario = () => {
     if (exito) {
       setNuevaFila({ nombre: "", cantidad: "", stock_recomendado: "", unidad: "" });
       setVerFormulario(false);
+      setErrorValidacion("");
       lanzarAlerta("Insumo creado con éxito");
     }
   };
@@ -143,7 +161,12 @@ const Inventario = () => {
                   <button onClick={() => setTipoOperacion("reduccion")} className={`flex-1 py-2 rounded-lg text-sm font-semibold ${tipoOperacion === "reduccion" ? "bg-red-100 shadow-sm text-red-600" : "text-gray-500"}`}>Salida</button>
                 </div>
 
-                <Input variante="decimal" placeholder="0.00" value={ajusteCantidad} onChange={(e) => setAjusteCantidad(e.target.value)} />
+                <Input 
+                  variante="decimal" 
+                  placeholder="0.00" 
+                  value={ajusteCantidad} 
+                  onChange={(e) => handleCambioAjuste(e.target.value)} 
+                />
                 {errorModal && <Text variante="label" style={{ color: "#E53E3E", fontSize: "13px" }}>{errorModal}</Text>}
 
                 <div className="flex gap-4">

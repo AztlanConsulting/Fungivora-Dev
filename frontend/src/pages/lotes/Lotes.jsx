@@ -347,7 +347,7 @@ function Lotes() {
                     onClick={previsualizarRegistro}
                     disabled={guardando}
                   >
-                    {guardando ? "Cargando..." : "Registrar"}
+                    {guardando ? "Cargando..." : "Finalizar"}
                   </Button> 
               </div>
               <div className="order-2 md:order-1">

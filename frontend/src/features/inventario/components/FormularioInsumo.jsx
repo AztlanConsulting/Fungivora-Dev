@@ -6,6 +6,15 @@ import Button from "../../../shared/components/ui/buttons/botones";
 import { colores } from "../../../shared/components/ui/basics/colores";
 
 const FormularioInsumo = ({ nuevaFila, handleNuevaFila, handleGuardarInsumo, unidades, errorValidacion }) => {
+
+  const handleCambioNumero = (campo, valor) => {
+    const regex = /^\d{0,6}(\.\d{0,2})?$/;
+    
+    if (regex.test(valor)) {
+      handleNuevaFila(campo, valor);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-5">
       <div className="mb-3">
@@ -26,7 +35,7 @@ const FormularioInsumo = ({ nuevaFila, handleNuevaFila, handleGuardarInsumo, uni
         <Input
           placeholder="0.00"
           value={nuevaFila.cantidad}
-          onChange={(e) => handleNuevaFila("cantidad", e.target.value)}
+          onChange={(e) => handleCambioNumero("cantidad", e.target.value)}
         />
       </div>
 
@@ -35,7 +44,7 @@ const FormularioInsumo = ({ nuevaFila, handleNuevaFila, handleGuardarInsumo, uni
         <Input
           placeholder="0.00"
           value={nuevaFila.stock_recomendado}
-          onChange={(e) => handleNuevaFila("stock_recomendado", e.target.value)}
+          onChange={(e) => handleCambioNumero("stock_recomendado", e.target.value)}
         />
       </div>
 
