@@ -39,8 +39,10 @@ function Lotes() {
     year: hoy.getFullYear().toString()
   });
 
-  const { datos, sustratos, ubicaciones, especies, especiesDisponibles,
-  getInoculosPorEspecie, cargando, error, addLote, deleteLote } = useLotes();
+  const { 
+      datos, sustratos, ubicaciones, especies, especiesDisponibles,
+      getInoculosPorEspecie, cargando, error, addLote, deleteLote 
+    } = useLotes();
   const [verFormulario, setVerFormulario] = useState(false);
   const [nuevaFila, setNuevaFila] = useState({ especie: "", tipo_sustrato: "", ubicacion_lote: "", id_inoculo: "" });
   const [errorValidacion, setErrorValidacion] = useState("");
@@ -53,15 +55,26 @@ function Lotes() {
   const [loteAEliminar, setLoteAEliminar] = useState(null);
   const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
 
-  useEffect(() => {
-    // Obtener el código de lote
-    if (paso === 2 && nuevaFila.id_inoculo) {
+useEffect(() => {
+  if (nuevaFila.id_inoculo && nuevaFila.especie) {
+    
+    const opcionesInoculo = getInoculosPorEspecie(nuevaFila.especie);
+    const seleccionado = opcionesInoculo.find(
+      opt => String(opt.value) === String(nuevaFila.id_inoculo)
+    );
+
+    if (seleccionado) {
+      const { abreviatura } = seleccionado;
       const dd = String(fecha.day).padStart(2, '0');
       const mm = String(fecha.month).padStart(2, '0');
       const yy = fecha.year.toString().slice(-2);
-      setCodigoPrevisualizacion(`LC-XX-${dd}${mm}${yy}-X`);
+
+      setCodigoPrevisualizacion(`LC-${abreviatura || "XX"}-${dd}${mm}${yy}`);
+    } else {
+      setCodigoPrevisualizacion("");
     }
-  }, [paso, nuevaFila.id_inoculo, fecha]);
+  }
+}, [nuevaFila.id_inoculo, nuevaFila.especie, fecha, getInoculosPorEspecie]);
 
   // Colores para podruccion y experimental
   const colores_tipo = {
@@ -73,14 +86,25 @@ function Lotes() {
 
   // Que cambie el valor de los inputs de select
   const handleInputChange = (setter) => (campo, valor) => {
-    const value = (valor && typeof valor === 'object' && 'value' in valor) ? String(valor.value) : (valor?.target ? valor.target.value : valor);
-    setter((prev) => ({ ...prev, [campo]: value || "" }));
+    const value = (valor && typeof valor === 'object' && 'value' in valor) 
+      ? String(valor.value) 
+      : (valor?.target ? valor.target.value : valor);
+
+    setter((prev) => {
+      const nuevoEstado = { ...prev, [campo]: value || "" };
+      if (campo === "especie") {
+        nuevoEstado.id_inoculo = "";
+        setCodigoPrevisualizacion(""); 
+      }
+      
+      return nuevoEstado;
+    });
   };
 
   // Cambiar de lotes a bloques en el registro
   const irAPasoBloques = () => {
-    if (!nuevaFila.ubicacion_lote || !nuevaFila.tipo_sustrato || !nuevaFila.id_inoculo) {
-      setErrorValidacion("Por favor, completa los datos");
+    if (!nuevaFila.especie || !nuevaFila.ubicacion_lote || !nuevaFila.tipo_sustrato) {
+      setErrorValidacion("Por favor, completa los datos del lote");
       return;
     }
     setErrorValidacion("");
@@ -117,6 +141,10 @@ function Lotes() {
 
   // Obligar a añadir al menos 1 bloque
   const previsualizarRegistro = () => {
+    if (!nuevaFila.id_inoculo) {
+      setErrorValidacion("Debes seleccionar una semilla (inóculo) para el lote");
+      return;
+    }
     if (bloquesTemporales.length === 0) {
       setErrorValidacion("Añade al menos un bloque");
       return;
@@ -285,8 +313,6 @@ function Lotes() {
             {paso === 1 ? (
               <FormCrearLote 
                 especiesDisponibles={especiesDisponibles} 
-                getInoculosPorEspecie={getInoculosPorEspecie}
-                especies={especies} 
                 sustratos={sustratos} 
                 ubicaciones={ubicaciones}
                 nuevaFila={nuevaFila} 
@@ -298,9 +324,17 @@ function Lotes() {
               />
             ) : (
               <FormCrearBloque 
-                codigo={codigoPrevisualizacion} contenedores={contenedores}
-                bloqueForm={bloqueForm} setBloqueForm={setBloqueForm}
-                handleBloqueForm={handleInputChange(setBloqueForm)} onAgregar={handleAgregarBloque} error={errorValidacion}
+                codigo={codigoPrevisualizacion} 
+                contenedores={contenedores}
+                bloqueForm={bloqueForm} 
+                setBloqueForm={setBloqueForm}
+                handleBloqueForm={handleInputChange(setBloqueForm)} 
+                onAgregar={handleAgregarBloque} 
+                error={errorValidacion}
+                especieSeleccionada={nuevaFila.especie}
+                getInoculosPorEspecie={getInoculosPorEspecie}
+                idInoculoSeleccionado={nuevaFila.id_inoculo}
+                setIdInoculoLote={handleInputChange(setNuevaFila)}
               />
             )}
           </div>

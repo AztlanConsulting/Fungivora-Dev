@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Titulo from "../../../shared/components/ui/basics/titulo";
 import Text from "../../../shared/components/ui/basics/texto";
 import { colores } from "../../../shared/components/ui/basics/colores";
@@ -6,7 +6,12 @@ import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto"
 import Button from "../../../shared/components/ui/buttons/botones";
 
 // Form para poder crear un bloque, con sus inserts
-const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, handleBloqueForm, onAgregar, error }) => {
+const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, handleBloqueForm, onAgregar, error,
+  especieSeleccionada, 
+  getInoculosPorEspecie,
+  idInoculoSeleccionado,
+  setIdInoculoLote
+ }) => {
 
   // Validar el número
   const validarNumero = (valor, limite) => {
@@ -33,6 +38,11 @@ const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, hand
     return limpio;
   };
 
+  const inoculosOpciones = useMemo(() => {
+    if (!especieSeleccionada) return [];
+    return getInoculosPorEspecie(especieSeleccionada);
+  }, [especieSeleccionada, getInoculosPorEspecie]);
+
   // Número para peso
   const handleChangePeso = (e) => {
     const valorValidado = validarNumero(e.target.value, 6);
@@ -52,6 +62,19 @@ const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, hand
       <div className="mb-3 flex justify-between items-center">
         <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "22px" }}>Crear Bloques</Text>
       </div>
+
+      <div className="rounded-xl flex flex-col gap-2">
+        <Text variante="label" style={{ color: colores.black, fontWeight: "700" }}>Semilla ({especieSeleccionada})</Text>
+        <SelectField 
+          placeholder="Selecciona el inóculo para este lote" 
+          size="forms" 
+          options={inoculosOpciones} 
+          value={idInoculoSeleccionado} 
+          onChange={(op) => setIdInoculoLote("id_inoculo", op)} 
+        />
+      </div>
+
+      <hr className="border-gray-100" />
 
         {/* Insert de tamaño - contenedores*/}
       <div className="flex flex-col gap-2">
