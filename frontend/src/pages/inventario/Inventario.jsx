@@ -47,9 +47,16 @@ const Inventario = () => {
     }
 
     const cantidadActual = parseFloat(modalEdicion.insumo.cantidad) || 0;
+    if (tipoOperacion === "reduccion" && cambio > cantidadActual) {
+      setErrorModal(`Stock insuficiente (Disponible: ${cantidadActual})`);
+      return;
+    }
 
-    let nuevaCantidad = tipoOperacion === "incremento" ? cantidadActual + cambio : cantidadActual - cambio;
-    nuevaCantidad = Math.max(0, parseFloat(nuevaCantidad.toFixed(2)));
+    let nuevaCantidad = tipoOperacion === "incremento" 
+      ? cantidadActual + cambio 
+      : cantidadActual - cambio;
+    
+    nuevaCantidad = parseFloat(nuevaCantidad.toFixed(2));
 
     const exito = await updateInsumo(modalEdicion.insumo.id_insumo, { cantidad: nuevaCantidad });
     if (exito) {
