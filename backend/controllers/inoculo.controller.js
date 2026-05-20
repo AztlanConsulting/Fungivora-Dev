@@ -99,7 +99,9 @@ exports.post_crear_inoculo = async (req, res, next) => {
                 }, connection);
             }
 
-            await Inoculo.insertBitacora({ inoculoId, fecha, nota }, connection);
+            if (nota != null && nota.trim() !== "") {
+                await Inoculo.insertBitacora({ inoculoId, fecha, nota }, connection);
+            }
 
             for (const ingrediente of ingredientes) {
                 await Inoculo.updateInsumo({

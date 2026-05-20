@@ -3,38 +3,59 @@ import { colores } from "../basics/colores";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Calendar03Icon } from '@hugeicons/core-free-icons';
 
-/**
- * Componente de entrada de fecha con campos de día, mes y año.
- * Se eliminó la duplicidad de texto utilizando placeholders nativos
- * para asegurar que el número y la etiqueta no se encimen.
- */
+const hoyInicial = () => {
+    const hoy = new Date();
+    return {
+        day:   String(hoy.getDate()).padStart(2, "0"),
+        month: String(hoy.getMonth() + 1).padStart(2, "0"),
+        year:  String(hoy.getFullYear()),
+    };
+};
+
+const esFechaValida = ({ day, month, year }) => {
+    if (!day || !month || !year || String(year).length < 4) return false;
+    const d = Number(day);
+    const m = Number(month);
+    const y = Number(year);
+    if (y < 2020 || y > 2100) return false; 
+    const fecha = new Date(y, m - 1, d);
+    return (
+        fecha.getFullYear() === y &&
+        fecha.getMonth()    === m - 1 &&
+        fecha.getDate()     === d
+    );
+};
+
 const InputFecha = ({ value = {}, onChange }) => {
     const [isFocused, setIsFocused] = useState(false);
 
-    /* Función para validar la entrada: solo números y rangos lógicos
-    */
     const handleChange = (field, val) => {
-        if (!/^\d*$/.test(val)) return; // Solo permite dígitos
+        if (!/^\d*$/.test(val)) return;
 
         if (field === "day") {
             if (val.length > 2) return;
-            if (parseInt(val) > 31) return;
+            if (val.length === 2 && parseInt(val) > 31) return;
+            if (parseInt(val) === 0 && val.length === 2) return;
         }
         if (field === "month") {
             if (val.length > 2) return;
-            if (parseInt(val) > 12) return;
+            if (val.length === 2 && parseInt(val) > 12) return;
+            if (parseInt(val) === 0 && val.length === 2) return;
         }
         if (field === "year") {
             if (val.length > 4) return;
         }
+
         onChange({ ...value, [field]: val });
     };
 
-    /**
-     * Estilos base para los inputs:
-     * text-center: asegura que el número y el placeholder estén centrados.
-     * placeholder:text-gray-400: define el color del DD/MM/YYYY cuando no hay valor.
-     */
+    const handleBlur = () => {
+        setIsFocused(false);
+        if (!esFechaValida(value)) {
+            onChange(hoyInicial());
+        }
+    };
+
     const inputStyle = `
         w-full h-full bg-transparent 
         text-center outline-none 
@@ -45,30 +66,26 @@ const InputFecha = ({ value = {}, onChange }) => {
         [&::-webkit-inner-spin-button]:appearance-none
     `;
 
-    const ringColor = isFocused ? colores.azul : colores.grisMedio;
-
     return (
         <div
             className={`
                 w-80 h-10 md:w-96 md:h-12
                 bg-[#FFFFFF] rounded-md overflow-hidden transition-all flex items-stretch
-                ${isFocused ? "ring-4" : "ring-2"} ring-[var(--input-ring)]
+                ${isFocused ? "ring-4" : "ring-2"}
             `}
-            style={{ "--input-ring": isFocused ? colores.azul : colores.grisClaro }}
+            style={{ outline: "none", boxShadow: `0 0 0 ${isFocused ? "4px" : "2px"} ${isFocused ? colores.azul : colores.grisClaro}` }}
         >
-
-            {/* Icono lateral con borde divisorio */}
+            {/* Icono lateral */}
             <div
                 className="flex items-center justify-center px-3 border-r-2"
-                style={{ borderColor: colores.grisClaro, color: ringColor }}
+                style={{ borderColor: colores.grisClaro, color: isFocused ? colores.azul : colores.grisMedio }}
             >
                 <HugeiconsIcon icon={Calendar03Icon} size={26} />
             </div>
 
-            {/* Contenedor principal de los inputs */}
+            {/* Inputs */}
             <div className="flex flex-1 items-center">
 
-                {/* Campo Día */}
                 <div className="flex-1 h-full">
                     <input
                         className={inputStyle}
@@ -76,15 +93,13 @@ const InputFecha = ({ value = {}, onChange }) => {
                         value={value.day || ""}
                         onChange={(e) => handleChange("day", e.target.value)}
                         onFocus={() => setIsFocused(true)}
-                        onBlur={() => setIsFocused(false)}
+                        onBlur={handleBlur}
                         inputMode="numeric"
                     />
                 </div>
 
-                {/* Divisor Visual */}
                 <div className="w-[2px] h-full" style={{ backgroundColor: colores.grisClaro }} />
 
-                {/* Campo Mes */}
                 <div className="flex-1 h-full">
                     <input
                         className={inputStyle}
@@ -92,15 +107,13 @@ const InputFecha = ({ value = {}, onChange }) => {
                         value={value.month || ""}
                         onChange={(e) => handleChange("month", e.target.value)}
                         onFocus={() => setIsFocused(true)}
-                        onBlur={() => setIsFocused(false)}
+                        onBlur={handleBlur}
                         inputMode="numeric"
                     />
                 </div>
 
-                {/* Divisor Visual */}
                 <div className="w-[2px] h-full" style={{ backgroundColor: colores.grisClaro }} />
 
-                {/* Campo Año */}
                 <div className="flex-[1.5] h-full">
                     <input
                         className={inputStyle}
@@ -108,10 +121,11 @@ const InputFecha = ({ value = {}, onChange }) => {
                         value={value.year || ""}
                         onChange={(e) => handleChange("year", e.target.value)}
                         onFocus={() => setIsFocused(true)}
-                        onBlur={() => setIsFocused(false)}
+                        onBlur={handleBlur}
                         inputMode="numeric"
                     />
                 </div>
+
             </div>
         </div>
     );

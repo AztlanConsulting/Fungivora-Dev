@@ -98,23 +98,26 @@ export const obtenerAbreviaturaEspecie = (nombreEspecie, categorias) => {
 };
 
 /**
- * Genera el array de códigos únicos para un lote de inóculos.
+ * Genera los códigos de un lote de inóculos.
  *
- * Si cantidad = 1, devuelve un solo código sin sufijo numérico.
- * Si cantidad > 1, devuelve N códigos, cada uno con su número de repetición al final.
+ * Retorna un objeto con:
+ *   - base:  el código sin sufijo, listo para enviar al backend (que genera los sufijos).
+ *   - lista: los códigos a mostrar al usuario.
+ *            cantidad <= 1 → [base]  (un solo código, sin sufijo)
+ *            cantidad >  1 → [base-1, base-2, ..., base-N]
  *
  * Ejemplos:
- *   cantidad=1 → ["A2G-PD-120226"]
- *   cantidad=3 → ["A2G-PD-120226-1", "A2G-PD-120226-2", "A2G-PD-120226-3"]
+ *   cantidad=1 → { base: "A2G-PD-120226", lista: ["A2G-PD-120226"] }
+ *   cantidad=3 → { base: "A2G-PD-120226", lista: ["A2G-PD-120226-1", "A2G-PD-120226-2", "A2G-PD-120226-3"] }
  *
  * @param {object} params
  * @param {"semilla"|"medioLiquido"|"agar"} params.tipoCreacion
- * @param {string|null} params.tipoInoculo 
- * @param {string} params.nombreEspecie 
- * @param {Array} params.categorias 
+ * @param {string|null} params.tipoInoculo
+ * @param {string} params.nombreEspecie
+ * @param {Array} params.categorias
  * @param {{ day?: string, month?: string, year?: string }} params.fecha
- * @param {number} params.cantidad 
- * @returns {string[]} 
+ * @param {number} params.cantidad
+ * @returns {{ base: string, lista: string[] }}
  */
 export const generarCodigos = ({
   tipoCreacion,
@@ -130,10 +133,9 @@ export const generarCodigos = ({
 
   const base = `${prefijo}-${abreviatura}-${fechaStr}`;
 
-  if (!cantidad || cantidad <= 1) {
-    return [base];
-  }
+  const lista = !cantidad || cantidad <= 1
+    ? [base]
+    : Array.from({ length: cantidad }, (_, i) => `${base}-${i + 1}`);
 
-  // Genera un código por cada repetición del lote
-  return Array.from({ length: cantidad }, (_, i) => `${base}-${i + 1}`);
+  return { base, lista };
 };
