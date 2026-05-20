@@ -22,7 +22,7 @@ const MAPA_PREFIJOS = {
     agar:               "A2A",
     semilla:            "G2A",
     medioLiquido:       "L2A",
-    selloEsporas:       "PA",
+    selloEsporas:       "PA", 
     esporasSuspendidas: "PA",
     // "PA" también se usa como fallback cuando el origen es nulo o desconocido.
   },
@@ -42,6 +42,7 @@ export const normalizarTipoInoculo = (tipo) => {
   // falsos positivos si "esporas" llegara a aparecer en otros tipos.
   if (t.includes("sello"))                            return "selloEsporas";
   if (t.includes("suspend"))                          return "esporasSuspendidas";
+  if (t.includes("tejido"))                            return "tejido";
   if (t.includes("agar"))                             return "agar";
   if (t.includes("semilla"))                          return "semilla";
   if (t.includes("liquido") || t.includes("medio"))   return "medioLiquido";
@@ -53,7 +54,7 @@ export const normalizarTipoInoculo = (tipo) => {
  * Obtiene el prefijo del código según el tipo de creación y el tipo del inóculo fuente.
  *
  * @param {"semilla" | "medioLiquido" | "agar"} tipoCreacion
- * @param {"agar" | "semilla" | "medioLiquido" | null} tipoInoculo
+ * @param {"agar" | "semilla" | "medioLiquido" | "tejido" | "selloEsporas" | "esporasSuspendidas" | null} tipoInoculo
  * @returns {string} - El prefijo (ej. "A2G", "ML", "G2A", "PA")
  */
 export const obtenerPrefijo = (tipoCreacion, tipoInoculo) => {
