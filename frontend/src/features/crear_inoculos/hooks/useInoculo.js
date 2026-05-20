@@ -9,7 +9,7 @@ import insumosService from '../services/inoculos.service';
  * Semilla  → puede usar: Agar, Medio Líquido, Semilla
  */
 const TIPOS_PERMITIDOS = {
-    agar:         ['agar', 'medio liquido', 'semilla', 'prima'],
+    agar:         ['agar', 'medio liquido', 'semilla', 'prima', 'sello de esporas', 'esporas suspendidas'],
     medioliquido: ['agar', 'medio liquido'],
     semilla:      ['agar', 'medio liquido', 'semilla'],
 };
