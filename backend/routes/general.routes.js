@@ -8,6 +8,7 @@ const inoculoRoutes = require('./inoculo.routes');
 const categoriaRoutes = require('./categoria.routes');
 const lotesRoutes = require('./lotes.routes');
 const bloqueRoutes = require('./bloque.routes');
+const dashboardRoutes = require('./dashboard.routes');
 
 // Inicio de sesión
 router.use('/login', loginRoutes);
@@ -17,5 +18,6 @@ router.use('/inoculos', inoculoRoutes);
 router.use('/categorias', categoriaRoutes);
 router.use('/lotes', lotesRoutes);
 router.use('/bloques', bloqueRoutes);
+router.use('/dashboard', dashboardRoutes);
 
 module.exports = router;

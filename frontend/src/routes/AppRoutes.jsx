@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import {
-    FirstPage, Login, Usuario, Inventario,
+    FirstPage, HomePage, Login, Usuario, Inventario,
     Lotes, Lote, BibliotecaGenetica
 } from "../pages";
 import { MainLayout, RutaProtegida } from "../shared/components/layout";
@@ -25,6 +25,7 @@ export default function AppRoutes() {
             >
                 {/* Ruta home */}
                 <Route path="/first" element={<FirstPage />} />
+                <Route path="/home" element={<HomePage />} />
 
                 {/* Ruta lotes */}
                 <Route path="/lotes" element={<Lotes />} />
@@ -51,7 +52,7 @@ export default function AppRoutes() {
                     }
                 />
 
-                <Route path="*" element={<Navigate to="/first" />} />
+                <Route path="*" element={<Navigate to="/home" />} />
             </Route>
         </Routes>
     );

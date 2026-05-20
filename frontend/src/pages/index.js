@@ -1,4 +1,5 @@
 export { default as FirstPage } from "./home/First_Page";
+export { default as HomePage } from "./home/HomePage";
 export { default as Inventario } from "./inventario/Inventario";
 export { default as Lotes } from "./lotes/Lotes";
 export { default as Lote } from "./lotes/Lote";

@@ -23,7 +23,7 @@ describe('Pruebas de navegacion - Configuracion', () => {
     })
 
     it('Los links estan en el componente', () => {
-        const rutas = ['/first', '/lotes', '/inventario', '/inoculos']
+        const rutas = ['/home', '/lotes', '/inventario', '/inoculos']
 
         rutas.forEach(ruta => {
             const link = document.querySelector(`a[href="${ruta}"]`)
@@ -37,7 +37,7 @@ describe('Pruebas de navegacion - Configuracion', () => {
         const linkInventario = screen.getByText(/inventario/i).closest('a')
         const linkBiblioteca = screen.getByText(/biblioteca genética/i).closest('a')
 
-        expect(linkInicio).toHaveAttribute('href', '/first')
+        expect(linkInicio).toHaveAttribute('href', '/home')
         expect(linkLotes).toHaveAttribute('href', '/lotes')
         expect(linkInventario).toHaveAttribute('href', '/inventario')
         expect(linkBiblioteca).toHaveAttribute('href', '/inoculos')
@@ -64,7 +64,7 @@ describe('Pruebas de navegacion - Funcionalidad', () => {
 
         await user.click(linkInicio)
 
-        expect(window.location.pathname).toBe('/first')
+        expect(window.location.pathname).toBe('/home')
     })
 
     it('El usuario se mueve a Inventario', async () => {

@@ -164,7 +164,7 @@ exports.post_batch = async (req, res) => {
             // Ciclos para tener tantos bloques como estos sean añadidos
             for (const b of bloques) {
                 const numBloques = Number(b.cantidad) || 1;
-                
+
                 for (let i = 0; i < numBloques; i++) {
                     promesasBloques.push(
                         Bloque.crear_bloque({
@@ -226,7 +226,7 @@ exports.actualizar_fase = async (req, res) => {
 exports.get_batch_by_id = async (req, res) => {
     const { id_lote } = req.query;
     try {
-        const lote = await Lote.findOne({ where: { id_lote: id_lote } }); 
+        const lote = await Lote.findOne({ where: { id_lote: id_lote } });
         res.json(lote);
     } catch (error) {
         res.status(500).send(error.message);
@@ -241,7 +241,7 @@ exports.get_batch_by_id = async (req, res) => {
 exports.get_especies_unicas = async (req, res) => {
     try {
         const inoculos = await Lotes.fetch_inoculos_disponibles();
-        
+
         // Especies sin repetir
         const especiesUnicas = [...new Set(inoculos.map(i => i.especie))];
 
@@ -282,6 +282,29 @@ exports.delete_batch = async (req, res) => {
             success: false,
             message: 'Error al eliminar el lote',
             error: error.message
+        });
+    }
+};
+
+exports.revisar_lotes = async (req, res, next) => {
+    try {
+        const { ids } = req.body;
+
+        if (!ids || !Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({
+                message: "Ids inválidos"
+            });
+        }
+
+        await Lotes.revision_lotes(ids);
+        return res.status(200).json({
+            message: "Lotes revisados correctamente"
+        });
+    } catch (err) {
+        console.error("Error en revisar_lotes:", err);
+
+        return res.status(500).json({
+            message: "Error marcando lotes como revisados"
         });
     }
 };

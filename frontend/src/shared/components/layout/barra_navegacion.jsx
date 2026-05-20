@@ -70,7 +70,7 @@ const Barra_navegacion = () => {
 
                     {/* Home */}
                     <NavLink
-                        to="/first"
+                        to="/home"
                         className={({ isActive }) =>
                             `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
                         }>
