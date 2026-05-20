@@ -68,7 +68,7 @@ const Inventario = () => {
   // Guardar el nuevo insumo
   const handleGuardarInsumo = async () => {
     if (!nuevaFila.nombre || !nuevaFila.cantidad || !nuevaFila.unidad) {
-      setErrorValidacion("Completa los campos obligatorios");
+      setErrorValidacion("Completa todos los campos");
       return;
     }
     const exito = await addInsumo(nuevaFila);
@@ -106,7 +106,7 @@ const Inventario = () => {
         </div>
       </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 items-stretch">
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Columnas*/}
           <div className={`w-full lg:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} lg:block`}>
             <TablaInventario 
@@ -120,7 +120,7 @@ const Inventario = () => {
           </div>
 
           {/* Formulario */}
-          <div className={`w-full lg:w-[440px] bg-white rounded-[32px] shadow-sm border p-8 ${verFormulario ? "block" : "hidden"} lg:block`}>
+          <div className={`w-full lg:w-[440px] bg-white rounded-[32px] shadow-sm border p-8 ${verFormulario ? "block" : "hidden"} lg:block lg:mt-0`}>
             <FormularioInsumo 
               nuevaFila={nuevaFila}
               handleNuevaFila={handleNuevaFila}
