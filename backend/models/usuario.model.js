@@ -21,6 +21,32 @@ class Usuario {
 
     return filas[0];
   };
+
+  //Se encarga de solo tener la ID, para comparativas
+  static getByid = async (id_usuario) => {
+    const [User] = await db.execute(
+      'SELECT id_usuario, nombre_usuario FROM Usuarios WHERE id_usuario = ?',
+       [id_usuario]
+    );
+    return User[0]
+  } 
+
+  //se encarga del delete del usuario, se maneja por id
+  static deleateByid =async (id_usuario) =>{
+    const [deleteUser] = await db.execute(
+      'DELETE FROM Usuarios WHERE id_usuario = ?',
+      [id_usuario]
+    )
+    return deleteUser
+  }
+
+  //obtiene la lista de todos los usuarios
+  static getAllusers = async () => {
+    const [Users] = await db.execute(
+      'SELECT id_usuario, nombre_usuario, correo_usuario  FROM Usuarios'
+    );
+    return Users;
+  } 
 }
 
 module.exports = Usuario;
