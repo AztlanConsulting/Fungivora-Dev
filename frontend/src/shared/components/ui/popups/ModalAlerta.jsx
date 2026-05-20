@@ -32,7 +32,7 @@ const VARIANTES = {
     },
 };
 
-const AUTO_DISMISS_MS = 4000; // 4 segundos
+const AUTO_DISMISS_MS = 6000; // 6 segundos
 
 /**
  * ModalAlerta

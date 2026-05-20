@@ -70,28 +70,34 @@ const useIngredientesSemilla = ({
   const aguaInsumo = insumos.find((i) => i.nombre.toLowerCase().includes("agua"));
 
   const items = [
-    {
-      nombre: tipoMijo || "Mijo",
-      unidad: normalizarUnidad(mijoInsumo?.unidad) || "ml",
-      value: cantMijo,
-      onChange: (e) => setCantMijo(e.target.value),
-      cantidad: parseFloat(mijoInsumo?.cantidad) || 10000,
-    },
-    {
-      nombre: "Agua",
-      unidad: normalizarUnidad(aguaInsumo?.unidad) || "ml",
-      value: cantAgua,
-      onChange: (e) => setCantAgua(e.target.value),
-      cantidad: parseFloat(aguaInsumo?.cantidad) || 5000,
-    },
-    {
-      nombre: codigoInoculo || "Inóculo",
-      unidad: "ml",
-      value: cantInoculo,
-      onChange: (e) => setCantInoculo(e.target.value),
-      cantidad: inoculoDisponible,
-    },
-  ];
+  {
+    id:       mijoInsumo?.id_insumo ?? null,
+    tipo:     "ingrediente",
+    nombre: tipoMijo || "Mijo",
+    unidad: normalizarUnidad(mijoInsumo?.unidad) || "ml",
+    value: cantMijo,
+    onChange: (e) => setCantMijo(e.target.value),
+    cantidad: parseFloat(mijoInsumo?.cantidad) || 10000,
+  },
+  {
+    id:       aguaInsumo?.id_insumo ?? null,
+    tipo:     "ingrediente",
+    nombre: "Agua",
+    unidad: normalizarUnidad(aguaInsumo?.unidad) || "ml",
+    value: cantAgua,
+    onChange: (e) => setCantAgua(e.target.value),
+    cantidad: parseFloat(aguaInsumo?.cantidad) || 5000,
+  },
+  {
+    id:       null,
+    tipo:     "inoculo",
+    nombre: codigoInoculo || "Inóculo",
+    unidad: "ml",
+    value: cantInoculo,
+    onChange: (e) => setCantInoculo(e.target.value),
+    cantidad: inoculoDisponible,
+  },
+];
 
   return {
     items,
