@@ -4,6 +4,7 @@ import Text from "../../../shared/components/ui/basics/texto";
 import { colores } from "../../../shared/components/ui/basics/colores";
 import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
 import Button from "../../../shared/components/ui/buttons/botones";
+import Input from "../../../shared/components/ui/inputs/input_texto";
 
 // Form para poder crear un bloque, con sus inserts
 const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, handleBloqueForm, onAgregar, error,
@@ -85,13 +86,12 @@ const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, hand
         {/* Insert de peso*/}
       <div className="flex flex-col gap-2">
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Peso</Text>
-        <input 
+        <Input
           type="text" 
           inputMode="decimal"
           style={{fontStyle: 'italic'}} 
           placeholder="Ingresa el peso (g)" 
           value={bloqueForm.peso_gr} 
-          className="border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 text-sm" 
           onChange={handleChangePeso} 
         />
       </div>
@@ -105,13 +105,12 @@ const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, hand
         {/* Insert de cantidad*/}
       <div className="flex flex-col gap-2">
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Cantidad</Text>
-        <input 
+        <Input 
           type="text" 
           inputMode="decimal"
           style={{fontStyle: 'italic'}} 
           placeholder="Ingresa cantidad" 
           value={bloqueForm.cantidad} 
-          className="border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 text-sm" 
           onChange={handleChangeCantidad} 
         />
       </div>
