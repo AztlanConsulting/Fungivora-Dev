@@ -56,11 +56,15 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
         return fases[id_fase] ? fases[id_fase].label : "Desconocida";
     };
 
-    const guardarCambios = async (bloquesActualizados, nuevaFase) => {
+    const guardarCambios = async (bloquesActualizados, nuevaFaseIndex) => {
         try {
-            const fase = fases[nuevaFase] ? fases[nuevaFase].label : "Inoculación";
-            await LoteService.updateFaseLote(id_lote, fase);
+
+            const nombreFase = fases[nuevaFaseIndex] ? fases[nuevaFaseIndex].label : "Inoculación";
+
+            await LoteService.updateFaseLote(id_lote, nombreFase);
+            
             await LoteService.updateBloquesMasivo(id_lote, bloquesActualizados);
+            
             return { success: true };
         } catch (err) {
             return { success: false, error: err.message };

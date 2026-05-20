@@ -178,6 +178,19 @@ class Lotes {
             throw err;
         }
     }
+
+    static async actualizar_ubicacion(id_lote, nuevaUbicacion) {
+        try {
+            return await db.execute(`
+                UPDATE Lotes 
+                SET ubicacion_lote = ? 
+                WHERE id_lote = ?
+            `, [nuevaUbicacion, id_lote]);
+        } catch (err) {
+            console.error("Error en actualizar_ubicacion model:", err);
+            throw err;
+        }
+    }
 }
 
 module.exports = Lotes;
