@@ -14,6 +14,8 @@ const PanelLista = ({
     onVerTodo,
     mostrarChecks
 }) => {
+    const cantidadLotes = lotes ? lotes.length : 0;
+    const stringLotes = cantidadLotes === 1 ? 'lote' : 'lotes';
     const seleccionados = Object.values(checked).some(Boolean);
     return (
         <div className="bg-white rounded-2xl p-5 flex-1 min-w-0 shadow-sm">
@@ -21,7 +23,7 @@ const PanelLista = ({
                 <div className="flex items-center gap-2">
                     {icono}
                     <Text variante="subtitle" style={{ color: colores.azul, fontWeight: 600 }}>
-                        {titulo}
+                        {titulo} {cantidadLotes > 0 && `(${cantidadLotes} ${stringLotes})`}
                     </Text>
                 </div>
                 <button onClick={onVerTodo} className="flex items-center gap-1 hover:opacity-70 transition-opacity">
@@ -33,24 +35,31 @@ const PanelLista = ({
                     </svg>
                 </button>
             </div>
-            <div className="max-h-[160px] overflow-y-auto pr-5">
-                {items.map(item => {
-                    const lote = lotes?.find(
-                        lote => lote.id_lote === item.id
-                    );
-
-                    return (
-                        <FilaCheck
-                            key={item.id}
-                            item={item}
-                            lote={lote}
-                            checked={!!checked[item.id]}
-                            onToggle={onToggle}
-                            mostrarCheck={mostrarChecks}
-                        />
-                    );
-                })}
-            </div>
+            {items.length === 0 ? (
+                <div className="flex flex-col items-center gap-2 mt-10">
+                    <Text variante="small" style={{ color: colores.gris }}>
+                        No hay {titulo.toLowerCase()} por el momento
+                    </Text>
+                </div>
+            ) : (
+                <div className="max-h-[160px] overflow-y-auto pr-5">
+                    {items.map(item => {
+                        const lote = lotes?.find(
+                            lote => lote.id_lote === item.id
+                        );
+                        return (
+                            <FilaCheck
+                                key={item.id}
+                                item={item}
+                                lote={lote}
+                                checked={!!checked[item.id]}
+                                onToggle={onToggle}
+                                mostrarCheck={mostrarChecks}
+                            />
+                        );
+                    })}
+                </div>
+            )}
             <div className="flex justify-end">
                 {seleccionados && (
                     <button
