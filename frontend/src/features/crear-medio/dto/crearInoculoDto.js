@@ -6,7 +6,7 @@ export const crearInoculoDTO = ({
     cantidadFinal,
     cantidad,
     nota,
-    unidad = "gr",
+    unidad = "ml",
     inoculoSeleccionado,
     valoresComposicion,
     itemsComposicion,
