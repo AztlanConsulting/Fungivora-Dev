@@ -59,11 +59,12 @@ class Lotes {
     //  Metodo para actualizar la fase del lote
     static async actualizar_fase(id_lote, nuevaFase) {
         try {
+            const activo = (nuevaFase === "Finalización") ? 0 : 1;
             return await db.execute(`
                 UPDATE Lotes 
-                SET fase = ? 
+                SET fase = ?, activo = ?
                 WHERE id_lote = ?
-            `, [nuevaFase, id_lote]);
+            `, [nuevaFase, activo, id_lote]);
         } catch (err) {
             console.error("Error en actualizar_fase model:", err);
             throw err;
