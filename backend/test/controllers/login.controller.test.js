@@ -4,7 +4,10 @@ const { generarToken } = require('../../util/jwtUtils');
 
 // Mocks de la base y los tokens
 jest.mock('../../models/usuario.model');
-jest.mock('../../util/jwtUtils');
+jest.mock('../../util/jwtUtils', () => ({ generarToken: jest.fn() }));
+
+jest.mock('bcrypt');
+const bcrypt = require('bcrypt');
 
 // Helper que crea req/res falsos
 const mockRes = () => {
@@ -18,8 +21,8 @@ describe('Login Controller — post_login', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         // Silencia los console.errors y los console.log intencionales
-        jest.spyOn(console, 'error').mockImplementation(() => {});
-        jest.spyOn(console, 'log').mockImplementation(() => {});
+        jest.spyOn(console, 'error').mockImplementation(() => { });
+        jest.spyOn(console, 'log').mockImplementation(() => { });
     });
 
     // Cuando el usuario/contraseña no existe de ninguna forma en la base de datos
@@ -32,7 +35,7 @@ describe('Login Controller — post_login', () => {
         await post_login(req, res);
 
         expect(res.status).toHaveBeenCalledWith(404);
-        expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ 
+        expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
             error: 'identificador', //El identificador es usuario o contraseña
             msg: "El usuario o correo no están registrados"
         }));
@@ -42,16 +45,18 @@ describe('Login Controller — post_login', () => {
     it('401 Unauthorized - la contraseña es incorrecta', async () => {
         Usuario.fetch_one.mockResolvedValue({
             nombre_usuario: 'testuser',
-            contrasena_usuario: 'correcta' 
+            contrasena_usuario: 'correcta'
         });
 
-        const req = { body: { nombre_usuario: 'testuser', contrasena: 'incorrecta' } }; 
+        bcrypt.compare.mockResolvedValue(false);
+
+        const req = { body: { nombre_usuario: 'testuser', contrasena: 'incorrecta' } };
         const res = mockRes();
 
         await post_login(req, res);
 
         expect(res.status).toHaveBeenCalledWith(401);
-        expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ 
+        expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
             error: 'password',
             msg: "Contraseña incorrecta"
         }));
@@ -66,6 +71,7 @@ describe('Login Controller — post_login', () => {
             is_user_admin: 1
         };
         Usuario.fetch_one.mockResolvedValue(mockUser);
+        bcrypt.compare.mockResolvedValue(true);
         generarToken.mockReturnValue('token_valido_xyz');
 
         const req = { body: { nombre_usuario: 'admin', contrasena: 'secret' } };
