@@ -74,7 +74,8 @@ const useLotes = () => {
             )
             .map(i => ({
                 value: i.id_inoculo,
-                label: i.codigo_fungivora 
+                label: i.codigo_fungivora,
+                abreviatura: i.abreviatura 
             }));
     }, [inoculosRaw]);
 

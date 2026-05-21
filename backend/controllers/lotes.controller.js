@@ -205,9 +205,15 @@ exports.actualizar_fase = async (req, res) => {
         const { nuevaFase } = req.body;
         await Lotes.actualizar_fase(id_lote, nuevaFase);
 
+        const fasesGranja = ["Fructificación", "Cosecha 1", "Cosecha 2", "Finalización"];
+        
+        if (fasesGranja.includes(nuevaFase)) {
+            await Lotes.actualizar_ubicacion(id_lote, "Granja");
+        }
+
         res.status(200).json({
             success: true,
-            message: 'Fase del lote actualizada con éxito'
+            message: 'Fase (y ubicación si aplica) actualizada con éxito'
         });
     } catch (error) {
         console.error("Error en actualizar_fase controller:", error);

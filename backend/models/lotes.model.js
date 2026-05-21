@@ -59,11 +59,12 @@ class Lotes {
     //  Metodo para actualizar la fase del lote
     static async actualizar_fase(id_lote, nuevaFase) {
         try {
+            const activo = (nuevaFase === "Finalización") ? 0 : 1;
             return await db.execute(`
                 UPDATE Lotes 
-                SET fase = ? 
+                SET fase = ?, activo = ?
                 WHERE id_lote = ?
-            `, [nuevaFase, id_lote]);
+            `, [nuevaFase, activo, id_lote]);
         } catch (err) {
             console.error("Error en actualizar_fase model:", err);
             throw err;
@@ -75,14 +76,16 @@ class Lotes {
         try {
             const [filas] = await db.execute(`
                 SELECT
-                    id_inoculo,
-                    codigo_fungivora,
-                    especie,
-                    cantidad_disponible,
-                    unidad
-                FROM Inoculos
-                WHERE cantidad_disponible > 0
-                ORDER BY fecha DESC
+                    i.id_inoculo,
+                    i.codigo_fungivora,
+                    i.especie,
+                    i.cantidad_disponible,
+                    i.unidad,
+                    c.abreviatura_opcion AS abreviatura
+                FROM Inoculos i
+                LEFT JOIN Categorias c ON i.especie = c.nombre_opcion
+                WHERE i.cantidad_disponible > 0
+                ORDER BY i.fecha DESC
             `);
             return filas;
         } catch (err) {
@@ -173,6 +176,19 @@ class Lotes {
             `, ids);
         } catch (err) {
             console.error("Error en revision_lotes:", err);
+            throw err;
+        }
+    }
+
+    static async actualizar_ubicacion(id_lote, nuevaUbicacion) {
+        try {
+            return await db.execute(`
+                UPDATE Lotes 
+                SET ubicacion_lote = ? 
+                WHERE id_lote = ?
+            `, [nuevaUbicacion, id_lote]);
+        } catch (err) {
+            console.error("Error en actualizar_ubicacion model:", err);
             throw err;
         }
     }
