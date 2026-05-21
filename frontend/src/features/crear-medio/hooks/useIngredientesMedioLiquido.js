@@ -32,11 +32,11 @@ const useIngredientesMedioLiquido = ({ carbohidrato = "", inoculoDisponible = 0 
   const [loading,  setLoading]  = useState(true);
   const [error,    setError]    = useState(null);
 
-  const [agua,            setAgua]            = useState("");
-  const [peptona,         setPeptona]         = useState("");
-  const [extracto,        setExtracto]        = useState("");
+  const [agua,             setAgua]             = useState("");
+  const [peptona,          setPeptona]          = useState("");
+  const [extracto,         setExtracto]         = useState("");
   const [carbohidratoCant, setCarbohidratoCant] = useState("");
-  const [inoculoCant,     setInoculoCant]     = useState("");
+  const [cantInoculo,      setCantInoculo]      = useState("");
 
   useEffect(() => {
     insumosService.getMaterialesInsumos()
@@ -60,6 +60,8 @@ const useIngredientesMedioLiquido = ({ carbohidrato = "", inoculoDisponible = 0 
 
   const items = [
     {
+      id:       aguaInsumo?.id_insumo ?? null,
+      tipo:     "ingrediente",
       nombre:   "Agua",
       unidad:   normalizarUnidad(aguaInsumo?.unidad) || "ml",
       value:    agua,
@@ -67,6 +69,8 @@ const useIngredientesMedioLiquido = ({ carbohidrato = "", inoculoDisponible = 0 
       cantidad: parseFloat(aguaInsumo?.cantidad) || 5000,
     },
     {
+      id:       peptonaInsumo?.id_insumo ?? null,
+      tipo:     "ingrediente",
       nombre:   "Peptona",
       unidad:   normalizarUnidad(peptonaInsumo?.unidad) || "ml",
       value:    peptona,
@@ -74,6 +78,8 @@ const useIngredientesMedioLiquido = ({ carbohidrato = "", inoculoDisponible = 0 
       cantidad: parseFloat(peptonaInsumo?.cantidad) || 500,
     },
     {
+      id:       extractoInsumo?.id_insumo ?? null,
+      tipo:     "ingrediente",
       nombre:   "Extracto de Malta",
       unidad:   normalizarUnidad(extractoInsumo?.unidad) || "ml",
       value:    extracto,
@@ -83,6 +89,8 @@ const useIngredientesMedioLiquido = ({ carbohidrato = "", inoculoDisponible = 0 
     // El carbohidrato solo aparece cuando se ha seleccionado uno
     ...(carbohidrato
       ? [{
+          id:       carbohidratoInsumo?.id_insumo ?? null,
+          tipo:     "ingrediente",
           nombre:   LABEL_CARBOHIDRATO[carbohidrato] ?? carbohidrato,
           unidad:   normalizarUnidad(carbohidratoInsumo?.unidad) || "ml",
           value:    carbohidratoCant,
@@ -92,17 +100,19 @@ const useIngredientesMedioLiquido = ({ carbohidrato = "", inoculoDisponible = 0 
       : []
     ),
     {
+      id:       null,
+      tipo:     "inoculo",
       nombre:   "Inóculo",
       unidad:   "ml",
-      value:    inoculoCant,
-      onChange: (e) => setInoculoCant(e.target.value),
+      value:    cantInoculo,
+      onChange: (e) => setCantInoculo(e.target.value),
       cantidad: inoculoDisponible,
     },
   ];
 
   return {
     items,
-    valores: { agua, peptona, extracto, carbohidratoCant, inoculoCant },
+    valores: { agua, peptona, extracto, carbohidratoCant, cantInoculo },
     loading,
     error,
   };
