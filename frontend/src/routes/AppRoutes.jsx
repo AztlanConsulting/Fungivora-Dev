@@ -7,6 +7,7 @@ import { MainLayout, RutaProtegida } from "../shared/components/layout";
 import CrearAgar from "../pages/inoculos/agar/CrearAgar";
 import FormMedioLiquido from "../pages/inoculos/medioLiquido/FormMedioLiquido";
 import CrearSemilla from "../pages/inoculos/semillas/CrearSemillas";
+import MiComponenteVisual from "../pages/raphael/prueba";
 
 export default function AppRoutes() {
     return (
@@ -51,6 +52,9 @@ export default function AppRoutes() {
                         </RutaProtegida>
                     }
                 />
+                                
+                {/* Ruta prueba de rapahel */}
+                 <Route path="/raphael" element={<MiComponenteVisual />} />
 
                 <Route path="*" element={<Navigate to="/home" />} />
             </Route>
