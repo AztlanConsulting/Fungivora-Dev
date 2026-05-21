@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import insumosService from "../services/inoculos.service";
+import { COMPOSICION_MEDIO_LIQUIDO } from "../types/inoculos.type";
 
 const normalizarUnidad = (unidad = "") => {
   const u = unidad.toLowerCase();
@@ -25,18 +26,41 @@ const LABEL_CARBOHIDRATO = {
  * Gestiona los ingredientes de un medio líquido:
  *   Agua · Peptona · Extracto de Malta · Carbohidrato (dinámico) · Inóculo
  *
- * El carbohidrato aparece en la lista solo cuando el form padre ha seleccionado uno.
+ * Los campos se autocompletan con los valores de COMPOSICION_MEDIO_LIQUIDO
+ * en cuanto se conoce el tipo del inóculo padre. La peptona se deja en
+ * blanco para que el usuario la rellene manualmente.
  */
-const useIngredientesMedioLiquido = ({ carbohidrato = "", inoculoDisponible = 0 }) => {
-  const [insumos,  setInsumos]  = useState([]);
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState(null);
+const useIngredientesMedioLiquido = ({
+  carbohidrato      = "",
+  inoculoDisponible = 0,
+  tipoInoculo       = null,
+}) => {
+  const [insumos, setInsumos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState(null);
 
-  const [agua,             setAgua]             = useState("");
-  const [peptona,          setPeptona]          = useState("");
-  const [extracto,         setExtracto]         = useState("");
-  const [carbohidratoCant, setCarbohidratoCant] = useState("");
-  const [cantInoculo,      setCantInoculo]      = useState("");
+  const sugeridos = useMemo(() => ({
+    agua:         String(COMPOSICION_MEDIO_LIQUIDO.agua),
+    peptona:      String(COMPOSICION_MEDIO_LIQUIDO.peptona),
+    extracto:     String(COMPOSICION_MEDIO_LIQUIDO.extractoMalta),
+    carbohidrato: String(COMPOSICION_MEDIO_LIQUIDO.carbohidrato),
+    inoculo:      String(COMPOSICION_MEDIO_LIQUIDO.inoculo[tipoInoculo] ?? ""),
+  }), [tipoInoculo]);
+
+  const [agua,             setAgua]             = useState(sugeridos.agua);
+  const [peptona,          setPeptona]          = useState(sugeridos.peptona);
+  const [extracto,         setExtracto]         = useState(sugeridos.extracto);
+  const [carbohidratoCant, setCarbohidratoCant] = useState(sugeridos.carbohidrato);
+  const [cantInoculo,      setCantInoculo]      = useState(sugeridos.inoculo);
+
+  // Resincronizar cuando cambia el tipo del inóculo padre
+  useEffect(() => {
+    setAgua(sugeridos.agua);
+    setPeptona(sugeridos.peptona);
+    setExtracto(sugeridos.extracto);
+    setCarbohidratoCant(sugeridos.carbohidrato);
+    setCantInoculo(sugeridos.inoculo);
+  }, [sugeridos]);
 
   useEffect(() => {
     insumosService.getMaterialesInsumos()
@@ -55,8 +79,8 @@ const useIngredientesMedioLiquido = ({ carbohidrato = "", inoculoDisponible = 0 
   const peptonaInsumo  = buscar("peptona");
   const extractoInsumo = buscar("extracto");
 
-  const claveCarbohidrato    = CLAVE_CARBOHIDRATO[carbohidrato] ?? "";
-  const carbohidratoInsumo   = claveCarbohidrato ? buscar(claveCarbohidrato) : null;
+  const claveCarbohidrato  = CLAVE_CARBOHIDRATO[carbohidrato] ?? "";
+  const carbohidratoInsumo = claveCarbohidrato ? buscar(claveCarbohidrato) : null;
 
   const items = [
     {

@@ -6,6 +6,19 @@ export const BOLSAS = {
 export const cantAgar = { agar: 150 };
 export const cantMedioLiquido = 600;
 
+// Cantidades predeterminadas para crear un medio líquido (en ml).
+// El inóculo depende del tipo del inóculo padre seleccionado.
+export const COMPOSICION_MEDIO_LIQUIDO = {
+  agua:          600,
+  peptona:       1,
+  extractoMalta: 1,
+  carbohidrato:  7.5,
+  inoculo: {
+    agar:         1,
+    medioLiquido: 10,
+  },
+};
+
 export const TAMANOS_COMPOSICION = {
     cantIngredientes: {
         [BOLSAS.chico]: { agua: 60, mijo: 100 },
