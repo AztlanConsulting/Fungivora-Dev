@@ -1,6 +1,6 @@
 import React from "react";
 import Titulo from "../../../shared/components/ui/basics/titulo";
-import CrearMedioLiquido from "../../../features/crear_inoculos/components/FormMedioLiquido";
+import CrearMedioLiquido from "../../../features/crear-medio/components/FormMedioLiquido";
 
 const FormMedioLiquido = () => {
   return (
@@ -10,5 +10,5 @@ const FormMedioLiquido = () => {
     </div>
   );
 };
- 
+
 export default FormMedioLiquido;
