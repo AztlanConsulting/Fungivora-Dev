@@ -65,7 +65,7 @@ const FormAgar = () => {
   } = useIngredientesAgar({ inoculoDisponible, codigoInoculo, tipoInoculo });
 
   // Cantidad de inóculo a usar (parseada — acepta coma decimal del input)
-  const cantInoculo = parseFloat(String(valoresComposicion?.inoculoCant ?? "").replace(",", ".")) || 0;
+  const cantInoculo = parseFloat(String(valoresComposicion?.cantInoculo ?? "").replace(",", ".")) || 0;
 
   const opcionesEspecies = especies.map((esp) => ({
     value: esp.especie,
@@ -112,6 +112,7 @@ const FormAgar = () => {
         cantidadFinal: cantAgar.agar,
         cantidad,
         nota,
+        unidad: "ml",
         inoculoSeleccionado,
         valoresComposicion,
         itemsComposicion,

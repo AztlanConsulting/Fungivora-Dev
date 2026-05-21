@@ -111,6 +111,7 @@ const FormSemillas = () => {
         cantidadFinal,
         cantidad,
         nota,
+        unidad: "g",
         inoculoSeleccionado,
         valoresComposicion,
         itemsComposicion,
