@@ -1,6 +1,6 @@
 import React from "react";
 import Titulo from "../../../shared/components/ui/basics/titulo";
-import CrearMedioLiquido from "../../../features/crear_inoculos/components/CrearMedioLiquido";
+import CrearMedioLiquido from "../../../features/crear_inoculos/components/FormMedioLiquido";
 
 const FormMedioLiquido = () => {
   return (

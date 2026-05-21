@@ -15,7 +15,7 @@ import ResumenSemilla   from "./ResumenSemilla";
 
 import useEspecies                 from "../../inoculos/hooks/useEspecies";
 import useCategorias               from "../hooks/useCategorias";
-import useInoculo      from "../../crear_inoculos/hooks/useInoculo";
+import useInoculo      from "../hooks/useInoculo";
 import useIngredientesMedioLiquido from "../hooks/useIngredientesMedioLiquido";
 
 import {

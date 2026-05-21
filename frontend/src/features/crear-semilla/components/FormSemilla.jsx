@@ -8,21 +8,21 @@ import InputNota from "../../../shared/components/ui/inputs/input_nota";
 import Button from "../../../shared/components/ui/buttons/botones";
 import ModalAlerta from "../../../shared/components/ui/popups/ModalAlerta";
 
-import { EntradaLista } from "../../crear_inoculos/components/seleccionar_cantidades";
-import ResumenSemilla from "../../crear_inoculos/components/ResumenSemilla";
-import insumosService from "../../crear_inoculos/services/inoculos.service";
-import { BOLSAS } from "../../crear_inoculos/types/inoculos.type";
-import { crearInoculoDTO } from "../../crear_inoculos/dto/crearInoculoDto";
+import { EntradaLista } from "../../crear-medio/components/seleccionar_cantidades";
+import ResumenSemilla from "../../crear-medio/components/ResumenSemilla";
+import insumosService from "../../crear-medio/services/inoculos.service";
+import { BOLSAS } from "../../crear-medio/types/inoculos.type";
+import { crearInoculoDTO } from "../../crear-medio/dto/crearInoculoDto";
 import { traducirError } from "../../../shared/utils/traducirError";
 
 import useEspecies from "../../inoculos/hooks/useEspecies";
-import useCategorias from "../../crear_inoculos/hooks/useCategorias";
-import useInoculo from "../../crear_inoculos/hooks/useInoculo";
-import useIngredientesSemilla from "../../crear_inoculos/hooks/useIngredientesSemilla";
+import useCategorias from "../../crear-medio/hooks/useCategorias";
+import useInoculo from "../../crear-medio/hooks/useInoculo";
+import useIngredientesSemilla from "../../crear-medio/hooks/useIngredientesSemilla";
 import {
   generarCodigos,
   normalizarTipoInoculo,
-} from "../../crear_inoculos/utils/generarCodigoInoculo";
+} from "../../crear-medio/utils/generarCodigoInoculo";
 
 import Titulo from "../../../shared/components/ui/basics/titulo";
 import Text from "../../../shared/components/ui/basics/texto";
