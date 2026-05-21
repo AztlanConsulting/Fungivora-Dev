@@ -5,7 +5,7 @@ import {
 } from "../pages";
 import { MainLayout, RutaProtegida } from "../shared/components/layout";
 import CrearAgar from "../pages/inoculos/agar/CrearAgar";
-import FormMedioLiquido from "../pages/inoculos/medioLiquido/FormMedioLiquido";
+import CrearMedioLiquido from "../pages/inoculos/medioLiquido/CrearMedioLiquido";
 import CrearSemilla from "../pages/inoculos/semillas/CrearSemillas";
 
 export default function AppRoutes() {
@@ -39,7 +39,7 @@ export default function AppRoutes() {
 
                 {/* Rutas inóculos */}
                 <Route path="/inoculos/crear/agar" element={<CrearAgar />} />
-                <Route path="/inoculos/crear/medio-liquido" element={<FormMedioLiquido />} />
+                <Route path="/inoculos/crear/medio-liquido" element={<CrearMedioLiquido />} />
                 <Route path="/inoculos/crear/semilla" element={<CrearSemilla />} />
 
                 {/* Rutas con rol específico */}

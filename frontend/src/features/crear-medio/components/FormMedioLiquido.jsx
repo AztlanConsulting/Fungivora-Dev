@@ -1,43 +1,50 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
-import SelectField   from "../../../shared/components/ui/inputs/seleccionar_texto";
-import InputFecha    from "../../../shared/components/ui/inputs/input_fecha";
-import InputCantidad from "../../../shared/components/ui/inputs/input_cantidad";
-import InputNota     from "../../../shared/components/ui/inputs/input_nota";
-import Button        from "../../../shared/components/ui/buttons/botones";
-import ModalAlerta   from "../../../shared/components/ui/popups/ModalAlerta";
+import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
+import InputFecha  from "../../../shared/components/ui/inputs/input_fecha";
+import InputNota   from "../../../shared/components/ui/inputs/input_nota";
+import Button      from "../../../shared/components/ui/buttons/botones";
+import ModalAlerta from "../../../shared/components/ui/popups/ModalAlerta";
+import Text        from "../../../shared/components/ui/basics/texto";
+import { Base }    from "../../../shared/components/layout";
+import { colores } from "../../../shared/components/ui/basics/colores";
 
-import { EntradaLista } from "../../crear-medio/components/seleccionar_cantidades";
-import ResumenSemilla   from "../../crear-medio/components/ResumenSemilla";
-import insumosService   from "../../crear-medio/services/inoculos.service";
-import { crearInoculoDTO } from "../../crear-medio/dto/crearInoculoDto";
-import { traducirError }  from "../../../shared/utils/traducirError";
+import { EntradaLista } from "./seleccionar_cantidades";
+import ResumenSemilla   from "./ResumenSemilla";
+import insumosService   from "../services/inoculos.service";
+import { cantMedioLiquido } from "../types/inoculos.type";
+import { crearInoculoDTO }  from "../dto/crearInoculoDto";
+import { traducirError }    from "../../../shared/utils/traducirError";
 
-import useEspecies     from "../../inoculos/hooks/useEspecies";
-import useCategorias   from "../../crear-medio/hooks/useCategorias";
-import useInoculo      from "../../crear-medio/hooks/useInoculo";
-import useIngredientesAgar from "../../crear-medio/hooks/useIngredientesAgar";
+import useEspecies                 from "../../inoculos/hooks/useEspecies";
+import useCategorias               from "../hooks/useCategorias";
+import useInoculo                  from "../hooks/useInoculo";
+import useIngredientesMedioLiquido from "../hooks/useIngredientesMedioLiquido";
 
 import {
   generarCodigos,
   normalizarTipoInoculo,
-} from "../../crear-medio/utils/generarCodigoInoculo";
+} from "../utils/generarCodigoInoculo";
 
-import Titulo      from "../../../shared/components/ui/basics/titulo";
-import Text        from "../../../shared/components/ui/basics/texto";
-import { Base }    from "../../../shared/components/layout";
-import { colores } from "../../../shared/components/ui/basics/colores";
-import { cantAgar } from "../../crear-medio/types/inoculos.type";
+const TIPO_CREACION = "medioLiquido";    // clave interna (prefijo + filtro de inóculo)
+const TIPO_DB       = "medio liquido";   // valor literal que se guarda en la columna `tipo`
 
-const TIPO_CREACION = "agar";
+// El medio líquido siempre se crea como una sola unidad (un solo matraz por registro).
+const REPETICIONES = 1;
 
-const FormAgar = () => {
+const OPCIONES_CARBOHIDRATO = [
+  { value: "miel",        label: "Miel" },
+  { value: "jarabe_maiz", label: "Jarabe de maíz" },
+];
+
+const FormMedioLiquido = () => {
   const navigate = useNavigate();
 
-  const [especie,  setEspecie]  = useState("");
-  const [inoculo,  setInoculo]  = useState("");
-  const [cantidad, setCantidad] = useState(1);
+  const [especie,      setEspecie]      = useState("");
+  const [inoculo,      setInoculo]      = useState("");
+  const [carbohidrato, setCarbohidrato] = useState("");
+
   const hoy = new Date();
   const [fecha, setFecha] = useState({
     day:   String(hoy.getDate()).padStart(2, "0"),
@@ -49,7 +56,7 @@ const FormAgar = () => {
   const [registrando, setRegistrando] = useState(false);
   const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
 
-  const { especies,  loading: loadingEspecies,  error: errorEspecies  } = useEspecies();
+  const { especies, loading: loadingEspecies, error: errorEspecies } = useEspecies();
   const { opciones: inoculos, loading: loadingInoculos, error: errorInoculos } = useInoculo(especie, TIPO_CREACION);
   const { categorias, loading: loadingCategorias } = useCategorias();
 
@@ -62,9 +69,9 @@ const FormAgar = () => {
     items: itemsComposicion,
     valores: valoresComposicion,
     loading: loadingInsumos,
-  } = useIngredientesAgar({ inoculoDisponible, codigoInoculo, tipoInoculo });
+  } = useIngredientesMedioLiquido({ carbohidrato, inoculoDisponible, tipoInoculo });
 
-  // Cantidad de inóculo a usar (parseada — acepta coma decimal del input)
+  // Cantidad de inóculo padre a usar (parseada — acepta coma decimal)
   const cantInoculo = parseFloat(String(valoresComposicion?.cantInoculo ?? "").replace(",", ".")) || 0;
 
   const opcionesEspecies = especies.map((esp) => ({
@@ -85,34 +92,22 @@ const FormAgar = () => {
       nombreEspecie: especie,
       categorias,
       fecha,
-      cantidad,
+      cantidad: REPETICIONES,
     });
-  }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias]);
-
-  const resetForm = () => {
-    setEspecie("");
-    setInoculo("");
-    setCantidad(1);
-    setFecha({
-      day:   String(hoy.getDate()).padStart(2, "0"),
-      month: String(hoy.getMonth() + 1).padStart(2, "0"),
-      year:  String(hoy.getFullYear()),
-    });
-    setNota("");
-  };
+  }, [tipoInoculo, especie, categorias, fecha, loadingCategorias]);
 
   const handleRegistrar = async () => {
     setRegistrando(true);
     try {
       const datos = crearInoculoDTO({
-        codigo: codigos.base,
-        tipo:   TIPO_CREACION,
+        codigo:        codigos.base,
+        tipo:          TIPO_DB,
         especie,
         fecha,
-        cantidadFinal: cantAgar.agar,
-        cantidad,
+        cantidadFinal: cantMedioLiquido,   // volumen fijo de 600 ml
+        cantidad:      REPETICIONES,        // siempre 1 — medio líquido no repite
         nota,
-        unidad: "ml",
+        unidad:        "ml",
         inoculoSeleccionado,
         valoresComposicion,
         itemsComposicion,
@@ -127,7 +122,6 @@ const FormAgar = () => {
           },
         },
       });
-
     } catch (error) {
       console.error("Error en el registro:", error);
       setAlerta({ visible: true, ...traducirError(error) });
@@ -138,8 +132,6 @@ const FormAgar = () => {
 
   return (
     <>
-      <Titulo>Crear Agar</Titulo>
-
       <Base margen_arriba="mt-16 md:mt-8">
         <div className="p-6 flex flex-col gap-6">
 
@@ -175,23 +167,27 @@ const FormAgar = () => {
                     />
                   </div>
 
+                  <div className="flex flex-col gap-2">
+                    <Text variante="label" style={{ color: colores.gris }}>Carbohidrato</Text>
+                    <SelectField
+                      value={carbohidrato}
+                      onChange={(e) => setCarbohidrato(e.target.value)}
+                      placeholder="Selecciona carbohidrato"
+                      options={OPCIONES_CARBOHIDRATO}
+                      loading={loadingInsumos}
+                    />
+                  </div>
+
                 </div>
               </div>
 
-              <EntradaLista items={itemsComposicion} repeticiones={cantidad} />
+              <EntradaLista items={itemsComposicion} />
 
               <div className="bg-white rounded-[32px] shadow-sm border p-6 md:p-8 flex flex-col gap-6">
 
-                <div className="flex flex-col md:flex-row gap-8 items-start flex-wrap">
-                  <div className="flex flex-col gap-3">
-                    <Text variante="medium">Cantidad</Text>
-                    <InputCantidad value={cantidad} onChange={setCantidad} />
-                  </div>
-
-                  <div className="flex flex-col gap-3">
-                    <Text variante="medium">Fecha de creación</Text>
-                    <InputFecha value={fecha} onChange={setFecha} />
-                  </div>
+                <div className="flex flex-col gap-3">
+                  <Text variante="medium">Fecha de creación</Text>
+                  <InputFecha value={fecha} onChange={setFecha} />
                 </div>
 
                 <div className="flex flex-col gap-3">
@@ -207,7 +203,6 @@ const FormAgar = () => {
               codigoInoculo={codigoInoculo}
               composicion={itemsComposicion}
               codigos={codigos.lista}
-              cantidad={cantidad}
             />
 
           </div>
@@ -219,9 +214,9 @@ const FormAgar = () => {
             <Button
               variant="registrar"
               onClick={handleRegistrar}
-              disabled={registrando || !inoculo || !cantidad || cantidad < 1 || cantInoculo <= 0}
+              disabled={registrando || !inoculo || !carbohidrato || cantInoculo <= 0}
             >
-              {registrando ? "Registrando ..." : "Registrar"}
+              {registrando ? "Registrando..." : "Registrar"}
             </Button>
           </div>
 
@@ -238,4 +233,4 @@ const FormAgar = () => {
   );
 };
 
-export default FormAgar;
+export default FormMedioLiquido;

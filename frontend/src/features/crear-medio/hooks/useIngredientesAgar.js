@@ -38,7 +38,7 @@ const useIngredientesAgar = ({
   const [agaragar,   setAgaragar]   = useState(sugeridos.agaragar);
   const [peptona,    setPeptona]    = useState(sugeridos.peptona);
   const [extracto,   setExtracto]   = useState(sugeridos.extracto);
-  const [inoculoCant, setInoculoCant] = useState(sugeridos.inoculo);
+  const [cantInoculo, setInoculoCant] = useState(sugeridos.inoculo);
 
   useEffect(() => {
     setAgua(sugeridos.agua);
@@ -108,7 +108,7 @@ const useIngredientesAgar = ({
       nombre: codigoInoculo || "Inóculo",
       tipo:    "inoculo",
       unidad:   "ml",
-      value:    inoculoCant,
+      value:    cantInoculo,
       onChange: (e) => setInoculoCant(e.target.value),
       cantidad: inoculoDisponible,
     },
@@ -116,7 +116,7 @@ const useIngredientesAgar = ({
 
   return {
     items,
-    valores: { agua, agaragar, peptona, extracto, inoculoCant },
+    valores: { agua, agaragar, peptona, extracto, cantInoculo },
     loading,
     error,
   };
