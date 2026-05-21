@@ -4,12 +4,12 @@ import insumosService from '../services/inoculos.service';
 /**
  * Reglas de tipos permitidos por destino:
  *
- * Agar     → puede usar: Agar, Medio Líquido, Semilla, Prima
+ * Agar     → puede usar: Agar, Medio Líquido, Semilla, Tejido Vivo, Sello de Esporas, Esporas Suspendidas
  * Medio Líquido → puede usar: Agar, Medio Líquido
  * Semilla  → puede usar: Agar, Medio Líquido, Semilla
  */
 const TIPOS_PERMITIDOS = {
-    agar:         ['agar', 'medio liquido', 'semilla', 'prima'],
+    agar:         ['agar', 'medio liquido', 'semilla', 'tejido vivo', 'sello de esporas', 'esporas suspendidas'],
     medioliquido: ['agar', 'medio liquido'],
     semilla:      ['agar', 'medio liquido', 'semilla'],
 };
