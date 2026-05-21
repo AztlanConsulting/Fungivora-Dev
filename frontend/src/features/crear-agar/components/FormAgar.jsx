@@ -64,6 +64,9 @@ const FormAgar = () => {
     loading: loadingInsumos,
   } = useIngredientesAgar({ inoculoDisponible, codigoInoculo, tipoInoculo });
 
+  // Cantidad de inóculo a usar (parseada — acepta coma decimal del input)
+  const cantInoculo = parseFloat(String(valoresComposicion?.inoculoCant ?? "").replace(",", ".")) || 0;
+
   const opcionesEspecies = especies.map((esp) => ({
     value: esp.especie,
     label: esp.especie,
@@ -215,7 +218,7 @@ const FormAgar = () => {
             <Button
               variant="registrar"
               onClick={handleRegistrar}
-              disabled={registrando || !inoculo || !cantidad || cantidad < 1}
+              disabled={registrando || !inoculo || !cantidad || cantidad < 1 || cantInoculo <= 0}
             >
               {registrando ? "Registrando ..." : "Registrar"}
             </Button>
