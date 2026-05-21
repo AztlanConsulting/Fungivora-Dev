@@ -47,9 +47,9 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax, repeticiones = 
   }
 
   return (
-    <div className="relative flex flex-col items-center gap-3 p-5 ">
-    
-        <Text className="text-center p-2" variante="label" style={{color: colores.black, fontSize: "18px"}}>
+    <div className="relative flex flex-col items-center gap-3 p-5 w-full md:w-auto min-w-0">
+
+        <Text className="text-center p-2 break-all max-w-full" variante="label" style={{color: colores.black, fontSize: "18px"}}>
             {nombre}
         </Text>
 
@@ -86,7 +86,7 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax, repeticiones = 
 
 export const EntradaLista = ({ items = [], repeticiones = 1 }) => {
   return (
-    <div className="w-full max-h-[780px] lg:flex-1 bg-white rounded-[32px] shadow-sm border pb-8 p-6 md:p-8 flex flex-col">
+    <div className="w-full lg:flex-1 bg-white rounded-[32px] shadow-sm border pb-8 p-6 md:p-8 flex flex-col">
       
       <div className="mb-6">
         <Text variante="medium">Composición</Text>
@@ -105,21 +105,24 @@ export const EntradaLista = ({ items = [], repeticiones = 1 }) => {
             />
 
             
-            {index < items.length - 1 && (  
-                <div className="relative flex items-center justify-center self-stretch mx-4">
-                    
-                    <div 
-                    className="hidden md:block w-[1px] h-full" 
-                    style={{ backgroundColor: colores.grisClaro }} 
+            {index < items.length - 1 && (
+                <div className="relative flex items-center justify-center self-stretch w-full md:w-auto py-3 md:py-0 md:mx-4">
+
+                    {/* Línea: horizontal en mobile, vertical en desktop */}
+                    <div
+                      className="w-full h-[1px] md:w-[1px] md:h-full"
+                      style={{ backgroundColor: colores.grisClaro }}
                     />
 
-                    <div className="absolute md:flex items-center justify-center">
-                    <Text variante="medium" style={{ color: colores.azul, lineHeight: 0, fontSize: "22px"}}>
+                    {/* Icono + centrado sobre la línea, con bg que la "corta" */}
+                    <div
+                      className="absolute flex items-center justify-center px-3"
+                      style={{ backgroundColor: "#FEFEFB" }}
+                    >
+                      <Text variante="medium" style={{ color: colores.azul, lineHeight: 0, fontSize: "22px" }}>
                         +
-                    </Text>
+                      </Text>
                     </div>
-
-                    <div className="block md:hidden h-[1px] w-full" style={{ backgroundColor: colores.grisClaro }} />
                 </div>
                 )}
           </React.Fragment>

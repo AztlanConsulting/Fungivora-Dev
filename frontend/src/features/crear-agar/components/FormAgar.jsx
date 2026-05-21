@@ -215,9 +215,9 @@ const FormAgar = () => {
             <Button
               variant="registrar"
               onClick={handleRegistrar}
-              disabled={registrando}
+              disabled={registrando || !inoculo || !cantidad || cantidad < 1}
             >
-              {registrando ? "Registrando..." : "Registrar"}
+              {registrando ? "Registrando ..." : "Registrar"}
             </Button>
           </div>
 
