@@ -110,19 +110,15 @@ const useIngredientesMedioLiquido = ({
       onChange: (e) => setExtracto(e.target.value),
       cantidad: parseFloat(extractoInsumo?.cantidad) || 500,
     },
-    // El carbohidrato solo aparece cuando se ha seleccionado uno
-    ...(carbohidrato
-      ? [{
-          id:       carbohidratoInsumo?.id_insumo ?? null,
-          tipo:     "ingrediente",
-          nombre:   LABEL_CARBOHIDRATO[carbohidrato] ?? carbohidrato,
-          unidad:   normalizarUnidad(carbohidratoInsumo?.unidad) || "ml",
-          value:    carbohidratoCant,
-          onChange: (e) => setCarbohidratoCant(e.target.value),
-          cantidad: parseFloat(carbohidratoInsumo?.cantidad) || 100,
-        }]
-      : []
-    ),
+    {
+      id:       carbohidratoInsumo?.id_insumo ?? null,
+      tipo:     "ingrediente",
+      nombre:   LABEL_CARBOHIDRATO[carbohidrato] || "Carbohidrato",
+      unidad:   normalizarUnidad(carbohidratoInsumo?.unidad) || "ml",
+      value:    carbohidratoCant,
+      onChange: (e) => setCarbohidratoCant(e.target.value),
+      cantidad: parseFloat(carbohidratoInsumo?.cantidad) || 100,
+    },
     {
       id:       null,
       tipo:     "inoculo",
