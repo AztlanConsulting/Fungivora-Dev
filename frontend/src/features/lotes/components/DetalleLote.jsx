@@ -72,6 +72,10 @@ const DetalleLote = () => {
         setIsModalOpen(false);
         const resultado = await guardarCambios(bloques, fase);
         if (resultado.success) {
+            setBloquesIniciales(
+                bloques.map(b => ({ ...b }))
+            );
+            setFaseInicialNum(fase);
             setEditado(false);
             setAlerta({
                 visible: true,
