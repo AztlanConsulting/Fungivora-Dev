@@ -20,10 +20,14 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax, repeticiones = 
   const maxPorUnidad = cantMax > 0 ? +(cantMax / repeticiones).toFixed(2) : 0;
 
   const manejarCambio = (e) => {
-    const val = e.target.value;
+    let val = e.target.value;
     const regex = /^\d*[.,]?\d{0,2}$/;
 
-    if ( val === "" || regex.test(val)) {
+    if (val === "" || regex.test(val)) {
+      // Quitar ceros a la izquierda (preserva "0", "0.5" y "0,5")
+      val = val.replace(/^0+(?=\d)/, "");
+      e.target.value = val;
+
       const numValor = parseFloat(val.replace(',', '.'));
 
       if (!isNaN(numValor)) {
