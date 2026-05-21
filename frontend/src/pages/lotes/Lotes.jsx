@@ -138,6 +138,16 @@ function Lotes() {
     setErrorValidacion("");
   };
 
+  const manejarCancelar = () => {
+    setPaso(1);
+    bloquesTemporales.forEach(bloque => {
+      eliminarBloqueDeLista(bloque.id_temp);
+    });
+
+    setBloqueForm({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+    setErrorValidacion("");
+  };
+
   // Obligar a añadir al menos 1 bloque
   const previsualizarRegistro = () => {
     if (!nuevaFila.id_inoculo) {
@@ -351,7 +361,7 @@ function Lotes() {
                   </Button> 
               </div>
               <div className="order-2 md:order-1">
-                <Button variant="eliminar" isOutline={true} onClick={() => setPaso(1)}>Cancelar</Button> 
+                <Button variant="eliminar" isOutline={true} onClick={manejarCancelar}>Cancelar</Button> 
               </div>
             </div>
           )}
