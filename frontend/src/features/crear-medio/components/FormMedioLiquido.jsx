@@ -1,15 +1,14 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
-import SelectField   from "../../../shared/components/ui/inputs/seleccionar_texto";
-import InputFecha    from "../../../shared/components/ui/inputs/input_fecha";
-import InputCantidad from "../../../shared/components/ui/inputs/input_cantidad";
-import InputNota     from "../../../shared/components/ui/inputs/input_nota";
-import Button        from "../../../shared/components/ui/buttons/botones";
-import ModalAlerta   from "../../../shared/components/ui/popups/ModalAlerta";
-import Text          from "../../../shared/components/ui/basics/texto";
-import { Base }      from "../../../shared/components/layout";
-import { colores }   from "../../../shared/components/ui/basics/colores";
+import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
+import InputFecha  from "../../../shared/components/ui/inputs/input_fecha";
+import InputNota   from "../../../shared/components/ui/inputs/input_nota";
+import Button      from "../../../shared/components/ui/buttons/botones";
+import ModalAlerta from "../../../shared/components/ui/popups/ModalAlerta";
+import Text        from "../../../shared/components/ui/basics/texto";
+import { Base }    from "../../../shared/components/layout";
+import { colores } from "../../../shared/components/ui/basics/colores";
 
 import { EntradaLista } from "./seleccionar_cantidades";
 import ResumenSemilla   from "./ResumenSemilla";
@@ -31,6 +30,9 @@ import {
 const TIPO_CREACION = "medioLiquido";    // clave interna (prefijo + filtro de inóculo)
 const TIPO_DB       = "medio liquido";   // valor literal que se guarda en la columna `tipo`
 
+// El medio líquido siempre se crea como una sola unidad (un solo matraz por registro).
+const REPETICIONES = 1;
+
 const OPCIONES_CARBOHIDRATO = [
   { value: "miel",        label: "Miel" },
   { value: "jarabe_maiz", label: "Jarabe de maíz" },
@@ -42,7 +44,6 @@ const FormMedioLiquido = () => {
   const [especie,      setEspecie]      = useState("");
   const [inoculo,      setInoculo]      = useState("");
   const [carbohidrato, setCarbohidrato] = useState("");
-  const [cantidad,     setCantidad]     = useState(1);
 
   const hoy = new Date();
   const [fecha, setFecha] = useState({
@@ -68,7 +69,7 @@ const FormMedioLiquido = () => {
     items: itemsComposicion,
     valores: valoresComposicion,
     loading: loadingInsumos,
-  } = useIngredientesMedioLiquido({ carbohidrato, inoculoDisponible });
+  } = useIngredientesMedioLiquido({ carbohidrato, inoculoDisponible, tipoInoculo });
 
   // Cantidad de inóculo padre a usar (parseada — acepta coma decimal)
   const cantInoculo = parseFloat(String(valoresComposicion?.cantInoculo ?? "").replace(",", ".")) || 0;
@@ -91,9 +92,9 @@ const FormMedioLiquido = () => {
       nombreEspecie: especie,
       categorias,
       fecha,
-      cantidad,
+      cantidad: REPETICIONES,
     });
-  }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias]);
+  }, [tipoInoculo, especie, categorias, fecha, loadingCategorias]);
 
   const handleRegistrar = async () => {
     setRegistrando(true);
@@ -103,8 +104,8 @@ const FormMedioLiquido = () => {
         tipo:          TIPO_DB,
         especie,
         fecha,
-        cantidadFinal: cantMedioLiquido,   // volumen fijo de 600 ml por matraz
-        cantidad,                          // repeticiones (cuántos matraces)
+        cantidadFinal: cantMedioLiquido,   // volumen fijo de 600 ml
+        cantidad:      REPETICIONES,        // siempre 1 — medio líquido no repite
         nota,
         unidad:        "ml",
         inoculoSeleccionado,
@@ -180,20 +181,13 @@ const FormMedioLiquido = () => {
                 </div>
               </div>
 
-              <EntradaLista items={itemsComposicion} repeticiones={cantidad} />
+              <EntradaLista items={itemsComposicion} />
 
               <div className="bg-white rounded-[32px] shadow-sm border p-6 md:p-8 flex flex-col gap-6">
 
-                <div className="flex flex-col md:flex-row gap-8 items-start flex-wrap">
-                  <div className="flex flex-col gap-3">
-                    <Text variante="medium">Cantidad</Text>
-                    <InputCantidad value={cantidad} onChange={setCantidad} />
-                  </div>
-
-                  <div className="flex flex-col gap-3">
-                    <Text variante="medium">Fecha de creación</Text>
-                    <InputFecha value={fecha} onChange={setFecha} />
-                  </div>
+                <div className="flex flex-col gap-3">
+                  <Text variante="medium">Fecha de creación</Text>
+                  <InputFecha value={fecha} onChange={setFecha} />
                 </div>
 
                 <div className="flex flex-col gap-3">
@@ -209,7 +203,6 @@ const FormMedioLiquido = () => {
               codigoInoculo={codigoInoculo}
               composicion={itemsComposicion}
               codigos={codigos.lista}
-              cantidad={cantidad}
             />
 
           </div>
@@ -221,7 +214,7 @@ const FormMedioLiquido = () => {
             <Button
               variant="registrar"
               onClick={handleRegistrar}
-              disabled={registrando || !inoculo || !carbohidrato || cantInoculo <= 0 || !cantidad || cantidad < 1}
+              disabled={registrando || !inoculo || !carbohidrato || cantInoculo <= 0}
             >
               {registrando ? "Registrando..." : "Registrar"}
             </Button>
