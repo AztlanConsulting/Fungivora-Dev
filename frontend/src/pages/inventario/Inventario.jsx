@@ -7,8 +7,6 @@ import useInsumos from "../../features/inventario/hooks/useInsumos";
 import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
 import Button from "../../shared/components/ui/buttons/botones";
 import Input from "../../shared/components/ui/inputs/input_texto";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Cancel01Icon } from "@hugeicons/core-free-icons";
 
 import TablaInventario from "../../features/inventario/components/TablaInventario";
 import FormularioInsumo from "../../features/inventario/components/FormularioInsumo";
