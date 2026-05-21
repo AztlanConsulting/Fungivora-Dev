@@ -1,7 +1,7 @@
 const { get_especies, get_inoculos_filtrados } = require('../../../controllers/inoculo.controller');
 
 // Mockea el modelo
-jest.mock('../../models/inoculo.model');
+jest.mock('../../../models/inoculo.model');
 const Inoculo = require('../../../models/inoculo.model');
 
 // Helper que crea req/res falsos
@@ -178,7 +178,7 @@ describe('inoculo.controller — get_inoculos_filtrados', () => {
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({
             success: false,
-            message: 'Error al obtener los inoculos'
+            message: 'Error al obtener los inóculos'
         });
     });
 
@@ -191,7 +191,7 @@ describe('inoculo.controller — get_inoculos_filtrados', () => {
         await get_inoculos_filtrados(req, res);
 
         expect(console.error).toHaveBeenCalledWith(
-            'Error al obtener respuesta:',
+            'Error al obtener inóculos:',
             expect.any(Error)
         );
     });

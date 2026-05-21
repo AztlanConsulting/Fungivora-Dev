@@ -14,13 +14,13 @@ const Usuario = require('../../models/usuario.model');
 const jwt = require('jsonwebtoken');
 
 describe('Auth Routes — /api/login', () => {
-    
+
     // El secreto es necesario, es el token "seguro"
     const JWT_SECRET = "secreto_super_seguro";
 
     beforeEach(() => {
         jest.clearAllMocks();
-        jest.spyOn(console, 'error').mockImplementation(() => {});
+        jest.spyOn(console, 'error').mockImplementation(() => { });
     });
 
     // Pruebas para todo lo relacionado con POST, como las de controller
@@ -37,9 +37,12 @@ describe('Auth Routes — /api/login', () => {
         });
 
         it('Error 401 - contraseña es incorrecta', async () => {
+            const bcrypt = require('bcrypt');
+            const hash = await bcrypt.hash('password_correcta', 10);
+
             Usuario.fetch_one.mockResolvedValue({
                 nombre_usuario: 'user123',
-                contrasena_usuario: 'password_correcta'
+                contrasena_usuario: hash
             });
 
             const res = await request(app)
@@ -51,10 +54,13 @@ describe('Auth Routes — /api/login', () => {
         });
 
         it('Mensaje 200 - entregar token de credenciales válidas', async () => {
+            const bcrypt = require('bcrypt');
+            const hash = await bcrypt.hash('12345', 10);
+
             Usuario.fetch_one.mockResolvedValue({
                 id_usuario: 10,
                 nombre_usuario: 'user123',
-                contrasena_usuario: '12345',
+                contrasena_usuario: hash,
                 is_user_admin: 0
             });
 
@@ -76,10 +82,10 @@ describe('Auth Routes — /api/login', () => {
 
         // El token es valido, relacionado con el usuario que esta ingresando
         it('Mensaje 200 -  token válido', async () => {
-            const SECRET_PARA_TEST = "secreto_super_seguro"; 
+            const SECRET_PARA_TEST = "secreto_super_seguro";
 
             const tokenValido = jwt.sign(
-                { id: 10, isAdmin: true }, 
+                { id: 10, isAdmin: true },
                 SECRET_PARA_TEST
             );
 
