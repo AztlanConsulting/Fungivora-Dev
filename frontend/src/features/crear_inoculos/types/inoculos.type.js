@@ -3,7 +3,7 @@ export const BOLSAS = {
     mediano: 500,
     grande: 1800,
 };
-export const cantAgar = "agar: 150";
+export const cantAgar = { agar: 150 };
 
 export const TAMANOS_COMPOSICION = {
     cantIngredientes: {

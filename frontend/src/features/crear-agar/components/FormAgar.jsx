@@ -28,6 +28,7 @@ import Titulo      from "../../../shared/components/ui/basics/titulo";
 import Text        from "../../../shared/components/ui/basics/texto";
 import { Base }    from "../../../shared/components/layout";
 import { colores } from "../../../shared/components/ui/basics/colores";
+import { cantAgar } from "../../crear_inoculos/types/inoculos.type";
 
 const TIPO_CREACION = "agar";
 
@@ -105,7 +106,7 @@ const FormAgar = () => {
         tipo:   TIPO_CREACION,
         especie,
         fecha,
-        cantidadFinal: cantidad,
+        cantidadFinal: cantAgar.agar,
         cantidad,
         nota,
         inoculoSeleccionado,
