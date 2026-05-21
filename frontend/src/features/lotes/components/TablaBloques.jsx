@@ -1,6 +1,6 @@
 import React from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Tick02Icon, ArrowDown01Icon } from '@hugeicons/core-free-icons';
+import { Tick02Icon } from '@hugeicons/core-free-icons';
 import Text from '../../../shared/components/ui/basics/texto';
 import { colores } from '../../../shared/components/ui/basics/colores';
 
@@ -12,12 +12,12 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, codi
     // Generar unicamente de modo vizual el código para el bloque
     const generarCodigoBloque = (codigoLote, indice) => {
         if (!codigoLote) return `BC-B${indice + 1}`;
-        
+
         let base = codigoLote.trim();
 
         const partes = base.split('-');
         if (partes.length > 3) {
-            partes.pop(); 
+            partes.pop();
             base = partes.join('-');
         }
 
@@ -69,20 +69,14 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, codi
     return (
         <div className="w-full rounded-[32px] border shadow-sm p-4 md:p-6" style={{ backgroundColor: colores.blanco, borderColor: '#E0E0E0' }}>
             <div className="rounded-2xl border overflow-hidden" style={{ borderColor: '#F0F0F0' }}>
-                
+
                 {/* Encabezado Desktop */}
                 <div className="hidden md:grid grid-cols-5 py-5 px-8 gap-4 items-center" style={{ backgroundColor: colorHeaderTabla }}>
                     <div><Text variante="option" style={{ fontWeight: '600' }}>Código del bloque</Text></div>
                     <div><Text variante="option" style={{ fontWeight: '600' }}>Tamaño</Text></div>
                     <div><Text variante="option" style={{ fontWeight: '600' }}>Peso (g)</Text></div>
-                    <div className="flex items-center gap-1">
-                        <Text variante="option" style={{ fontWeight: '600' }}>Clasificación</Text>
-                        <HugeiconsIcon icon={ArrowDown01Icon} size={14} color="#3b3fb6" />
-                    </div>
-                    <div className="flex items-center gap-1">
-                        <Text variante="option" style={{ fontWeight: '600' }}>Contaminado</Text>
-                        <HugeiconsIcon icon={ArrowDown01Icon} size={14} color="#3b3fb6" />
-                    </div>
+                    <div><Text variante="option" style={{ fontWeight: '600' }}>Clasificación</Text></div>
+                    <div><Text variante="option" style={{ fontWeight: '600' }}>Contaminado</Text></div>
                 </div>
 
                 <div className="flex flex-col">
