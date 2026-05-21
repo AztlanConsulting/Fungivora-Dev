@@ -39,7 +39,7 @@ export default function AppRoutes() {
 
                 {/* Rutas inóculos */}
                 <Route path="/inoculos/crear/agar" element={<CrearAgar />} />
-                <Route path="/inoculos/crear/medio-liquido" element={<FormMedioLiquido />} />
+                <Route path="/inoculos/crear/medio-liquido" element={<CrearMedioLiquido />} />
                 <Route path="/inoculos/crear/semilla" element={<CrearSemilla />} />
 
                 {/* Rutas con rol específico */}
