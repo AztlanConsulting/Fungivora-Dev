@@ -1,9 +1,10 @@
 const db = require('../util/db');
 
 class Bloque {
-    constructor(id_bloque, id_lote, produccion, peso_gr, contaminado, contenedor) {
+    constructor(id_bloque, id_lote, id_inoculo, produccion, peso_gr, contaminado, contenedor) {
         this.id_bloque = id_bloque;
         this.id_lote = id_lote;
+        this.id_inoculo = id_inoculo;
         this.produccion = produccion;
         this.peso_gr = peso_gr;
         this.contaminado = contaminado;
@@ -20,7 +21,8 @@ class Bloque {
                     produccion,
                     peso_gr,
                     contaminado,
-                    contenedor
+                    contenedor,
+                    id_inoculo
                 FROM Bloques
                 WHERE id_lote = ?
                 ORDER BY id_bloque DESC
@@ -59,13 +61,13 @@ class Bloque {
     // Metodo para insertar los datos de bloque
     static async crear_bloque(nuevoBloque) {
         try {
-            const { id_bloque, id_lote, produccion, peso_gr, contaminado, contenedor } = nuevoBloque;
+            const { id_bloque, id_lote, id_inoculo, produccion, peso_gr, contaminado, contenedor } = nuevoBloque;
             return await db.execute(`
                 INSERT INTO Bloques (
-                    id_bloque, id_lote, produccion, peso_gr, contaminado, contenedor
+                    id_bloque, id_lote, id_inoculo, produccion, peso_gr, contaminado, contenedor
                 ) 
-                VALUES (?, ?, ?, ?, ?, ?)
-            `, [id_bloque, id_lote, produccion, peso_gr, contaminado, contenedor]);
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            `, [id_bloque, id_lote, id_inoculo, produccion, peso_gr, contaminado, contenedor]);
         } catch (err) {
             console.error("Error en crear_bloque model:", err);
             throw err;

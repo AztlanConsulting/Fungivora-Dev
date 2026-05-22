@@ -109,83 +109,60 @@ Metodo que añade la información de lotes a la tabla
 */
 exports.post_batch = async (req, res) => {
     try {
-        // Request de los datos
-        const { ubicacion_lote, tipo_sustrato, id_inoculo, fecha_lote, bloques, produccion } = req.body;
+        const { ubicacion_lote, tipo_sustrato, fecha_lote, bloques, produccion } = req.body;
 
-        // Recuperar los inculos
-        const inoculos = await Lotes.fetch_inoculos_disponibles();
-        const inoculoSeleccionado = inoculos.find(i => i.id_inoculo == id_inoculo);
-
-        if (!inoculoSeleccionado) {
-            return res.status(400).json({ success: false, message: "Inóculo no encontrado" });
+        if (!bloques || bloques.length === 0) {
+            return res.status(400).json({ success: false, message: "No hay bloques para registrar" });
         }
 
-        // Generación del código
-
-        // Abreviatura del inoculo
-        const [abreviaturaResult] = await Categoria.fetchAbreviaturaPorNombre(inoculoSeleccionado.especie);
+        const idInoculoReferencia = bloques[0].id_inoculo;
+        const inoculosDisponibles = await Lotes.fetch_inoculos_disponibles();
+        const infoInoculo = inoculosDisponibles.find(i => i.id_inoculo == idInoculoReferencia);
+        
+        const [abreviaturaResult] = await Categoria.fetchAbreviaturaPorNombre(infoInoculo.especie);
         const abreviatura = abreviaturaResult[0].abreviatura_opcion;
 
-        // Fecha para el código
         const fechaParaCodigo = new Date(fecha_lote);
-        const dd = String(fechaParaCodigo.getUTCDate()).padStart(2, '0');
-        const mm = String(fechaParaCodigo.getUTCMonth() + 1).padStart(2, '0');
-        const yy = fechaParaCodigo.getUTCFullYear().toString().slice(-2);
-        const fechaStr = `${dd}${mm}${yy}`;
-
-        // Forma inicial del código
+        const fechaStr = `${String(fechaParaCodigo.getUTCDate()).padStart(2, '0')}${String(fechaParaCodigo.getUTCMonth() + 1).padStart(2, '0')}${fechaParaCodigo.getUTCFullYear().toString().slice(-2)}`;
+        
         const prefijoBase = `LC-${abreviatura}-${fechaStr}`;
-
-        // Contar cuantos lotes hay con dicho prefijo
         const cantidadGrupo = await Lotes.count_lotes_similares(prefijoBase);
-        const nuevoNumero = cantidadGrupo + 1;
-
-        // Código completo
-        const codigo_fungivora = `${prefijoBase}-${nuevoNumero}`;
+        const codigo_fungivora = `${prefijoBase}-${cantidadGrupo + 1}`;
 
         const id_lote = crypto.randomUUID();
 
-        // Crear el lote
+        // Crear el Lote 
         await Lotes.crear_lote(
             id_lote,
-            id_inoculo,
             tipo_sustrato,
             codigo_fungivora,
             fecha_lote,
             ubicacion_lote,
-            1, // activo
-            "Inoculación" // fase por default
+            1,
+            "Inoculación"
         );
 
-        // Crear bloques con la relación
-        if (bloques && Array.isArray(bloques)) {
-            const promesasBloques = [];
-
-            // Ciclos para tener tantos bloques como estos sean añadidos
-            for (const b of bloques) {
-                const numBloques = Number(b.cantidad) || 1;
-
-                for (let i = 0; i < numBloques; i++) {
-                    promesasBloques.push(
-                        Bloque.crear_bloque({
-                            id_bloque: crypto.randomUUID(),
-                            id_lote: id_lote,
-                            produccion: (b.produccion !== undefined) ? b.produccion : produccion,
-                            peso_gr: b.peso_gr || 0,
-                            contaminado: 0,
-                            contenedor: b.contenedor
-                        })
-                    );
-                }
+        // Crear los Bloques 
+        const promesasBloques = [];
+        for (const b of bloques) {
+            const numBloques = Number(b.cantidad) || 1;
+            for (let i = 0; i < numBloques; i++) {
+                promesasBloques.push(
+                    Bloque.crear_bloque({
+                        id_bloque: crypto.randomUUID(),
+                        id_lote: id_lote,
+                        id_inoculo: b.id_inoculo, 
+                        produccion: (b.produccion !== undefined) ? b.produccion : produccion,
+                        peso_gr: b.peso_gr || 0,
+                        contaminado: 0,
+                        contenedor: b.contenedor
+                    })
+                );
             }
-            await Promise.all(promesasBloques);
         }
+        await Promise.all(promesasBloques);
 
-        res.status(201).json({
-            success: true,
-            codigo: codigo_fungivora,
-            id: id_lote
-        });
+        res.status(201).json({ success: true, codigo: codigo_fungivora, id: id_lote });
 
     } catch (error) {
         console.error("Error en post_batch:", error);
