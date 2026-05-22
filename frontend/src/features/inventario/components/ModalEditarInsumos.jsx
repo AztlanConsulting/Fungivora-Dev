@@ -1,0 +1,107 @@
+import React, { useState, useEffect } from "react";
+import Text from "../../../shared/components/ui/basics/texto";
+import Input from "../../../shared/components/ui/inputs/input_texto";
+import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
+import Button from "../../../shared/components/ui/buttons/botones";
+import { colores } from "../../../shared/components/ui/basics/colores";
+
+const ModalEditarInsumo = ({ insumo, unidades, onConfirm, onCancel }) => {
+    const [nombre, setNombre] = useState("");
+    const [unidad, setUnidad] = useState("");
+    const [stockRecomendado, setStockRecomendado] = useState("");
+    const [error, setError] = useState("");
+
+    // Precarga los valores actuales del insumo
+    useEffect(() => {
+        if (insumo) {
+            setNombre(insumo.nombre || "");
+            setUnidad(insumo.unidad || "");
+            setStockRecomendado(String(insumo.stock_recomendado ?? ""));
+            setError("");
+        }
+    }, [insumo]);
+
+    const handleConfirmar = async () => {
+        if (!nombre.trim()) {
+            setError("El nombre no puede estar vacío");
+            return;
+        }
+        if (!unidad) {
+            setError("Selecciona una unidad");
+            return;
+        }
+        const stock = parseFloat(stockRecomendado);
+        if (isNaN(stock) || stock <= 0) {
+            setError("El stock recomendado debe ser mayor a 0");
+            return;
+        }
+
+        const exito = await onConfirm(insumo.id_insumo, {
+            nombre: nombre.trim(),
+            unidad,
+            stock_recomendado: stock,
+        });
+
+        if (!exito) setError("No se pudo guardar. Intenta de nuevo.");
+    };
+
+    return (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onCancel} />
+            <div className="relative bg-white rounded-[30px] p-9 w-full max-w-lg shadow-2xl flex flex-col gap-6 border animate-in zoom-in duration-200">
+                
+                <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", textAlign: "center", fontSize: "20px" }}>
+                    Editar Insumo
+                </Text>
+
+                {/* Nombre */}
+                <div className="flex flex-col gap-2">
+                    <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Nombre</Text>
+                    <Input
+                        placeholder="Nombre del insumo"
+                        value={nombre}
+                        onChange={(e) => setNombre(e.target.value)}
+                    />
+                </div>
+
+                {/* Unidad */}
+                <div className="flex flex-col gap-2">
+                    <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Unidad de medida</Text>
+                    <SelectField
+                        placeholder="Selecciona unidad"
+                        size="forms"
+                        value={unidad}
+                        onChange={(e) => setUnidad(e.target.value)}
+                        options={unidades.map(u => ({ value: u.opcion, label: u.opcion }))}
+                    />
+                </div>
+
+                {/* Stock recomendado */}
+                <div className="flex flex-col gap-2">
+                    <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Stock recomendado</Text>
+                    <Input
+                        placeholder="0.00"
+                        value={stockRecomendado}
+                        onChange={(e) => {
+                            const val = e.target.value.replace(",", ".");
+                            if (/^\d{0,6}(\.\d{0,2})?$/.test(val)) setStockRecomendado(val);
+                        }}
+                    />
+                </div>
+
+                {error && (
+                    <Text variante="label" style={{ color: "#E53E3E", fontSize: "13px", textAlign: "center" }}>
+                        {error}
+                    </Text>
+                )}
+
+                <div className="flex gap-4">
+                    <Button variant="cancelar" isOutline onClick={onCancel} className="flex-1">Cancelar</Button>
+                    <Button variant="confirmar" onClick={handleConfirmar} className="flex-1">Guardar</Button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default ModalEditarInsumo;

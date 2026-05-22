@@ -77,7 +77,27 @@ const useInsumos = () => {
         }
     };
 
-        return { insumos, unidades, loading, error, addInsumo, updateInsumo, refresh: fetchInsumos };
+    const editarInsumo = async (id, datosEditados) => {
+    try {
+        const res = await inventarioService.editarInsumo(id, datosEditados);
+        if (res.success) {
+            setInsumos((prev) =>
+                prev.map((item) =>
+                    item.id_insumo === id
+                        ? { ...item, ...datosEditados }
+                        : item
+                )
+            );
+            return true;
+        }
+        return false;
+    } catch (err) {
+        console.error("Error al editar insumo:", err);
+        return false;
+    }
+    };
+
+        return {  insumos, unidades, loading, error, addInsumo, updateInsumo, editarInsumo, refresh: fetchInsumos };
     };
 
 export default useInsumos;

@@ -7,12 +7,13 @@ import useInsumos from "../../features/inventario/hooks/useInsumos";
 import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
 import Button from "../../shared/components/ui/buttons/botones";
 import Input from "../../shared/components/ui/inputs/input_texto";
+import ModalEditarInsumo from "../../features/inventario/components/ModalEditarInsumos";
 
 import TablaInventario from "../../features/inventario/components/TablaInventario";
 import FormularioInsumo from "../../features/inventario/components/FormularioInsumo";
 
 const Inventario = () => {
-  const { insumos, unidades, loading, addInsumo, updateInsumo } = useInsumos();
+  const { insumos, unidades, loading, addInsumo, updateInsumo, editarInsumo } = useInsumos();
   const [filaSeleccionada, setFilaSeleccionada] = useState(null);
   const [nuevaFila, setNuevaFila] = useState({ nombre: "", cantidad: "", stock_recomendado: "", unidad: "" });
   const [errorValidacion, setErrorValidacion] = useState("");
@@ -22,11 +23,24 @@ const Inventario = () => {
   const [ajusteCantidad, setAjusteCantidad] = useState("");
   const [tipoOperacion, setTipoOperacion] = useState("incremento");
   const [alerta, setAlerta] = useState({ visible: false, mensaje: "", variante: "exito" });
+  const [modalEditar, setModalEditar] = useState({ visible: false, insumo: null });
 
   // Grid de la tabla
   const gridLayout = "grid-cols-1 md:grid-cols-[1.5fr_1.8fr_1fr_1fr]";
 
   const lanzarAlerta = (mensaje, variante = "exito") => setAlerta({ visible: true, mensaje, variante });
+
+  // Handlers
+  const abrirModalEditar = (item) => setModalEditar({ visible: true, insumo: item });
+
+  const handleConfirmarEdicion = async (id, datos) => {
+    const exito = await editarInsumo(id, datos);
+    if (exito) {
+        setModalEditar({ visible: false, insumo: null });
+        lanzarAlerta("¡Insumo actualizado correctamente!");
+    }
+    return exito;
+};
 
   // Modal de editar cantidad
   const abrirModalEdicion = (item) => {
@@ -138,6 +152,7 @@ const Inventario = () => {
               filaSeleccionada={filaSeleccionada}
               setFilaSeleccionada={setFilaSeleccionada}
               abrirModalEdicion={abrirModalEdicion}
+              abrirModalEditar={abrirModalEditar} 
               gridLayout={gridLayout}
             />
           </div>
@@ -180,6 +195,15 @@ const Inventario = () => {
                 </div>
              </div>
           </div>
+        )}
+
+        {modalEditar.visible && (
+            <ModalEditarInsumo
+                insumo={modalEditar.insumo}
+                unidades={unidades}
+                onConfirm={handleConfirmarEdicion}
+                onCancel={() => setModalEditar({ visible: false, insumo: null })}
+            />
         )}
       </Base>
       

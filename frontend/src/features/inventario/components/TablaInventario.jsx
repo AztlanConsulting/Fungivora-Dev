@@ -2,7 +2,7 @@ import React from "react";
 import Text from "../../../shared/components/ui/basics/texto";
 import { colores } from "../../../shared/components/ui/basics/colores";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { PlusMinus02Icon } from "@hugeicons/core-free-icons";
+import { PlusMinus02Icon, PencilEdit01Icon } from "@hugeicons/core-free-icons";
 
 const colorBordeHeader = "#F2F2FC";
 const columnasHeader = [
@@ -12,7 +12,7 @@ const columnasHeader = [
   { label: "Acciones", key: "accion" },
 ];
 
-const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSeleccionada, abrirModalEdicion, gridLayout }) => {
+const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSeleccionada, abrirModalEdicion,  abrirModalEditar, gridLayout }) => {
   
   // Número de forma visual mejor
   const formatearNumero = (valor) => {
@@ -93,11 +93,20 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                     {estado.label}
                   </span>
                 </div>
-                <div className="flex justify-center p-2" onClick={(e) => { e.stopPropagation(); abrirModalEdicion(item); }}>
-                  <div className="hover:scale-110 transition-transform">
-                    <HugeiconsIcon icon={PlusMinus02Icon} size={20} color={colores.azul} />
+                <div className="flex justify-center items-center gap-3 p-2">
+                  <div 
+                      className="hover:scale-110 transition-transform cursor-pointer"
+                      onClick={(e) => { e.stopPropagation(); abrirModalEditar(item); }}
+                  >
+                      <HugeiconsIcon icon={PencilEdit01Icon} size={20} color={colores.azul} />
                   </div>
-                </div>
+                  <div 
+                      className="hover:scale-110 transition-transform cursor-pointer"
+                      onClick={(e) => { e.stopPropagation(); abrirModalEdicion(item); }}
+                  >
+                      <HugeiconsIcon icon={PlusMinus02Icon} size={20} color={colores.azul} />
+                  </div>
+              </div>
               </div>
 
               {/* Cartas de movil*/}
