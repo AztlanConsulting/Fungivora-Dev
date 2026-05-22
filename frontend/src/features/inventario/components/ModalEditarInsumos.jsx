@@ -133,7 +133,7 @@ const ModalEditarInsumo = ({ insumo, unidades, onConfirm, onCancel }) => {
 
                         <div className="flex gap-4">
                             <Button variant="cancelar" isOutline onClick={() => setConfirmando(false)} className="flex-1">
-                                Cancelar
+                                Regresar
                             </Button>
                             <Button variant="confirmar" onClick={handleConfirmarFinal} className="flex-1">
                                 Confirmar

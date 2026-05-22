@@ -149,7 +149,7 @@ describe('ModalEditarInsumo — paso de confirmación', () => {
 
         await user.click(screen.getByText('Guardar'))
 
-        expect(screen.getByText('Cancelar')).toBeInTheDocument()
+        expect(screen.getByText('Regresar')).toBeInTheDocument()
         expect(screen.getByText('Confirmar')).toBeInTheDocument()
     })
 
@@ -158,7 +158,7 @@ describe('ModalEditarInsumo — paso de confirmación', () => {
         renderModal()
 
         await user.click(screen.getByText('Guardar'))
-        await user.click(screen.getByText('Cancelar'))
+        await user.click(screen.getByText('Regresar'))
 
         expect(screen.getByText('Guardar')).toBeInTheDocument()
         expect(screen.queryByText('¿Confirmas los siguientes cambios?')).not.toBeInTheDocument()
