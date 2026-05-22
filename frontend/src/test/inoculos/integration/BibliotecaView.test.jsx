@@ -27,7 +27,7 @@ vi.mock('../../../features/inoculos/components/ModalCrearInoculo', () => ({
 vi.mock('../../../shared/components/ui/basics/titulo', () => ({
     default: ({ children }) => <h1>{children}</h1>,
 }))
-vi.mock('../../../shared/components/layout/base', () => ({
+vi.mock('../../../shared/components/layout/Base', () => ({
     default: ({ children }) => <div>{children}</div>,
 }))
 vi.mock('../../../shared/components/ui/basics/texto', () => ({

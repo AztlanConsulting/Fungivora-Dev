@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { BrowserRouter } from 'react-router-dom'
-import Barra_navegacion from '../../../shared/components/layout/Barra_navegacion'
+import Barra_navegacion from '../../../shared/components/layout/BarraNavegacion'
 
 vi.mock('/icons/icon-splash-blue.png', () => ({ default: 'logo-mock' }))
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Base from "../../layout/base";
+import Base from "../../layout/Base";
 import Titulo from "../basics/titulo";
 import Button from "../buttons/botones";
 import Input from "../inputs/input_texto";

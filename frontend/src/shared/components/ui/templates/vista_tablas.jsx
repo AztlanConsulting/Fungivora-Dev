@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Base from "../../layout/base";
+import Base from "../../layout/Base";
 import Titulo from "../basics/titulo";
 import BarraBusqueda from "../others/barra_busqueda";
 import Text from "../basics/texto";

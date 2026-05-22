@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import Base from "../../shared/components/layout/base";
+import Base from "../../shared/components/layout/Base";
 import Titulo from "../../shared/components/ui/basics/titulo";
 import Text from "../../shared/components/ui/basics/texto";
 import { colores } from "../../shared/components/ui/basics/colores";

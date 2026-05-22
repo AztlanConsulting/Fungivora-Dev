@@ -13,7 +13,7 @@ vi.mock("../../../features/lotes/hooks/useLotes", () => ({
 // Mocks de UI 
 vi.mock('../../shared/components/ui/basics/titulo', () => ({ default: ({ children }) => <h1>{children}</h1> }))
 vi.mock('../../shared/components/ui/basics/texto', () => ({ default: ({ children, className, style }) => <span className={className} style={style}>{children}</span> }))
-vi.mock('../../shared/components/layout/base', () => ({ default: ({ children }) => <div>{children}</div> }))
+vi.mock('../../shared/components/layout/Base', () => ({ default: ({ children }) => <div>{children}</div> }))
 vi.mock('../../shared/components/ui/buttons/botones', () => ({
     default: ({ children, onClick, className }) => <button className={className} onClick={onClick}>{children}</button>
 }))

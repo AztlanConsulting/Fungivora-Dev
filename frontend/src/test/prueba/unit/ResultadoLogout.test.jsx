@@ -3,20 +3,20 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { BrowserRouter } from 'react-router-dom'
-import Barra_navegacion from '../../../shared/components/layout/Barra_navegacion'
+import Barra_navegacion from '../../../shared/components/layout/BarraNavegacion'
 
 // Mock de los componentes
 vi.mock('../../../shared/components/ui/popups/modal_confirmacion', () => ({
-  default: ({ visible, titulo, onConfirm, onCancel }) => {
-    if (!visible) return null;
-    return (
-      <div data-testid="modal-confirmacion">
-        <h1>{titulo}</h1>
-        <button onClick={onConfirm}>Confirmar</button>
-        <button onClick={onCancel}>Cancelar</button>
-      </div>
-    );
-  }
+    default: ({ visible, titulo, onConfirm, onCancel }) => {
+        if (!visible) return null;
+        return (
+            <div data-testid="modal-confirmacion">
+                <h1>{titulo}</h1>
+                <button onClick={onConfirm}>Confirmar</button>
+                <button onClick={onCancel}>Cancelar</button>
+            </div>
+        );
+    }
 }));
 
 vi.mock('@hugeicons/react', () => ({
@@ -27,7 +27,7 @@ vi.mock('@hugeicons/react', () => ({
 vi.mock('/icons/icon-splash-blue.png?url', () => ({ default: 'logo-mock' }))
 
 describe('Pruebas de Logout - Resultado', () => {
-    
+
     beforeEach(() => {
         vi.clearAllMocks()
         localStorage.clear()
@@ -41,14 +41,14 @@ describe('Pruebas de Logout - Resultado', () => {
     )
 
     it('Abrir el modal', async () => {
-    const user = userEvent.setup()
-    renderBarra()
+        const user = userEvent.setup()
+        renderBarra()
 
-    const botonAbrir = screen.getByText(/Cerrar sesión/i).closest('button')
-    await user.click(botonAbrir)
-    const modal = await screen.findByTestId('modal-confirmacion')
-    expect(modal).toBeInTheDocument()
-})
+        const botonAbrir = screen.getByText(/Cerrar sesión/i).closest('button')
+        await user.click(botonAbrir)
+        const modal = await screen.findByTestId('modal-confirmacion')
+        expect(modal).toBeInTheDocument()
+    })
 
     it('Confirmar cierre', async () => {
         const user = userEvent.setup()
