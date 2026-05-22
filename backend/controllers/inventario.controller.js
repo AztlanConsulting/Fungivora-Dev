@@ -121,3 +121,41 @@ exports.post_update_cantidad = async (req, res) => {
         res.status(500).json({ success: false, error: 'Error interno del servidor' });
     }
 };
+
+/*
+* put_editar_insumo
+* Edita nombre, unidad y stock recomendado de un insumo existente
+*/
+exports.put_editar_insumo = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nombre, unidad, stock_recomendado } = req.body;
+
+        if (!nombre || !unidad || stock_recomendado === undefined) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Faltan campos obligatorios' 
+            });
+        }
+
+        if (stock_recomendado <= 0) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'El stock recomendado debe ser mayor a 0' 
+            });
+        }
+
+        await Inventario.editar_insumo(id, nombre, unidad, stock_recomendado);
+
+        res.status(200).json({
+            success: true,
+            message: 'Insumo actualizado correctamente'
+        });
+
+    } catch (error) {
+        if (error.message === 'Insumo no encontrado') {
+            return res.status(404).json({ success: false, error: error.message });
+        }
+        res.status(500).json({ success: false, error: 'Error interno del servidor' });
+    }
+};

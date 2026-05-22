@@ -88,6 +88,24 @@ class Inventario {
             connection.release();
         }
     };
+
+    // Editar nombre, unidad y stock recomendado de un insumo
+    static editar_insumo = async (id_insumo, nombre, unidad, stock_recomendado) => {
+        const [rows] = await db.execute(
+            'SELECT id_insumo FROM Insumos WHERE id_insumo = ?',
+            [id_insumo]
+        );
+
+        if (rows.length === 0) throw new Error('Insumo no encontrado');
+
+        const [result] = await db.execute(`
+            UPDATE Insumos 
+            SET nombre = ?, unidad = ?, stock_recomendado = ?
+            WHERE id_insumo = ?
+        `, [nombre, unidad, stock_recomendado, id_insumo]);
+
+        return result;
+    }
 }
 
 module.exports = Inventario;
