@@ -77,10 +77,12 @@ describe('Página Lotes — Acciones y Formulario', () => {
     it('muestra error de validación', async () => {
         const user = userEvent.setup()
         renderWithRouter(<Lotes />)
-        const botonEnviar = screen.getByRole('button', { name: /Crear Lote/i })
+        const botonEnviar = screen.getByRole('button', { name: /Siguiente/i })
         await user.click(botonEnviar)
 
-        expect(screen.getByText('Por favor, completa los campos')).toBeInTheDocument()
+        expect(
+            await screen.findByText(/completa los datos del lote/i)
+        ).toBeInTheDocument()
     })
 
     it('vista tabla y formulario en móvil', async () => {
