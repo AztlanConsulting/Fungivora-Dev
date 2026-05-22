@@ -302,6 +302,17 @@ function Lotes() {
                   colorBordeHeader="#F2F2FC"
                 />
               )}
+              {error ? <Text>Error al cargar los datos</Text> : (
+                <TablaLotes
+                  datos={datos}
+                  onEliminar={prepararEliminacion}
+                  columnas={columnas}
+                  onVerDetalle={(lote) => navigate(`/lotes/detalle/${lote.id_lote}`, { state: lote })}
+                  obtenerEstiloFase={obtenerEstiloFase}
+                  gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1fr_1.1fr_1.2fr_1fr_0.5fr]"
+                  colorBordeHeader="#F2F2FC"
+                />
+              )}
             </>
           ) : (
             <div className="animate-in fade-in duration-500">
