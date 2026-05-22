@@ -115,9 +115,14 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                   style={{ borderColor: colorBordeHeader, ringColor: colores.azul }}>
                   <div className="flex justify-between items-start mb-3">
                     <Text variante="option" style={{ color: "black", fontWeight: "600", fontSize: "16px" }}>{item.nombre}</Text>
+                    <div className="flex items-center gap-3">
+                    <button onClick={(e) => { e.stopPropagation(); abrirModalEditar(item); }}>
+                      <HugeiconsIcon icon={PencilEdit01Icon} size={22} color={colores.azul} />
+                    </button>
                     <button onClick={(e) => { e.stopPropagation(); abrirModalEdicion(item); }}>
                       <HugeiconsIcon icon={PlusMinus02Icon} size={22} color={colores.azul} />
                     </button>
+                    </div>
                   </div>
                   <div className="flex justify-between items-center border-t pt-3 mt-1" style={{ borderColor: colorBordeHeader }}>
                     <span className="px-3 py-1 rounded-full text-[10px] font-semibold uppercase" style={{ backgroundColor: estado.bg, color: estado.color }}>
