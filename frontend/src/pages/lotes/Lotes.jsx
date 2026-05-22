@@ -44,7 +44,7 @@ function Lotes() {
       getInoculosPorEspecie, cargando, error, addLote, deleteLote 
     } = useLotes();
   const [verFormulario, setVerFormulario] = useState(false);
-  const [nuevaFila, setNuevaFila] = useState({ especie: "", tipo_sustrato: "", ubicacion_lote: "", id_inoculo: "" });
+  const [nuevaFila, setNuevaFila] = useState({ especie: "", tipo_sustrato: "", ubicacion_lote: ""});
   const [errorValidacion, setErrorValidacion] = useState("");
   const [codigoPrevisualizacion, setCodigoPrevisualizacion] = useState("");
   const [paso, setPaso] = useState(1);
@@ -81,7 +81,7 @@ function Lotes() {
     experimental: { bg: "#E9EAFF", text: "#272CBA" } 
   };
 
-  const [bloqueForm, setBloqueForm] = useState({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+  const [bloqueForm, setBloqueForm] = useState({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
 
   // Que cambie el valor de los inputs de select
   const handleInputChange = (setter) => (campo, valor) => {
@@ -112,7 +112,7 @@ function Lotes() {
 
   // Agregar el bloque y su validación
   const handleAgregarBloque = () => {
-    if (!bloqueForm.contenedor || !bloqueForm.peso_gr || !bloqueForm.cantidad) {
+    if (!bloqueForm.id_inoculo || !bloqueForm.contenedor || !bloqueForm.peso_gr || !bloqueForm.cantidad) {
       setErrorValidacion("Completa los campos del bloque");
       return;
     }
@@ -134,7 +134,7 @@ function Lotes() {
 
     agregarBloqueALista({ ...bloqueForm });
     
-    setBloqueForm({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+    setBloqueForm({id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
     setErrorValidacion("");
   };
 
@@ -150,10 +150,6 @@ function Lotes() {
 
   // Obligar a añadir al menos 1 bloque
   const previsualizarRegistro = () => {
-    if (!nuevaFila.id_inoculo) {
-      setErrorValidacion("Debes seleccionar una semilla (inóculo) para el lote");
-      return;
-    }
     if (bloquesTemporales.length === 0) {
       setErrorValidacion("Añade al menos un bloque");
       return;
@@ -343,7 +339,6 @@ function Lotes() {
                 especieSeleccionada={nuevaFila.especie}
                 getInoculosPorEspecie={getInoculosPorEspecie}
                 idInoculoSeleccionado={nuevaFila.id_inoculo}
-                setIdInoculoLote={handleInputChange(setNuevaFila)}
               />
             )}
           </div>

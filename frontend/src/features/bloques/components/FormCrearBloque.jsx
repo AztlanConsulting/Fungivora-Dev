@@ -65,17 +65,15 @@ const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, hand
       </div>
 
       <div className="rounded-xl flex flex-col gap-2">
-        <Text variante="label" style={{ color: colores.black, fontWeight: "700" }}>Semilla ({especieSeleccionada})</Text>
+        <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Semilla ({especieSeleccionada})</Text>
         <SelectField 
-          placeholder="Selecciona el inóculo para este bloque" 
+          placeholder="Selecciona el inóculo" 
           size="forms" 
           options={inoculosOpciones} 
-          value={idInoculoSeleccionado} 
-          onChange={(op) => setIdInoculoLote("id_inoculo", op)} 
+          value={bloqueForm.id_inoculo} 
+          onChange={(op) => handleBloqueForm("id_inoculo", op)} 
         />
       </div>
-
-      <hr className="border-gray-100" />
 
         {/* Insert de tamaño - contenedores*/}
       <div className="flex flex-col gap-2">
