@@ -291,18 +291,7 @@ function Lotes() {
           {paso === 1 ? (
             <>
               <Titulo>Lotes</Titulo>
-              {cargando ? <Text>Cargando...</Text> : (
-                <TablaLotes
-                  datos={datos}
-                  onEliminar={prepararEliminacion}
-                  columnas={columnas}
-                  onVerDetalle={(lote) => navigate(`/lotes/detalle/${lote.id_lote}`, { state: lote })}
-                  obtenerEstiloFase={obtenerEstiloFase}
-                  gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1fr_1.1fr_1.2fr_1fr_0.5fr]"
-                  colorBordeHeader="#F2F2FC"
-                />
-              )}
-              {error ? <Text>Error al cargar los datos</Text> : (
+              {cargando ? <Text>Cargando...</Text> : error ? <Text>Error al cargar los datos</Text> : (
                 <TablaLotes
                   datos={datos}
                   onEliminar={prepararEliminacion}
