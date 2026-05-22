@@ -38,6 +38,8 @@ vi.mock('@hugeicons/react', () => ({
 }))
 vi.mock('@hugeicons/core-free-icons', () => ({
     Add01Icon: {},
+    CheckmarkCircle02Icon: {},
+    MultiplicationSignCircleIcon: {}
 }))
 
 // Mock de useNavigate

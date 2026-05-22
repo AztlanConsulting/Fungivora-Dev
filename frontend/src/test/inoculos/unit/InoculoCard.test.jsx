@@ -88,7 +88,7 @@ describe('InoculoCard — renderizado base', () => {
         renderComponente()
         expect(screen.getByText('Etiqueta')).toBeInTheDocument()
         expect(screen.getByText('Cantidad actual')).toBeInTheDocument()
-        expect(screen.getByText('Stock mínimo')).toBeInTheDocument()
+        expect(screen.getByText('Stock recomendado')).toBeInTheDocument()
         expect(screen.getByText('Fecha Creación')).toBeInTheDocument()
     })
 

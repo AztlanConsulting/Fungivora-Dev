@@ -68,7 +68,7 @@ describe('Vista Lotes', () => {
     it('Carga y muestra los lotes correctamente en la tabla', async () => {
         renderWithRouter(<Lotes />);
 
-        expect(screen.getByText("Lotes")).toBeInTheDocument();
+        expect(screen.getAllByText("Lotes")).toBeInTheDocument();
         expect(screen.getAllByText(/LOTE-001/i).length).toBeGreaterThan(0);
         expect(screen.getAllByText(/LOTE-002/i).length).toBeGreaterThan(0);
         expect(screen.getAllByText(/Paja/i)[0]).toBeInTheDocument();
@@ -100,7 +100,7 @@ describe('Vista Lotes', () => {
         });
 
         renderWithRouter(<Lotes />);
-        expect(screen.getByText(/Cargando lotes.../i)).toBeInTheDocument();
+        expect(screen.getByText(/Cargando.../i)).toBeInTheDocument();
     });
 
     it('Vista de tabla y formulario', async () => {

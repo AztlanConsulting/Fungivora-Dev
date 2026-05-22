@@ -60,7 +60,7 @@ describe('Página Lotes ', () => {
         renderWithRouter(<Lotes />)
         const formTitle = screen.getAllByText(/Crear Lote/i)
         expect(formTitle.length).toBeGreaterThan(0)
-        expect(screen.getByText('Inóculo / (Especie)')).toBeInTheDocument()
+        expect(screen.getByText('Especie')).toBeInTheDocument()
     })
 })
 

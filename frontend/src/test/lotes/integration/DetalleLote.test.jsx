@@ -45,7 +45,7 @@ vi.mock('../../../features/lotes/components/SeccionFaseBuscar', () => ({
             <input
                 data-testid="input-busqueda"
                 value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
+                onChange={(e) => setBusqueda?.(e.target.value)}
             />
         </div>
     ),

@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
-import useLogout from '../../../features/hooks/useLogout';
+import useLogout from '../../../features/logout/hooks/useLogout';
 
 // Mock navegación
 const mockNavigate = vi.fn();
