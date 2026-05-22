@@ -2,8 +2,6 @@ export { default as HomePage } from "./home/HomePage";
 export { default as Inventario } from "./inventario/Inventario";
 export { default as Lotes } from "./lotes/Lotes";
 export { default as Lote } from "./lotes/Lote";
-export { default as Pruebas } from "./tests/pruba_componentes";
 export { default as Usuario } from "./users/Usuario";
 export { default as Login } from "./users/login";
 export { default as BibliotecaGenetica } from "./inoculos/biblioteca_genetica";
-export { default as PruebaDb } from "./tests/PruebaDb";
