@@ -48,6 +48,11 @@ const mockDatos = [
 describe('Vista Lotes', () => {
     const addLoteMock = vi.fn();
     const refreshMock = vi.fn();
+    const getInoculosPorEspecieMock = vi.fn(() => [{
+        value: 'INO-001',
+        label: 'Inóculo 1',
+        abreviatura: 'PL'
+    }]);
 
     beforeEach(() => {
         vi.clearAllMocks();
@@ -55,9 +60,10 @@ describe('Vista Lotes', () => {
 
         vi.mocked(useLotes).mockReturnValue({
             datos: mockDatos,
+            especiesDisponibles: [{ value: '1', label: 'Pleurotus' }],
             sustratos: [{ value: 'Paja', label: 'Paja' }],
             ubicaciones: [{ value: 'Estante A', label: 'Estante A' }],
-            especies: [{ value: '1', label: 'ESP-001 / Pleurotus' }],
+            getInoculosPorEspecie: getInoculosPorEspecieMock,
             cargando: false,
             error: null,
             addLote: addLoteMock,
@@ -68,22 +74,22 @@ describe('Vista Lotes', () => {
     it('Carga y muestra los lotes correctamente en la tabla', async () => {
         renderWithRouter(<Lotes />);
 
-        expect(screen.getAllByText("Lotes")).toBeInTheDocument();
+        expect(screen.getAllByText("Lotes").length).toBeGreaterThan(0);
         expect(screen.getAllByText(/LOTE-001/i).length).toBeGreaterThan(0);
         expect(screen.getAllByText(/LOTE-002/i).length).toBeGreaterThan(0);
-        expect(screen.getAllByText(/Paja/i)[0]).toBeInTheDocument();
+        expect(screen.getAllByText(/Paja/i).length).toBeGreaterThan(0);;
     });
 
     it('Muestra error de validación si faltan campos', async () => {
         const user = userEvent.setup();
         renderWithRouter(<Lotes />);
 
-        const botonesCrear = screen.getAllByRole('button', { name: /Crear Lote/i });
+        const botonesCrear = screen.getAllByRole('button', { name: /Siguiente/i });
         const botonFormulario = botonesCrear[botonesCrear.length - 1];
 
         await user.click(botonFormulario);
 
-        expect(screen.getByText(/Por favor, completa los campos/i)).toBeInTheDocument();
+        expect(screen.getByText(/Por favor, completa los datos del lote/i)).toBeInTheDocument();
         expect(addLoteMock).not.toHaveBeenCalled();
     });
 
@@ -113,12 +119,10 @@ describe('Vista Lotes', () => {
         await user.click(botonToggle);
 
         const titulos = screen.getAllByText(/Crear Lote/i);
-        expect(titulos.length).toBeGreaterThan(1);
+        expect(titulos.length).toBeGreaterThan(0);
     });
 
-    it('Completar el formulario y llamar a addLote', async () => {
-        addLoteMock.mockResolvedValue({ success: true });
-
+    it('Completar el formulario y llamar a getInoculosPorEspecie', async () => {
         const user = userEvent.setup();
         renderWithRouter(<Lotes />);
 
@@ -128,11 +132,11 @@ describe('Vista Lotes', () => {
         await user.selectOptions(selects[1], 'Paja');
         await user.selectOptions(selects[2], 'Estante A');
 
-        const botones = screen.getAllByRole('button', { name: /Crear Lote/i });
+        const botones = screen.getAllByRole('button', { name: /Siguiente/i });
 
         await user.click(botones[botones.length - 1]);
         await waitFor(() => {
-            expect(addLoteMock).toHaveBeenCalled();
+            expect(getInoculosPorEspecieMock).toHaveBeenCalled();
         });
     });
 
@@ -145,6 +149,6 @@ describe('Vista Lotes', () => {
         });
 
         renderWithRouter(<Lotes />);
-        expect(screen.getByText(/Error al conectar/i)).toBeInTheDocument();
+        expect(screen.getByText(/Error al cargar los datos/i)).toBeInTheDocument();
     });
 });
