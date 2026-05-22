@@ -96,15 +96,15 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                 <div className="flex justify-center items-center gap-3 p-2">
                   <div 
                       className="hover:scale-110 transition-transform cursor-pointer"
-                      onClick={(e) => { e.stopPropagation(); abrirModalEditar(item); }}
-                  >
-                      <HugeiconsIcon icon={PencilEdit01Icon} size={20} color={colores.azul} />
-                  </div>
-                  <div 
-                      className="hover:scale-110 transition-transform cursor-pointer"
                       onClick={(e) => { e.stopPropagation(); abrirModalEdicion(item); }}
                   >
                       <HugeiconsIcon icon={PlusMinus02Icon} size={20} color={colores.azul} />
+                  </div>
+                  <div 
+                      className="hover:scale-110 transition-transform cursor-pointer"
+                      onClick={(e) => { e.stopPropagation(); abrirModalEditar(item); }}
+                  >
+                      <HugeiconsIcon icon={PencilEdit01Icon} size={20} color={colores.azul} />
                   </div>
               </div>
               </div>
@@ -116,11 +116,11 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                   <div className="flex justify-between items-start mb-3">
                     <Text variante="option" style={{ color: "black", fontWeight: "600", fontSize: "16px" }}>{item.nombre}</Text>
                     <div className="flex items-center gap-3">
-                    <button onClick={(e) => { e.stopPropagation(); abrirModalEditar(item); }}>
-                      <HugeiconsIcon icon={PencilEdit01Icon} size={22} color={colores.azul} />
-                    </button>
                     <button onClick={(e) => { e.stopPropagation(); abrirModalEdicion(item); }}>
                       <HugeiconsIcon icon={PlusMinus02Icon} size={22} color={colores.azul} />
+                    </button>
+                    <button onClick={(e) => { e.stopPropagation(); abrirModalEditar(item); }}>
+                      <HugeiconsIcon icon={PencilEdit01Icon} size={22} color={colores.azul} />
                     </button>
                     </div>
                   </div>
