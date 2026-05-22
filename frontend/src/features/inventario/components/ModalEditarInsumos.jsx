@@ -107,21 +107,21 @@ const ModalEditarInsumo = ({ insumo, unidades, onConfirm, onCancel }) => {
                 ) : (
                     <>
                         <Text variante="label" style={{ color: colores.black, textAlign: "center" }}>
-                            ¿Confirmas los siguientes cambios?
+                            Confirme los siguientes cambios
                         </Text>
 
-                        <div className="flex flex-col gap-3 bg-gray-50 rounded-2xl p-4">
+                        <div className="flex flex-col gap-3 4">
                             <div className="flex justify-between">
-                                <Text variante="label" style={{ color: "#6B7280" }}>Nombre</Text>
-                                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>{nombre}</Text>
+                                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Nombre</Text>
+                                <Text variante="label" style={{ color: "#6B7280" }}>{nombre}</Text>
                             </div>
                             <div className="flex justify-between">
-                                <Text variante="label" style={{ color: "#6B7280" }}>Unidad</Text>
-                                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>{unidad}</Text>
+                                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Unidad</Text>
+                                <Text variante="label" style={{ color: "#6B7280" }}>{unidad}</Text>
                             </div>
                             <div className="flex justify-between">
-                                <Text variante="label" style={{ color: "#6B7280" }}>Stock recomendado</Text>
-                                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>{stockRecomendado}</Text>
+                                <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Stock recomendado</Text>
+                                <Text variante="label" style={{ color: "#6B7280" }}>{stockRecomendado}</Text>
                             </div>
                         </div>
 
