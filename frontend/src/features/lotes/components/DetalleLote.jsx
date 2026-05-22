@@ -37,7 +37,8 @@ const DetalleLote = () => {
 
         // Verificar cambios en bloques
         const bloquesModificados = nuevosBloques.some((bloque, index) => {
-            const bloqueInicial = bloquesIniciales[index];
+            const bloqueInicial = bloquesIniciales?.[index];
+            if (!bloqueInicial) return false;
 
             return (
                 bloque.contaminado !== bloqueInicial?.contaminado

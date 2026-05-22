@@ -6,8 +6,8 @@ import { BrowserRouter } from 'react-router-dom'
 import { Login } from '../../../pages'
 
 // Mantenemos tus mocks de archivos tal cual los tienes
-vi.mock('../../../features/hooks/useLogin')
-import usePruebaDb from '../../../features/hooks/useLogin'
+vi.mock('../../../features/login/hooks/useLogin')
+import usePruebaDb from '../../../features/login/hooks/useLogin'
 
 // Mocks de ui
 vi.mock('../../../shared/components/ui/inputs/input_texto', () => ({
@@ -49,7 +49,7 @@ describe('Login — Pruebas completas', () => {
 
     it('Flujo completo', async () => {
         const user = userEvent.setup()
-        
+
         fetch.mockResolvedValueOnce({
             ok: true,
             json: async () => ({ token: 'token-secreto-123' }),
@@ -59,10 +59,10 @@ describe('Login — Pruebas completas', () => {
 
         const inputUsuario = screen.getByPlaceholderText(/Escribe tu usuario/i)
         const inputPassword = screen.getByPlaceholderText(/Escribe tu contraseña/i)
-        
+
         await user.type(inputUsuario, 'Eli')
         await user.type(inputPassword, '123')
-        
+
         const boton = screen.getByRole('button', { name: /entrar/i })
         await user.click(boton)
 
@@ -82,17 +82,17 @@ describe('Login — Pruebas completas', () => {
     // Diferentes mensajes cuando el flujo no es exitoso
     it('Mensajes de error (401, 500, etc)', async () => {
         const user = userEvent.setup()
-        
+
         fetch.mockResolvedValueOnce({
             ok: false,
-            json: async () => ({ msg: "Error de base de datos" }), 
+            json: async () => ({ msg: "Error de base de datos" }),
         })
 
         renderWithRouter(<Login />)
 
         const inputUsuario = screen.getByPlaceholderText(/Escribe tu usuario/i)
         await user.type(inputUsuario, 'Eli')
-        
+
         const boton = screen.getByRole('button', { name: /entrar/i })
         await user.click(boton)
 
@@ -103,14 +103,14 @@ describe('Login — Pruebas completas', () => {
     // Si en algun momento no hay conexión, aun hay mensajes de error
     it('Mensajes sin conexión', async () => {
         const user = userEvent.setup()
-        
+
         fetch.mockRejectedValueOnce(new Error("Network Error"))
 
         renderWithRouter(<Login />)
 
         const inputUsuario = screen.getByPlaceholderText(/Escribe tu usuario/i)
         await user.type(inputUsuario, 'Eli')
-        
+
         const boton = screen.getByRole('button', { name: /entrar/i })
         await user.click(boton)
 
@@ -121,7 +121,7 @@ describe('Login — Pruebas completas', () => {
     // Una vez el botón fue clickeado, cargará y no se puede volver a clickear
     it('Botón deshabilitado al cargar', async () => {
         const user = userEvent.setup()
-        fetch.mockReturnValue(new Promise(() => {})) 
+        fetch.mockReturnValue(new Promise(() => { }))
 
         renderWithRouter(<Login />)
 

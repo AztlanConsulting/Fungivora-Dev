@@ -6,7 +6,7 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
     const [bloquesIniciales, setBloquesIniciales] = useState([]);
     const [especie, setEspecie] = useState("");
     const [codigoInoculo, setCodigoInoculo] = useState("");
-    const [codigoLoteBD, setCodigoLoteBD] = useState(null); 
+    const [codigoLoteBD, setCodigoLoteBD] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
     const fases = [
@@ -20,7 +20,6 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
     useEffect(() => {
         const fetchData = async () => {
             if (!id_lote) return;
-            console.log("ID del lote recibido en el hook:", id_lote);
             setCargando(true);
             try {
                 const [resBloques, resCodigo, resEspecie] = await Promise.all([
@@ -31,15 +30,15 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
 
                 // Obtener todos los datos de los bloques y lote
                 const listaObtenida = resBloques.data || [];
-                
+
                 setBloques(listaObtenida);
                 setBloquesIniciales(resBloques.data || []);
                 setCodigoInoculo(resCodigo);
                 setEspecie(resEspecie);
-                    if (listaObtenida.length > 0) {
-                        const codigoEncontrado = listaObtenida[0].codigo_lote || "LC-DESCONOCIDO-000000"; 
-                        setCodigoLoteBD(codigoEncontrado);
-                    }
+                if (listaObtenida.length > 0) {
+                    const codigoEncontrado = listaObtenida[0].codigo_lote || "LC-DESCONOCIDO-000000";
+                    setCodigoLoteBD(codigoEncontrado);
+                }
 
             } catch (err) {
                 setError(err.message);
@@ -62,9 +61,9 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
             const nombreFase = fases[nuevaFaseIndex] ? fases[nuevaFaseIndex].label : "Inoculación";
 
             await LoteService.updateFaseLote(id_lote, nombreFase);
-            
+
             await LoteService.updateBloquesMasivo(id_lote, bloquesActualizados);
-            
+
             return { success: true };
         } catch (err) {
             return { success: false, error: err.message };
@@ -74,7 +73,7 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
     return {
         bloques, setBloques, bloquesIniciales, setBloquesIniciales,
         fase, setFase, faseInicialNum, setFaseInicialNum,
-        especie, codigoInoculo, codigoLoteBD, 
+        especie, codigoInoculo, codigoLoteBD,
         cargando, error, getFase, guardarCambios,
         fases
     };

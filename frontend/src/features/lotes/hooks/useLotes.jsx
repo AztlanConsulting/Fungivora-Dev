@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"; 
+import { useState, useEffect, useCallback } from "react";
 import loteService from "../services/lotes.service";
 
 const useLotes = () => {
@@ -7,7 +7,7 @@ const useLotes = () => {
     const [ubicaciones, setUbicaciones] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
-    const [especiesDisponibles, setEspeciesDisponibles] = useState([]); 
+    const [especiesDisponibles, setEspeciesDisponibles] = useState([]);
     const [inoculosRaw, setInoculosRaw] = useState([]);
 
     const fetchLotes = useCallback(async () => {
@@ -16,6 +16,8 @@ const useLotes = () => {
             if (json.success) {
                 setDatos(json.data);
                 setError(null);
+            } else {
+                setError("Error al cargar lotes")
             }
         } catch (err) {
             setError("Error de conexión");
@@ -49,7 +51,7 @@ const useLotes = () => {
             // Procesar Inóculos y Especies Únicas
             const dataIno = jsonEsp.data || [];
             setInoculosRaw(dataIno);
-            
+
             const nombresUnicos = [...new Set(dataIno.map(i => i.especie))];
             setEspeciesDisponibles(nombresUnicos.map(e => ({ value: e, label: e })));
 
@@ -68,14 +70,14 @@ const useLotes = () => {
         const regexCodigoValido = /^[A-Z].G-[A-Z]{2,3}-\d+/;
 
         return inoculosRaw
-            .filter(i => 
-                i.especie === especieNombre && 
-                regexCodigoValido.test(i.codigo_fungivora) 
+            .filter(i =>
+                i.especie === especieNombre &&
+                regexCodigoValido.test(i.codigo_fungivora)
             )
             .map(i => ({
                 value: i.id_inoculo,
                 label: i.codigo_fungivora,
-                abreviatura: i.abreviatura 
+                abreviatura: i.abreviatura
             }));
     }, [inoculosRaw]);
 
@@ -89,7 +91,7 @@ const useLotes = () => {
         }
     };
 
-    
+
     const deleteLote = async (id_lote) => {
         try {
             const res = await loteService.deleteLote(id_lote);
@@ -102,17 +104,17 @@ const useLotes = () => {
         }
     };
 
-    return { 
-        datos, 
-        sustratos, 
-        ubicaciones, 
-        especiesDisponibles, 
-        getInoculosPorEspecie, 
-        cargando, 
-        error, 
-        addLote, 
+    return {
+        datos,
+        sustratos,
+        ubicaciones,
+        especiesDisponibles,
+        getInoculosPorEspecie,
+        cargando,
+        error,
+        addLote,
         deleteLote,
-        refresh: fetchLotes 
+        refresh: fetchLotes
     };
 };
 
