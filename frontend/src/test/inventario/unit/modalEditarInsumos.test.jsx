@@ -137,7 +137,7 @@ describe('ModalEditarInsumo — paso de confirmación', () => {
 
         await user.click(screen.getByText('Guardar'))
 
-        expect(screen.getByText('¿Confirmas los siguientes cambios?')).toBeInTheDocument()
+        expect(screen.getByText('Confirme los siguientes cambios')).toBeInTheDocument()
         expect(screen.getByText('Agar agar')).toBeInTheDocument()
         expect(screen.getByText('Gramo(s)')).toBeInTheDocument()
         expect(screen.getByText('100')).toBeInTheDocument()
