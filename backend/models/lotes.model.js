@@ -189,6 +189,25 @@ class Lotes {
             throw err;
         }
     }
+
+    static async fetch_by_id(id_lote) {
+        try {
+            const [rows] = await db.execute(`
+                SELECT 
+                    l.*, 
+                    i.especie 
+                FROM Lotes l
+                LEFT JOIN Bloques b ON l.id_lote = b.id_lote
+                LEFT JOIN Inoculos i ON b.id_inoculo = i.id_inoculo
+                WHERE l.id_lote = ?
+                LIMIT 1
+            `, [id_lote]);
+            return rows[0];
+        } catch (err) {
+            console.error("Error en fetch_by_id:", err);
+            throw err;
+        }
+    }
 }
 
 module.exports = Lotes;

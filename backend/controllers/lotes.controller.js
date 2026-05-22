@@ -209,10 +209,20 @@ exports.actualizar_fase = async (req, res) => {
 exports.get_batch_by_id = async (req, res) => {
     const { id_lote } = req.query;
     try {
-        const lote = await Lote.findOne({ where: { id_lote: id_lote } });
+        if (!id_lote) {
+            return res.status(400).json({ message: "ID de lote requerido" });
+        }
+        
+        const lote = await Lotes.fetch_by_id(id_lote);
+        
+        if (!lote) {
+            return res.status(404).json({ message: "Lote no encontrado" });
+        }
+
         res.json(lote);
     } catch (error) {
-        res.status(500).send(error.message);
+        console.error("Error en get_batch_by_id:", error);
+        res.status(500).json({ success: false, error: error.message });
     }
 };
 

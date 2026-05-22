@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { LoteService } from '../services/lote.service';
 
-const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
+const useDetalleLote = (id_lote, faseInicial) => {
     const [bloques, setBloques] = useState([]);
     const [bloquesIniciales, setBloquesIniciales] = useState([]);
     const [especie, setEspecie] = useState("");
-    const [codigoInoculo, setCodigoInoculo] = useState("");
-    const [codigoLoteBD, setCodigoLoteBD] = useState(null); 
+    const [codigoInoculo, setCodigoInoculo] = useState(null); 
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
     const fases = [
@@ -19,38 +18,34 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!id_lote) return;
-            console.log("ID del lote recibido en el hook:", id_lote);
-            setCargando(true);
-            try {
-                const [resBloques, resCodigo, resEspecie] = await Promise.all([
-                    LoteService.getBloquesByLote(id_lote),
-                    id_inoculo_usado ? LoteService.getCodigoInoculo(id_inoculo_usado) : Promise.resolve("N/A"),
-                    id_inoculo_usado ? LoteService.getEspecieByLote(id_inoculo_usado) : Promise.resolve("S/N")
-                ]);
+        if (!id_lote) return;
+        setCargando(true);
+        try {
+            const resBloques = await LoteService.getBloquesByLote(id_lote);
 
-                // Obtener todos los datos de los bloques y lote
-                const listaObtenida = resBloques.data || [];
+            const listaObtenida = resBloques.data || [];
+
+            if (listaObtenida.length > 0) {
+                const primerBloque = listaObtenida[0];
                 
                 setBloques(listaObtenida);
-                setBloquesIniciales(resBloques.data || []);
-                setCodigoInoculo(resCodigo);
-                setEspecie(resEspecie);
-                    if (listaObtenida.length > 0) {
-                        const codigoEncontrado = listaObtenida[0].codigo_lote || "LC-DESCONOCIDO-000000"; 
-                        setCodigoLoteBD(codigoEncontrado);
-                    }
-
-            } catch (err) {
-                setError(err.message);
-                setBloques([]);
-                setBloquesIniciales([]);
-            } finally {
-                setCargando(false);
+                setBloquesIniciales(listaObtenida.map(b => ({ ...b })));
+                
+                setCodigoInoculo(primerBloque.codigo_lote); 
+                setEspecie(primerBloque.especie_nombre || "S/N");
+            } else {
+                console.error("La lista de bloques está vacía para este ID.");
             }
-        };
+
+        } catch (err) {
+            console.error("Error en fetchData detalle:", err);
+            setError(err.message);
+        } finally {
+            setCargando(false);
+        }
+    };
         fetchData();
-    }, [id_lote, id_inoculo_usado]);
+    }, [id_lote]);
 
     const getFase = (id_fase) => {
         return fases[id_fase] ? fases[id_fase].label : "Desconocida";
@@ -71,10 +66,11 @@ const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
         }
     };
 
+
     return {
         bloques, setBloques, bloquesIniciales, setBloquesIniciales,
         fase, setFase, faseInicialNum, setFaseInicialNum,
-        especie, codigoInoculo, codigoLoteBD, 
+        especie, codigoInoculo,        
         cargando, error, getFase, guardarCambios,
         fases
     };

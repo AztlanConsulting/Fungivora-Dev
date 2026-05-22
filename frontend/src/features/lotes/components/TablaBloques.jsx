@@ -9,6 +9,7 @@ const colorBordeDestacado = '#7F7FD5';
 
 const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, codigo_lote }) => {
 
+
     // Generar unicamente de modo vizual el código para el bloque
     const generarCodigoBloque = (codigoLote, indice) => {
         if (!codigoLote) return `BC-B${indice + 1}`;
@@ -38,7 +39,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, codi
 
         return (
             <div className="px-4 py-1 rounded-lg inline-block" style={{ backgroundColor: bg }}>
-                <Text variante="body" style={{ color, fontWeight: '600', fontSize: '14px' }}>
+                <Text variante="body" style={{ color, fontWeight: '600', fontSize: '12px' }}>
                     {texto}
                 </Text>
             </div>
@@ -71,8 +72,9 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, codi
             <div className="rounded-2xl border overflow-hidden" style={{ borderColor: '#F0F0F0' }}>
 
                 {/* Encabezado Desktop */}
-                <div className="hidden md:grid grid-cols-5 py-5 px-8 gap-4 items-center" style={{ backgroundColor: colorHeaderTabla }}>
-                    <div><Text variante="option" style={{ fontWeight: '600' }}>Código del bloque</Text></div>
+                <div className="hidden md:grid grid-cols-6 py-5 px-8 gap-4 items-center" style={{ backgroundColor: colorHeaderTabla }}>
+                    <div><Text variante="option" style={{ fontWeight: '600' }}>Código Bloque</Text></div>
+                    <div><Text variante="option" style={{ fontWeight: '600' }}>Inóculo</Text></div>
                     <div><Text variante="option" style={{ fontWeight: '600' }}>Tamaño</Text></div>
                     <div><Text variante="option" style={{ fontWeight: '600' }}>Peso (g)</Text></div>
                     <div><Text variante="option" style={{ fontWeight: '600' }}>Clasificación</Text></div>
@@ -89,39 +91,53 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, codi
                     ) : (
                         bloques.map((bloque, index) => {
                             // Inserta el código vizual
-                            const codigoVisual = generarCodigoBloque(codigo_lote, index);
+                            const codigoPadre = codigo_lote || bloque.codigo_lote;
+                            const codigoVisual = generarCodigoBloque(codigoPadre, index);
                             const pesoLimpio = parseFloat(bloque.peso_gr || 0).toFixed(0);
 
                             return (
                                 <div key={bloque.id_bloque || index} className="relative">
-                                    {/* Vista movil */}
-                                    <div className="md:hidden p-5 flex flex-col gap-2 bg-white border-b border-gray-100">
-                                        <Text variante="body" style={{ fontWeight: '600', color: colores.azul }}>
-                                            {codigoVisual}
-                                        </Text>
-                                        <div className="flex justify-between items-center mt-1">
-                                            <div className="flex flex-col">
-                                                <Text variante="body" style={{ color: colores.gris }}>{bloque.contenedor}</Text>
-                                                <Text variante="body" style={{ color: colores.gris }}>{pesoLimpio} g</Text>
-                                            </div>
-                                            <div className="flex flex-col items-end gap-2">
-                                                {renderEtiqueta(bloque.produccion)}
-                                                <div className="flex items-center gap-2">
-                                                    <Text variante="body" style={{ fontSize: '12px' }}>Contaminado:</Text>
-                                                    {renderCheckbox(bloque.contaminado, bloque.id_bloque)}
-                                                </div>
-                                            </div>
+                                {/* Vista movil */}
+                                <div className="md:hidden p-5 flex flex-col gap-4 bg-white border-b border-gray-100">
+                                    <div className="flex justify-between items-start">
+                                        <div className="flex flex-col gap-1">
+                                            <Text variante="body" style={{ fontWeight: '600', color: colores.black, fontSize: '14px' }}>
+                                                {codigoVisual}
+                                            </Text>
+                                            <Text variante="body" style={{ fontWeight: '400', color: colores.black, fontSize: '14px' }}>
+                                                {bloque.codigo_lote}
+                                            </Text>
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                            {renderCheckbox(bloque.contaminado, bloque.id_bloque)}
                                         </div>
                                     </div>
 
+                                    <div className="flex justify-between items-end">
+                                        <div className="flex flex-col gap-1">
+                                            <Text variante="body" style={{ color: '#444', fontSize: '13px', fontWeight: '600' }}>
+                                                {bloque.contenedor}
+                                            </Text>
+                                            <Text variante="body" style={{ color: '#444', fontSize: '13px', fontWeight: '600' }}>
+                                                {pesoLimpio} g
+                                            </Text>
+                                        </div>
+                                        
+                                        <div className="flex flex-col items-end">
+                                            {renderEtiqueta(bloque.produccion)}
+                                        </div>
+                                    </div>
+                                </div>
+
                                     {/* Vista desktop */}
-                                    <div className="hidden md:grid grid-cols-5 px-8 py-4 gap-4 items-center transition-colors hover:bg-slate-50 bg-white"
-                                         style={{ borderBottom: index === bloques.length - 1 ? 'none' : '1px solid #F0F0F0' }}>
+                                    <div className="hidden md:grid grid-cols-6 px-8 py-4 gap-4 items-center transition-colors hover:bg-slate-50 bg-white"
+                                    style={{ borderBottom: index === bloques.length - 1 ? 'none' : '1px solid #F0F0F0' }}>
                                         <Text variante="body" style={{ fontWeight: '600', color: '#1A1A40' }}>{codigoVisual}</Text>
+                                        <Text variante="body" style={{ color: '#444' }}>{bloque.codigo_lote}</Text>
                                         <Text variante="body" style={{ color: '#444' }}>{bloque.contenedor}</Text>
                                         <Text variante="body" style={{ color: '#444' }}>{pesoLimpio} g</Text>
                                         <div>{renderEtiqueta(bloque.produccion)}</div>
-                                        <div className="flex justify-start">
+                                        <div className="flex justify-center mr-20">
                                             {renderCheckbox(bloque.contaminado, bloque.id_bloque)}
                                         </div>
                                     </div>

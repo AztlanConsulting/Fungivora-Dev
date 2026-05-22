@@ -17,14 +17,10 @@ const DetalleLote = () => {
     const {
         bloques, setBloques, bloquesIniciales, setBloquesIniciales,
         fase, setFase, faseInicialNum, setFaseInicialNum,
-        especie, codigoInoculo, codigoLoteBD,
+        especie, codigoInoculo,
         cargando, error, getFase, guardarCambios,
         fases
-    } = useDetalleLote(
-        id_lote,
-        state?.id_inoculo,
-        state?.fase
-    );
+    } = useDetalleLote(id_lote, state?.fase);
 
     const [busqueda, setBusqueda] = useState("");
     const [editado, setEditado] = useState(false);
