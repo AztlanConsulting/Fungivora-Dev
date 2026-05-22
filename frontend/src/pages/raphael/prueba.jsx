@@ -1,56 +1,60 @@
 import React, { useEffect, useRef } from 'react';
 import Raphael from 'raphael';
 
-const DiagramaRaphael = ({ datos }) => {
+const DiagramaRaphael = ({ datos, onNodoClick }) => {
   const containerRef = useRef(null);
 
   useEffect(() => {
-    // Validación de seguridad para 'datos' y el contenedor
     if (!containerRef.current || !datos || !datos.nodos) return;
 
-    const paper = Raphael(containerRef.current, "100%", 400);
-    
-    const estilos = {
-      nodo: { fill: "#fdf2f8", stroke: "#db2777", "stroke-width": 2, r: 8 },
-      texto: { "font-family": "Inter, sans-serif", "font-size": 14, fill: "#334155" },
-      linea: { stroke: "#fbcfe8", "stroke-width": 2 }
+    const paper = Raphael(containerRef.current, "100%", 500);
+    const col = {
+      abuelo: { f: "#fef3c7", s: "#d97706" },
+      padre: { f: "#dcfce7", s: "#16a34a" },
+      hijo: { f: "#e0e7ff", s: "#4f46e5" },
+      linea: "#e2e8f0"
     };
 
-    // Dibujar conexiones
-    if (datos.conexiones) {
-      datos.conexiones.forEach(conn => {
-        const origen = datos.nodos.find(n => n.id === conn.from);
-        const destino = datos.nodos.find(n => n.id === conn.to);
-        
-        if (origen && destino) {
-          paper.path(`M${origen.x} ${origen.y}L${destino.x} ${destino.y}`)
-               .attr(estilos.linea);
-        }
-      });
-    }
+    // Dibujar Conexiones
+    datos.conexiones.forEach(conn => {
+      const o = datos.nodos.find(n => n.id === conn.from);
+      const d = datos.nodos.find(n => n.id === conn.to);
+      if (o && d) {
+        const path = `M${o.x},${o.y-25} L${d.x},${d.y+25}`;
+        paper.path(path).attr({ stroke: col.linea, "stroke-width": 2 }).toBack();
+      }
+    });
 
-    // Dibujar nodos
+    // Dibujar Nodos
     datos.nodos.forEach(nodo => {
-      const c = paper.rect(nodo.x - 40, nodo.y - 20, 80, 40, estilos.nodo.r)
-                     .attr(estilos.nodo);
+      const estilo = col[nodo.tipo] || col.hijo;
       
-      paper.text(nodo.x, nodo.y, nodo.label)
-           .attr(estilos.texto);
+      const rect = paper.rect(nodo.x - 70, nodo.y - 25, 140, 50, 15).attr({
+        fill: estilo.f,
+        stroke: estilo.s,
+        "stroke-width": 2,
+        cursor: "pointer"
+      });
 
-      c.mouseover(() => c.animate({ fill: "#fbcfe8", transform: "s1.1" }, 200));
-      c.mouseout(() => c.animate({ fill: "#fdf2f8", transform: "s1" }, 200));
+      paper.text(nodo.x, nodo.y, nodo.label).attr({
+        "font-family": "Inter",
+        "font-size": 11,
+        "font-weight": "600",
+        fill: "#1e293b",
+        cursor: "pointer"
+      }).click(() => onNodoClick(nodo.id));
+
+      rect.click(() => onNodoClick(nodo.id));
+      
+      // Animación simple
+      rect.mouseover(() => rect.animate({ "stroke-width": 4 }, 200));
+      rect.mouseout(() => rect.animate({ "stroke-width": 2 }, 200));
     });
 
     return () => paper.remove();
-  }, [datos]);
+  }, [datos, onNodoClick]);
 
-  return (
-    <div 
-      ref={containerRef} 
-      className="w-full bg-white rounded-lg shadow-inner overflow-hidden border border-slate-200" 
-    />
-  );
+  return <div ref={containerRef} className="w-full min-h-[500px]" />;
 };
 
-// ESTA ES LA LÍNEA QUE FALTA:
 export default DiagramaRaphael;
