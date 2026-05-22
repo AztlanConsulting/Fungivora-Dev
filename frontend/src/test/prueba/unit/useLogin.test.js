@@ -1,9 +1,9 @@
 import { renderHook, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import useLogin from '../../../features/login/hooks/useLogin'
-import loginService from '../../../features/login/service/login.service'
+import loginService from '../../../features/login/services/login.service'
 
-vi.mock('../../../features/login/service/login.service', () => {
+vi.mock('../../../features/login/services/login.service', () => {
     return {
         default: {
             login: vi.fn()
