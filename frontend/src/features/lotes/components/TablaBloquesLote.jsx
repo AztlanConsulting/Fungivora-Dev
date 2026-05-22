@@ -116,7 +116,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, codi
 
                                     {/* Vista desktop */}
                                     <div className="hidden md:grid grid-cols-5 px-8 py-4 gap-4 items-center transition-colors hover:bg-slate-50 bg-white"
-                                         style={{ borderBottom: index === bloques.length - 1 ? 'none' : '1px solid #F0F0F0' }}>
+                                        style={{ borderBottom: index === bloques.length - 1 ? 'none' : '1px solid #F0F0F0' }}>
                                         <Text variante="body" style={{ fontWeight: '600', color: '#1A1A40' }}>{codigoVisual}</Text>
                                         <Text variante="body" style={{ color: '#444' }}>{bloque.contenedor}</Text>
                                         <Text variante="body" style={{ color: '#444' }}>{pesoLimpio} g</Text>

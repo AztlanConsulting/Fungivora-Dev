@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import TablaBloques from '../../../features/lotes/components/TablaBloques'
+import TablaBloques from '../../../features/lotes/components/TablaBloquesLote'
 
 // Mock de Text
 vi.mock('../../../shared/components/ui/basics/texto', () => ({

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import useDetalleLote from '../hooks/useDetalleLote';
 import BannerLote from '../components/BannerLote';
-import TablaBloques from '../components/TablaBloques';
+import TablaBloques from '../components/TablaBloquesLote';
 import SeccionFaseBuscar from '../components/SeccionFaseBuscar';
 import { Titulo, Text, ModalConfirmacion, ModalAlerta } from '../../../shared/components/ui';
 import { colores } from '../../../shared/components/ui/basics/colores';

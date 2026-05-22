@@ -16,7 +16,7 @@ import { CheckmarkCircle02Icon, CancelCircleIcon } from '@hugeicons/core-free-ic
 
 // Componentes de Tablas y Forms
 import TablaLotes from "../../features/lotes/components/TablaLotes";
-import TablaBloques from "../../features/bloques/components/TablaBloques";
+import TablaBloques from "../../features/bloques/components/TablaBloquesEditable";
 import FormCrearLote from "../../features/lotes/components/FormCrearLote";
 import FormCrearBloque from "../../features/bloques/components/FormCrearBloque";
 

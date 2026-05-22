@@ -20,7 +20,7 @@ vi.mock('../../../features/lotes/components/BannerLote', () => ({
     ),
 }))
 
-vi.mock('../../../features/lotes/components/TablaBloques', () => ({
+vi.mock('../../../features/lotes/components/TablaBloquesLote', () => ({
     default: ({ bloques, loading, onToggleContaminado, codigo_lote }) => (
         <div data-testid="tabla-bloques" data-loading={loading} data-codigo={codigo_lote}>
             {bloques.map((b) => (
