@@ -36,11 +36,10 @@ vi.mock('../../../shared/components/ui/basics/texto', () => ({
 vi.mock('@hugeicons/react', () => ({
     HugeiconsIcon: () => <span />,
 }))
-vi.mock('@hugeicons/core-free-icons', () => ({
-    Add01Icon: {},
-    CheckmarkCircle02Icon: {},
-    MultiplicationSignCircleIcon: {}
-}))
+vi.mock('@hugeicons/core-free-icons', async (importOriginal) => {
+    const actual = await importOriginal()
+    return { ...actual }
+})
 
 // Mock de useNavigate
 const mockNavigate = vi.fn()

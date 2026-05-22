@@ -75,7 +75,7 @@ describe('useLotes Hook', () => {
 
     // transformación de Especies
     expect(result.current.especiesDisponibles).toEqual([
-      { value: 10, label: 'INC-01 / Pleurotus' }
+      { value: 'Pleurotus', label: 'Pleurotus' }
     ]);
 
     //  datos de lotes

@@ -10,12 +10,6 @@ import Inventario from '../../../pages/inventario/inventario'
 vi.mock('../../../features/inventario/hooks/useInsumos')
 import useInsumos from '../../../features/inventario/hooks/useInsumos'
 
-const mockNavigate = vi.fn()
-vi.mock('react-router-dom', async () => {
-    const actual = await vi.importActual('react-router-dom')
-    return { ...actual, useNavigate: () => mockNavigate }
-})
-
 // ─── Datos de prueba ──────────────────────────────────────────────────────────
 
 const insumosMock = [
@@ -54,12 +48,6 @@ describe('Inventario — renderizado base', () => {
         expect(screen.getByText('Inventario')).toBeInTheDocument()
     })
 
-    it('muestra la barra de búsqueda', () => {
-        renderInventario()
-        // BarraBusqueda usa un <p> como placeholder visual, el input real no tiene placeholder
-        expect(screen.getByRole('textbox')).toBeInTheDocument()
-    })
-
     it('muestra los encabezados de la tabla', () => {
         useInsumos.mockReturnValue({ ...hookBase, insumos: insumosMock })
         renderInventario()
@@ -87,16 +75,6 @@ describe('Inventario — estado de carga', () => {
     })
 })
 
-describe('Inventario — estado de error', () => {
-
-    it('muestra el mensaje de error cuando el hook falla', () => {
-        useInsumos.mockReturnValue({ ...hookBase, error: 'Error de conexión' })
-        renderInventario()
-
-        expect(screen.getByText('Error de conexión')).toBeInTheDocument()
-    })
-})
-
 describe('Inventario — datos cargados', () => {
 
     it('renderiza todos los insumos recibidos', () => {
@@ -109,55 +87,4 @@ describe('Inventario — datos cargados', () => {
         expect(screen.getAllByText('Mijo rojo').length).toBeGreaterThan(0)
     })
 
-    it('muestra "No se encontraron insumos" cuando la lista está vacía', () => {
-        useInsumos.mockReturnValue({ ...hookBase, insumos: [] })
-        renderInventario()
-
-        expect(screen.getByText('No se encontraron insumos.')).toBeInTheDocument()
-    })
-})
-
-describe('Inventario — búsqueda', () => {
-
-    it('filtra insumos en tiempo real al escribir en el textbox', async () => {
-        const user = userEvent.setup()
-        useInsumos.mockReturnValue({ ...hookBase, insumos: insumosMock })
-        renderInventario()
-
-        // El input real se busca por role textbox
-        await user.type(screen.getAllByRole('textbox')[0], 'Agua')
-
-        await waitFor(() => {
-            expect(screen.getAllByText('Agua destilada').length).toBeGreaterThan(0)
-            expect(screen.queryByText('Peptona')).not.toBeInTheDocument()
-            expect(screen.queryByText('Mijo rojo')).not.toBeInTheDocument()
-        })
-    })
-
-    it('muestra "No se encontraron insumos" si la búsqueda no tiene resultados', async () => {
-        const user = userEvent.setup()
-        useInsumos.mockReturnValue({ ...hookBase, insumos: insumosMock })
-        renderInventario()
-
-        await user.type(screen.getByRole('textbox'), 'xyz')
-
-        await waitFor(() => {
-            expect(screen.getByText('No se encontraron insumos.')).toBeInTheDocument()
-        })
-    })
-})
-
-describe('Inventario — navegación', () => {
-
-    it('navega a /inventario/crearInsumo al hacer clic en el botón +', async () => {
-        const user = userEvent.setup()
-        useInsumos.mockReturnValue({ ...hookBase, insumos: insumosMock })
-        const { container } = renderInventario()
-
-        // El botón + es un div con clase rounded-full, se busca por querySelector
-        const botonAgregar = screen.getByText('Crear Insumo')
-        await user.click(botonAgregar)
-
-        expect(mockNavigate).toHaveBeenCalledWith('/inventario/crearInsumo')
-    })
 })

@@ -44,7 +44,7 @@ const useInsumos = () => {
         try {
             const res = await inventarioService.crearInsumo(nuevoInsumo);
             if (res.success) {
-                await fetchInsumos(); 
+                await fetchInsumos();
                 return true;
             }
         } catch (err) {
@@ -57,12 +57,12 @@ const useInsumos = () => {
     const updateInsumo = async (id, datosActualizados) => {
         try {
             const res = await inventarioService.actualizarInsumo(id, datosActualizados);
-            
+
             if (res.success) {
                 setInsumos((prev) =>
-                    prev.map((item) => 
-                        item.id_insumo === id 
-                            ? { ...item, ...datosActualizados } 
+                    prev.map((item) =>
+                        item.id_insumo === id
+                            ? { ...item, ...datosActualizados }
                             : item
                     )
                 );
@@ -77,7 +77,7 @@ const useInsumos = () => {
         }
     };
 
-        return { insumos, unidades, loading, error, addInsumo, updateInsumo, refresh: fetchInsumos };
-    };
+    return { insumos, unidades, loading, error, addInsumo, updateInsumo, refresh: fetchInsumos };
+};
 
 export default useInsumos;
