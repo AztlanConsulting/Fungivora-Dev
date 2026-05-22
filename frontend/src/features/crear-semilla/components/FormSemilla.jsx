@@ -8,7 +8,7 @@ import InputNota from "../../../shared/components/ui/inputs/input_nota";
 import Button from "../../../shared/components/ui/buttons/botones";
 import ModalAlerta from "../../../shared/components/ui/popups/ModalAlerta";
 
-import { EntradaLista } from "../../crear-medio/components/seleccionar_cantidades";
+import { EntradaLista } from "../../crear-medio/components/SeleccionarCantidades";
 import ResumenSemilla from "../../crear-medio/components/ResumenSemilla";
 import insumosService from "../../crear-medio/services/inoculos.service";
 import { BOLSAS } from "../../crear-medio/types/inoculos.type";
@@ -46,11 +46,11 @@ const FormSemillas = () => {
   const [tamano, setTamano] = useState("");
   const [cantidad, setCantidad] = useState(1);
   const hoy = new Date();
-    const [fecha, setFecha] = useState({
-        day:   String(hoy.getDate()).padStart(2, "0"),
-        month: String(hoy.getMonth() + 1).padStart(2, "0"),
-        year:  String(hoy.getFullYear()),
-    });
+  const [fecha, setFecha] = useState({
+    day: String(hoy.getDate()).padStart(2, "0"),
+    month: String(hoy.getMonth() + 1).padStart(2, "0"),
+    year: String(hoy.getFullYear()),
+  });
   const [nota, setNota] = useState("");
 
   const { especies, loading: loadingEspecies, error: errorEspecies } = useEspecies();
@@ -103,7 +103,7 @@ const FormSemillas = () => {
   const handleRegistrar = async () => {
     setRegistrando(true);
     try {
-        const datos = crearInoculoDTO({
+      const datos = crearInoculoDTO({
         codigo: codigos.base,
         tipo: TIPO_CREACION,
         especie,
@@ -115,24 +115,24 @@ const FormSemillas = () => {
         inoculoSeleccionado,
         valoresComposicion,
         itemsComposicion,
-        });
+      });
 
-        // En handleRegistrar — primero el navigate con state, sin setAlerta
-        await insumosService.postInoculo(datos);
-        navigate("/inoculos", {
-            state: {
-                alerta: {
-                    variante: "exito",
-                    mensaje: `Registro con éxito de : ${codigos.base}`,
-                }
-            }
-        });
+      // En handleRegistrar — primero el navigate con state, sin setAlerta
+      await insumosService.postInoculo(datos);
+      navigate("/inoculos", {
+        state: {
+          alerta: {
+            variante: "exito",
+            mensaje: `Registro con éxito de : ${codigos.base}`,
+          }
+        }
+      });
 
     } catch (error) {
       console.error("Error en el registro:", error);
       setAlerta({ visible: true, ...traducirError(error) });
     } finally {
-        setRegistrando(false);
+      setRegistrando(false);
     }
   };
 
@@ -238,21 +238,21 @@ const FormSemillas = () => {
               Cancelar
             </Button>
             <Button
-                variant="registrar"
-                onClick={handleRegistrar}
-                disabled={registrando || !tamano}
-              >
+              variant="registrar"
+              onClick={handleRegistrar}
+              disabled={registrando || !tamano}
+            >
               {registrando ? "Registrando..." : "Registrar"}
             </Button>
           </div>
         </div>
       </Base>
       <ModalAlerta
-            visible={alerta.visible}
-            variante={alerta.variante}
-            mensaje={alerta.mensaje}
-            onClose={() => setAlerta((a) => ({ ...a, visible: false }))}
-        />
+        visible={alerta.visible}
+        variante={alerta.variante}
+        mensaje={alerta.mensaje}
+        onClose={() => setAlerta((a) => ({ ...a, visible: false }))}
+      />
     </>
   );
 };

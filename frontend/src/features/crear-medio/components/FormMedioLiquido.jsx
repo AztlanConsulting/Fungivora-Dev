@@ -2,24 +2,24 @@ import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
-import InputFecha  from "../../../shared/components/ui/inputs/input_fecha";
-import InputNota   from "../../../shared/components/ui/inputs/input_nota";
-import Button      from "../../../shared/components/ui/buttons/botones";
+import InputFecha from "../../../shared/components/ui/inputs/input_fecha";
+import InputNota from "../../../shared/components/ui/inputs/input_nota";
+import Button from "../../../shared/components/ui/buttons/botones";
 import ModalAlerta from "../../../shared/components/ui/popups/ModalAlerta";
-import Text        from "../../../shared/components/ui/basics/texto";
-import { Base }    from "../../../shared/components/layout";
+import Text from "../../../shared/components/ui/basics/texto";
+import { Base } from "../../../shared/components/layout";
 import { colores } from "../../../shared/components/ui/basics/colores";
 
-import { EntradaLista } from "./seleccionar_cantidades";
-import ResumenSemilla   from "./ResumenSemilla";
-import insumosService   from "../services/inoculos.service";
+import { EntradaLista } from "./SeleccionarCantidades";
+import ResumenSemilla from "./ResumenSemilla";
+import insumosService from "../services/inoculos.service";
 import { cantMedioLiquido } from "../types/inoculos.type";
-import { crearInoculoDTO }  from "../dto/crearInoculoDto";
-import { traducirError }    from "../../../shared/utils/traducirError";
+import { crearInoculoDTO } from "../dto/crearInoculoDto";
+import { traducirError } from "../../../shared/utils/traducirError";
 
-import useEspecies                 from "../../inoculos/hooks/useEspecies";
-import useCategorias               from "../hooks/useCategorias";
-import useInoculo                  from "../hooks/useInoculo";
+import useEspecies from "../../inoculos/hooks/useEspecies";
+import useCategorias from "../hooks/useCategorias";
+import useInoculo from "../hooks/useInoculo";
 import useIngredientesMedioLiquido from "../hooks/useIngredientesMedioLiquido";
 
 import {
@@ -28,28 +28,28 @@ import {
 } from "../utils/generarCodigoInoculo";
 
 const TIPO_CREACION = "medioLiquido";    // clave interna (prefijo + filtro de inóculo)
-const TIPO_DB       = "medio liquido";   // valor literal que se guarda en la columna `tipo`
+const TIPO_DB = "medio liquido";   // valor literal que se guarda en la columna `tipo`
 
 // El medio líquido siempre se crea como una sola unidad (un solo matraz por registro).
 const REPETICIONES = 1;
 
 const OPCIONES_CARBOHIDRATO = [
-  { value: "miel",        label: "Miel" },
+  { value: "miel", label: "Miel" },
   { value: "jarabe_maiz", label: "Jarabe de maíz" },
 ];
 
 const FormMedioLiquido = () => {
   const navigate = useNavigate();
 
-  const [especie,      setEspecie]      = useState("");
-  const [inoculo,      setInoculo]      = useState("");
+  const [especie, setEspecie] = useState("");
+  const [inoculo, setInoculo] = useState("");
   const [carbohidrato, setCarbohidrato] = useState("");
 
   const hoy = new Date();
   const [fecha, setFecha] = useState({
-    day:   String(hoy.getDate()).padStart(2, "0"),
+    day: String(hoy.getDate()).padStart(2, "0"),
     month: String(hoy.getMonth() + 1).padStart(2, "0"),
-    year:  String(hoy.getFullYear()),
+    year: String(hoy.getFullYear()),
   });
   const [nota, setNota] = useState("");
 
@@ -61,9 +61,9 @@ const FormMedioLiquido = () => {
   const { categorias, loading: loadingCategorias } = useCategorias();
 
   const inoculoSeleccionado = (inoculos ?? []).find((ino) => ino.codigo === inoculo);
-  const tipoInoculo         = normalizarTipoInoculo(inoculoSeleccionado?.raw?.tipo);
-  const inoculoDisponible   = inoculoSeleccionado?.raw?.cantidad_disponible ?? 0;
-  const codigoInoculo       = inoculoSeleccionado?.codigo ?? "";
+  const tipoInoculo = normalizarTipoInoculo(inoculoSeleccionado?.raw?.tipo);
+  const inoculoDisponible = inoculoSeleccionado?.raw?.cantidad_disponible ?? 0;
+  const codigoInoculo = inoculoSeleccionado?.codigo ?? "";
 
   const {
     items: itemsComposicion,
@@ -87,7 +87,7 @@ const FormMedioLiquido = () => {
   const codigos = useMemo(() => {
     if (loadingCategorias) return { base: "", lista: [] };
     return generarCodigos({
-      tipoCreacion:  TIPO_CREACION,
+      tipoCreacion: TIPO_CREACION,
       tipoInoculo,
       nombreEspecie: especie,
       categorias,
@@ -100,14 +100,14 @@ const FormMedioLiquido = () => {
     setRegistrando(true);
     try {
       const datos = crearInoculoDTO({
-        codigo:        codigos.base,
-        tipo:          TIPO_DB,
+        codigo: codigos.base,
+        tipo: TIPO_DB,
         especie,
         fecha,
         cantidadFinal: cantMedioLiquido,   // volumen fijo de 600 ml
-        cantidad:      REPETICIONES,        // siempre 1 — medio líquido no repite
+        cantidad: REPETICIONES,        // siempre 1 — medio líquido no repite
         nota,
-        unidad:        "ml",
+        unidad: "ml",
         inoculoSeleccionado,
         valoresComposicion,
         itemsComposicion,
@@ -118,7 +118,7 @@ const FormMedioLiquido = () => {
         state: {
           alerta: {
             variante: "exito",
-            mensaje:  `Registro con éxito de: ${codigos.base}`,
+            mensaje: `Registro con éxito de: ${codigos.base}`,
           },
         },
       });

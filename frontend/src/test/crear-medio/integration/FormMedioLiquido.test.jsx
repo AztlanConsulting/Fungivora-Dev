@@ -4,11 +4,11 @@ import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import FormMedioLiquido from '../../../features/crear-medio/components/FormMedioLiquido'
-import useEspecies                 from '../../../features/inoculos/hooks/useEspecies'
-import useInoculo                  from '../../../features/crear-medio/hooks/useInoculo'
-import useCategorias               from '../../../features/crear-medio/hooks/useCategorias'
+import useEspecies from '../../../features/inoculos/hooks/useEspecies'
+import useInoculo from '../../../features/crear-medio/hooks/useInoculo'
+import useCategorias from '../../../features/crear-medio/hooks/useCategorias'
 import useIngredientesMedioLiquido from '../../../features/crear-medio/hooks/useIngredientesMedioLiquido'
-import insumosService              from '../../../features/crear-medio/services/inoculos.service'
+import insumosService from '../../../features/crear-medio/services/inoculos.service'
 
 vi.mock('../../../features/inoculos/hooks/useEspecies')
 vi.mock('../../../features/crear-medio/hooks/useInoculo')
@@ -20,7 +20,7 @@ vi.mock('../../../features/crear-medio/services/inoculos.service', () => ({
 }))
 
 vi.mock('../../../features/crear-medio/utils/generarCodigoInoculo', () => ({
-    generarCodigos:        vi.fn(() => ({ base: 'ML-SH-200526', lista: ['ML-SH-200526'] })),
+    generarCodigos: vi.fn(() => ({ base: 'ML-SH-200526', lista: ['ML-SH-200526'] })),
     normalizarTipoInoculo: vi.fn(() => 'agar'),
 }))
 
@@ -31,11 +31,11 @@ vi.mock('../../../features/crear-medio/dto/crearInoculoDto', () => ({
 vi.mock('../../../shared/utils/traducirError', () => ({
     traducirError: vi.fn((err) => ({
         variante: 'error',
-        mensaje:  err?.message || 'Error desconocido',
+        mensaje: err?.message || 'Error desconocido',
     })),
 }))
 
-vi.mock('../../../features/crear-medio/components/seleccionar_cantidades', () => ({
+vi.mock('../../../features/crear-medio/components/SeleccionarCantidades', () => ({
     EntradaLista: () => <div data-testid="entrada-lista" />,
 }))
 
@@ -109,7 +109,7 @@ const setupHooks = () => {
     useInoculo.mockReturnValue({
         opciones: [{
             codigo: 'ML-001',
-            label:  'ML-001 — Medio Líquido (100 ml)',
+            label: 'ML-001 — Medio Líquido (100 ml)',
             raw: { tipo: 'Medio Líquido', cantidad_disponible: 100, id_inoculo: 42 },
         }],
         loading: false, error: null,
@@ -141,8 +141,8 @@ const renderForm = () =>
 
 const completarForm = async (user) => {
     const [especie, inoculo, carbohidrato] = screen.getAllByRole('combobox')
-    await user.selectOptions(especie,      'Shiitake')
-    await user.selectOptions(inoculo,      'ML-001')
+    await user.selectOptions(especie, 'Shiitake')
+    await user.selectOptions(inoculo, 'ML-001')
     await user.selectOptions(carbohidrato, 'miel')
 }
 
