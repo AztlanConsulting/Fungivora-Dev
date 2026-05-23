@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Input from "../../shared/components/ui/inputs/input_texto";
+import Input from "../../shared/components/ui/inputs/InputTexto";
 import Button from "../../shared/components/ui/buttons/Botones";
 import Text from "../../shared/components/ui/basics/Texto";
 import { colores } from "../../shared/components/ui/basics/Colores";
