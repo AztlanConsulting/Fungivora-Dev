@@ -106,7 +106,7 @@ const DetalleLote = () => {
     ) || [];
 
 
-    const codigoParaTabla = state?.codigo_fungivora || codigoLoteBD || "";
+    const codigoParaTabla = state?.codigo_fungivora || codigoInoculo || "";
     return (
         <>
             <Titulo>Lote: {state?.codigo_fungivora || 'Detalle'}</Titulo>

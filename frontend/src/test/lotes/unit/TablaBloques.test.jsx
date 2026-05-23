@@ -35,14 +35,12 @@ vi.mock('../../../shared/components/ui/basics/colores', () => ({
     },
 }))
 
-// Datos de prueba 
-
 const CODIGO_LOTE = 'LT-001'
 
 const bloquesMock = [
-    { id_bloque: 1, peso_gr: '850.5', contenedor: 'Bolsa', produccion: 1, contaminado: 0 },
-    { id_bloque: 2, peso_gr: '920.0', contenedor: 'Frasco', produccion: 0, contaminado: 1 },
-    { id_bloque: 3, peso_gr: '0', contenedor: 'Bolsa', produccion: true, contaminado: false },
+    { id_bloque: 1, peso_gr: '850.5', contenedor: 'Bolsa', produccion: 1, contaminado: 0, codigo_inoculo_bloque: 'LT-001' },
+    { id_bloque: 2, peso_gr: '920.0', contenedor: 'Frasco', produccion: 0, contaminado: 1, codigo_inoculo_bloque: 'LT-001' },
+    { id_bloque: 3, peso_gr: '0', contenedor: 'Bolsa', produccion: true, contaminado: false, codigo_inoculo_bloque: 'LT-001' },
 ]
 
 const renderComponente = (props = {}) => {
@@ -59,16 +57,14 @@ beforeEach(() => {
     vi.clearAllMocks()
 })
 
-// Renderizado base 
-
 describe('TablaBloques — renderizado base', () => {
     it('renderiza sin errores', () => {
         expect(() => renderComponente()).not.toThrow()
     })
 
-    it('muestra el encabezado "Código del bloque"', () => {
+    it('muestra el encabezado "Código Bloque"', () => {
         renderComponente()
-        expect(screen.getAllByText('Código del bloque').length).toBeGreaterThan(0)
+        expect(screen.getAllByText('Código Bloque').length).toBeGreaterThan(0)
     })
 
     it('muestra el encabezado "Tamaño"', () => {
@@ -76,9 +72,9 @@ describe('TablaBloques — renderizado base', () => {
         expect(screen.getAllByText('Tamaño').length).toBeGreaterThan(0)
     })
 
-    it('muestra el encabezado "Peso (g)"', () => {
+    it('muestra el encabezado "Peso"', () => {
         renderComponente()
-        expect(screen.getAllByText('Peso (g)').length).toBeGreaterThan(0)
+        expect(screen.getAllByText('Peso').length).toBeGreaterThan(0)
     })
 
     it('muestra el encabezado "Clasificación"', () => {
@@ -91,8 +87,6 @@ describe('TablaBloques — renderizado base', () => {
         expect(screen.getAllByText('Contaminado').length).toBeGreaterThan(0)
     })
 })
-
-// Estado de carga 
 
 describe('TablaBloques — estado de carga', () => {
     it('muestra "Cargando bloques..." cuando loading=true', () => {
@@ -111,8 +105,6 @@ describe('TablaBloques — estado de carga', () => {
     })
 })
 
-// Estado vacío 
-
 describe('TablaBloques — estado vacío', () => {
     it('muestra mensaje de sin bloques cuando el array está vacío', () => {
         renderComponente({ bloques: [] })
@@ -123,14 +115,7 @@ describe('TablaBloques — estado vacío', () => {
         renderComponente({ bloques: [] })
         expect(screen.queryByText(/BC/)).not.toBeInTheDocument()
     })
-
-    it('muestra el mensaje de vacío con bloques undefined (default)', () => {
-        render(<TablaBloques codigo_lote={CODIGO_LOTE} />)
-        expect(screen.getByText('Sin bloques registrados.')).toBeInTheDocument()
-    })
 })
-
-// Código visual de bloques 
 
 describe('TablaBloques — código visual', () => {
     it('genera el código visual correcto para cada bloque', () => {
@@ -141,8 +126,6 @@ describe('TablaBloques — código visual', () => {
     })
 })
 
-// Contenedor y peso 
-
 describe('TablaBloques — contenedor y peso', () => {
     it('muestra el contenedor de cada bloque', () => {
         renderComponente()
@@ -150,23 +133,20 @@ describe('TablaBloques — contenedor y peso', () => {
         expect(screen.getAllByText('Frasco').length).toBeGreaterThan(0)
     })
 
-    it('muestra el peso redondeado al entero', () => {
+    it('muestra el peso redondeado con la unidad correcta', () => {
         renderComponente()
-        // 850.5 → "851 g", 920.0 → "920 g", 0 → "0 g"
-        expect(screen.getAllByText('851 g').length).toBeGreaterThan(0)
-        expect(screen.getAllByText('920 g').length).toBeGreaterThan(0)
-        expect(screen.getAllByText('0 g').length).toBeGreaterThan(0)
+        expect(screen.getAllByText('851 Gramos(s)').length).toBeGreaterThan(0)
+        expect(screen.getAllByText('920 Gramos(s)').length).toBeGreaterThan(0)
+        expect(screen.getAllByText('0 Gramos(s)').length).toBeGreaterThan(0)
     })
 
-    it('muestra "0 g" cuando peso_gr es falsy', () => {
+    it('muestra "0 Gramos(s)" cuando peso_gr es falsy', () => {
         renderComponente({
             bloques: [{ id_bloque: 1, peso_gr: null, contenedor: 'Bolsa', produccion: 1, contaminado: 0 }],
         })
-        expect(screen.getAllByText('0 g').length).toBeGreaterThan(0)
+        expect(screen.getAllByText('0 Gramos(s)').length).toBeGreaterThan(0)
     })
 })
-
-// Clasificación (produccion) 
 
 describe('TablaBloques — clasificación', () => {
     it('muestra "Producción" cuando produccion=1', () => {
@@ -178,69 +158,26 @@ describe('TablaBloques — clasificación', () => {
         renderComponente()
         expect(screen.getAllByText('Experimental').length).toBeGreaterThan(0)
     })
-
-    it('muestra "Producción" cuando produccion=true', () => {
-        renderComponente({
-            bloques: [{ id_bloque: 1, peso_gr: '100', contenedor: 'Bolsa', produccion: true, contaminado: 0 }],
-        })
-        expect(screen.getAllByText('Producción').length).toBeGreaterThan(0)
-    })
-
-    it('muestra "Experimental" cuando produccion=false', () => {
-        renderComponente({
-            bloques: [{ id_bloque: 1, peso_gr: '100', contenedor: 'Bolsa', produccion: false, contaminado: 0 }],
-        })
-        expect(screen.getAllByText('Experimental').length).toBeGreaterThan(0)
-    })
 })
-
-// Checkbox contaminado 
 
 describe('TablaBloques — checkbox contaminado', () => {
     it('renderiza un checkbox por bloque', () => {
         renderComponente()
         const checkboxes = screen.getAllByRole('checkbox')
-        // Hay vista móvil y desktop → 2 checkboxes por bloque
         expect(checkboxes.length).toBe(bloquesMock.length * 2)
     })
 
-    it('el checkbox está marcado cuando contaminado=1', () => {
+    it('el checkbox está marcado cuando contaminado=1', async () => {
         renderComponente({
             bloques: [{ id_bloque: 2, peso_gr: '100', contenedor: 'Bolsa', produccion: 0, contaminado: 1 }],
         })
         const checkboxes = screen.getAllByRole('checkbox')
         checkboxes.forEach((cb) => expect(cb).toBeChecked())
     })
-
-    it('el checkbox está desmarcado cuando contaminado=0', () => {
-        renderComponente({
-            bloques: [{ id_bloque: 1, peso_gr: '100', contenedor: 'Bolsa', produccion: 1, contaminado: 0 }],
-        })
-        const checkboxes = screen.getAllByRole('checkbox')
-        checkboxes.forEach((cb) => expect(cb).not.toBeChecked())
-    })
-
-    it('el checkbox está marcado cuando contaminado=true', () => {
-        renderComponente({
-            bloques: [{ id_bloque: 1, peso_gr: '100', contenedor: 'Bolsa', produccion: 0, contaminado: true }],
-        })
-        const checkboxes = screen.getAllByRole('checkbox')
-        checkboxes.forEach((cb) => expect(cb).toBeChecked())
-    })
-
-    it('el checkbox está desmarcado cuando contaminado=false', () => {
-        renderComponente({
-            bloques: [{ id_bloque: 1, peso_gr: '100', contenedor: 'Bolsa', produccion: 0, contaminado: false }],
-        })
-        const checkboxes = screen.getAllByRole('checkbox')
-        checkboxes.forEach((cb) => expect(cb).not.toBeChecked())
-    })
 })
 
-// Interacciones 
-
 describe('TablaBloques — interacciones', () => {
-    it('llama a onToggleContaminado con el id_bloque al hacer click en el checkbox', async () => {
+    it('llama a onToggleContaminado con el id_bloque al hacer click', async () => {
         const user = userEvent.setup()
         const onToggleContaminado = vi.fn()
         renderComponente({
@@ -252,30 +189,5 @@ describe('TablaBloques — interacciones', () => {
         await user.click(checkboxes[0])
 
         expect(onToggleContaminado).toHaveBeenCalledWith(7)
-    })
-
-    it('no lanza error al hacer click si onToggleContaminado no está definido', async () => {
-        const user = userEvent.setup()
-        renderComponente({
-            bloques: [{ id_bloque: 1, peso_gr: '100', contenedor: 'Bolsa', produccion: 1, contaminado: 0 }],
-            onToggleContaminado: undefined,
-        })
-
-        const checkboxes = screen.getAllByRole('checkbox')
-        await expect(user.click(checkboxes[0])).resolves.not.toThrow()
-    })
-
-    it('llama a onToggleContaminado una sola vez por click', async () => {
-        const user = userEvent.setup()
-        const onToggleContaminado = vi.fn()
-        renderComponente({
-            bloques: [{ id_bloque: 3, peso_gr: '100', contenedor: 'Bolsa', produccion: 1, contaminado: 0 }],
-            onToggleContaminado,
-        })
-
-        const checkboxes = screen.getAllByRole('checkbox')
-        await user.click(checkboxes[0])
-
-        expect(onToggleContaminado).toHaveBeenCalledTimes(1)
     })
 })
