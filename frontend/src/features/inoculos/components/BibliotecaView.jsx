@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Titulo, Text } from '../../../shared/components/ui';
-import { colores } from '../../../shared/components/ui/basics/colores';
+import { colores } from '../../../shared/components/ui/basics/Colores';
 import { Base } from '../../../shared/components/layout';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Add01Icon } from '@hugeicons/core-free-icons';

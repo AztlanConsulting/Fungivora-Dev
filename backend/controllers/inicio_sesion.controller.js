@@ -15,20 +15,20 @@ Metodo que toma la información del usuario/contraseña y su rol para poder acce
 const { generarToken } = require("../util/jwtUtils");
 exports.post_login = async (req, res) => {
     try {
-        const { nombre_usuario, contrasena } = req.body; 
+        const { nombre_usuario, contrasena } = req.body;
         const user = await Usuario.fetch_one(nombre_usuario);
 
         if (!user) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 error: "identificador",
                 msg: "El usuario o correo no están registrados"
             });
         }
-        
+
         const coinciden = await bcrypt.compare(contrasena, user.contrasena_usuario);
 
         if (!coinciden) {
-            return res.status(401).json({ 
+            return res.status(401).json({
                 error: "password",
                 msg: "Contraseña incorrecta"
             });
@@ -36,7 +36,7 @@ exports.post_login = async (req, res) => {
 
         const token = generarToken({
             id: user.id_usuario,
-            isAdmin: user.is_user_admin === 1 
+            isAdmin: user.is_user_admin === 1
         });
 
         res.json({ token });
@@ -45,10 +45,6 @@ exports.post_login = async (req, res) => {
         console.error(error);
         res.status(500).json({ msg: "Error en login" });
     }
-};
-
-exports.get_first = (request, response, next) => {
-    response.render('first_page');
 };
 
 /*
@@ -67,14 +63,14 @@ Hashear la contraseña
 Metodo que toma la contraseña guardada por el cuadro de texto
 @param contrasena, contrasena_hasheada
 */
-let contrasena_hasheada = null; 
+let contrasena_hasheada = null;
 exports.post_hash = async (request, response, next) => {
     try {
         const { contrasena } = request.body;
 
         const hash = await bcrypt.hash(contrasena, 10);
 
-        contrasena_hasheada = hash; 
+        contrasena_hasheada = hash;
         console.log("Contraseña guardada:", contrasena);
         console.log("Hash guardado:", contrasena_hasheada);
 

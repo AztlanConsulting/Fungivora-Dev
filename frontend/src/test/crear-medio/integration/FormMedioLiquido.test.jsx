@@ -4,15 +4,15 @@ import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import FormMedioLiquido from '../../../features/crear-medio/components/FormMedioLiquido'
-import useEspecies                 from '../../../features/inoculos/hooks/useEspecies'
-import useInoculo                  from '../../../features/crear-medio/hooks/useInoculo'
-import useCategorias               from '../../../features/crear-medio/hooks/useCategorias'
+import useEspecies from '../../../features/inoculos/hooks/useEspecies'
+import useInoculo from '../../../shared/crear-inoculos/hooks/useInoculo'
+import useCategorias from '../../../shared/crear-inoculos/hooks/useCategorias'
 import useIngredientesMedioLiquido from '../../../features/crear-medio/hooks/useIngredientesMedioLiquido'
-import insumosService              from '../../../features/crear-medio/services/inoculos.service'
+import insumosService from '../../../shared/crear-inoculos/services/inoculos.service'
 
 vi.mock('../../../features/inoculos/hooks/useEspecies')
-vi.mock('../../../features/crear-medio/hooks/useInoculo')
-vi.mock('../../../features/crear-medio/hooks/useCategorias')
+vi.mock('../../../shared/crear-inoculos/hooks/useInoculo')
+vi.mock('../../../shared/crear-inoculos/hooks/useCategorias')
 vi.mock('../../../features/crear-medio/hooks/useIngredientesMedioLiquido')
 
 vi.mock('../../../features/crear-medio/services/inoculos.service', () => ({
@@ -20,7 +20,7 @@ vi.mock('../../../features/crear-medio/services/inoculos.service', () => ({
 }))
 
 vi.mock('../../../features/crear-medio/utils/generarCodigoInoculo', () => ({
-    generarCodigos:        vi.fn(() => ({ base: 'ML-SH-200526', lista: ['ML-SH-200526'] })),
+    generarCodigos: vi.fn(() => ({ base: 'ML-SH-200526', lista: ['ML-SH-200526'] })),
     normalizarTipoInoculo: vi.fn(() => 'agar'),
 }))
 
@@ -31,15 +31,15 @@ vi.mock('../../../features/crear-medio/dto/crearInoculoDto', () => ({
 vi.mock('../../../shared/utils/traducirError', () => ({
     traducirError: vi.fn((err) => ({
         variante: 'error',
-        mensaje:  err?.message || 'Error desconocido',
+        mensaje: err?.message || 'Error desconocido',
     })),
 }))
 
-vi.mock('../../../features/crear-medio/components/seleccionar_cantidades', () => ({
+vi.mock('../../../features/crear-medio/components/SeleccionarCantidades', () => ({
     EntradaLista: () => <div data-testid="entrada-lista" />,
 }))
 
-vi.mock('../../../features/crear-medio/components/ResumenSemilla', () => ({
+vi.mock('../../../features/crear-medio/components/Resumen', () => ({
     default: () => <div data-testid="resumen" />,
 }))
 
@@ -48,7 +48,7 @@ vi.mock('../../../shared/components/ui/popups/ModalAlerta', () => ({
         visible ? <div data-testid={`alerta-${variante}`}>{mensaje}</div> : null,
 }))
 
-vi.mock('../../../shared/components/ui/inputs/seleccionar_texto', () => ({
+vi.mock('../../../shared/components/ui/inputs/SeleccionarTexto', () => ({
     default: ({ value, onChange, placeholder, options = [], disabled }) => (
         <select value={value} onChange={onChange} disabled={disabled}>
             <option value="">{placeholder}</option>
@@ -59,23 +59,23 @@ vi.mock('../../../shared/components/ui/inputs/seleccionar_texto', () => ({
     ),
 }))
 
-vi.mock('../../../shared/components/ui/inputs/input_cantidad', () => ({
+vi.mock('../../../shared/components/ui/inputs/InputCantidad', () => ({
     default: ({ value, onChange }) => (
         <input type="number" value={value} onChange={(e) => onChange(Number(e.target.value))} />
     ),
 }))
 
-vi.mock('../../../shared/components/ui/inputs/input_fecha', () => ({
+vi.mock('../../../shared/components/ui/inputs/InputFecha', () => ({
     default: ({ value }) => <input readOnly value={value?.day || ''} />,
 }))
 
-vi.mock('../../../shared/components/ui/inputs/input_nota', () => ({
+vi.mock('../../../shared/components/ui/inputs/InputNota', () => ({
     default: ({ value, onChange }) => (
         <textarea value={value} onChange={(e) => onChange(e.target.value)} />
     ),
 }))
 
-vi.mock('../../../shared/components/ui/buttons/botones', () => ({
+vi.mock('../../../shared/components/ui/buttons/Botones', () => ({
     default: ({ children, onClick, disabled, variant }) => (
         <button data-testid={`btn-${variant}`} onClick={onClick} disabled={disabled}>
             {children}
@@ -83,7 +83,7 @@ vi.mock('../../../shared/components/ui/buttons/botones', () => ({
     ),
 }))
 
-vi.mock('../../../shared/components/ui/basics/texto', () => ({
+vi.mock('../../../shared/components/ui/basics/Texto', () => ({
     default: ({ children }) => <span>{children}</span>,
 }))
 
@@ -91,7 +91,7 @@ vi.mock('../../../shared/components/layout', () => ({
     Base: ({ children }) => <div>{children}</div>,
 }))
 
-vi.mock('../../../shared/components/ui/basics/colores', () => ({
+vi.mock('../../../shared/components/ui/basics/Colores', () => ({
     colores: { gris: '#555', azul: '#3b3fb6', negro: '#000', grisClaro: '#EAEAEC' },
 }))
 
@@ -109,7 +109,7 @@ const setupHooks = () => {
     useInoculo.mockReturnValue({
         opciones: [{
             codigo: 'ML-001',
-            label:  'ML-001 — Medio Líquido (100 ml)',
+            label: 'ML-001 — Medio Líquido (100 ml)',
             raw: { tipo: 'Medio Líquido', cantidad_disponible: 100, id_inoculo: 42 },
         }],
         loading: false, error: null,
@@ -141,8 +141,8 @@ const renderForm = () =>
 
 const completarForm = async (user) => {
     const [especie, inoculo, carbohidrato] = screen.getAllByRole('combobox')
-    await user.selectOptions(especie,      'Shiitake')
-    await user.selectOptions(inoculo,      'ML-001')
+    await user.selectOptions(especie, 'Shiitake')
+    await user.selectOptions(inoculo, 'ML-001')
     await user.selectOptions(carbohidrato, 'miel')
 }
 

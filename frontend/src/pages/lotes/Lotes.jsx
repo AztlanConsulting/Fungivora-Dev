@@ -6,8 +6,8 @@ import Text from "../../shared/components/ui/basics/texto";
 import { colores } from "../../shared/components/ui/basics/colores";
 import useLotes from "../../features/lotes/hooks/useLotes";
 import useBloques from "../../features/bloques/hooks/useBloques";
-import Button from "../../shared/components/ui/buttons/botones";
-import ModalConfirmacion from "../../shared/components/ui/popups/modal_confirmacion";
+import Button from "../../shared/components/ui/buttons/Botones";
+import ModalConfirmacion from "../../shared/components/ui/popups/ModalConfirmacion";
 import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
 
 // Iconos
@@ -16,7 +16,7 @@ import { CheckmarkCircle02Icon, CancelCircleIcon } from '@hugeicons/core-free-ic
 
 // Componentes de Tablas y Forms
 import TablaLotes from "../../features/lotes/components/TablaLotes";
-import TablaBloques from "../../features/bloques/components/TablaBloques";
+import TablaBloques from "../../features/bloques/components/TablaBloquesEditable";
 import FormCrearLote from "../../features/lotes/components/FormCrearLote";
 import FormCrearBloque from "../../features/bloques/components/FormCrearBloque";
 

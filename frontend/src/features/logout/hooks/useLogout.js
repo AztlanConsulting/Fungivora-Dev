@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import logoutService from "../service/logout.service";
+import logoutService from "../services/logout.service";
 
 const useLogout = () => {
     const [cargando, setCargando] = useState(false);
