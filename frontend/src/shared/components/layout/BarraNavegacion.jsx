@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { colores } from "../ui/basics/colores";
 import Text from "../ui/basics/texto";
-import ModalConfirmacion from "../ui/popups/modal_confirmacion";
+import { ModalConfirmacion } from "../ui";
 import useLogout from '../../../features/logout/hooks/useLogout';
 
 import { HugeiconsIcon } from '@hugeicons/react';

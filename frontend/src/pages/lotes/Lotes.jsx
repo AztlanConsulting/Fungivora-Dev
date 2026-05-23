@@ -57,6 +57,15 @@ function Lotes() {
   const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
 
   const location = useLocation();
+    
+  const abrirModalCancelar = useCallback(() => {
+    if (bloquesTemporales.length > 0) {
+      setMostrarModalCancelar(true);
+    } else {
+      setPaso(1);
+      setErrorValidacion("");
+    }
+  }, [bloquesTemporales.length]);
 
   useEffect(() => {
     if (location.pathname === "/lotes" && paso === 2) {
@@ -168,15 +177,6 @@ function Lotes() {
     setErrorValidacion("");
     setMostrarModalCancelar(false);
   };
-
-  const abrirModalCancelar = useCallback(() => {
-    if (bloquesTemporales.length > 0) {
-      setMostrarModalCancelar(true);
-    } else {
-      setPaso(1);
-      setErrorValidacion("");
-    }
-  }, [bloquesTemporales.length]);
 
   // Obligar a añadir al menos 1 bloque
   const previsualizarRegistro = () => {

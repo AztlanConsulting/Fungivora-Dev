@@ -21,6 +21,8 @@ const useLotes = () => {
                 setError(json.message || "Error al cargar lotes");
             }
         } catch {
+            setError("Error de conexión con el servidor");
+        } finally {
             setCargando(false);
         }
     }, []);
