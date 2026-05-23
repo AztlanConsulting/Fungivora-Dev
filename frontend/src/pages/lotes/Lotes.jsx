@@ -389,6 +389,7 @@ function Lotes() {
                 <Button
                   variant="registrar"
                   onClick={previsualizarRegistro}
+                  isOutline={true} 
                   disabled={guardando}
                 >
                   {guardando ? "Cargando..." : "Finalizar"}
