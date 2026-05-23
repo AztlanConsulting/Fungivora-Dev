@@ -11,16 +11,17 @@ const useLotes = () => {
     const [inoculosRaw, setInoculosRaw] = useState([]);
 
     const fetchLotes = useCallback(async () => {
+        setCargando(true);
         try {
             const json = await loteService.getLotes();
             if (json.success) {
                 setDatos(json.data);
                 setError(null);
             } else {
-                setError("Error al cargar lotes")
+                setError(json.message || "Error al cargar lotes");
             }
-        } catch (err) {
-            setError("Error de conexión");
+        } catch {
+            setError("Error de conexión con el servidor");
         } finally {
             setCargando(false);
         }
@@ -33,6 +34,10 @@ const useLotes = () => {
                 fetch('/api/lotes/ubicaciones'),
                 fetch('/api/lotes/especies')
             ]);
+
+            if (!resSus.ok || !resUbi.ok || !resEsp.ok) {
+                throw new Error("Uno o más catálogos fallaron al cargar");
+            }
 
             const [dataSus, dataUbi, jsonEsp] = await Promise.all([
                 resSus.json(),
@@ -48,15 +53,15 @@ const useLotes = () => {
             const listUbi = Array.isArray(dataUbi) ? dataUbi : (dataUbi.data || []);
             setUbicaciones(listUbi.map(u => ({ value: u.opcion, label: u.opcion })));
 
-            // Procesar Inóculos y Especies Únicas
+            // Procesar Inóculos
             const dataIno = jsonEsp.data || [];
             setInoculosRaw(dataIno);
 
             const nombresUnicos = [...new Set(dataIno.map(i => i.especie))];
             setEspeciesDisponibles(nombresUnicos.map(e => ({ value: e, label: e })));
 
-        } catch (err) {
-            console.error("Error cargando catálogos:", err);
+        } catch {
+            setError("Error al inicializar formularios (catálogos)");
         }
     }, []);
 
@@ -65,7 +70,6 @@ const useLotes = () => {
         cargarCatalogos();
     }, [fetchLotes, cargarCatalogos]);
 
-    // Función para filtrar inóculos basada en el nombre de la especie
     const getInoculosPorEspecie = useCallback((especieNombre) => {
         const regexCodigoValido = /^[A-Z].G-[A-Z]{2,3}-\d+/;
 
@@ -87,10 +91,13 @@ const useLotes = () => {
             if (res.success) await fetchLotes();
             return res;
         } catch (err) {
-            return { success: false, message: "Error de conexión" };
+            console.error("Fallo al agregar lote:", err);
+            return { 
+                success: false, 
+                message: err.message || "Error de conexión al guardar" 
+            };
         }
     };
-
 
     const deleteLote = async (id_lote) => {
         try {
@@ -100,7 +107,11 @@ const useLotes = () => {
             }
             return res;
         } catch (err) {
-            return { success: false, message: "Error al intentar eliminar" };
+            console.error(`Error eliminando lote ${id_lote}:`, err);
+            return { 
+                success: false, 
+                message: "No se pudo eliminar el registro en este momento" 
+            };
         }
     };
 

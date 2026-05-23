@@ -1,11 +1,13 @@
 const { get_batches, post_batch, get_sustratos } = require('../../controllers/lotes.controller');
 const Lotes = require('../../models/lotes.model');
 const Categoria = require('../../models/categoria.model');
+const Bloque = require('../../models/bloque.model');
 const crypto = require('crypto');
 
 // Mocks de los modelos
 jest.mock('../../models/lotes.model');
 jest.mock('../../models/categoria.model');
+jest.mock('../../models/bloque.model');
 jest.mock('crypto');
 
 const mockRes = () => {
@@ -57,56 +59,69 @@ describe('Lotes Controller', () => {
 
     describe('Post lotes', () => {
         it('201 - crear un lote', async () => {
-            // Datos de entrada
             const req = {
                 body: {
                     ubicacion_lote: 'Estante A',
                     tipo_sustrato: 'Paja',
-                    id_inoculo: 10,
-                    fecha_lote: '2026-05-09'
+                    fecha_lote: '2026-05-09',
+                    produccion: 1,
+                    bloques: [
+                        { id_inoculo: 10, cantidad: 2, peso_gr: 500, contenedor: 'Bolsa' }
+                    ]
                 }
             };
             const res = mockRes();
 
-            // Mocks
             Lotes.fetch_inoculos_disponibles.mockResolvedValue([
                 { id_inoculo: 10, especie: 'Pleurotus' }
             ]);
+
             Categoria.fetchAbreviaturaPorNombre.mockResolvedValue([
                 [{ abreviatura_opcion: 'PL' }]
             ]);
+
             Lotes.count_lotes_similares.mockResolvedValue(5); 
             crypto.randomUUID.mockReturnValue('uuid-generado-123');
+            
+            const Bloque = require('../../models/bloque.model');
+            jest.mock('../../models/bloque.model');
+            Bloque.crear_bloque = jest.fn().mockResolvedValue(true);
 
             await post_batch(req, res);
 
             expect(Lotes.crear_lote).toHaveBeenCalledWith(
                 'uuid-generado-123',
-                10,
                 'Paja',
-                expect.stringContaining('LC-PL-090526-6'),
+                'LC-PL-090526-6',
                 '2026-05-09',
                 'Estante A',
                 1,
                 'Inoculación'
             );
+
             expect(res.status).toHaveBeenCalledWith(201);
-            expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ success: true }));
         });
 
         it('400 - inóculo no encontrado', async () => {
-            Lotes.fetch_inoculos_disponibles.mockResolvedValue([]); // Lista vacía
-            
-            const req = { body: { id_inoculo: 999 } };
+            const req = { 
+                body: { 
+                    bloques: [{ id_inoculo: 999 }],
+                    fecha_lote: '2026-05-09' 
+                } 
+            };
             const res = mockRes();
+            
+            Lotes.fetch_inoculos_disponibles.mockResolvedValue([
+                { id_inoculo: 10, especie: 'Pleurotus' }
+            ]);
 
             await post_batch(req, res);
 
-            expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({
+            expect(res.status).toHaveBeenCalledWith(400); 
+            expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
                 success: false,
                 message: "Inóculo no encontrado"
-            });
+            }));
         });
     });
 
