@@ -328,6 +328,7 @@ function Lotes() {
             </>
           ) : (
             <div className="animate-in fade-in duration-500">
+              <Titulo>Bloques</Titulo>
               <TablaBloques
                 codigo={codigoPrevisualizacion}
                 bloques={bloquesTemporales}

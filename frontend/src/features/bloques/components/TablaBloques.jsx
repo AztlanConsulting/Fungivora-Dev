@@ -19,7 +19,6 @@ const TablaBloques = ({ codigo, bloques, onEliminar, estilosTipo, colorBordeHead
 
   return (
     <div className="flex flex-col gap-5">
-      <Titulo>Bloques</Titulo>
       <div className="flex flex-col md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
         
         {/* Header de la tabla */}

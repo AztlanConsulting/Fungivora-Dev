@@ -47,8 +47,6 @@ const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, hand
 
   return (
     <div className="flex flex-col gap-5">
-        {/* Titulo */}
-      <Titulo>Bloques: {codigo}</Titulo>
 
       <div className="mb-3 flex justify-between items-center">
         <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "22px" }}>Crear Bloques</Text>
