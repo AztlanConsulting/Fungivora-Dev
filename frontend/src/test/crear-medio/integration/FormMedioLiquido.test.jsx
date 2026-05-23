@@ -59,7 +59,7 @@ vi.mock('../../../shared/components/ui/inputs/SeleccionarTexto', () => ({
     ),
 }))
 
-vi.mock('../../../shared/components/ui/inputs/input_cantidad', () => ({
+vi.mock('../../../shared/components/ui/inputs/InputCantidad', () => ({
     default: ({ value, onChange }) => (
         <input type="number" value={value} onChange={(e) => onChange(Number(e.target.value))} />
     ),
@@ -69,7 +69,7 @@ vi.mock('../../../shared/components/ui/inputs/InputFecha', () => ({
     default: ({ value }) => <input readOnly value={value?.day || ''} />,
 }))
 
-vi.mock('../../../shared/components/ui/inputs/input_nota', () => ({
+vi.mock('../../../shared/components/ui/inputs/InputNota', () => ({
     default: ({ value, onChange }) => (
         <textarea value={value} onChange={(e) => onChange(e.target.value)} />
     ),

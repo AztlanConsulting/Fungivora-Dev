@@ -3,8 +3,8 @@ import { redirect, useNavigate } from "react-router-dom";
 
 import SelectField from "../../../shared/components/ui/inputs/SeleccionarTexto";
 import InputFecha from "../../../shared/components/ui/inputs/InputFecha";
-import InputCantidad from "../../../shared/components/ui/inputs/input_cantidad";
-import InputNota from "../../../shared/components/ui/inputs/input_nota";
+import InputCantidad from "../../../shared/components/ui/inputs/InputCantidad";
+import InputNota from "../../../shared/components/ui/inputs/InputNota";
 import Button from "../../../shared/components/ui/buttons/Botones";
 import ModalAlerta from "../../../shared/components/ui/popups/ModalAlerta";
 

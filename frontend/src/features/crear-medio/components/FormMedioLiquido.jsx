@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import SelectField from "../../../shared/components/ui/inputs/SeleccionarTexto";
 import InputFecha from "../../../shared/components/ui/inputs/InputFecha";
-import InputNota from "../../../shared/components/ui/inputs/input_nota";
+import InputNota from "../../../shared/components/ui/inputs/InputNota";
 import Button from "../../../shared/components/ui/buttons/Botones";
 import ModalAlerta from "../../../shared/components/ui/popups/ModalAlerta";
 import Text from "../../../shared/components/ui/basics/Texto";
