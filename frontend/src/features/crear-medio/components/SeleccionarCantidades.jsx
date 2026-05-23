@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { colores } from "../../../shared/components/ui/basics/colores";
-import Text from "../../../shared/components/ui/basics/texto";
+import { colores } from "../../../shared/components/ui/basics/Colores";
+import Text from "../../../shared/components/ui/basics/Texto";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { PlusSignIcon } from '@hugeicons/core-free-icons';
 
 const EntradaCard = ({ nombre, unidad, value, onChange, cantMax, repeticiones = 1 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [cantError, setError] = useState(false);
-  
+
   const ringColor = isFocused ? colores.azul : colores.grisClaro;
 
   const alturaStyle = {
@@ -53,45 +53,45 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax, repeticiones = 
   return (
     <div className="relative flex flex-col items-center gap-3 p-5 w-full md:w-auto min-w-0">
 
-        <Text className="text-center p-2 break-all max-w-full" variante="label" style={{color: colores.black, fontSize: "18px"}}>
-            {nombre}
-        </Text>
+      <Text className="text-center p-2 break-all max-w-full" variante="label" style={{ color: colores.black, fontSize: "18px" }}>
+        {nombre}
+      </Text>
 
-        <div className="flex flex-row items-center gap-4">
-            <div className="flex flex-row items-center  w-full mb-3 px-3 rounded-xl bg-white" style={alturaStyle}>
-                <input 
-                type="text"
-                inputMode="decimal"
-                placeholder="0"
-                value={value}
-                onChange={manejarCambio}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-                className="outline-none w-16 text-center bg-transparent"
-                />
+      <div className="flex flex-row items-center gap-4">
+        <div className="flex flex-row items-center  w-full mb-3 px-3 rounded-xl bg-white" style={alturaStyle}>
+          <input
+            type="text"
+            inputMode="decimal"
+            placeholder="0"
+            value={value}
+            onChange={manejarCambio}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            className="outline-none w-16 text-center bg-transparent"
+          />
 
-            </div>
-            
-            <div className="">
-                <Text variante="label" style={{color: colores.black}}>
-                    {unidad}
-                </Text>
-            </div>
         </div>
-        <div className={`relative md:absolute -bottom-1 mb-2 left-2 transition-opacity duration-300 ${cantError ? "opacity-100" : "opacity-0"}`}>
-          <span style={{ color: "red", fontSize: "10px", fontWeight: "600" }}>
-            Máximo disponible: {maxPorUnidad}
-          </span>
+
+        <div className="">
+          <Text variante="label" style={{ color: colores.black }}>
+            {unidad}
+          </Text>
         </div>
+      </div>
+      <div className={`relative md:absolute -bottom-1 mb-2 left-2 transition-opacity duration-300 ${cantError ? "opacity-100" : "opacity-0"}`}>
+        <span style={{ color: "red", fontSize: "10px", fontWeight: "600" }}>
+          Máximo disponible: {maxPorUnidad}
+        </span>
+      </div>
     </div>
-    
+
   );
 };
 
 export const EntradaLista = ({ items = [], repeticiones = 1 }) => {
   return (
     <div className="w-full lg:flex-1 bg-white rounded-[32px] shadow-sm border pb-8 p-6 md:p-8 flex flex-col">
-      
+
       <div className="mb-6">
         <Text variante="medium">Composición</Text>
       </div>
@@ -108,27 +108,27 @@ export const EntradaLista = ({ items = [], repeticiones = 1 }) => {
               repeticiones={repeticiones}
             />
 
-            
+
             {index < items.length - 1 && (
-                <div className="relative flex items-center justify-center self-stretch w-full md:w-auto py-3 md:py-0 md:mx-4">
+              <div className="relative flex items-center justify-center self-stretch w-full md:w-auto py-3 md:py-0 md:mx-4">
 
-                    {/* Línea: horizontal en mobile, vertical en desktop */}
-                    <div
-                      className="w-full h-[1px] md:w-[1px] md:h-full"
-                      style={{ backgroundColor: colores.grisClaro }}
-                    />
+                {/* Línea: horizontal en mobile, vertical en desktop */}
+                <div
+                  className="w-full h-[1px] md:w-[1px] md:h-full"
+                  style={{ backgroundColor: colores.grisClaro }}
+                />
 
-                    {/* Icono + centrado sobre la línea, con bg que la "corta" */}
-                    <div
-                      className="absolute flex items-center justify-center px-3"
-                      style={{ backgroundColor: "#FEFEFB" }}
-                    >
-                      <Text variante="medium" style={{ color: colores.azul, lineHeight: 0, fontSize: "22px" }}>
-                        +
-                      </Text>
-                    </div>
+                {/* Icono + centrado sobre la línea, con bg que la "corta" */}
+                <div
+                  className="absolute flex items-center justify-center px-3"
+                  style={{ backgroundColor: "#FEFEFB" }}
+                >
+                  <Text variante="medium" style={{ color: colores.azul, lineHeight: 0, fontSize: "22px" }}>
+                    +
+                  </Text>
                 </div>
-                )}
+              </div>
+            )}
           </React.Fragment>
         ))}
       </div>

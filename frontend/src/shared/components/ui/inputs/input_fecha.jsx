@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { colores } from "../basics/colores";
+import { colores } from "../basics/Colores";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Calendar03Icon } from '@hugeicons/core-free-icons';
 
 const hoyInicial = () => {
     const hoy = new Date();
     return {
-        day:   String(hoy.getDate()).padStart(2, "0"),
+        day: String(hoy.getDate()).padStart(2, "0"),
         month: String(hoy.getMonth() + 1).padStart(2, "0"),
-        year:  String(hoy.getFullYear()),
+        year: String(hoy.getFullYear()),
     };
 };
 
@@ -17,12 +17,12 @@ const esFechaValida = ({ day, month, year }) => {
     const d = Number(day);
     const m = Number(month);
     const y = Number(year);
-    if (y < 2020 || y > 2100) return false; 
+    if (y < 2020 || y > 2100) return false;
     const fecha = new Date(y, m - 1, d);
     return (
         fecha.getFullYear() === y &&
-        fecha.getMonth()    === m - 1 &&
-        fecha.getDate()     === d
+        fecha.getMonth() === m - 1 &&
+        fecha.getDate() === d
     );
 };
 

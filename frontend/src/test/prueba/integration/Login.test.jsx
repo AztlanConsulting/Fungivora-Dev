@@ -14,13 +14,13 @@ vi.mock('../../../shared/components/ui/inputs/input_texto', () => ({
     default: (props) => <input {...props} />
 }))
 
-vi.mock('../../../shared/components/ui/buttons/botones', () => ({
+vi.mock('../../../shared/components/ui/buttons/Botones', () => ({
     default: ({ children, disabled, type }) => (
         <button disabled={disabled} type={type}>{children}</button>
     )
 }))
 
-vi.mock('../../../shared/components/ui/basics/texto', () => ({
+vi.mock('../../../shared/components/ui/basics/Texto', () => ({
     default: ({ children }) => <span>{children}</span>
 }))
 

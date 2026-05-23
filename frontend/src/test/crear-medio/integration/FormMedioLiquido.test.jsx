@@ -75,7 +75,7 @@ vi.mock('../../../shared/components/ui/inputs/input_nota', () => ({
     ),
 }))
 
-vi.mock('../../../shared/components/ui/buttons/botones', () => ({
+vi.mock('../../../shared/components/ui/buttons/Botones', () => ({
     default: ({ children, onClick, disabled, variant }) => (
         <button data-testid={`btn-${variant}`} onClick={onClick} disabled={disabled}>
             {children}
@@ -83,7 +83,7 @@ vi.mock('../../../shared/components/ui/buttons/botones', () => ({
     ),
 }))
 
-vi.mock('../../../shared/components/ui/basics/texto', () => ({
+vi.mock('../../../shared/components/ui/basics/Texto', () => ({
     default: ({ children }) => <span>{children}</span>,
 }))
 
@@ -91,7 +91,7 @@ vi.mock('../../../shared/components/layout', () => ({
     Base: ({ children }) => <div>{children}</div>,
 }))
 
-vi.mock('../../../shared/components/ui/basics/colores', () => ({
+vi.mock('../../../shared/components/ui/basics/Colores', () => ({
     colores: { gris: '#555', azul: '#3b3fb6', negro: '#000', grisClaro: '#EAEAEC' },
 }))
 

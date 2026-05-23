@@ -9,7 +9,7 @@ vi.mock('../../../features/inoculos/hooks/useInoculoCard')
 import useInoculoCard from '../../../features/inoculos/hooks/useInoculoCard'
 
 // Mock de componentes UI compartidos
-vi.mock('../../../shared/components/ui/basics/texto', () => ({
+vi.mock('../../../shared/components/ui/basics/Texto', () => ({
     default: ({ children }) => <p>{children}</p>,
 }))
 vi.mock('../../../shared/components/ui/inputs/seleccionar_texto', () => ({

@@ -24,13 +24,13 @@ vi.mock('../../../features/inoculos/components/ModalCrearInoculo', () => ({
         ) : null,
 }))
 
-vi.mock('../../../shared/components/ui/basics/titulo', () => ({
+vi.mock('../../../shared/components/ui/basics/Titulo', () => ({
     default: ({ children }) => <h1>{children}</h1>,
 }))
 vi.mock('../../../shared/components/layout/Base', () => ({
     default: ({ children }) => <div>{children}</div>,
 }))
-vi.mock('../../../shared/components/ui/basics/texto', () => ({
+vi.mock('../../../shared/components/ui/basics/Texto', () => ({
     default: ({ children }) => <p>{children}</p>,
 }))
 vi.mock('@hugeicons/react', () => ({

@@ -1,7 +1,7 @@
 import React from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import Text from '../../../shared/components/ui/basics/texto';
-import { colores } from '../../../shared/components/ui/basics/colores';
+import Text from '../../../shared/components/ui/basics/Texto';
+import { colores } from '../../../shared/components/ui/basics/Colores';
 
 const InfoLote = ({ icon: Icon, label, value, showDivider = true }) => (
     <div className="flex items-center gap-4 w-full md:flex-1 px-4">

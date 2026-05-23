@@ -1,8 +1,8 @@
 import React from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Tick02Icon } from '@hugeicons/core-free-icons';
-import Text from '../../../shared/components/ui/basics/texto';
-import { colores } from '../../../shared/components/ui/basics/colores';
+import Text from '../../../shared/components/ui/basics/Texto';
+import { colores } from '../../../shared/components/ui/basics/Colores';
 
 const colorHeaderTabla = '#F2F2FC';
 const colorBordeDestacado = '#7F7FD5';

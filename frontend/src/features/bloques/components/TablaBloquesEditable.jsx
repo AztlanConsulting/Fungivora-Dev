@@ -1,7 +1,7 @@
 import React from "react";
-import Text from "../../../shared/components/ui/basics/texto";
-import { colores } from "../../../shared/components/ui/basics/colores";
-import Titulo from "../../../shared/components/ui/basics/titulo";
+import Text from "../../../shared/components/ui/basics/Texto";
+import { colores } from "../../../shared/components/ui/basics/Colores";
+import Titulo from "../../../shared/components/ui/basics/Titulo";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { CancelCircleIcon } from '@hugeicons/core-free-icons';
 
@@ -9,10 +9,10 @@ import { CancelCircleIcon } from '@hugeicons/core-free-icons';
 const TablaBloques = ({ codigo, bloques, onEliminar, estilosTipo, gridLayout, colorBordeHeader }) => {
   return (
     <div className="flex flex-col gap-5">
-        {/* Titulo*/}
+      {/* Titulo*/}
       <Titulo>Bloques: {codigo}</Titulo>
       <div className="flex flex-col md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
-        
+
         {/* Header de la tabla */}
         <div className={`hidden md:grid ${gridLayout}`} style={{ backgroundColor: colorBordeHeader }}>
           <div className="px-6 py-4"><Text variante="medium" style={{ color: colores.azul, fontSize: "16px", fontWeight: '600' }}>Tamaño</Text></div>
@@ -55,7 +55,7 @@ const TablaBloques = ({ codigo, bloques, onEliminar, estilosTipo, gridLayout, co
                       <button onClick={() => onEliminar(bloque.id_temp)} className="p-2 text-[#3b3fb6]"><HugeiconsIcon icon={CancelCircleIcon} size={24} /></button>
                     </div>
                     <div className="flex justify-between items-center border-t pt-3" style={{ borderColor: colorBordeHeader }}>
-                      <Text variante="option" style={{color: colores.gris, fontSize: '14px' }}>{bloque.peso_gr}g - {bloque.cantidad} piezas</Text>
+                      <Text variante="option" style={{ color: colores.gris, fontSize: '14px' }}>{bloque.peso_gr}g - {bloque.cantidad} piezas</Text>
                       <span className="px-3 py-1 rounded-md text-[11px] font-semibold border" style={{ backgroundColor: estilo.bg, color: estilo.text }}>
                         {esProd ? "Producción" : "Experimental"}
                       </span>

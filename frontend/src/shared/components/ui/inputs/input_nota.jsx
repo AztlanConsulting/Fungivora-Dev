@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { colores } from "../basics/colores";
+import { colores } from "../basics/Colores";
 
 /**
  * Textarea para notas libres.

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Base from "../../shared/components/layout/Base";
-import Titulo from "../../shared/components/ui/basics/titulo";
-import Text from "../../shared/components/ui/basics/texto";
-import { colores } from "../../shared/components/ui/basics/colores";
+import Titulo from "../../shared/components/ui/basics/Titulo";
+import Text from "../../shared/components/ui/basics/Texto";
+import { colores } from "../../shared/components/ui/basics/Colores";
 import useInsumos from "../../features/inventario/hooks/useInsumos";
 import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
-import Button from "../../shared/components/ui/buttons/botones";
+import Button from "../../shared/components/ui/buttons/Botones";
 import Input from "../../shared/components/ui/inputs/input_texto";
 
 import TablaInventario from "../../features/inventario/components/TablaInventario";

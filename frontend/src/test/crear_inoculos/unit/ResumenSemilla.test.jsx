@@ -3,13 +3,13 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import ResumenSemilla from "../../../features/crear-medio/components/ResumenSemilla";
 
-vi.mock("../../../shared/components/ui/basics/texto", () => ({
+vi.mock("../../../shared/components/ui/basics/Texto", () => ({
   default: ({ children }) => <span>{children}</span>,
 }));
 
 const composicionMock = [
-  { nombre: "Agua",    unidad: "ml", value: "100" },
-  { nombre: "Peptona", unidad: "g",  value: "5"   },
+  { nombre: "Agua", unidad: "ml", value: "100" },
+  { nombre: "Peptona", unidad: "g", value: "5" },
 ];
 
 describe("ResumenSemilla — renderizado base", () => {

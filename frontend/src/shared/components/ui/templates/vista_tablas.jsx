@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Base from "../../layout/Base";
-import Titulo from "../basics/titulo";
+import Titulo from "../basics/Titulo";
 import BarraBusqueda from "../others/barra_busqueda";
-import Text from "../basics/texto";
-import { colores } from "../basics/colores";
+import Text from "../basics/Texto";
+import { colores } from "../basics/Colores";
 
 // Acceso a los estilos definidos en Text para aplicarlos a inputs
 const estilosReferencia = {

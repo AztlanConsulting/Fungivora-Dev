@@ -5,10 +5,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import ModalCrearInoculo from '../../../features/inoculos/components/ModalCrearInoculo'
 
 // Mock de componentes UI compartidos
-vi.mock('../../../shared/components/ui/basics/texto', () => ({
+vi.mock('../../../shared/components/ui/basics/Texto', () => ({
     default: ({ children }) => <p>{children}</p>,
 }))
-vi.mock('../../../shared/components/ui/buttons/botones', () => ({
+vi.mock('../../../shared/components/ui/buttons/Botones', () => ({
     default: ({ children, onClick }) => (
         <button onClick={onClick}>{children}</button>
     ),

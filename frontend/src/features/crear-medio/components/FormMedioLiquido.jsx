@@ -4,11 +4,11 @@ import { useNavigate } from "react-router-dom";
 import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
 import InputFecha from "../../../shared/components/ui/inputs/input_fecha";
 import InputNota from "../../../shared/components/ui/inputs/input_nota";
-import Button from "../../../shared/components/ui/buttons/botones";
+import Button from "../../../shared/components/ui/buttons/Botones";
 import ModalAlerta from "../../../shared/components/ui/popups/ModalAlerta";
-import Text from "../../../shared/components/ui/basics/texto";
+import Text from "../../../shared/components/ui/basics/Texto";
 import { Base } from "../../../shared/components/layout";
-import { colores } from "../../../shared/components/ui/basics/colores";
+import { colores } from "../../../shared/components/ui/basics/Colores";
 
 import { EntradaLista } from "./SeleccionarCantidades";
 import ResumenSemilla from "./ResumenSemilla";

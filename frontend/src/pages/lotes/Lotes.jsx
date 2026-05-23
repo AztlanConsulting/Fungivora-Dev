@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import Base from "../../shared/components/layout/Base";
-import Titulo from "../../shared/components/ui/basics/titulo";
-import Text from "../../shared/components/ui/basics/texto";
-import { colores } from "../../shared/components/ui/basics/colores";
+import Titulo from "../../shared/components/ui/basics/Titulo";
+import Text from "../../shared/components/ui/basics/Texto";
+import { colores } from "../../shared/components/ui/basics/Colores";
 import useLotes from "../../features/lotes/hooks/useLotes";
 import useBloques from "../../features/bloques/hooks/useBloques";
-import Button from "../../shared/components/ui/buttons/botones";
+import Button from "../../shared/components/ui/buttons/Botones";
 import ModalConfirmacion from "../../shared/components/ui/popups/modal_confirmacion";
 import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
 

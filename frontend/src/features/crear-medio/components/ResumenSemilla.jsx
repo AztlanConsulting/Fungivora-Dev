@@ -1,6 +1,6 @@
 import React from "react";
-import { colores } from "../../../shared/components/ui/basics/colores";
-import Text from "../../../shared/components/ui/basics/texto";
+import { colores } from "../../../shared/components/ui/basics/Colores";
+import Text from "../../../shared/components/ui/basics/Texto";
 
 /**
  * Tarjeta de resumen cambiante para el formulario de creación de semillas.
@@ -17,8 +17,8 @@ const ResumenSemilla = ({
   codigos = [],
   cantidad = 1,
 }) => {
-  const codigoUnico   = codigos.length === 1 ? codigos[0] : null;
-  const varioscodigos = codigos.length > 1   ? codigos    : null;
+  const codigoUnico = codigos.length === 1 ? codigos[0] : null;
+  const varioscodigos = codigos.length > 1 ? codigos : null;
 
 
   const estiloEtiqueta = { color: colores.negro, fontWeight: 500 };
@@ -101,7 +101,7 @@ const ResumenSemilla = ({
 
         {composicion.map((item, index) => {
           const valorNum = parseFloat(String(item.value).replace(",", ".")) || 0;
-          const total    = +(valorNum * cantidad).toFixed(2);
+          const total = +(valorNum * cantidad).toFixed(2);
           const hayValor = valorNum > 0;
 
           return (

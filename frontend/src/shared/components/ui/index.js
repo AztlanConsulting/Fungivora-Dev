@@ -1,11 +1,11 @@
 // Basics
-export { default as Colores } from "./basics/colores"
-export { default as Error } from "./basics/error"
-export { default as Text } from "./basics/texto";
-export { default as Titulo } from "./basics/titulo";
+export { default as Colores } from "./basics/Colores"
+export { default as Error } from "./basics/Error"
+export { default as Text } from "./basics/Texto";
+export { default as Titulo } from "./basics/Titulo";
 
 // Buttons
-export { default as Botones } from "./buttons/botones";
+export { default as Botones } from "./buttons/Botones";
 
 // Cards
 export { default as TarjetaNota } from "./cards/area_notas";

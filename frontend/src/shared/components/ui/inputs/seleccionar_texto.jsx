@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { colores } from "../basics/colores";
+import { colores } from "../basics/Colores";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 
@@ -54,13 +54,13 @@ const SelectField = ({
         </span>
       )}
 
-      <div 
+      <div
         className={`
           relative overflow-hidden rounded-xl transition-all
           ${sizeClass}
           ${isFocused ? "ring-4" : "ring-2"}
         `}
-        style={{ 
+        style={{
           backgroundColor: "#FFFFFF",
           ringColor: isFocused ? colores.azul : colores.grisClaro,
           boxShadow: `0 0 0 ${isFocused ? '4px' : '2px'} ${isFocused ? colores.azul : colores.grisClaro}`

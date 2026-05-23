@@ -5,7 +5,7 @@ import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto"
 import InputFecha from "../../../shared/components/ui/inputs/input_fecha";
 import InputCantidad from "../../../shared/components/ui/inputs/input_cantidad";
 import InputNota from "../../../shared/components/ui/inputs/input_nota";
-import Button from "../../../shared/components/ui/buttons/botones";
+import Button from "../../../shared/components/ui/buttons/Botones";
 import ModalAlerta from "../../../shared/components/ui/popups/ModalAlerta";
 
 import { EntradaLista } from "../../crear-medio/components/SeleccionarCantidades";
@@ -24,10 +24,10 @@ import {
   normalizarTipoInoculo,
 } from "../../crear-medio/utils/generarCodigoInoculo";
 
-import Titulo from "../../../shared/components/ui/basics/titulo";
-import Text from "../../../shared/components/ui/basics/texto";
+import Titulo from "../../../shared/components/ui/basics/Titulo";
+import Text from "../../../shared/components/ui/basics/Texto";
 import { Base } from "../../../shared/components/layout";
-import { colores } from "../../../shared/components/ui/basics/colores";
+import { colores } from "../../../shared/components/ui/basics/Colores";
 import { cantAgar } from "../../crear-medio/types/inoculos.type";
 
 const TIPO_CREACION = "agar";

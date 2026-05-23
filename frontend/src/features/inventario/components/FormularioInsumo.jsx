@@ -1,15 +1,15 @@
 import React from "react";
-import Text from "../../../shared/components/ui/basics/texto";
+import Text from "../../../shared/components/ui/basics/Texto";
 import Input from "../../../shared/components/ui/inputs/input_texto";
 import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
-import Button from "../../../shared/components/ui/buttons/botones";
-import { colores } from "../../../shared/components/ui/basics/colores";
+import Button from "../../../shared/components/ui/buttons/Botones";
+import { colores } from "../../../shared/components/ui/basics/Colores";
 
 const FormularioInsumo = ({ nuevaFila, handleNuevaFila, handleGuardarInsumo, unidades, errorValidacion }) => {
 
   const handleCambioNumero = (campo, valor) => {
     const regex = /^\d{0,6}(\.\d{0,2})?$/;
-    
+
     if (regex.test(valor)) {
       handleNuevaFila(campo, valor);
     }

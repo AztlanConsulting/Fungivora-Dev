@@ -1,5 +1,5 @@
 import React from "react";
-import Text from "../basics/texto";
+import Text from "../basics/Texto";
 
 /**
  * TarjetaNota

@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Cancel01Icon } from '@hugeicons/core-free-icons';
 
-import Text from '../../../shared/components/ui/basics/texto';
-import Button from '../../../shared/components/ui/buttons/botones';
+import Text from '../../../shared/components/ui/basics/Texto';
+import Button from '../../../shared/components/ui/buttons/Botones';
 import SelectField from '../../../shared/components/ui/inputs/seleccionar_texto';
-import { colores } from '../../../shared/components/ui/basics/colores';
+import { colores } from '../../../shared/components/ui/basics/Colores';
 import { TIPOS_INOCULO } from '../types/inoculo.types';
 
 /**

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import Base from "../../layout/Base";
-import Titulo from "../basics/titulo";
-import Button from "../buttons/botones";
+import Titulo from "../basics/Titulo";
+import Button from "../buttons/Botones";
 import Input from "../inputs/input_texto";
-import Text from "../basics/texto";
+import Text from "../basics/Texto";
 import InputFecha from "../inputs/input_fecha";
 import TarjetaNota from "../cards/area_notas"
-import { colores } from "../basics/colores";
+import { colores } from "../basics/Colores";
 
 function Notas() {
   const [val6, setVal6] = useState("");

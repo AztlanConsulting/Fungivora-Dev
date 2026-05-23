@@ -5,7 +5,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import TablaBloques from '../../../features/lotes/components/TablaBloquesLote'
 
 // Mock de Text
-vi.mock('../../../shared/components/ui/basics/texto', () => ({
+vi.mock('../../../shared/components/ui/basics/Texto', () => ({
     default: ({ children, variante, style }) => (
         <p data-testid="text" data-variante={variante} style={style}>
             {children}
@@ -27,7 +27,7 @@ vi.mock('@hugeicons/core-free-icons', () => ({
 }))
 
 // Mock de colores
-vi.mock('../../../shared/components/ui/basics/colores', () => ({
+vi.mock('../../../shared/components/ui/basics/Colores', () => ({
     colores: {
         blanco: '#fff',
         azul: '#3b3fb6',

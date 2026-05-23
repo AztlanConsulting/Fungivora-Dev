@@ -76,7 +76,7 @@ vi.mock('../../../shared/components/layout', () => ({
     Base: ({ children }) => <div>{children}</div>,
 }))
 
-vi.mock('../../../shared/components/ui/basics/colores', () => ({
+vi.mock('../../../shared/components/ui/basics/Colores', () => ({
     colores: { azul: '#3b3fb6', gris: '#555555' },
 }))
 

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { colores } from "../basics/colores";
-import Text from "../basics/texto";
+import { colores } from "../basics/Colores";
+import Text from "../basics/Texto";
 
 // Estilos y configuración estática
 

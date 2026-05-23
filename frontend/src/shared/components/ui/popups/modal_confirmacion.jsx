@@ -1,7 +1,7 @@
 import React from "react";
-import Button from "../buttons/botones";
-import Text from "../basics/texto";
-import { colores } from "../basics/colores";
+import Button from "../buttons/Botones";
+import Text from "../basics/Texto";
+import { colores } from "../basics/Colores";
 
 import { HugeiconsIcon } from '@hugeicons/react';
 /* Esta importación devuelve un array, por eso fallaba al usarlo como componente directo */
