@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 import Barra_navegacion from '../../../shared/components/layout/BarraNavegacion'
 
 // Mock de los componentes
-vi.mock('../../../shared/components/ui/popups/modal_confirmacion', () => ({
+vi.mock('../../../shared/components/ui/popups/ModalConfirmacion', () => ({
     default: ({ visible, titulo, onConfirm, onCancel }) => {
         if (!visible) return null;
         return (

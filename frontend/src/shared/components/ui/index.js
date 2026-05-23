@@ -23,9 +23,9 @@ export { default as BarraBusqueda } from "./others/BarraBusqueda";
 export { default as Stepper } from "./others/Stepper";
 
 // Popups
-export { default as ModalConfirmacion } from "./popups/modal_confirmacion";
+export { default as ModalConfirmacion } from "./popups/ModalConfirmacion";
 export { default as ModalAlerta } from "./popups/ModalAlerta";
 
 // Templates
-export { default as Notas } from "./templates/notas";
-export { default as VistaTablas } from "./templates/vista_tablas";
+export { default as Notas } from "./templates/Notas";
+export { default as VistaTablas } from "./templates/VistaTablas";

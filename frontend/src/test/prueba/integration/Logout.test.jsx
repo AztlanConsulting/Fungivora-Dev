@@ -9,7 +9,7 @@ import Barra_navegacion from '../../../shared/components/layout/BarraNavegacion'
 vi.mock('/icons/icon-splash-blue.png', () => ({ default: 'logo-mock' }))
 
 // Mock del modal
-vi.mock('../ui/popups/modal_confirmacion', () => ({
+vi.mock('../ui/popups/ModalConfirmacion', () => ({
     default: ({ visible, onConfirm, onCancel, titulo }) => (
         visible ? (
             <div data-testid="modal-mock">
