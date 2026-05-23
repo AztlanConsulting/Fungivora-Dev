@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text } from '../../../shared/components/ui';
-import { colores } from '../../../shared/components/ui/basics/colores';
+import { colores } from '../../../shared/components/ui/basics/Colores';
 
 const MetricaCard = ({ valor, label }) => {
     return (

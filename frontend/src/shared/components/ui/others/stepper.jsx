@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
-import { colores } from "../basics/colores";
-import Text from "../basics/texto";
+import { colores } from "../basics/Colores";
+import Text from "../basics/Texto";
 
 /**
 * Stepper 

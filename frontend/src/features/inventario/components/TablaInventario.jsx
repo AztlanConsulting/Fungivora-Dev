@@ -1,6 +1,6 @@
 import React from "react";
-import Text from "../../../shared/components/ui/basics/texto";
-import { colores } from "../../../shared/components/ui/basics/colores";
+import Text from "../../../shared/components/ui/basics/Texto";
+import { colores } from "../../../shared/components/ui/basics/Colores";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { PlusMinus02Icon } from "@hugeicons/core-free-icons";
 
@@ -13,7 +13,7 @@ const columnasHeader = [
 ];
 
 const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSeleccionada, abrirModalEdicion, gridLayout }) => {
-  
+
   // Número de forma visual mejor
   const formatearNumero = (valor) => {
     const numero = parseFloat(valor);

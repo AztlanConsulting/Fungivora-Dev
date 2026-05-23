@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Text } from '../../../shared/components/ui';
-import { colores } from '../../../shared/components/ui/basics/colores';
+import { colores } from '../../../shared/components/ui/basics/Colores';
 
 const FilaCheck = ({ item, lote, checked, onToggle, mostrarCheck }) => {
     return (

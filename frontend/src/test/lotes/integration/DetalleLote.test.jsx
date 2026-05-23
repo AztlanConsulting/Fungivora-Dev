@@ -20,7 +20,7 @@ vi.mock('../../../features/lotes/components/BannerLote', () => ({
     ),
 }))
 
-vi.mock('../../../features/lotes/components/TablaBloques', () => ({
+vi.mock('../../../features/lotes/components/TablaBloquesLote', () => ({
     default: ({ bloques, loading, onToggleContaminado, codigo_lote }) => (
         <div data-testid="tabla-bloques" data-loading={loading} data-codigo={codigo_lote}>
             {bloques.map((b) => (
@@ -76,7 +76,7 @@ vi.mock('../../../shared/components/layout', () => ({
     Base: ({ children }) => <div>{children}</div>,
 }))
 
-vi.mock('../../../shared/components/ui/basics/colores', () => ({
+vi.mock('../../../shared/components/ui/basics/Colores', () => ({
     colores: { azul: '#3b3fb6', gris: '#555555' },
 }))
 
