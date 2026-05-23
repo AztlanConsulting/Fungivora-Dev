@@ -4,8 +4,8 @@ import Button from "../../shared/components/ui/buttons/Botones";
 import Text from "../../shared/components/ui/basics/Texto";
 import { colores } from "../../shared/components/ui/basics/Colores";
 
-import fondoEscritorio from "../../assets/images/fondo_fungivora.png";
-import fondoMovil from "../../assets/images/fondo_fungivora_plano.png";
+import fondoEscritorio from "../../assets/images/fondo-fungivora.png";
+import fondoMovil from "../../assets/images/fondo-fungivora-plano.png";
 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ViewOffIcon, ViewIcon, User03Icon, Key01Icon } from '@hugeicons/core-free-icons';

@@ -26,8 +26,8 @@ vi.mock('../../../shared/components/ui/basics/Texto', () => ({
 
 
 // Mocks de assets e iconos para evitar errores de carga
-vi.mock('../../../assets/images/fondo_fungivora.png', () => ({ default: '' }))
-vi.mock('../../../assets/images/fondo_fungivora_plano.png', () => ({ default: '' }))
+vi.mock('../../../assets/images/fondo-fungivora.png', () => ({ default: '' }))
+vi.mock('../../../assets/images/fondo-fungivora-plano.png', () => ({ default: '' }))
 vi.mock('@hugeicons/react', () => ({
     HugeiconsIcon: () => <div data-testid="icon" />
 }))
