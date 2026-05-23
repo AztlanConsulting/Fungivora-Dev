@@ -118,6 +118,13 @@ exports.post_batch = async (req, res) => {
         const idInoculoReferencia = bloques[0].id_inoculo;
         const inoculosDisponibles = await Lotes.fetch_inoculos_disponibles();
         const infoInoculo = inoculosDisponibles.find(i => i.id_inoculo == idInoculoReferencia);
+
+        if (!infoInoculo) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Inóculo no encontrado" 
+            });
+        }
         
         const [abreviaturaResult] = await Categoria.fetchAbreviaturaPorNombre(infoInoculo.especie);
         const abreviatura = abreviaturaResult[0].abreviatura_opcion;
