@@ -11,12 +11,12 @@ export { default as Botones } from "./buttons/Botones";
 export { default as TarjetaNota } from "./cards/AreaNotas";
 
 // Inputs
-export { default as EntradaCantidad } from "./inputs/entrada_cantidad";
-export { default as InputFecha } from "./inputs/input_fecha";
-export { default as Input } from "./inputs/input_texto";
-export { default as CampoTexto } from "./inputs/input_titulo";
-export { default as Select } from "./inputs/seleccionar_texto";
-export { default as Slider } from "./inputs/slider";
+export { default as EntradaCantidad } from "./inputs/EntradaCantidad";
+export { default as InputFecha } from "./inputs/InputFecha";
+export { default as Input } from "./inputs/InputTexto";
+export { default as CampoTexto } from "./inputs/InputTitulo";
+export { default as Select } from "./inputs/SeleccionarTexto";
+export { default as Slider } from "./inputs/Slider";
 
 // Others
 export { default as BarraBusqueda } from "./others/BarraBusqueda";

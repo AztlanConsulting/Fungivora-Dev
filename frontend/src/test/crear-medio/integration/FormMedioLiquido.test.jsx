@@ -48,7 +48,7 @@ vi.mock('../../../shared/components/ui/popups/ModalAlerta', () => ({
         visible ? <div data-testid={`alerta-${variante}`}>{mensaje}</div> : null,
 }))
 
-vi.mock('../../../shared/components/ui/inputs/seleccionar_texto', () => ({
+vi.mock('../../../shared/components/ui/inputs/SeleccionarTexto', () => ({
     default: ({ value, onChange, placeholder, options = [], disabled }) => (
         <select value={value} onChange={onChange} disabled={disabled}>
             <option value="">{placeholder}</option>
@@ -65,7 +65,7 @@ vi.mock('../../../shared/components/ui/inputs/input_cantidad', () => ({
     ),
 }))
 
-vi.mock('../../../shared/components/ui/inputs/input_fecha', () => ({
+vi.mock('../../../shared/components/ui/inputs/InputFecha', () => ({
     default: ({ value }) => <input readOnly value={value?.day || ''} />,
 }))
 

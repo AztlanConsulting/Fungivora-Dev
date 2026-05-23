@@ -2,9 +2,9 @@ import React, { useMemo } from "react";
 import Titulo from "../../../shared/components/ui/basics/Titulo";
 import Text from "../../../shared/components/ui/basics/Texto";
 import { colores } from "../../../shared/components/ui/basics/Colores";
-import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
+import SelectField from "../../../shared/components/ui/inputs/SeleccionarTexto";
 import Button from "../../../shared/components/ui/buttons/Botones";
-import Input from "../../../shared/components/ui/inputs/input_texto";
+import Input from "../../../shared/components/ui/inputs/InputTexto";
 
 // Form para poder crear un bloque, con sus inserts
 const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, handleBloqueForm, onAgregar, error,

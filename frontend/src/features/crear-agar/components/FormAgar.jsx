@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
-import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
-import InputFecha from "../../../shared/components/ui/inputs/input_fecha";
+import SelectField from "../../../shared/components/ui/inputs/SeleccionarTexto";
+import InputFecha from "../../../shared/components/ui/inputs/InputFecha";
 import InputCantidad from "../../../shared/components/ui/inputs/input_cantidad";
 import InputNota from "../../../shared/components/ui/inputs/input_nota";
 import Button from "../../../shared/components/ui/buttons/Botones";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { colores } from "../basics/Colores";
-import Input from "../inputs/input_texto";
+import Input from "../inputs/InputTexto";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Search02Icon } from '@hugeicons/core-free-icons';
 

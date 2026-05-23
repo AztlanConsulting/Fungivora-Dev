@@ -12,7 +12,7 @@ import useInoculoCard from '../../../features/inoculos/hooks/useInoculoCard'
 vi.mock('../../../shared/components/ui/basics/Texto', () => ({
     default: ({ children }) => <p>{children}</p>,
 }))
-vi.mock('../../../shared/components/ui/inputs/seleccionar_texto', () => ({
+vi.mock('../../../shared/components/ui/inputs/SeleccionarTexto', () => ({
     default: ({ value, onChange, options }) => (
         <select value={value} onChange={onChange} data-testid="select-tipo">
             {options.map((op) => (

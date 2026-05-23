@@ -6,7 +6,7 @@ import { colores } from "../../shared/components/ui/basics/Colores";
 import useInsumos from "../../features/inventario/hooks/useInsumos";
 import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
 import Button from "../../shared/components/ui/buttons/Botones";
-import Input from "../../shared/components/ui/inputs/input_texto";
+import Input from "../../shared/components/ui/inputs/InputTexto";
 
 import TablaInventario from "../../features/inventario/components/TablaInventario";
 import FormularioInsumo from "../../features/inventario/components/FormularioInsumo";

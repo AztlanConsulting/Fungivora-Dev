@@ -13,7 +13,7 @@ vi.mock('../../../shared/components/ui/buttons/Botones', () => ({
         <button onClick={onClick}>{children}</button>
     ),
 }))
-vi.mock('../../../shared/components/ui/inputs/seleccionar_texto', () => ({
+vi.mock('../../../shared/components/ui/inputs/SeleccionarTexto', () => ({
     default: ({ value, onChange, options }) => (
         <select value={value} onChange={onChange} data-testid="select-tipo">
             {options.map((op) => (

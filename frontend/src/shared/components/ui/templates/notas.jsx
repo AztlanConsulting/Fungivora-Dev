@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import Base from "../../layout/Base";
 import Titulo from "../basics/Titulo";
 import Button from "../buttons/Botones";
-import Input from "../inputs/input_texto";
+import Input from "../inputs/InputTexto";
 import Text from "../basics/Texto";
-import InputFecha from "../inputs/input_fecha";
+import InputFecha from "../inputs/InputFecha";
 import TarjetaNota from "../cards/AreaNotas"
 import { colores } from "../basics/Colores";
 

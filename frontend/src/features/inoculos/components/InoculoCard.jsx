@@ -3,7 +3,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons';
 
 import Text from '../../../shared/components/ui/basics/Texto';
-import SelectField from '../../../shared/components/ui/inputs/seleccionar_texto';
+import SelectField from '../../../shared/components/ui/inputs/SeleccionarTexto';
 import { colores } from '../../../shared/components/ui/basics/Colores';
 
 import useInoculoCard from '../hooks/useInoculoCard';

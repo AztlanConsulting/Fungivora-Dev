@@ -3,8 +3,8 @@ import React from "react"; // Quitamos useMemo porque ya no se usa
 import Titulo from "../../../shared/components/ui/basics/Titulo";
 import Text from "../../../shared/components/ui/basics/Texto";
 import { colores } from "../../../shared/components/ui/basics/Colores";
-import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
-import InputFecha from "../../../shared/components/ui/inputs/input_fecha";
+import SelectField from "../../../shared/components/ui/inputs/SeleccionarTexto";
+import InputFecha from "../../../shared/components/ui/inputs/InputFecha";
 import Button from "../../../shared/components/ui/buttons/Botones";
 
 const FormCrearLote = ({

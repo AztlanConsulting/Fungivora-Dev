@@ -1,7 +1,7 @@
 import React from "react";
 import Text from "../../../shared/components/ui/basics/Texto";
-import Input from "../../../shared/components/ui/inputs/input_texto";
-import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
+import Input from "../../../shared/components/ui/inputs/InputTexto";
+import SelectField from "../../../shared/components/ui/inputs/SeleccionarTexto";
 import Button from "../../../shared/components/ui/buttons/Botones";
 import { colores } from "../../../shared/components/ui/basics/Colores";
 

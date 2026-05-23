@@ -10,7 +10,7 @@ vi.mock('../../../features/login/hooks/useLogin')
 import usePruebaDb from '../../../features/login/hooks/useLogin'
 
 // Mocks de ui
-vi.mock('../../../shared/components/ui/inputs/input_texto', () => ({
+vi.mock('../../../shared/components/ui/inputs/InputTexto', () => ({
     default: (props) => <input {...props} />
 }))
 
