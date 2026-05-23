@@ -1,24 +1,24 @@
 import { useState, useEffect, useMemo } from "react";
 import insumosService from "../services/inoculos.service";
-import { COMPOSICION_MEDIO_LIQUIDO } from "../types/inoculos.type";
+import { COMPOSICION_MEDIO_LIQUIDO } from "../types/inoculos.types";
 
 const normalizarUnidad = (unidad = "") => {
   const u = unidad.toLowerCase();
   if (u.includes("mililitro")) return "ml";
-  if (u.includes("gramo"))     return "g";
+  if (u.includes("gramo")) return "g";
   if (u.includes("kilogramo")) return "kg";
-  if (u.includes("litro"))     return "L";
+  if (u.includes("litro")) return "L";
   return unidad;
 };
 
 // Mapea el valor del select al nombre que buscamos en los insumos del backend
 const CLAVE_CARBOHIDRATO = {
-  miel:        "miel",
+  miel: "miel",
   jarabe_maiz: "jarabe",
 };
 
 const LABEL_CARBOHIDRATO = {
-  miel:        "Miel",
+  miel: "Miel",
   jarabe_maiz: "Jarabe de maíz",
 };
 
@@ -31,27 +31,27 @@ const LABEL_CARBOHIDRATO = {
  * blanco para que el usuario la rellene manualmente.
  */
 const useIngredientesMedioLiquido = ({
-  carbohidrato      = "",
+  carbohidrato = "",
   inoculoDisponible = 0,
-  tipoInoculo       = null,
+  tipoInoculo = null,
 }) => {
   const [insumos, setInsumos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState(null);
+  const [error, setError] = useState(null);
 
   const sugeridos = useMemo(() => ({
-    agua:         String(COMPOSICION_MEDIO_LIQUIDO.agua),
-    peptona:      String(COMPOSICION_MEDIO_LIQUIDO.peptona),
-    extracto:     String(COMPOSICION_MEDIO_LIQUIDO.extractoMalta),
+    agua: String(COMPOSICION_MEDIO_LIQUIDO.agua),
+    peptona: String(COMPOSICION_MEDIO_LIQUIDO.peptona),
+    extracto: String(COMPOSICION_MEDIO_LIQUIDO.extractoMalta),
     carbohidrato: String(COMPOSICION_MEDIO_LIQUIDO.carbohidrato),
-    inoculo:      String(COMPOSICION_MEDIO_LIQUIDO.inoculo[tipoInoculo] ?? ""),
+    inoculo: String(COMPOSICION_MEDIO_LIQUIDO.inoculo[tipoInoculo] ?? ""),
   }), [tipoInoculo]);
 
-  const [agua,             setAgua]             = useState(sugeridos.agua);
-  const [peptona,          setPeptona]          = useState(sugeridos.peptona);
-  const [extracto,         setExtracto]         = useState(sugeridos.extracto);
+  const [agua, setAgua] = useState(sugeridos.agua);
+  const [peptona, setPeptona] = useState(sugeridos.peptona);
+  const [extracto, setExtracto] = useState(sugeridos.extracto);
   const [carbohidratoCant, setCarbohidratoCant] = useState(sugeridos.carbohidrato);
-  const [cantInoculo,      setCantInoculo]      = useState(sugeridos.inoculo);
+  const [cantInoculo, setCantInoculo] = useState(sugeridos.inoculo);
 
   // Resincronizar cuando cambia el tipo del inóculo padre
   useEffect(() => {
@@ -75,56 +75,56 @@ const useIngredientesMedioLiquido = ({
   const buscar = (nombre) =>
     insumos.find((i) => i.nombre.toLowerCase().includes(nombre.toLowerCase()));
 
-  const aguaInsumo     = buscar("agua");
-  const peptonaInsumo  = buscar("peptona");
+  const aguaInsumo = buscar("agua");
+  const peptonaInsumo = buscar("peptona");
   const extractoInsumo = buscar("extracto");
 
-  const claveCarbohidrato  = CLAVE_CARBOHIDRATO[carbohidrato] ?? "";
+  const claveCarbohidrato = CLAVE_CARBOHIDRATO[carbohidrato] ?? "";
   const carbohidratoInsumo = claveCarbohidrato ? buscar(claveCarbohidrato) : null;
 
   const items = [
     {
-      id:       aguaInsumo?.id_insumo ?? null,
-      tipo:     "ingrediente",
-      nombre:   "Agua",
-      unidad:   normalizarUnidad(aguaInsumo?.unidad) || "ml",
-      value:    agua,
+      id: aguaInsumo?.id_insumo ?? null,
+      tipo: "ingrediente",
+      nombre: "Agua",
+      unidad: normalizarUnidad(aguaInsumo?.unidad) || "ml",
+      value: agua,
       onChange: (e) => setAgua(e.target.value),
       cantidad: parseFloat(aguaInsumo?.cantidad) || 5000,
     },
     {
-      id:       peptonaInsumo?.id_insumo ?? null,
-      tipo:     "ingrediente",
-      nombre:   "Peptona",
-      unidad:   normalizarUnidad(peptonaInsumo?.unidad) || "ml",
-      value:    peptona,
+      id: peptonaInsumo?.id_insumo ?? null,
+      tipo: "ingrediente",
+      nombre: "Peptona",
+      unidad: normalizarUnidad(peptonaInsumo?.unidad) || "ml",
+      value: peptona,
       onChange: (e) => setPeptona(e.target.value),
       cantidad: parseFloat(peptonaInsumo?.cantidad) || 500,
     },
     {
-      id:       extractoInsumo?.id_insumo ?? null,
-      tipo:     "ingrediente",
-      nombre:   "Extracto de Malta",
-      unidad:   normalizarUnidad(extractoInsumo?.unidad) || "ml",
-      value:    extracto,
+      id: extractoInsumo?.id_insumo ?? null,
+      tipo: "ingrediente",
+      nombre: "Extracto de Malta",
+      unidad: normalizarUnidad(extractoInsumo?.unidad) || "ml",
+      value: extracto,
       onChange: (e) => setExtracto(e.target.value),
       cantidad: parseFloat(extractoInsumo?.cantidad) || 500,
     },
     {
-      id:       carbohidratoInsumo?.id_insumo ?? null,
-      tipo:     "ingrediente",
-      nombre:   LABEL_CARBOHIDRATO[carbohidrato] || "Carbohidrato",
-      unidad:   normalizarUnidad(carbohidratoInsumo?.unidad) || "ml",
-      value:    carbohidratoCant,
+      id: carbohidratoInsumo?.id_insumo ?? null,
+      tipo: "ingrediente",
+      nombre: LABEL_CARBOHIDRATO[carbohidrato] || "Carbohidrato",
+      unidad: normalizarUnidad(carbohidratoInsumo?.unidad) || "ml",
+      value: carbohidratoCant,
       onChange: (e) => setCarbohidratoCant(e.target.value),
       cantidad: parseFloat(carbohidratoInsumo?.cantidad) || 100,
     },
     {
-      id:       null,
-      tipo:     "inoculo",
-      nombre:   "Inóculo",
-      unidad:   "ml",
-      value:    cantInoculo,
+      id: null,
+      tipo: "inoculo",
+      nombre: "Inóculo",
+      unidad: "ml",
+      value: cantInoculo,
       onChange: (e) => setCantInoculo(e.target.value),
       cantidad: inoculoDisponible,
     },

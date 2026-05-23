@@ -28,7 +28,7 @@ import Titulo from "../../../shared/components/ui/basics/Titulo";
 import Text from "../../../shared/components/ui/basics/Texto";
 import { Base } from "../../../shared/components/layout";
 import { colores } from "../../../shared/components/ui/basics/Colores";
-import { cantAgar } from "../../crear-medio/types/inoculos.type";
+import { cantAgar } from "../../crear-medio/types/inoculos.types";
 
 const TIPO_CREACION = "agar";
 

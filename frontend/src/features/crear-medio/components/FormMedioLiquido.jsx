@@ -13,7 +13,7 @@ import { colores } from "../../../shared/components/ui/basics/Colores";
 import { EntradaLista } from "./SeleccionarCantidades";
 import ResumenSemilla from "./ResumenSemilla";
 import insumosService from "../services/inoculos.service";
-import { cantMedioLiquido } from "../types/inoculos.type";
+import { cantMedioLiquido } from "../types/inoculos.types";
 import { crearInoculoDTO } from "../dto/crearInoculoDto";
 import { traducirError } from "../../../shared/utils/traducirError";
 

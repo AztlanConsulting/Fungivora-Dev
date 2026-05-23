@@ -11,7 +11,7 @@ import ModalAlerta from "../../../shared/components/ui/popups/ModalAlerta";
 import { EntradaLista } from "../../crear-medio/components/SeleccionarCantidades";
 import ResumenSemilla from "../../crear-medio/components/ResumenSemilla";
 import insumosService from "../../crear-medio/services/inoculos.service";
-import { BOLSAS } from "../../crear-medio/types/inoculos.type";
+import { BOLSAS } from "../../crear-medio/types/inoculos.types";
 import { crearInoculoDTO } from "../../crear-medio/dto/crearInoculoDto";
 import { traducirError } from "../../../shared/utils/traducirError";
 
