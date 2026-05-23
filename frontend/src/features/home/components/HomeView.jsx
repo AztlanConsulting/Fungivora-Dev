@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Clock01Icon, PackageIcon } from '@hugeicons/core-free-icons';
 import { Titulo, Text } from '../../../shared/components/ui';
-import { colores } from '../../../shared/components/ui/basics/colores';
+import { colores } from '../../../shared/components/ui/basics/Colores';
 import { Base } from '../../../shared/components/layout';
 import AccesoRapido from './AccesoRapido';
 import MetricaCard from './MetricaCard';

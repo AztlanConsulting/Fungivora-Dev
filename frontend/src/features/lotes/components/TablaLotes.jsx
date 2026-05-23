@@ -1,6 +1,6 @@
 import React from "react";
-import Text from "../../../shared/components/ui/basics/texto";
-import { colores } from "../../../shared/components/ui/basics/colores";
+import Text from "../../../shared/components/ui/basics/Texto";
+import { colores } from "../../../shared/components/ui/basics/Colores";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { CancelCircleIcon } from '@hugeicons/core-free-icons';
 
@@ -52,13 +52,13 @@ const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayo
                   </div>
                 ))}
                 <div className="py-4 flex justify-center items-center">
-                  <button 
-                      onClick={(e) => handleEliminarClick(e, lote)}
-                      className="hover:scale-110 transition-transform p-2"
+                  <button
+                    onClick={(e) => handleEliminarClick(e, lote)}
+                    className="hover:scale-110 transition-transform p-2"
                   >
-                      <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
+                    <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
                   </button>
-                  </div>
+                </div>
               </div>
 
               {/* Vista de movil */}
@@ -68,10 +68,10 @@ const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayo
                 style={{ borderColor: colorBordeHeader }}
               >
                 <div className="flex justify-between items-start">
-                    <Text variante="option" style={{ color: "black", fontWeight: '500', fontSize: '18px' }}>{lote.codigo_fungivora}</Text>
-                    <button onClick={(e) => handleEliminarClick(e, lote)}>
-                        <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
-                    </button>
+                  <Text variante="option" style={{ color: "black", fontWeight: '500', fontSize: '18px' }}>{lote.codigo_fungivora}</Text>
+                  <button onClick={(e) => handleEliminarClick(e, lote)}>
+                    <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
+                  </button>
                 </div>
                 <div className="grid grid-cols-2 gap-4 border-t pt-4" style={{ borderColor: colorBordeHeader }}>
                   <Text variante="option" style={{ color: colores.gris, fontSize: '14px' }}>{lote.tipo_sustrato}</Text>

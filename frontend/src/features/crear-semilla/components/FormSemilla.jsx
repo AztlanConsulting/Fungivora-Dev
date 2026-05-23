@@ -1,33 +1,35 @@
 import React, { useState, useMemo } from "react";
 import { redirect, useNavigate } from "react-router-dom";
 
-import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
-import InputFecha from "../../../shared/components/ui/inputs/input_fecha";
-import InputCantidad from "../../../shared/components/ui/inputs/input_cantidad";
-import InputNota from "../../../shared/components/ui/inputs/input_nota";
-import Button from "../../../shared/components/ui/buttons/botones";
+import SelectField from "../../../shared/components/ui/inputs/SeleccionarTexto";
+import InputFecha from "../../../shared/components/ui/inputs/InputFecha";
+import InputCantidad from "../../../shared/components/ui/inputs/InputCantidad";
+import InputNota from "../../../shared/components/ui/inputs/InputNota";
+import Button from "../../../shared/components/ui/buttons/Botones";
 import ModalAlerta from "../../../shared/components/ui/popups/ModalAlerta";
 
-import { EntradaLista } from "../../crear-medio/components/seleccionar_cantidades";
-import ResumenSemilla from "../../crear-medio/components/ResumenSemilla";
-import insumosService from "../../crear-medio/services/inoculos.service";
-import { BOLSAS } from "../../crear-medio/types/inoculos.type";
-import { crearInoculoDTO } from "../../crear-medio/dto/crearInoculoDto";
+import { EntradaLista } from "../../../shared/crear-inoculos/components/SeleccionarCantidades";
+import Resumen from "../../../shared/crear-inoculos/components/Resumen";
+import insumosService from "../../../shared/crear-inoculos/services/inoculos.service";
+import { BOLSAS } from "../../../shared/crear-inoculos/types/inoculos.types";
+import { crearInoculoDTO } from "../../../shared/crear-inoculos/dto/crearInoculoDto";
+
 import { traducirError } from "../../../shared/utils/traducirError";
 
 import useEspecies from "../../inoculos/hooks/useEspecies";
-import useCategorias from "../../crear-medio/hooks/useCategorias";
-import useInoculo from "../../crear-medio/hooks/useInoculo";
-import useIngredientesSemilla from "../../crear-medio/hooks/useIngredientesSemilla";
+
+import useCategorias from "../../../shared/crear-inoculos/hooks/useCategorias";
+import useInoculo from "../../../shared/crear-inoculos/hooks/useInoculo";
+import useIngredientesSemilla from "../hooks/useIngredientesSemilla";
 import {
   generarCodigos,
   normalizarTipoInoculo,
-} from "../../crear-medio/utils/generarCodigoInoculo";
+} from "../../../shared/crear-inoculos/utils/generarCodigoInoculo";
 
-import Titulo from "../../../shared/components/ui/basics/titulo";
-import Text from "../../../shared/components/ui/basics/texto";
+import Titulo from "../../../shared/components/ui/basics/Titulo";
+import Text from "../../../shared/components/ui/basics/Texto";
 import { Base } from "../../../shared/components/layout";
-import { colores } from "../../../shared/components/ui/basics/colores";
+import { colores } from "../../../shared/components/ui/basics/Colores";
 
 const TIPO_CREACION = "semilla";
 
@@ -46,11 +48,11 @@ const FormSemillas = () => {
   const [tamano, setTamano] = useState("");
   const [cantidad, setCantidad] = useState(1);
   const hoy = new Date();
-    const [fecha, setFecha] = useState({
-        day:   String(hoy.getDate()).padStart(2, "0"),
-        month: String(hoy.getMonth() + 1).padStart(2, "0"),
-        year:  String(hoy.getFullYear()),
-    });
+  const [fecha, setFecha] = useState({
+    day: String(hoy.getDate()).padStart(2, "0"),
+    month: String(hoy.getMonth() + 1).padStart(2, "0"),
+    year: String(hoy.getFullYear()),
+  });
   const [nota, setNota] = useState("");
 
   const { especies, loading: loadingEspecies, error: errorEspecies } = useEspecies();
@@ -103,7 +105,7 @@ const FormSemillas = () => {
   const handleRegistrar = async () => {
     setRegistrando(true);
     try {
-        const datos = crearInoculoDTO({
+      const datos = crearInoculoDTO({
         codigo: codigos.base,
         tipo: TIPO_CREACION,
         especie,
@@ -115,24 +117,24 @@ const FormSemillas = () => {
         inoculoSeleccionado,
         valoresComposicion,
         itemsComposicion,
-        });
+      });
 
-        // En handleRegistrar — primero el navigate con state, sin setAlerta
-        await insumosService.postInoculo(datos);
-        navigate("/inoculos", {
-            state: {
-                alerta: {
-                    variante: "exito",
-                    mensaje: `Registro con éxito de : ${codigos.base}`,
-                }
-            }
-        });
+      // En handleRegistrar — primero el navigate con state, sin setAlerta
+      await insumosService.postInoculo(datos);
+      navigate("/inoculos", {
+        state: {
+          alerta: {
+            variante: "exito",
+            mensaje: `Registro con éxito de : ${codigos.base}`,
+          }
+        }
+      });
 
     } catch (error) {
       console.error("Error en el registro:", error);
       setAlerta({ visible: true, ...traducirError(error) });
     } finally {
-        setRegistrando(false);
+      setRegistrando(false);
     }
   };
 
@@ -223,7 +225,7 @@ const FormSemillas = () => {
               </div>
             </div>
 
-            <ResumenSemilla
+            <Resumen
               especie={especie}
               codigoInoculo={codigoInoculo}
               composicion={itemsComposicion}
@@ -238,21 +240,21 @@ const FormSemillas = () => {
               Cancelar
             </Button>
             <Button
-                variant="registrar"
-                onClick={handleRegistrar}
-                disabled={registrando || !tamano}
-              >
+              variant="registrar"
+              onClick={handleRegistrar}
+              disabled={registrando || !tamano}
+            >
               {registrando ? "Registrando..." : "Registrar"}
             </Button>
           </div>
         </div>
       </Base>
       <ModalAlerta
-            visible={alerta.visible}
-            variante={alerta.variante}
-            mensaje={alerta.mensaje}
-            onClose={() => setAlerta((a) => ({ ...a, visible: false }))}
-        />
+        visible={alerta.visible}
+        variante={alerta.variante}
+        mensaje={alerta.mensaje}
+        onClose={() => setAlerta((a) => ({ ...a, visible: false }))}
+      />
     </>
   );
 };
