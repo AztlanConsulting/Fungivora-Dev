@@ -125,8 +125,8 @@ const DetalleLote = () => {
                     }}
                 >
                     <Text variante='button' style={{ color: colores.azul }}>
-                        <span className="md:hidden">Guardar</span>
-                        <span className="hidden md:inline">Guardar Cambios</span>
+                        <span className="md:hidden">Actualizar</span>
+                        <span className="hidden md:inline">Actualizar</span>
                     </Text>
                 </button>
             )}
@@ -169,7 +169,7 @@ const DetalleLote = () => {
             <ModalConfirmacion
                 visible={isModalOpen}
                 icon={CheckmarkCircle02Icon}
-                titulo="¿Confirmar cambios?"
+                titulo="¿Confirmar actualización?"
                 descripcion={
                     <>
                         <span className="font-semibold">Nueva Fase:</span> {getFase(fase)}
