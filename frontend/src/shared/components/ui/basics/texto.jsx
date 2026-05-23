@@ -91,7 +91,7 @@ const Text = ({
   variante = "body",
   children,
   style = {},
-  as: Tag = "p",
+  as: Tag = "span",
 }) => {
   const variantStyles = variantes[variante] || variantes.body;
 

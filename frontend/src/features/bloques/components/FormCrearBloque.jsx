@@ -15,26 +15,15 @@ const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, hand
  }) => {
 
   // Validar el número
-  const validarNumero = (valor, limite) => {
-    let limpio = valor.replace(/[^0-9.]/g, "");
+  const validarEntero = (valor, limite) => {
+    let limpio = valor.replace(/[^0-9]/g, "");
 
-    if (limpio.startsWith("0")) {
+    if (limpio.length > 1 && limpio.startsWith("0")) {
       limpio = limpio.substring(1);
     }
-
     if (limpio.length > limite) {
       limpio = limpio.slice(0, limite);
     }
-    const partes = limpio.split(".");
-    if (partes.length > 2) {
-      limpio = partes[0] + "." + partes.slice(1).join("");
-    }
-
-    if (partes[1] && partes[1].length > 2) {
-      limpio = parseFloat(limpio).toFixed(2);
-    }
-
-    if (limpio === ".") return "";
 
     return limpio;
   };
@@ -44,17 +33,18 @@ const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, hand
     return getInoculosPorEspecie(especieSeleccionada);
   }, [especieSeleccionada, getInoculosPorEspecie]);
 
-  // Número para peso
+  // Máximo 5 dígitos
   const handleChangePeso = (e) => {
-    const valorValidado = validarNumero(e.target.value, 6);
+    const valorValidado = validarEntero(e.target.value, 5);
     setBloqueForm({ ...bloqueForm, peso_gr: valorValidado });
   };
 
-  // Número para centidad
+  // Cambiar cantidad
   const handleChangeCantidad = (e) => {
-    const valorValidado = validarNumero(e.target.value, 2);
+    const valorValidado = validarEntero(e.target.value, 2);
     setBloqueForm({ ...bloqueForm, cantidad: valorValidado });
   };
+
   return (
     <div className="flex flex-col gap-5">
         {/* Titulo */}

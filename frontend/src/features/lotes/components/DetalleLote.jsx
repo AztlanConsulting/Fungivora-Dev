@@ -169,7 +169,7 @@ const DetalleLote = () => {
             <ModalConfirmacion
                 visible={isModalOpen}
                 icon={CheckmarkCircle02Icon}
-                titulo="¿Confirmar actualización?"
+                titulo="¿Confirmar cambios?"
                 descripcion={
                     <>
                         <span className="font-semibold">Nueva Fase:</span> {getFase(fase)}

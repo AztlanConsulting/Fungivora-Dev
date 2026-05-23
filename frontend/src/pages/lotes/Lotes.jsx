@@ -155,17 +155,6 @@ function Lotes() {
     setErrorValidacion("");
   };
 
-
-  const manejarCancelar = () => {
-    setPaso(1);
-    bloquesTemporales.forEach(bloque => {
-      eliminarBloqueDeLista(bloque.id_temp);
-    });
-
-    setBloqueForm({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
-    setErrorValidacion("");
-  };
-
   const confirmarCancelacion = () => {
     setPaso(1);
     bloquesTemporales.forEach(bloque => {

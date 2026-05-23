@@ -9,6 +9,16 @@ const colorBordeDestacado = '#7F7FD5';
 
 const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) => {
 
+    // Función para formatear el peso dinámicamente
+    const formatearPeso = (gramos) => {
+        const pesoNum = parseFloat(gramos || 0);
+        if (pesoNum >= 1000) {
+            const kg = (pesoNum / 1000).toFixed(1).replace(/\.0$/, "");
+            return `${kg} Kilogramos(s)`;
+        }
+        return `${pesoNum.toFixed(0)} Gramos(s)`;
+    };
+
     const bloquesOrdenados = [...bloques].sort((a, b) => {
         const inoculoA = (a.codigo_inoculo_bloque || '').toString();
         const inoculoB = (b.codigo_inoculo_bloque || '').toString();
@@ -20,21 +30,17 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
 
     const generarCodigoBloque = (codigoInoculo, indiceGlobal) => {
         if (!codigoInoculo) return `BC-B${indiceGlobal + 1}`;
-
         let base = codigoInoculo.trim();
         const partes = base.split('-');
-        
         if (partes.length > 3) {
             partes.pop();
             base = partes.join('-');
         }
-
         if (base.toUpperCase().startsWith('LC')) {
             base = 'BC' + base.substring(2);
         } else if (!base.toUpperCase().startsWith('BC')) {
             base = 'BC-' + base;
         }
-
         return `${base}-${indiceGlobal + 1}`;
     };
 
@@ -82,7 +88,8 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                     <div><Text variante="option" style={{ fontWeight: '600' }}>Código Bloque</Text></div>
                     <div><Text variante="option" style={{ fontWeight: '600' }}>Inóculo</Text></div>
                     <div><Text variante="option" style={{ fontWeight: '600' }}>Tamaño</Text></div>
-                    <div><Text variante="option" style={{ fontWeight: '600' }}>Peso (g)</Text></div>
+                    {/* Header genérico para evitar confusión con las unidades */}
+                    <div><Text variante="option" style={{ fontWeight: '600' }}>Peso</Text></div>
                     <div><Text variante="option" style={{ fontWeight: '600' }}>Clasificación</Text></div>
                     <div className="text-center"><Text variante="option" style={{ fontWeight: '600' }}>Contaminado</Text></div>
                 </div>
@@ -98,7 +105,6 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                         bloquesOrdenados.map((bloque, index) => {
                             const codigoInoculo = bloque.codigo_inoculo_bloque; 
                             const codigoVisual = generarCodigoBloque(codigoInoculo, index);
-                            const pesoLimpio = parseFloat(bloque.peso_gr || 0).toFixed(0);
 
                             return (
                                 <div key={bloque.id_bloque || index} className="relative">
@@ -116,7 +122,10 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                                         <div className="flex justify-between items-end">
                                             <div className="flex flex-col gap-1">
                                                 <Text variante="body" style={{ color: '#444', fontSize: '13px' }}>{bloque.contenedor}</Text>
-                                                <Text variante="body" style={{ color: '#444', fontSize: '13px', fontWeight: '600' }}>{pesoLimpio} g</Text>
+                                                {/* Aplicación de formatearPeso */}
+                                                <Text variante="body" style={{ color: '#444', fontSize: '13px', fontWeight: '600' }}>
+                                                    {formatearPeso(bloque.peso_gr)}
+                                                </Text>
                                             </div>
                                             <div>{renderEtiqueta(bloque.produccion)}</div>
                                         </div>
@@ -130,7 +139,10 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                                             {codigoInoculo || 'S/N'} 
                                         </Text>
                                         <Text variante="body" style={{ color: '#444' }}>{bloque.contenedor}</Text>
-                                        <Text variante="body" style={{ color: '#444' }}>{pesoLimpio} g</Text>
+                                        {/* Aplicación de formatearPeso */}
+                                        <Text variante="body" style={{ color: '#444' }}>
+                                            {formatearPeso(bloque.peso_gr)}
+                                        </Text>
                                         <div>{renderEtiqueta(bloque.produccion)}</div>
                                         <div className="flex justify-center">
                                             {renderCheckbox(bloque.contaminado, bloque.id_bloque)}
