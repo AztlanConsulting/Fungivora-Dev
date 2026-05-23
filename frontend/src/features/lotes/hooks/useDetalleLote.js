@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import { LoteService } from '../services/lote.service';
 
+const FASES_CONFIG = [
+    { label: "Inoculación" }, { label: "Colonización" }, { label: "Fructificación" },
+    { label: "Cosecha 1" }, { label: "Cosecha 2" }, { label: "Finalización" },
+];
+
 const useDetalleLote = (id_lote, faseInicial) => {
     const [bloques, setBloques] = useState([]);
     const [bloquesIniciales, setBloquesIniciales] = useState([]);
@@ -8,11 +13,6 @@ const useDetalleLote = (id_lote, faseInicial) => {
     const [codigoInoculo, setCodigoInoculo] = useState(null); 
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
-
-    const fases = [
-        { label: "Inoculación" }, { label: "Colonización" }, { label: "Fructificación" },
-        { label: "Cosecha 1" }, { label: "Cosecha 2" }, { label: "Finalización" },
-    ];
 
     const [fase, setFase] = useState(0);
     const [faseInicialNum, setFaseInicialNum] = useState(0);
@@ -37,7 +37,7 @@ const useDetalleLote = (id_lote, faseInicial) => {
                     setEspecie(listaObtenida[0].especie_nombre || "S/N");
                 }
 
-                const indexFase = fases.findIndex(f => f.label === faseActualLote);
+                const indexFase = FASES_CONFIG.findIndex(f => f.label === faseActualLote);
                 const valorFase = indexFase !== -1 ? indexFase : 0;
                 
                 setFase(valorFase);
@@ -51,16 +51,16 @@ const useDetalleLote = (id_lote, faseInicial) => {
             }
         };
         fetchData();
-    }, [id_lote]);
+    }, [id_lote, faseInicial]); 
 
     const getFase = (id_fase) => {
-        return fases[id_fase] ? fases[id_fase].label : "Desconocida";
+        return FASES_CONFIG[id_fase] ? FASES_CONFIG[id_fase].label : "Desconocida";
     };
 
     const guardarCambios = async (bloquesActualizados, nuevaFaseIndex) => {
         setCargando(true); 
         try {
-            const nombreFase = fases[nuevaFaseIndex]?.label || "Inoculación";
+            const nombreFase = FASES_CONFIG[nuevaFaseIndex]?.label || "Inoculación";
             await Promise.all([
                 LoteService.updateFaseLote(id_lote, nombreFase),
                 LoteService.updateBloquesMasivo(id_lote, bloquesActualizados)
@@ -78,7 +78,7 @@ const useDetalleLote = (id_lote, faseInicial) => {
         fase, setFase, faseInicialNum, setFaseInicialNum,
         especie, codigoInoculo,         
         cargando, error, getFase, guardarCambios,
-        fases
+        fases: FASES_CONFIG 
     };
 };
 

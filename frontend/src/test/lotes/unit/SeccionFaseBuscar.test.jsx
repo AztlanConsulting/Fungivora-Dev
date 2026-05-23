@@ -102,7 +102,7 @@ describe('SeccionFaseBuscar — props hacia Stepper', () => {
     })
 })
 
-// Props hacia BarraBusqueda 
+// Props hacia BarraBusqueda (skip por ahora)
 describe.skip('SeccionFaseBuscar — props hacia BarraBusqueda', () => {
     it('pasa el value de busqueda correctamente', () => {
         renderComponente({ busqueda: 'bloque 3' })
