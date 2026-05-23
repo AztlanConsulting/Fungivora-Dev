@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Base from "../../shared/components/layout/base";
 import Titulo from "../../shared/components/ui/basics/titulo";
 import Text from "../../shared/components/ui/basics/texto";
@@ -54,6 +54,15 @@ function Lotes() {
   const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
   const [loteAEliminar, setLoteAEliminar] = useState(null);
   const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
+  const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === "/lotes" && paso === 2) {
+      abrirModalCancelar();
+    }
+  }, [location]);
 
   useEffect(() => {
     if (nuevaFila.id_inoculo && nuevaFila.especie) {
@@ -155,6 +164,26 @@ function Lotes() {
 
     setBloqueForm({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
     setErrorValidacion("");
+  };
+
+  const confirmarCancelacion = () => {
+    setPaso(1);
+    bloquesTemporales.forEach(bloque => {
+      eliminarBloqueDeLista(bloque.id_temp);
+    });
+    setBloqueForm({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+    setNuevaFila({ especie: "", tipo_sustrato: "", ubicacion_lote: "" }); 
+    setErrorValidacion("");
+    setMostrarModalCancelar(false);
+  };
+
+  const abrirModalCancelar = () => {
+    if (bloquesTemporales.length > 0) {
+      setMostrarModalCancelar(true);
+    } else {
+      setPaso(1);
+      setErrorValidacion("");
+    }
   };
 
   // Obligar a añadir al menos 1 bloque
@@ -365,9 +394,9 @@ function Lotes() {
                   {guardando ? "Cargando..." : "Finalizar"}
                 </Button>
               </div>
-              <div className="order-2 md:order-1">
-                <Button variant="eliminar" isOutline={true} onClick={manejarCancelar}>Cancelar</Button>
-              </div>
+              <Button variant="eliminar" isOutline={true} onClick={abrirModalCancelar}>
+                Cancelar
+              </Button>
             </div>
           )}
         </div>
@@ -402,6 +431,17 @@ function Lotes() {
         onConfirm={confirmarEliminarLote}
         onCancel={() => setMostrarModalEliminar(false)}
         deshabilitarConfirmar={guardando}
+      />
+      <ModalConfirmacion
+        visible={mostrarModalCancelar}
+        titulo="¿Estás seguro de cancelar?"
+        descripcion="Se perderán todos los bloques que has añadido actualmente."
+        textoConfirmar="Sí, cancelar"
+        textoCancelar="Continuar editando"
+        icon={CancelCircleIcon} 
+        colorConfirmar={colores.rojo}
+        onConfirm={confirmarCancelacion}
+        onCancel={() => setMostrarModalCancelar(false)}
       />
     </Base>
   );
