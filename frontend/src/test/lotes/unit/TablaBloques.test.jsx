@@ -107,7 +107,7 @@ describe('TablaBloques — estado de carga', () => {
 
     it('no muestra el mensaje de vacío mientras carga', () => {
         renderComponente({ loading: true, bloques: [] })
-        expect(screen.queryByText('Sin bloques registrados en este lote.')).not.toBeInTheDocument()
+        expect(screen.queryByText('Sin bloques registrados.')).not.toBeInTheDocument()
     })
 })
 
@@ -116,7 +116,7 @@ describe('TablaBloques — estado de carga', () => {
 describe('TablaBloques — estado vacío', () => {
     it('muestra mensaje de sin bloques cuando el array está vacío', () => {
         renderComponente({ bloques: [] })
-        expect(screen.getByText('Sin bloques registrados en este lote.')).toBeInTheDocument()
+        expect(screen.getByText('Sin bloques registrados.')).toBeInTheDocument()
     })
 
     it('no muestra filas cuando bloques está vacío', () => {
@@ -126,7 +126,7 @@ describe('TablaBloques — estado vacío', () => {
 
     it('muestra el mensaje de vacío con bloques undefined (default)', () => {
         render(<TablaBloques codigo_lote={CODIGO_LOTE} />)
-        expect(screen.getByText('Sin bloques registrados en este lote.')).toBeInTheDocument()
+        expect(screen.getByText('Sin bloques registrados.')).toBeInTheDocument()
     })
 })
 
@@ -135,10 +135,9 @@ describe('TablaBloques — estado vacío', () => {
 describe('TablaBloques — código visual', () => {
     it('genera el código visual correcto para cada bloque', () => {
         renderComponente()
-        // codigo_lote="LT-001" → slice(2)="-001" → "BC-001-1", "BC-001-2", "BC-001-3"
-        expect(screen.getAllByText('BC-001-1').length).toBeGreaterThan(0)
-        expect(screen.getAllByText('BC-001-2').length).toBeGreaterThan(0)
-        expect(screen.getAllByText('BC-001-3').length).toBeGreaterThan(0)
+        expect(screen.getAllByText('BC-LT-001-1').length).toBeGreaterThan(0)
+        expect(screen.getAllByText('BC-LT-001-2').length).toBeGreaterThan(0)
+        expect(screen.getAllByText('BC-LT-001-3').length).toBeGreaterThan(0)
     })
 })
 

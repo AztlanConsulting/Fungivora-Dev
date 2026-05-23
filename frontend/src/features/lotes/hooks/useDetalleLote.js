@@ -21,19 +21,16 @@ const useDetalleLote = (id_lote, faseInicial) => {
         if (!id_lote) return;
         setCargando(true);
         try {
-            const resBloques = await LoteService.getBloquesByLote(id_lote);
+        const resBloques = await LoteService.getBloquesByLote(id_lote);
+        const listaObtenida = resBloques.data || [];
 
-            const listaObtenida = resBloques.data || [];
+        if (listaObtenida.length > 0) {
+            setBloques(listaObtenida);
+            setBloquesIniciales(listaObtenida.map(b => ({ ...b })));
 
-            if (listaObtenida.length > 0) {
-                const primerBloque = listaObtenida[0];
-                
-                setBloques(listaObtenida);
-                setBloquesIniciales(listaObtenida.map(b => ({ ...b })));
-                
-                setCodigoInoculo(primerBloque.codigo_lote); 
-                setEspecie(primerBloque.especie_nombre || "S/N");
-            } else {
+            setCodigoInoculo(listaObtenida[0].codigo_lote); 
+            setEspecie(listaObtenida[0].especie_nombre || "S/N");
+        } else {
                 console.error("La lista de bloques está vacía para este ID.");
             }
 
@@ -57,9 +54,9 @@ const useDetalleLote = (id_lote, faseInicial) => {
             const nombreFase = fases[nuevaFaseIndex] ? fases[nuevaFaseIndex].label : "Inoculación";
 
             await LoteService.updateFaseLote(id_lote, nombreFase);
-            
+
             await LoteService.updateBloquesMasivo(id_lote, bloquesActualizados);
-            
+
             return { success: true };
         } catch (err) {
             return { success: false, error: err.message };

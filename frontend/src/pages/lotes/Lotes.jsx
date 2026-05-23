@@ -7,12 +7,12 @@ import { colores } from "../../shared/components/ui/basics/colores";
 import useLotes from "../../features/lotes/hooks/useLotes";
 import useBloques from "../../features/bloques/hooks/useBloques";
 import Button from "../../shared/components/ui/buttons/botones";
-import ModalConfirmacion from "../../shared/components/ui/popups/modal_confirmacion"; 
+import ModalConfirmacion from "../../shared/components/ui/popups/modal_confirmacion";
 import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
 
 // Iconos
 import { HugeiconsIcon } from '@hugeicons/react';
-import { CheckmarkCircle02Icon, CancelCircleIcon} from '@hugeicons/core-free-icons';
+import { CheckmarkCircle02Icon, CancelCircleIcon } from '@hugeicons/core-free-icons';
 
 // Componentes de Tablas y Forms
 import TablaLotes from "../../features/lotes/components/TablaLotes";
@@ -39,10 +39,10 @@ function Lotes() {
     year: hoy.getFullYear().toString()
   });
 
-  const { 
-      datos, sustratos, ubicaciones, especies, especiesDisponibles,
-      getInoculosPorEspecie, cargando, error, addLote, deleteLote 
-    } = useLotes();
+  const {
+    datos, sustratos, ubicaciones, especies, especiesDisponibles,
+    getInoculosPorEspecie, cargando, error, addLote, deleteLote
+  } = useLotes();
   const [verFormulario, setVerFormulario] = useState(false);
   const [nuevaFila, setNuevaFila] = useState({ especie: "", tipo_sustrato: "", ubicacion_lote: ""});
   const [errorValidacion, setErrorValidacion] = useState("");
@@ -54,48 +54,48 @@ function Lotes() {
   const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
   const [loteAEliminar, setLoteAEliminar] = useState(null);
   const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
-  
+
   useEffect(() => {
-      if (nuevaFila.id_inoculo && nuevaFila.especie) {
-        const opcionesInoculo = getInoculosPorEspecie(nuevaFila.especie);
-        const seleccionado = opcionesInoculo.find(
-          opt => String(opt.value) === String(nuevaFila.id_inoculo)
-        );
+    if (nuevaFila.id_inoculo && nuevaFila.especie) {
+      const opcionesInoculo = getInoculosPorEspecie(nuevaFila.especie);
+      const seleccionado = opcionesInoculo.find(
+        opt => String(opt.value) === String(nuevaFila.id_inoculo)
+      );
 
-        if (seleccionado) {
-          const dd = String(fecha.day).padStart(2, '0');
-          const mm = String(fecha.month).padStart(2, '0');
-          const yy = fecha.year.toString().slice(-2);
-          const abreviatura = seleccionado.abreviatura || "XX";
+      if (seleccionado) {
+        const dd = String(fecha.day).padStart(2, '0');
+        const mm = String(fecha.month).padStart(2, '0');
+        const yy = fecha.year.toString().slice(-2);
+        const abreviatura = seleccionado.abreviatura || "XX";
 
-          setCodigoPrevisualizacion(`LC-${abreviatura}-${dd}${mm}${yy}`);
-        }
-      } else {
-        setCodigoPrevisualizacion("");
+        setCodigoPrevisualizacion(`LC-${abreviatura}-${dd}${mm}${yy}`);
       }
-    }, [nuevaFila.id_inoculo, nuevaFila.especie, fecha]);
+    } else {
+      setCodigoPrevisualizacion("");
+    }
+  }, [nuevaFila.id_inoculo, nuevaFila.especie, fecha]);
 
   // Colores para podruccion y experimental
   const colores_tipo = {
-    produccion: { bg: "#DDEEE9", text: "#23916F" }, 
-    experimental: { bg: "#E9EAFF", text: "#272CBA" } 
+    produccion: { bg: "#DDEEE9", text: "#23916F" },
+    experimental: { bg: "#E9EAFF", text: "#272CBA" }
   };
 
   const [bloqueForm, setBloqueForm] = useState({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
 
   // Que cambie el valor de los inputs de select
   const handleInputChange = (setter) => (campo, valor) => {
-    const value = (valor && typeof valor === 'object' && 'value' in valor) 
-      ? String(valor.value) 
+    const value = (valor && typeof valor === 'object' && 'value' in valor)
+      ? String(valor.value)
       : (valor?.target ? valor.target.value : valor);
 
     setter((prev) => {
       const nuevoEstado = { ...prev, [campo]: value || "" };
       if (campo === "especie") {
         nuevoEstado.id_inoculo = "";
-        setCodigoPrevisualizacion(""); 
+        setCodigoPrevisualizacion("");
       }
-      
+
       return nuevoEstado;
     });
   };
@@ -128,6 +128,21 @@ function Lotes() {
     });
     
     setBloqueForm({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+    if (isNaN(peso) || peso <= 0 || isNaN(cantidad) || cantidad <= 0) {
+      setErrorValidacion("Ingresa un número válido y mayor a cero");
+      return;
+    }
+
+    const cantidadAcumulada = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad), 0);
+
+    if (cantidadAcumulada + cantidad > 100) {
+      setErrorValidacion(`Límite excedido. Total acumulado: ${cantidadAcumulada}. No puedes superar 100 unidades.`);
+      return;
+    }
+
+    agregarBloqueALista({ ...bloqueForm });
+
+    setBloqueForm({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
     setErrorValidacion("");
   };
 
@@ -156,7 +171,7 @@ function Lotes() {
   const handleFinalizarRegistroCompleto = async () => {
     if (guardando || bloquesTemporales.length === 0) return;
 
-    setGuardando(true); 
+    setGuardando(true);
     setErrorValidacion("");
     setMostrarModal(false);
 
@@ -199,7 +214,7 @@ function Lotes() {
         mensaje: "Error de conexión con el servidor"
       });
     }
- };
+  };
 
   // Colores de las fases
   const obtenerEstiloFase = (fase) => {
@@ -213,38 +228,38 @@ function Lotes() {
 
   // Modal para confirmar eliminar
   const prepararEliminacion = (lote) => {
-      setLoteAEliminar(lote);
-      setMostrarModalEliminar(true);
+    setLoteAEliminar(lote);
+    setMostrarModalEliminar(true);
   };
 
   // Confirmar eliminar el lote
   const confirmarEliminarLote = async () => {
-      if (!loteAEliminar) return;
-      
-      setGuardando(true);
-      try {
-          const res = await deleteLote(loteAEliminar.id_lote);
-          
-          if (res.success) {
-              setAlerta({ 
-                  visible: true, 
-                  variante: "exito", 
-                  mensaje: "Lote eliminado correctamente" 
-              });
-          } else {
-              setAlerta({ 
-                  visible: true, 
-                  variante: "error", 
-                  mensaje: res.message || "No se pudo eliminar" 
-              });
-          }
-      } catch (err) {
-          setAlerta({ visible: true, variante: "error", mensaje: "Error de red" });
-      } finally {
-          setGuardando(false);
-          setMostrarModalEliminar(false);
-          setLoteAEliminar(null);
+    if (!loteAEliminar) return;
+
+    setGuardando(true);
+    try {
+      const res = await deleteLote(loteAEliminar.id_lote);
+
+      if (res.success) {
+        setAlerta({
+          visible: true,
+          variante: "exito",
+          mensaje: "Lote eliminado correctamente"
+        });
+      } else {
+        setAlerta({
+          visible: true,
+          variante: "error",
+          mensaje: res.message || "No se pudo eliminar"
+        });
       }
+    } catch (err) {
+      setAlerta({ visible: true, variante: "error", mensaje: "Error de red" });
+    } finally {
+      setGuardando(false);
+      setMostrarModalEliminar(false);
+      setLoteAEliminar(null);
+    }
   };
 
   const totalUnidadesBloques = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad || 0), 0);
@@ -252,27 +267,28 @@ function Lotes() {
   return (
     <Base margen_arriba="mt-20 md:mt-20">
       {/* Botón para cambiar del forms a la vista de tabla*/}
-    <div className="lg:hidden flex justify-start mb-6">
-      <div
-        onClick={() => setVerFormulario(!verFormulario)}
-        className={`px-5 py-2 rounded-[12px] border-2 bg-white transition-all active:scale-95 cursor-pointer shadow-sm
-          ${verFormulario ? "border-[#3b3fb6]" : "border-gray-200"}`}
-      >
-        <Text 
-          variante="label" 
-          style={{ 
-            color: verFormulario ? colores.azul : "#6B7280", 
-            fontWeight: "600",
-            fontSize: "13px"
-          }}
+      <div className="lg:hidden flex justify-start mb-6">
+        <Button
+          onClick={() => setVerFormulario(!verFormulario)}
+          className={`px-5 py-2 rounded-[12px] border-2`}
+          isOutline={true}
         >
-          {verFormulario 
-            ? (paso === 1 ? "Ver Lotes" : "Ver Bloques") 
-            : (paso === 1 ? "Crear lote" : "Crear bloque")
-          }
-        </Text>
+          <Text
+            variante="label"
+            style={{
+              color: colores.azul,
+              fontWeight: "600",
+              fontSize: "13px"
+            }}
+          >
+            {verFormulario
+              ? (paso === 1 ? "Ver Lotes" : "Ver Bloques")
+              : (paso === 1 ? "Crear lote" : "Crear bloque")
+            }
+          </Text>
+        </Button>
+
       </div>
-    </div>
 
       <div className="flex flex-col lg:flex-row gap-8 items-stretch relative">
         {/* Componente de las tablas*/}
@@ -280,11 +296,11 @@ function Lotes() {
           {paso === 1 ? (
             <>
               <Titulo>Lotes</Titulo>
-              {cargando ? <Text>Cargando...</Text> : (
-                <TablaLotes 
-                  datos={datos} 
+              {cargando ? <Text>Cargando...</Text> : error ? <Text>Error al cargar los datos</Text> : (
+                <TablaLotes
+                  datos={datos}
                   onEliminar={prepararEliminacion}
-                  columnas={columnas} 
+                  columnas={columnas}
                   onVerDetalle={(lote) => navigate(`/lotes/detalle/${lote.id_lote}`, { state: lote })}
                   obtenerEstiloFase={obtenerEstiloFase}
                   gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1fr_1.1fr_1.2fr_1fr_0.5fr]"
@@ -294,9 +310,9 @@ function Lotes() {
             </>
           ) : (
             <div className="animate-in fade-in duration-500">
-              <TablaBloques 
-              codigo={codigoPrevisualizacion}
-                bloques={bloquesTemporales} 
+              <TablaBloques
+                codigo={codigoPrevisualizacion}
+                bloques={bloquesTemporales}
                 onEliminar={eliminarBloqueDeLista}
                 estilosTipo={colores_tipo}
                 gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1fr_1.2fr_1.2fr_0.5fr]"
@@ -310,25 +326,25 @@ function Lotes() {
         <div className="flex flex-col lg:w-[440px]">
           <div className={`w-full bg-white rounded-[32px] shadow-sm border p-8 ${verFormulario ? "block" : "hidden"} lg:block`}>
             {paso === 1 ? (
-              <FormCrearLote 
-                especiesDisponibles={especiesDisponibles} 
-                sustratos={sustratos} 
+              <FormCrearLote
+                especiesDisponibles={especiesDisponibles}
+                sustratos={sustratos}
                 ubicaciones={ubicaciones}
-                nuevaFila={nuevaFila} 
-                fecha={fecha} 
+                nuevaFila={nuevaFila}
+                fecha={fecha}
                 setFecha={setFecha}
-                handleNuevaFila={handleInputChange(setNuevaFila)} 
-                onSiguiente={irAPasoBloques} 
+                handleNuevaFila={handleInputChange(setNuevaFila)}
+                onSiguiente={irAPasoBloques}
                 error={errorValidacion}
               />
             ) : (
-              <FormCrearBloque 
-                codigo={codigoPrevisualizacion} 
+              <FormCrearBloque
+                codigo={codigoPrevisualizacion}
                 contenedores={contenedores}
-                bloqueForm={bloqueForm} 
+                bloqueForm={bloqueForm}
                 setBloqueForm={setBloqueForm}
-                handleBloqueForm={handleInputChange(setBloqueForm)} 
-                onAgregar={handleAgregarBloque} 
+                handleBloqueForm={handleInputChange(setBloqueForm)}
+                onAgregar={handleAgregarBloque}
                 error={errorValidacion}
                 especieSeleccionada={nuevaFila.especie}
                 getInoculosPorEspecie={getInoculosPorEspecie}
@@ -337,37 +353,37 @@ function Lotes() {
             )}
           </div>
 
-        {/* Botones de registrar y cancelar*/}
+          {/* Botones de registrar y cancelar*/}
           {paso === 2 && (
             <div className={`flex flex-col md:flex-row gap-4 mt-8 items-center md:justify-end ${verFormulario ? "flex" : "hidden"} lg:flex`}>
               <div className="order-1 md:order-2">
-                <Button 
-                    variant="registrar" 
-                    onClick={previsualizarRegistro}
-                    disabled={guardando}
-                  >
-                    {guardando ? "Cargando..." : "Finalizar"}
-                  </Button> 
+                <Button
+                  variant="registrar"
+                  onClick={previsualizarRegistro}
+                  disabled={guardando}
+                >
+                  {guardando ? "Cargando..." : "Finalizar"}
+                </Button>
               </div>
               <div className="order-2 md:order-1">
-                <Button variant="eliminar" isOutline={true} onClick={manejarCancelar}>Cancelar</Button> 
+                <Button variant="eliminar" isOutline={true} onClick={manejarCancelar}>Cancelar</Button>
               </div>
             </div>
           )}
-        </div> 
-      </div>  
+        </div>
+      </div>
 
       <ModalAlerta
-                visible={alerta.visible}
-                variante={alerta.variante}
-                mensaje={alerta.mensaje}
-                onClose={() => setAlerta({ ...alerta, visible: false })}
-            />
+        visible={alerta.visible}
+        variante={alerta.variante}
+        mensaje={alerta.mensaje}
+        onClose={() => setAlerta({ ...alerta, visible: false })}
+      />
 
-     {/* Modal para confirmar el registro*/}
+      {/* Modal para confirmar el registro*/}
       <ModalConfirmacion
         visible={mostrarModal}
-        titulo={"¿Confirmar registro de lote?"} 
+        titulo={"¿Confirmar registro de lote?"}
         descripcion={`Se registrará el lote con ${totalUnidadesBloques} bloques.`}
         textoConfirmar="Registrar"
         textoCancelar="Cancelar"
@@ -375,17 +391,17 @@ function Lotes() {
         onConfirm={handleFinalizarRegistroCompleto}
         onCancel={() => !guardando && setMostrarModal(false)}
         deshabilitarConfirmar={guardando}
-      /> 
+      />
       <ModalConfirmacion
-          visible={mostrarModalEliminar}
-          titulo={"¿Eliminar este lote?"} 
-          descripcion={`Se eliminará el lote ${loteAEliminar?.codigo_fungivora} y sus bloques asociados permanentemente.`}
-          textoConfirmar="Eliminar"
-          textoCancelar="Cancelar"
-           icon={CancelCircleIcon}
-          onConfirm={confirmarEliminarLote}
-          onCancel={() => setMostrarModalEliminar(false)}
-          deshabilitarConfirmar={guardando}
+        visible={mostrarModalEliminar}
+        titulo={"¿Eliminar este lote?"}
+        descripcion={`Se eliminará el lote ${loteAEliminar?.codigo_fungivora} y sus bloques asociados permanentemente.`}
+        textoConfirmar="Eliminar"
+        textoCancelar="Cancelar"
+        icon={CancelCircleIcon}
+        onConfirm={confirmarEliminarLote}
+        onCancel={() => setMostrarModalEliminar(false)}
+        deshabilitarConfirmar={guardando}
       />
     </Base>
   );

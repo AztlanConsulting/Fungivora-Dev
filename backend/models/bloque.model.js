@@ -12,27 +12,27 @@ class Bloque {
     }
 
     // Metodo para encontrar los bloques por el lote
-    static async fetch_por_lote(id_lote) {
-    try {
-        const query = `
-            SELECT 
-                b.*, 
-                l.codigo_fungivora AS codigo_lote, 
-                i.especie AS especie_nombre
-            FROM Bloques b
-            JOIN Lotes l ON b.id_lote = l.id_lote
-            JOIN Inoculos i ON b.id_inoculo = i.id_inoculo
-            WHERE b.id_lote = ?
-            ORDER BY b.id_bloque DESC
-        `;
-        const [filas] = await db.execute(query, [id_lote]);
-        
-        return filas;
-    } catch (err) {
-        console.error("Error en fetch_por_lote bloques:", err);
-        throw err;
+     static async fetch_por_lote(id_lote) {
+        try {
+            const query = `
+                SELECT 
+                    b.*, 
+                    i.codigo_fungivora AS codigo_inoculo_bloque, 
+                    i.especie AS especie_nombre,
+                    l.codigo_fungivora AS codigo_lote_padre 
+                FROM Bloques b
+                JOIN Lotes l ON b.id_lote = l.id_lote
+                JOIN Inoculos i ON b.id_inoculo = i.id_inoculo
+                WHERE b.id_lote = ?
+                ORDER BY b.id_bloque DESC
+            `;
+            const [filas] = await db.execute(query, [id_lote]);
+            return filas;
+        } catch (err) {
+            console.error("Error en fetch_por_lote bloques:", err);
+            throw err;
+        }
     }
-}
 
     // Metodo para actualización masiva de bloques de un lote
     static async actualizar_bloques_masivo(id_lote, bloques) {
