@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react"; 
 import { useNavigate, useLocation } from 'react-router-dom';
 import Base from "../../shared/components/layout/base";
 import Titulo from "../../shared/components/ui/basics/titulo";
@@ -62,7 +62,7 @@ function Lotes() {
     if (location.pathname === "/lotes" && paso === 2) {
       abrirModalCancelar();
     }
-  }, [location]);
+  }, [location, paso, abrirModalCancelar]);
 
   useEffect(() => {
     if (nuevaFila.id_inoculo && nuevaFila.especie) {
@@ -82,7 +82,8 @@ function Lotes() {
     } else {
       setCodigoPrevisualizacion("");
     }
-  }, [nuevaFila.id_inoculo, nuevaFila.especie, fecha]);
+  }, [nuevaFila.id_inoculo, nuevaFila.especie, fecha, getInoculosPorEspecie]);
+
 
   // Colores para podruccion y experimental
   const colores_tipo = {
@@ -121,15 +122,32 @@ function Lotes() {
 
   // Agregar el bloque y su validación
   const handleAgregarBloque = () => {
-    if (!bloqueForm.id_inoculo || !bloqueForm.contenedor || !bloqueForm.peso_gr || !bloqueForm.cantidad) {
+    const { peso_gr, cantidad, id_inoculo, contenedor } = bloqueForm;
+
+    if (!id_inoculo || !contenedor || !peso_gr || !cantidad) {
       setErrorValidacion("Completa todos los campos, incluyendo el inóculo");
+      return;
+    }
+
+    const numPeso = Number(peso_gr);
+    const numCantidad = Number(cantidad);
+
+    if (isNaN(numPeso) || numPeso <= 0 || isNaN(numCantidad) || numCantidad <= 0) {
+      setErrorValidacion("Ingresa un número válido y mayor a cero");
       return;
     }
 
     const opcionesInoculo = getInoculosPorEspecie(nuevaFila.especie);
     const inoculoSeleccionado = opcionesInoculo.find(
-      opt => String(opt.value) === String(bloqueForm.id_inoculo)
+      opt => String(opt.value) === String(id_inoculo)
     );
+
+    const cantidadAcumulada = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad), 0);
+
+    if (cantidadAcumulada + numCantidad > 100) {
+      setErrorValidacion(`Límite excedido. Total acumulado: ${cantidadAcumulada}. No puedes superar 100 unidades.`);
+      return;
+    }
 
     agregarBloqueALista({ 
       ...bloqueForm, 
@@ -137,21 +155,6 @@ function Lotes() {
     });
     
     setBloqueForm({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
-    if (isNaN(peso) || peso <= 0 || isNaN(cantidad) || cantidad <= 0) {
-      setErrorValidacion("Ingresa un número válido y mayor a cero");
-      return;
-    }
-
-    const cantidadAcumulada = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad), 0);
-
-    if (cantidadAcumulada + cantidad > 100) {
-      setErrorValidacion(`Límite excedido. Total acumulado: ${cantidadAcumulada}. No puedes superar 100 unidades.`);
-      return;
-    }
-
-    agregarBloqueALista({ ...bloqueForm });
-
-    setBloqueForm({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
     setErrorValidacion("");
   };
 
@@ -166,14 +169,14 @@ function Lotes() {
     setMostrarModalCancelar(false);
   };
 
-  const abrirModalCancelar = () => {
+  const abrirModalCancelar = useCallback(() => {
     if (bloquesTemporales.length > 0) {
       setMostrarModalCancelar(true);
     } else {
       setPaso(1);
       setErrorValidacion("");
     }
-  };
+  }, [bloquesTemporales.length]);
 
   // Obligar a añadir al menos 1 bloque
   const previsualizarRegistro = () => {
@@ -224,7 +227,7 @@ function Lotes() {
           mensaje: "Error al guardar: " + (respuesta?.message || "Error desconocido")
         });
       }
-    } catch (err) {
+    } catch {
       setGuardando(false);
       setAlerta({
         visible: true,
@@ -271,7 +274,7 @@ function Lotes() {
           mensaje: res.message || "No se pudo eliminar"
         });
       }
-    } catch (err) {
+    } catch {
       setAlerta({ visible: true, variante: "error", mensaje: "Error de red" });
     } finally {
       setGuardando(false);

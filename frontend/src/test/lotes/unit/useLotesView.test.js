@@ -14,7 +14,7 @@ vi.mock('../../../features/lotes/services/lotes.service', () => ({
 }));
 
 // Mock de fetch global
-global.fetch = vi.fn();
+vi.stubGlobal('fetch', vi.fn());
 
 describe('useLotes Hook', () => {
   const mockLotesData = {

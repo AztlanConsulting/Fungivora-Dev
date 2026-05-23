@@ -5,15 +5,6 @@ import BarraBusqueda from "../others/barra_busqueda";
 import Text from "../basics/texto";
 import { colores } from "../basics/colores";
 
-// Acceso a los estilos definidos en Text para aplicarlos a inputs
-const estilosReferencia = {
-  input: {
-    fontStyle: "italic",
-    fontSize: "clamp(10px, 1.5vw, 12px)",
-    color: "#868889",
-  }
-};
-
 function VistaTablas() {
 
   // Estado de la barra de búsqueda
