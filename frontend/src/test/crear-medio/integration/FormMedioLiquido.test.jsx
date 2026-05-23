@@ -5,14 +5,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import FormMedioLiquido from '../../../features/crear-medio/components/FormMedioLiquido'
 import useEspecies from '../../../features/inoculos/hooks/useEspecies'
-import useInoculo from '../../../features/crear-medio/hooks/useInoculo'
-import useCategorias from '../../../features/crear-medio/hooks/useCategorias'
+import useInoculo from '../../../shared/crear-inoculos/hooks/useInoculo'
+import useCategorias from '../../../shared/crear-inoculos/hooks/useCategorias'
 import useIngredientesMedioLiquido from '../../../features/crear-medio/hooks/useIngredientesMedioLiquido'
-import insumosService from '../../../features/crear-medio/services/inoculos.service'
+import insumosService from '../../../shared/crear-inoculos/services/inoculos.service'
 
 vi.mock('../../../features/inoculos/hooks/useEspecies')
-vi.mock('../../../features/crear-medio/hooks/useInoculo')
-vi.mock('../../../features/crear-medio/hooks/useCategorias')
+vi.mock('../../../shared/crear-inoculos/hooks/useInoculo')
+vi.mock('../../../shared/crear-inoculos/hooks/useCategorias')
 vi.mock('../../../features/crear-medio/hooks/useIngredientesMedioLiquido')
 
 vi.mock('../../../features/crear-medio/services/inoculos.service', () => ({
@@ -39,7 +39,7 @@ vi.mock('../../../features/crear-medio/components/SeleccionarCantidades', () => 
     EntradaLista: () => <div data-testid="entrada-lista" />,
 }))
 
-vi.mock('../../../features/crear-medio/components/ResumenSemilla', () => ({
+vi.mock('../../../features/crear-medio/components/Resumen', () => ({
     default: () => <div data-testid="resumen" />,
 }))
 

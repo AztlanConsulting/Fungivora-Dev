@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import insumosService from '../services/inoculos.service'; 
+import insumosService from '../services/inoculos.service';
 
 /**
  * Reglas de tipos permitidos por destino:
@@ -9,9 +9,9 @@ import insumosService from '../services/inoculos.service';
  * Semilla  → puede usar: Agar, Medio Líquido, Semilla
  */
 const TIPOS_PERMITIDOS = {
-    agar:         ['agar', 'medio liquido', 'semilla', 'tejido vivo', 'sello de esporas', 'esporas suspendidas'],
+    agar: ['agar', 'medio liquido', 'semilla', 'tejido vivo', 'sello de esporas', 'esporas suspendidas'],
     medioliquido: ['agar', 'medio liquido'],
-    semilla:      ['agar', 'medio liquido', 'semilla'],
+    semilla: ['agar', 'medio liquido', 'semilla'],
 };
 
 const normalizar = (texto = '') =>
@@ -40,7 +40,7 @@ const useInoculo = (especie, tipoDestino) => {
             setError(null);
             try {
                 const data = await insumosService.fetchInoculos();
-                setTodos(data.data || []); 
+                setTodos(data.data || []);
             } catch (err) {
                 setError('No se pudieron cargar los inóculos disponibles.');
             } finally {

@@ -8,21 +8,23 @@ import InputNota from "../../../shared/components/ui/inputs/InputNota";
 import Button from "../../../shared/components/ui/buttons/Botones";
 import ModalAlerta from "../../../shared/components/ui/popups/ModalAlerta";
 
-import { EntradaLista } from "../../crear-medio/components/SeleccionarCantidades";
-import ResumenSemilla from "../../crear-medio/components/ResumenSemilla";
-import insumosService from "../../crear-medio/services/inoculos.service";
-import { BOLSAS } from "../../crear-medio/types/inoculos.types";
-import { crearInoculoDTO } from "../../crear-medio/dto/crearInoculoDto";
+import { EntradaLista } from "../../../shared/crear-inoculos/components/SeleccionarCantidades";
+import Resumen from "../../../shared/crear-inoculos/components/Resumen";
+import insumosService from "../../../shared/crear-inoculos/services/inoculos.service";
+import { BOLSAS } from "../../../shared/crear-inoculos/types/inoculos.types";
+import { crearInoculoDTO } from "../../../shared/crear-inoculos/dto/crearInoculoDto";
+
 import { traducirError } from "../../../shared/utils/traducirError";
 
 import useEspecies from "../../inoculos/hooks/useEspecies";
-import useCategorias from "../../crear-medio/hooks/useCategorias";
-import useInoculo from "../../crear-medio/hooks/useInoculo";
-import useIngredientesSemilla from "../../crear-medio/hooks/useIngredientesSemilla";
+
+import useCategorias from "../../../shared/crear-inoculos/hooks/useCategorias";
+import useInoculo from "../../../shared/crear-inoculos/hooks/useInoculo";
+import useIngredientesSemilla from "../hooks/useIngredientesSemilla";
 import {
   generarCodigos,
   normalizarTipoInoculo,
-} from "../../crear-medio/utils/generarCodigoInoculo";
+} from "../../../shared/crear-inoculos/utils/generarCodigoInoculo";
 
 import Titulo from "../../../shared/components/ui/basics/Titulo";
 import Text from "../../../shared/components/ui/basics/Texto";
@@ -223,7 +225,7 @@ const FormSemillas = () => {
               </div>
             </div>
 
-            <ResumenSemilla
+            <Resumen
               especie={especie}
               codigoInoculo={codigoInoculo}
               composicion={itemsComposicion}

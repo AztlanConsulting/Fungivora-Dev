@@ -10,22 +10,22 @@ import Text from "../../../shared/components/ui/basics/Texto";
 import { Base } from "../../../shared/components/layout";
 import { colores } from "../../../shared/components/ui/basics/Colores";
 
-import { EntradaLista } from "./SeleccionarCantidades";
-import ResumenSemilla from "./ResumenSemilla";
-import insumosService from "../services/inoculos.service";
-import { cantMedioLiquido } from "../types/inoculos.types";
-import { crearInoculoDTO } from "../dto/crearInoculoDto";
+import { EntradaLista } from "../../../shared/crear-inoculos/components/SeleccionarCantidades";
+import Resumen from "../../../shared/crear-inoculos/components/Resumen";
+import insumosService from "../../../shared/crear-inoculos/services/inoculos.service";
+import { cantMedioLiquido } from "../../../shared/crear-inoculos/types/inoculos.types";
+import { crearInoculoDTO } from "../../../shared/crear-inoculos/dto/crearInoculoDto";
 import { traducirError } from "../../../shared/utils/traducirError";
 
 import useEspecies from "../../inoculos/hooks/useEspecies";
-import useCategorias from "../hooks/useCategorias";
-import useInoculo from "../hooks/useInoculo";
+import useCategorias from "../../../shared/crear-inoculos/hooks/useCategorias";
+import useInoculo from "../../../shared/crear-inoculos/hooks/useInoculo";
 import useIngredientesMedioLiquido from "../hooks/useIngredientesMedioLiquido";
 
 import {
   generarCodigos,
   normalizarTipoInoculo,
-} from "../utils/generarCodigoInoculo";
+} from "../../../shared/crear-inoculos/utils/generarCodigoInoculo";
 
 const TIPO_CREACION = "medioLiquido";    // clave interna (prefijo + filtro de inóculo)
 const TIPO_DB = "medio liquido";   // valor literal que se guarda en la columna `tipo`
@@ -198,7 +198,7 @@ const FormMedioLiquido = () => {
               </div>
             </div>
 
-            <ResumenSemilla
+            <Resumen
               especie={especie}
               codigoInoculo={codigoInoculo}
               composicion={itemsComposicion}

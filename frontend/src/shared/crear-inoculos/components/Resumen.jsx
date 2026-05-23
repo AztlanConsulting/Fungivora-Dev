@@ -1,6 +1,6 @@
 import React from "react";
-import { colores } from "../../../shared/components/ui/basics/Colores";
-import Text from "../../../shared/components/ui/basics/Texto";
+import { colores } from "../../components/ui/basics/Colores";
+import Text from "../../components/ui/basics/Texto";
 
 /**
  * Tarjeta de resumen cambiante para el formulario de creación de semillas.
@@ -10,7 +10,7 @@ import Text from "../../../shared/components/ui/basics/Texto";
  * @param {Array}    composicion   
  * @param {string[]} codigos       
  */
-const ResumenSemilla = ({
+const Resumen = ({
   especie,
   codigoInoculo,
   composicion = [],
@@ -145,4 +145,4 @@ const ResumenSemilla = ({
   );
 };
 
-export default ResumenSemilla;
+export default Resumen;

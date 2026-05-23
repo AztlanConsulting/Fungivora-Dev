@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import insumosService from "../services/inoculos.service";
-import { COMPOSICION_MEDIO_LIQUIDO } from "../types/inoculos.types";
+import insumosService from "../../../shared/crear-inoculos/services/inoculos.service";
+import { COMPOSICION_MEDIO_LIQUIDO } from "../../../shared/crear-inoculos/types/inoculos.types";
 
 const normalizarUnidad = (unidad = "") => {
   const u = unidad.toLowerCase();
