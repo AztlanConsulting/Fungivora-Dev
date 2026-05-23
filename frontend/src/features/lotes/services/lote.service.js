@@ -1,4 +1,4 @@
-import api from '../../../shared/utils/api'; // Ajusta la ruta a tu archivo api.js
+import api from '../../../shared/utils/api'; 
 
 export const LoteService = {
     /**

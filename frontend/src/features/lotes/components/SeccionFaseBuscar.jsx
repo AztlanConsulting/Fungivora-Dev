@@ -1,6 +1,6 @@
 import React from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import Text from '../../../shared/components/ui/basics/texto';
+import Text from '../../../shared/components/ui/basics/Texto';
 import { Stepper, BarraBusqueda } from '../../../shared/components/ui';
 //const SeccionFaseBuscar = ({ fases, fase, setFase, busqueda, setBusqueda }) => {
 const SeccionFaseBuscar = ({ fases, fase, setFase }) => {

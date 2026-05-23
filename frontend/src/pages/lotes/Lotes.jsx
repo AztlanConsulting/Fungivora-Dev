@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react"; 
 import { useNavigate, useLocation } from 'react-router-dom';
-import Base from "../../shared/components/layout/base";
-import Titulo from "../../shared/components/ui/basics/titulo";
-import Text from "../../shared/components/ui/basics/texto";
-import { colores } from "../../shared/components/ui/basics/colores";
+import Base from "../../shared/components/layout/Base";
+import Titulo from "../../shared/components/ui/basics/Titulo";
+import Text from "../../shared/components/ui/basics/Texto";
+import { colores } from "../../shared/components/ui/basics/Colores";
 import useLotes from "../../features/lotes/hooks/useLotes";
 import useBloques from "../../features/bloques/hooks/useBloques";
 import Button from "../../shared/components/ui/buttons/Botones";

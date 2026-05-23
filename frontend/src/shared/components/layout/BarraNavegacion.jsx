@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { colores } from "../ui/basics/colores";
-import Text from "../ui/basics/texto";
+import { colores } from "../ui/basics/Colores";
+import Text from "../ui/basics/Texto";
 import { ModalConfirmacion } from "../ui";
 import useLogout from '../../../features/logout/hooks/useLogout';
 
