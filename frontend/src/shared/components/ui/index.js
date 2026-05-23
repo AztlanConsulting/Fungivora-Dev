@@ -8,7 +8,7 @@ export { default as Titulo } from "./basics/Titulo";
 export { default as Botones } from "./buttons/Botones";
 
 // Cards
-export { default as TarjetaNota } from "./cards/area_notas";
+export { default as TarjetaNota } from "./cards/AreaNotas";
 
 // Inputs
 export { default as EntradaCantidad } from "./inputs/entrada_cantidad";
@@ -19,8 +19,8 @@ export { default as Select } from "./inputs/seleccionar_texto";
 export { default as Slider } from "./inputs/slider";
 
 // Others
-export { default as BarraBusqueda } from "./others/barra_busqueda";
-export { default as Stepper } from "./others/stepper";
+export { default as BarraBusqueda } from "./others/BarraBusqueda";
+export { default as Stepper } from "./others/Stepper";
 
 // Popups
 export { default as ModalConfirmacion } from "./popups/modal_confirmacion";

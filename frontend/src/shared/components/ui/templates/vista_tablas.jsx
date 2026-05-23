@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Base from "../../layout/Base";
 import Titulo from "../basics/Titulo";
-import BarraBusqueda from "../others/barra_busqueda";
+import BarraBusqueda from "../others/BarraBusqueda";
 import Text from "../basics/Texto";
 import { colores } from "../basics/Colores";
 
