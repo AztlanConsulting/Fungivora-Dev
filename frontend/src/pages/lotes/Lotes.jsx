@@ -68,10 +68,30 @@ function Lotes() {
   }, [bloquesTemporales.length]);
 
   useEffect(() => {
-    if (location.pathname === "/lotes" && paso === 2) {
-      abrirModalCancelar();
+    if (location.state?.resetPaso) {
+      if (paso === 2) {
+        if (bloquesTemporales.length > 0) {
+          setMostrarModalCancelar(true);
+        } else {
+          setPaso(1);
+          setErrorValidacion("");
+        }
+      }
+      navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [location, paso, abrirModalCancelar]);
+  }, [location.state, paso, bloquesTemporales.length, navigate, location.pathname]);
+
+  const irAPasoBloques = () => {
+    if (!nuevaFila.especie || !nuevaFila.ubicacion_lote || !nuevaFila.tipo_sustrato) {
+      setErrorValidacion("Por favor, completa los datos del lote");
+      return;
+    }
+    
+    setErrorValidacion("");
+    setPaso(2); 
+
+    setVerFormulario(true); 
+  };
 
   useEffect(() => {
     if (nuevaFila.id_inoculo && nuevaFila.especie) {
@@ -117,16 +137,6 @@ function Lotes() {
 
       return nuevoEstado;
     });
-  };
-
-  // Cambiar de lotes a bloques en el registro
-  const irAPasoBloques = () => {
-    if (!nuevaFila.especie || !nuevaFila.ubicacion_lote || !nuevaFila.tipo_sustrato) {
-      setErrorValidacion("Por favor, completa los datos del lote");
-      return;
-    }
-    setErrorValidacion("");
-    setPaso(2);
   };
 
   // Agregar el bloque y su validación

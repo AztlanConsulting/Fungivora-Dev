@@ -66,20 +66,19 @@ const DetalleLote = () => {
     }
 
     const onGuardar = async () => {
-        setIsModalOpen(false);
         const resultado = await guardarCambios(bloques, fase);
         if (resultado.success) {
-            setBloquesIniciales(
-                bloques.map(b => ({ ...b }))
-            );
+            setBloquesIniciales(bloques.map(b => ({ ...b })));
             setFaseInicialNum(fase);
             setEditado(false);
+            setIsModalOpen(false); 
             setAlerta({
                 visible: true,
                 variante: "exito",
                 mensaje: "Cambios guardados exitosamente"
             });
         } else {
+            setIsModalOpen(false);
             setAlerta({
                 visible: true,
                 variante: "error",
@@ -113,20 +112,28 @@ const DetalleLote = () => {
             {editado && (
                 <button
                     onClick={() => setIsModalOpen(true)}
+                    disabled={cargando} 
                     className={`
-                                fixed bottom-20 right-10 md:bottom-10 md:right-16
-                                z-50 w-40 h-8 md:w-52 md:h-10 text-base md:text-lg
-                                rounded-full flex items-center justify-center shadow-lg
-                                transition-opacity hover:opacity-80 active:scale-95
-                            `}
+                        fixed bottom-20 right-10 md:bottom-10 md:right-16
+                        z-50 w-40 h-8 md:w-52 md:h-10 text-base md:text-lg
+                        rounded-full flex items-center justify-center shadow-lg
+                        transition-all hover:opacity-80 active:scale-95
+                        ${cargando ? "opacity-50 cursor-not-allowed" : "opacity-100"}
+                    `}
                     style={{
                         backgroundColor: "#FFFFFF",
                         border: `2px solid ${colores.azul}`
                     }}
                 >
                     <Text variante='button' style={{ color: colores.azul }}>
-                        <span className="md:hidden">Actualizando..</span>
-                        <span className="hidden md:inline">Actualizar</span>
+                        {cargando ? (
+                            "Actualizando..."
+                        ) : (
+                            <>
+                                <span className="md:hidden">Actualizar</span>
+                                <span className="hidden md:inline">Actualizar</span>
+                            </>
+                        )}
                     </Text>
                 </button>
             )}

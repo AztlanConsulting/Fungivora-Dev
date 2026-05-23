@@ -8,39 +8,48 @@ const useDetalleLote = (id_lote, faseInicial) => {
     const [codigoInoculo, setCodigoInoculo] = useState(null); 
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
+
     const fases = [
         { label: "Inoculación" }, { label: "Colonización" }, { label: "Fructificación" },
         { label: "Cosecha 1" }, { label: "Cosecha 2" }, { label: "Finalización" },
     ];
-    const faseNum = fases.findIndex(f => f.label === faseInicial);
-    const [fase, setFase] = useState(faseNum !== -1 ? faseNum : 0);
-    const [faseInicialNum, setFaseInicialNum] = useState(faseNum !== -1 ? faseNum : 0);
+
+    const [fase, setFase] = useState(0);
+    const [faseInicialNum, setFaseInicialNum] = useState(0);
 
     useEffect(() => {
         const fetchData = async () => {
-        if (!id_lote) return;
-        setCargando(true);
-        try {
-        const resBloques = await LoteService.getBloquesByLote(id_lote);
-        const listaObtenida = resBloques.data || [];
+            if (!id_lote) return;
+            setCargando(true);
+            try {
+                const [resBloques, dataLote] = await Promise.all([
+                    LoteService.getBloquesByLote(id_lote),
+                    LoteService.getDetalleLote(id_lote)
+                ]);
 
-        if (listaObtenida.length > 0) {
-            setBloques(listaObtenida);
-            setBloquesIniciales(listaObtenida.map(b => ({ ...b })));
+                const listaObtenida = resBloques.data || [];
+                const faseActualLote = dataLote?.fase || faseInicial; 
 
-            setCodigoInoculo(listaObtenida[0].codigo_lote); 
-            setEspecie(listaObtenida[0].especie_nombre || "S/N");
-        } else {
-                console.error("La lista de bloques está vacía para este ID.");
+                if (listaObtenida.length > 0) {
+                    setBloques(listaObtenida);
+                    setBloquesIniciales(listaObtenida.map(b => ({ ...b })));
+                    setCodigoInoculo(listaObtenida[0].codigo_lote);
+                    setEspecie(listaObtenida[0].especie_nombre || "S/N");
+                }
+
+                const indexFase = fases.findIndex(f => f.label === faseActualLote);
+                const valorFase = indexFase !== -1 ? indexFase : 0;
+                
+                setFase(valorFase);
+                setFaseInicialNum(valorFase);
+
+            } catch (err) {
+                console.error("Error en fetchData:", err);
+                setError(err.message);
+            } finally {
+                setCargando(false);
             }
-
-        } catch (err) {
-            console.error("Error en fetchData detalle:", err);
-            setError(err.message);
-        } finally {
-            setCargando(false);
-        }
-    };
+        };
         fetchData();
     }, [id_lote]);
 
@@ -49,25 +58,25 @@ const useDetalleLote = (id_lote, faseInicial) => {
     };
 
     const guardarCambios = async (bloquesActualizados, nuevaFaseIndex) => {
+        setCargando(true); 
         try {
-
-            const nombreFase = fases[nuevaFaseIndex] ? fases[nuevaFaseIndex].label : "Inoculación";
-
-            await LoteService.updateFaseLote(id_lote, nombreFase);
-
-            await LoteService.updateBloquesMasivo(id_lote, bloquesActualizados);
-
+            const nombreFase = fases[nuevaFaseIndex]?.label || "Inoculación";
+            await Promise.all([
+                LoteService.updateFaseLote(id_lote, nombreFase),
+                LoteService.updateBloquesMasivo(id_lote, bloquesActualizados)
+            ]);
             return { success: true };
         } catch (err) {
             return { success: false, error: err.message };
+        } finally {
+            setCargando(false);
         }
     };
-
 
     return {
         bloques, setBloques, bloquesIniciales, setBloquesIniciales,
         fase, setFase, faseInicialNum, setFaseInicialNum,
-        especie, codigoInoculo,        
+        especie, codigoInoculo,         
         cargando, error, getFase, guardarCambios,
         fases
     };
