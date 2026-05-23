@@ -40,7 +40,7 @@ function Lotes() {
   });
 
   const {
-    datos, sustratos, ubicaciones, especies, especiesDisponibles,
+    datos, sustratos, ubicaciones, especiesDisponibles,
     getInoculosPorEspecie, cargando, error, addLote, deleteLote
   } = useLotes();
   const [verFormulario, setVerFormulario] = useState(false);

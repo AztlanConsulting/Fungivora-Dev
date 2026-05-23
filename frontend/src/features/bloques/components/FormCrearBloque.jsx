@@ -7,11 +7,9 @@ import Button from "../../../shared/components/ui/buttons/botones";
 import Input from "../../../shared/components/ui/inputs/input_texto";
 
 // Form para poder crear un bloque, con sus inserts
-const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, handleBloqueForm, onAgregar, error,
+const FormCrearBloque = ({ contenedores, bloqueForm, setBloqueForm, handleBloqueForm, onAgregar, error,
   especieSeleccionada, 
-  getInoculosPorEspecie,
-  idInoculoSeleccionado,
-  setIdInoculoLote
+  getInoculosPorEspecie
  }) => {
 
   // Validar el número

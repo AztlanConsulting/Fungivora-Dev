@@ -20,10 +20,7 @@ const useLotes = () => {
             } else {
                 setError(json.message || "Error al cargar lotes");
             }
-        } catch (err) {
-            console.error("Error en fetchLotes:", err);
-            setError("Error de conexión con el servidor");
-        } finally {
+        } catch {
             setCargando(false);
         }
     }, []);
@@ -61,7 +58,7 @@ const useLotes = () => {
             const nombresUnicos = [...new Set(dataIno.map(i => i.especie))];
             setEspeciesDisponibles(nombresUnicos.map(e => ({ value: e, label: e })));
 
-        } catch (err) {
+        } catch {
             setError("Error al inicializar formularios (catálogos)");
         }
     }, []);

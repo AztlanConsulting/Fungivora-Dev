@@ -22,7 +22,7 @@ const DetalleLote = () => {
         fases
     } = useDetalleLote(id_lote, state?.fase);
 
-    const [busqueda, setBusqueda] = useState("");
+    const [busqueda ] = useState("");
     const [editado, setEditado] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
@@ -125,7 +125,7 @@ const DetalleLote = () => {
                     }}
                 >
                     <Text variante='button' style={{ color: colores.azul }}>
-                        <span className="md:hidden">Actualizar</span>
+                        <span className="md:hidden">Actualizando..</span>
                         <span className="hidden md:inline">Actualizar</span>
                     </Text>
                 </button>
@@ -139,8 +139,8 @@ const DetalleLote = () => {
                         fases={fases}
                         fase={fase}
                         setFase={handleLocalChangeFase}
-                    //busqueda={busqueda}
-                    //setBusqueda={setBusqueda}
+                        //busqueda={busqueda}
+                        //setBusqueda={setBusqueda}
                     />
 
                     <div className="flex flex-col gap-4">

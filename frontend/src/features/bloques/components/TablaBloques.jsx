@@ -5,7 +5,7 @@ import Titulo from "../../../shared/components/ui/basics/titulo";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { CancelCircleIcon } from '@hugeicons/core-free-icons';
 
-const TablaBloques = ({ codigo, bloques, onEliminar, estilosTipo, colorBordeHeader }) => {
+const TablaBloques = ({ bloques, onEliminar, estilosTipo, colorBordeHeader }) => {
   
   const layout = "md:grid-cols-[1.2fr_1fr_0.8fr_1.1fr_0.8fr_0.5fr]";
 
