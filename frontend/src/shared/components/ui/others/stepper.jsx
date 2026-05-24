@@ -54,8 +54,6 @@ const Stepper = ({
                     const isCompleted = index < currentStep;
                     const isActive = index === currentStep;
                     const isReached = index <= currentStep;
-                    const isFirst = index === 0;
-                    const isLast = index === totalSteps - 1;
 
                     const circleColor = isActive ? activeColor : (isCompleted ? mainColor : "#FFF");
                     const borderColor = isReached ? (isActive ? activeColor : mainColor) : inactiveColor;

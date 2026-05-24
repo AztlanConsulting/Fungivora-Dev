@@ -14,7 +14,7 @@ vi.mock('../../../features/lotes/services/lotes.service', () => ({
 }));
 
 // Mock de fetch global
-global.fetch = vi.fn();
+vi.stubGlobal('fetch', vi.fn());
 
 describe('useLotes Hook', () => {
   const mockLotesData = {
@@ -101,7 +101,7 @@ describe('useLotes Hook', () => {
 
     await waitFor(() => expect(result.current.cargando).toBe(false));
 
-    expect(result.current.error).toBe("Error de conexión");
+    expect(result.current.error).toBe("Error de conexión con el servidor");
   });
 
   it('llamar al servicio, true y refrescar la lista', async () => {

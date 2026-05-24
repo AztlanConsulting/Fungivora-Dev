@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     Calendar03Icon, MushroomIcon, MoneyBag01Icon,
-    Location01Icon, BacteriaIcon
+    Location01Icon
 } from '@hugeicons/core-free-icons';
 import InfoLote from './InfoLote';
 
@@ -12,7 +12,6 @@ const BannerLote = ({ data }) => {
             <InfoLote icon={MushroomIcon} label="Especie" value={data.especie} />
             <InfoLote icon={MoneyBag01Icon} label="Sustrato" value={data.sustrato} />
             <InfoLote icon={Location01Icon} label="Ubicación" value={data.ubicacion} />
-            <InfoLote icon={BacteriaIcon} label="Inóculo usado" value={data.inoculo} showDivider={false} />
         </div>
     );
 };

@@ -20,9 +20,7 @@ const useCategorias = () => {
         } else {
           setError("No se pudieron cargar las categorías");
         }
-      } catch (err) {
-        setError("Error de conexión");
-      } finally {
+      } catch  {
         setLoading(false);
       }
     };

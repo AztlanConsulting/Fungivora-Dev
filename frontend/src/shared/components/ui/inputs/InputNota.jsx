@@ -33,6 +33,7 @@ const InputNota = ({
         transition: "border-color 0.2s ease",
         fontFamily: "inherit",
       }}
+      maxLength={250}
     />
   );
 };
