@@ -70,6 +70,7 @@ const Input = ({
     className = "",
     type = "text", 
     roundedClass = "rounded-md",
+    regex= /^[a-zA-Záéíóú\s]*$/,
 }) => {
     const [isFocused, setIsFocused] = useState(false);
     /** Referencia al elemento del DOM para calcular altura */
@@ -103,7 +104,10 @@ const Input = ({
         if (variante === "numero") {
             const regex = numeroRegex[numeroTipo] || numeroRegex.entero;
             if (!regex.test(e.target.value)) return;
+            return onChange(e);
+            
         }
+        if (regex && e.target.value !== "" && !regex.test(e.target.value)) return;
         onChange(e);
     };
 
