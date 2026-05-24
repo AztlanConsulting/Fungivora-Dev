@@ -9,8 +9,16 @@ const lotesRoutes = require('./lotes.routes');
 const bloqueRoutes = require('./bloque.routes');
 const dashboardRoutes = require('./dashboard.routes');
 
-// Inicio de sesión
+// Pasar por atenticación
+const auth = require('../middleware/auth'); 
+
+// Rutas sin token
 router.use('/login', loginRoutes);
+
+// Usar la autenticación
+router.use(auth);
+
+// Rutes que si necesitan el token
 router.use('/inventario', inventarioRoutes);
 router.use('/inoculos', inoculoRoutes);
 router.use('/categorias', categoriaRoutes);

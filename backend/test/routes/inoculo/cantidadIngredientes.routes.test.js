@@ -1,4 +1,5 @@
 const request = require('supertest');
+const jwt = require('jsonwebtoken'); 
 
 jest.mock('../../../util/db');
 
@@ -15,6 +16,12 @@ const Inoculo = require('../../../models/inoculo.model');
 const app = require('../../../app');
 
 describe('GET /api/inoculos/cantidad-ingredientes', () => {
+    let tokenTest;
+
+    beforeAll(() => {
+        const SECRET = process.env.APP_ACCESS_KEY || 'test_secret_key';
+        tokenTest = jwt.sign({ id: 1, usuario: 'test_user', isAdmin: true }, SECRET, { expiresIn: '1h' });
+    });
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -34,7 +41,9 @@ describe('GET /api/inoculos/cantidad-ingredientes', () => {
         ];
         Inoculo.fetchCantidadIngredientes.mockResolvedValue([ingredientesMock]);
 
-        const res = await request(app).get('/api/inoculos/cantidad-ingredientes');
+        const res = await request(app)
+            .get('/api/inoculos/cantidad-ingredientes')
+            .set('Authorization', `Bearer ${tokenTest}`); 
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toMatchObject({
@@ -46,7 +55,9 @@ describe('GET /api/inoculos/cantidad-ingredientes', () => {
     it('responde 200 con data vacío si no hay ingredientes registrados', async () => {
         Inoculo.fetchCantidadIngredientes.mockResolvedValue([[]]);
 
-        const res = await request(app).get('/api/inoculos/cantidad-ingredientes');
+        const res = await request(app)
+            .get('/api/inoculos/cantidad-ingredientes')
+            .set('Authorization', `Bearer ${tokenTest}`); 
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toMatchObject({
@@ -60,7 +71,9 @@ describe('GET /api/inoculos/cantidad-ingredientes', () => {
     it('responde 500 cuando la DB falla', async () => {
         Inoculo.fetchCantidadIngredientes.mockRejectedValue(new Error('Connection lost'));
 
-        const res = await request(app).get('/api/inoculos/cantidad-ingredientes');
+        const res = await request(app)
+            .get('/api/inoculos/cantidad-ingredientes')
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(res.statusCode).toBe(500);
         expect(res.body).toMatchObject({
@@ -74,7 +87,9 @@ describe('GET /api/inoculos/cantidad-ingredientes', () => {
     it('responde con Content-Type application/json', async () => {
         Inoculo.fetchCantidadIngredientes.mockResolvedValue([[{ id: 1, nombre: 'Agua', cantidad: 5000 }]]);
 
-        const res = await request(app).get('/api/inoculos/cantidad-ingredientes');
+        const res = await request(app)
+            .get('/api/inoculos/cantidad-ingredientes')
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(res.headers['content-type']).toMatch(/application\/json/);
     });

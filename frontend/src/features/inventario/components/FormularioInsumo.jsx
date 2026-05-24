@@ -55,7 +55,7 @@ const FormularioInsumo = ({ nuevaFila, handleNuevaFila, handleGuardarInsumo, uni
           size="forms"
           value={nuevaFila.unidad}
           onChange={(e) => handleNuevaFila("unidad", e.target.value)}
-          options={unidades.map(u => ({ value: u.opcion, label: u.opcion }))}
+          options={(unidades || []).map(u => ({ value: u.opcion, label: u.opcion }))}
         />
       </div>
 
