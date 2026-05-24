@@ -3,39 +3,29 @@ import { colores } from "../../components/ui/basics/Colores";
 import Text from "../../components/ui/basics/Texto";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { PlusSignIcon } from '@hugeicons/core-free-icons';
+import  Input  from "../../components/ui/inputs/InputTexto";
 
 const EntradaCard = ({ nombre, unidad, value, onChange, cantMax, repeticiones = 1 }) => {
-  const [isFocused, setIsFocused] = useState(false);
   const [cantError, setError] = useState(false);
-
-  const ringColor = isFocused ? colores.azul : colores.grisClaro;
-
-  const alturaStyle = {
-    height: "clamp(28px, 3vw, 40px)",
-    boxShadow: `0 0 0 ${isFocused ? "4px" : "2px"} ${ringColor}`,
-    transition: "all 0.2s ease",
-    border: cantError ? `1px solid ${colores.rojo}` : "none"
-  };
 
   const maxPorUnidad = cantMax > 0 ? +(cantMax / repeticiones).toFixed(2) : 0;
 
   const manejarCambio = (e) => {
     let val = e.target.value;
-    const regex = /^\d*[.,]?\d{0,2}$/;
+    const regex = /^\d*$/;
+    const rawValue = val.replace(/,/g, "");
 
-    if (val === "" || regex.test(val)) {
+    if (rawValue === "" || regex.test(rawValue)) {
       // Quitar ceros a la izquierda (preserva "0", "0.5" y "0,5")
       val = val.replace(/^0+(?=\d)/, "");
-      e.target.value = val;
 
-      const numValor = parseFloat(val.replace(',', '.'));
+      const numValor = parseInt(rawValue, 10);
 
       if (!isNaN(numValor)) {
         if (numValor > maxPorUnidad) {
           setError(true);
           e.target.value = maxPorUnidad.toString();
           onChange(e);
-
           setTimeout(() => setError(false), 5000)
         }
         else {
@@ -58,16 +48,15 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax, repeticiones = 
       </Text>
 
       <div className="flex flex-row items-center gap-4">
-        <div className="flex flex-row items-center  w-full mb-3 px-3 rounded-xl bg-white" style={alturaStyle}>
-          <input
-            type="text"
-            inputMode="decimal"
+        <div className="flex flex-row items-center  w-full mb-3 px-3 rounded-xl bg-white" >
+          <Input
+            variante="numero"
+            numeroTipo="entero"
             placeholder="0"
             value={value}
             onChange={manejarCambio}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            className="outline-none w-16 text-center bg-transparent"
+            roundedClass="rounded-xl"
+            className="w-16 h-12"
           />
 
         </div>
