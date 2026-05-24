@@ -174,7 +174,7 @@ const Input = ({
                 />
             ) : (
                 <input {...sharedProps} {...numProps}
-                maxLength={variante === "normal" ? 50 : variante === "numero" ? 13 : undefined}
+                maxLength={variante === "normal" ? 50 : variante === "numero" ? 6 : undefined}
                 />
             )}
         </div>
