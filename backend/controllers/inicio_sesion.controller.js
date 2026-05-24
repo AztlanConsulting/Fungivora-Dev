@@ -12,7 +12,7 @@ Hacer un login basico para tener permisos
 Metodo que toma la información del usuario/contraseña y su rol para poder acceder
 @param id_usuario, nombre_usuario
 */
-const { generarToken } = require("../util/jwtUtils");
+const { generarRefreshToken } = require("../util/jwtUtils");
 exports.post_login = async (req, res) => {
     try {
         const { nombre_usuario, contrasena } = req.body;
@@ -34,7 +34,7 @@ exports.post_login = async (req, res) => {
             });
         }
 
-        const token = generarToken({
+        const token = generarRefreshToken({
             id: user.id_usuario,
             isAdmin: user.is_user_admin === 1
         });
