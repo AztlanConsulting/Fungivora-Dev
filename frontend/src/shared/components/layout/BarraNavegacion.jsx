@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { colores } from "../ui/basics/Colores";
 import Text from "../ui/basics/Texto";
-import ModalConfirmacion from "../ui/popups/ModalConfirmacion";
+import { ModalConfirmacion } from "../ui";
 import useLogout from '../../../features/logout/hooks/useLogout';
 
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -84,9 +84,11 @@ const Barra_navegacion = () => {
                     {/* lotes */}
                     <NavLink
                         to="/lotes"
+                        state={{ resetPaso: true }} 
                         className={({ isActive }) =>
                             `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
-                        }>
+                        }
+                    >
                         <HugeiconsIcon icon={BookOpenTextFreeIcons} size={33} color={colores.azul} strokeWidth={1.5} />
                         <span className={Tooltip}
                             style={{ backgroundColor: colores.azul, color: colores.blanco }}>

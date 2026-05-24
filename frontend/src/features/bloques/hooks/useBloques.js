@@ -4,7 +4,7 @@ import bloqueService from "../services/bloques.service";
 const useBloques = () => {
   const [bloquesTemporales, setBloquesTemporales] = useState([]);
   const [contenedores, setContenedores] = useState([]);
-  const [cargando, setCargando] = useState(false);
+  const [cargando] = useState(false);
 
   useEffect(() => {
     // Cargar los contenedores

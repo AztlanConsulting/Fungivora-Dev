@@ -33,13 +33,11 @@ const alignments = {
  */
 const numeroConfig = {
     entero: { type: "text", inputMode: "numeric", pattern: "[0-9]*" },
-    decimal: { type: "text", inputMode: "decimal", pattern: "[0-9]*[.,]?[0-9]{0,2}" },
 }
 
 /** Regex que valida el valor completo al escribir */
 const numeroRegex = {
     entero: /^\d*$/,
-    decimal: /^\d*[.,]?\d{0,2}$/,
 };
 
 /** Caracteres que pueden romper el formato */
@@ -56,7 +54,7 @@ const caracteresBase = ["<", ">", "{", "}", "[", "]", "\\", "`", "^", "~"];
  * El placeholder usa el componente <Text> para mantener consistencia tipográfica.
  *
  * @param {string}   variante    - "normal" | "amplio" | "numero"
- * @param {string}   numeroTipo  - "entero" | "decimal" (solo aplica si variante === "numero")
+ * @param {string}   numeroTipo  - "entero"  (solo aplica si variante === "numero")
  * @param {string}   placeholder - Texto de ayuda
  * @param {string}   value       - Valor controlado
  * @param {Function} onChange    - Handler de cambio del input
@@ -70,14 +68,16 @@ const Input = ({
     value,
     onChange,
     className = "",
-    type = "text", // Se añade la prop type con valor por defecto
+    type = "text", 
+    roundedClass = "rounded-md",
+    regex= /^[0-9a-zA-Záéíóú\s]*$/,
 }) => {
     const [isFocused, setIsFocused] = useState(false);
     /** Referencia al elemento del DOM para calcular altura */
     const textAreaRef = useRef(null);
 
     // Clases de tamaño y alineación según variante
-    const sizeClass = sizes[variante] || sizes.normal;
+    const sizeClass = className.includes("w-") ? "" : (sizes[variante] || sizes.normal);
     const alignmentClass = alignments[variante] || alignments.normal;
 
     /** Ajusta la altura del textarea dinámicamente según el contenido */
@@ -101,12 +101,19 @@ const Input = ({
      * antes de propagar el cambio — evita estados inválidos.
      */
     const handleChange = (e) => {
-        if (variante === "numero") {
-            const regex = numeroRegex[numeroTipo] || numeroRegex.entero;
-            if (!regex.test(e.target.value)) return;
-        }
-        onChange(e);
-    };
+    if (variante === "numero") {
+        const rawValue = e.target.value.replace(/,/g, "");
+        const numeroRgx = numeroRegex[numeroTipo] || numeroRegex.entero;
+        if (!numeroRgx.test(rawValue)) return;
+
+        const formatted = rawValue === "" ? "" : Number(rawValue).toLocaleString("en-US");
+        e.target.value = formatted;
+        return onChange(e);
+    }
+
+    if (regex && e.target.value !== "" && !regex.test(e.target.value)) return;
+    onChange(e);
+};
 
     // Props compartidos entre <input> y <textarea>
 
@@ -143,7 +150,7 @@ const Input = ({
         <div
             className={`
                 tu-clase-base ${className}
-                ${sizeClass} rounded-md overflow-hidden transition-all relative
+                ${sizeClass} ${roundedClass} overflow-hidden transition-all relative
                 ${isFocused ? "ring-4" : "ring-2"} ring-[var(--input-ring)]
             `}
             style={{ "--input-ring": isFocused ? colores.azul : colores.grisClaro }}
@@ -166,7 +173,9 @@ const Input = ({
 
                 />
             ) : (
-                <input {...sharedProps} {...numProps} />
+                <input {...sharedProps} {...numProps}
+                maxLength={variante === "normal" ? 50 : variante === "numero" ? 6 : undefined}
+                />
             )}
         </div>
     );

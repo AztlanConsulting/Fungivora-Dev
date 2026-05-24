@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from "react"; 
+import { useNavigate, useLocation } from 'react-router-dom';
 import Base from "../../shared/components/layout/Base";
 import Titulo from "../../shared/components/ui/basics/Titulo";
 import Text from "../../shared/components/ui/basics/Texto";
@@ -40,11 +40,11 @@ function Lotes() {
   });
 
   const {
-    datos, sustratos, ubicaciones, especies, especiesDisponibles,
+    datos, sustratos, ubicaciones, especiesDisponibles,
     getInoculosPorEspecie, cargando, error, addLote, deleteLote
   } = useLotes();
   const [verFormulario, setVerFormulario] = useState(false);
-  const [nuevaFila, setNuevaFila] = useState({ especie: "", tipo_sustrato: "", ubicacion_lote: "", id_inoculo: "" });
+  const [nuevaFila, setNuevaFila] = useState({ especie: "", tipo_sustrato: "", ubicacion_lote: ""});
   const [errorValidacion, setErrorValidacion] = useState("");
   const [codigoPrevisualizacion, setCodigoPrevisualizacion] = useState("");
   const [paso, setPaso] = useState(1);
@@ -54,6 +54,44 @@ function Lotes() {
   const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
   const [loteAEliminar, setLoteAEliminar] = useState(null);
   const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
+  const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
+
+  const location = useLocation();
+    
+  const abrirModalCancelar = useCallback(() => {
+    if (bloquesTemporales.length > 0) {
+      setMostrarModalCancelar(true);
+    } else {
+      setPaso(1);
+      setErrorValidacion("");
+    }
+  }, [bloquesTemporales.length]);
+
+  useEffect(() => {
+    if (location.state?.resetPaso) {
+      if (paso === 2) {
+        if (bloquesTemporales.length > 0) {
+          setMostrarModalCancelar(true);
+        } else {
+          setPaso(1);
+          setErrorValidacion("");
+        }
+      }
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, paso, bloquesTemporales.length, navigate, location.pathname]);
+
+  const irAPasoBloques = () => {
+    if (!nuevaFila.especie || !nuevaFila.ubicacion_lote || !nuevaFila.tipo_sustrato) {
+      setErrorValidacion("Por favor, completa los datos del lote");
+      return;
+    }
+    
+    setErrorValidacion("");
+    setPaso(2); 
+
+    setVerFormulario(true); 
+  };
 
   useEffect(() => {
     if (nuevaFila.id_inoculo && nuevaFila.especie) {
@@ -73,7 +111,8 @@ function Lotes() {
     } else {
       setCodigoPrevisualizacion("");
     }
-  }, [nuevaFila.id_inoculo, nuevaFila.especie, fecha]);
+  }, [nuevaFila.id_inoculo, nuevaFila.especie, fecha, getInoculosPorEspecie]);
+
 
   // Colores para podruccion y experimental
   const colores_tipo = {
@@ -81,7 +120,7 @@ function Lotes() {
     experimental: { bg: "#E9EAFF", text: "#272CBA" }
   };
 
-  const [bloqueForm, setBloqueForm] = useState({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+  const [bloqueForm, setBloqueForm] = useState({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
 
   // Que cambie el valor de los inputs de select
   const handleInputChange = (setter) => (campo, valor) => {
@@ -100,60 +139,57 @@ function Lotes() {
     });
   };
 
-  // Cambiar de lotes a bloques en el registro
-  const irAPasoBloques = () => {
-    if (!nuevaFila.especie || !nuevaFila.ubicacion_lote || !nuevaFila.tipo_sustrato) {
-      setErrorValidacion("Por favor, completa los datos del lote");
-      return;
-    }
-    setErrorValidacion("");
-    setPaso(2);
-  };
-
   // Agregar el bloque y su validación
   const handleAgregarBloque = () => {
-    if (!bloqueForm.contenedor || !bloqueForm.peso_gr || !bloqueForm.cantidad) {
-      setErrorValidacion("Completa los campos del bloque");
+    const { peso_gr, cantidad, id_inoculo, contenedor } = bloqueForm;
+
+    if (!id_inoculo || !contenedor || !peso_gr || !cantidad) {
+      setErrorValidacion("Completa todos los campos, incluyendo el inóculo");
       return;
     }
 
-    const peso = parseFloat(bloqueForm.peso_gr);
-    const cantidad = parseFloat(bloqueForm.cantidad);
+    const numPeso = Number(peso_gr);
+    const numCantidad = Number(cantidad);
 
-    if (isNaN(peso) || peso <= 0 || isNaN(cantidad) || cantidad <= 0) {
+    if (isNaN(numPeso) || numPeso <= 0 || isNaN(numCantidad) || numCantidad <= 0) {
       setErrorValidacion("Ingresa un número válido y mayor a cero");
       return;
     }
 
+    const opcionesInoculo = getInoculosPorEspecie(nuevaFila.especie);
+    const inoculoSeleccionado = opcionesInoculo.find(
+      opt => String(opt.value) === String(id_inoculo)
+    );
+
     const cantidadAcumulada = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad), 0);
 
-    if (cantidadAcumulada + cantidad > 100) {
+    if (cantidadAcumulada + numCantidad > 100) {
       setErrorValidacion(`Límite excedido. Total acumulado: ${cantidadAcumulada}. No puedes superar 100 unidades.`);
       return;
     }
 
-    agregarBloqueALista({ ...bloqueForm });
-
-    setBloqueForm({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+    agregarBloqueALista({ 
+      ...bloqueForm, 
+      nombre_inoculo: inoculoSeleccionado ? inoculoSeleccionado.label : "N/A" 
+    });
+    
+    setBloqueForm({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
     setErrorValidacion("");
   };
 
-  const manejarCancelar = () => {
+  const confirmarCancelacion = () => {
     setPaso(1);
     bloquesTemporales.forEach(bloque => {
       eliminarBloqueDeLista(bloque.id_temp);
     });
-
-    setBloqueForm({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+    setBloqueForm({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+    setNuevaFila({ especie: "", tipo_sustrato: "", ubicacion_lote: "" }); 
     setErrorValidacion("");
+    setMostrarModalCancelar(false);
   };
 
   // Obligar a añadir al menos 1 bloque
   const previsualizarRegistro = () => {
-    if (!nuevaFila.id_inoculo) {
-      setErrorValidacion("Debes seleccionar una semilla (inóculo) para el lote");
-      return;
-    }
     if (bloquesTemporales.length === 0) {
       setErrorValidacion("Añade al menos un bloque");
       return;
@@ -201,7 +237,7 @@ function Lotes() {
           mensaje: "Error al guardar: " + (respuesta?.message || "Error desconocido")
         });
       }
-    } catch (err) {
+    } catch {
       setGuardando(false);
       setAlerta({
         visible: true,
@@ -248,7 +284,7 @@ function Lotes() {
           mensaje: res.message || "No se pudo eliminar"
         });
       }
-    } catch (err) {
+    } catch {
       setAlerta({ visible: true, variante: "error", mensaje: "Error de red" });
     } finally {
       setGuardando(false);
@@ -305,6 +341,7 @@ function Lotes() {
             </>
           ) : (
             <div className="animate-in fade-in duration-500">
+              <Titulo>Bloques</Titulo>
               <TablaBloques
                 codigo={codigoPrevisualizacion}
                 bloques={bloquesTemporales}
@@ -344,7 +381,6 @@ function Lotes() {
                 especieSeleccionada={nuevaFila.especie}
                 getInoculosPorEspecie={getInoculosPorEspecie}
                 idInoculoSeleccionado={nuevaFila.id_inoculo}
-                setIdInoculoLote={handleInputChange(setNuevaFila)}
               />
             )}
           </div>
@@ -356,14 +392,15 @@ function Lotes() {
                 <Button
                   variant="registrar"
                   onClick={previsualizarRegistro}
+                  isOutline={true} 
                   disabled={guardando}
                 >
                   {guardando ? "Cargando..." : "Finalizar"}
                 </Button>
               </div>
-              <div className="order-2 md:order-1">
-                <Button variant="eliminar" isOutline={true} onClick={manejarCancelar}>Cancelar</Button>
-              </div>
+              <Button variant="eliminar" isOutline={true} onClick={abrirModalCancelar}>
+                Cancelar
+              </Button>
             </div>
           )}
         </div>
@@ -398,6 +435,17 @@ function Lotes() {
         onConfirm={confirmarEliminarLote}
         onCancel={() => setMostrarModalEliminar(false)}
         deshabilitarConfirmar={guardando}
+      />
+      <ModalConfirmacion
+        visible={mostrarModalCancelar}
+        titulo="¿Estás seguro de cancelar?"
+        descripcion="Se perderán todos los bloques que has añadido actualmente."
+        textoConfirmar="Sí, cancelar"
+        textoCancelar="Continuar editando"
+        icon={CancelCircleIcon} 
+        colorConfirmar={colores.rojo}
+        onConfirm={confirmarCancelacion}
+        onCancel={() => setMostrarModalCancelar(false)}
       />
     </Base>
   );

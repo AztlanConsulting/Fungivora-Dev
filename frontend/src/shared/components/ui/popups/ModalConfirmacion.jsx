@@ -73,7 +73,7 @@ const ModalConfirmacion = ({
         <div className="w-full h-[1.8px] bg-gray-200 rounded-full"></div>
 
         {/* Botones */}
-        <div className="flex flex-row md:flex-row gap-6 w-full justify-center">
+        <div className="flex flex-row md:flex-row gap-3 w-full justify-center">
           <Button variant="cancelar" isOutline={true} onClick={onCancel}>
             {textoCancelar}
           </Button>
