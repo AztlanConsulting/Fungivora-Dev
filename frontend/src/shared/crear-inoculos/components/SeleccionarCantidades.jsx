@@ -13,13 +13,13 @@ const EntradaCard = ({ nombre, unidad, value, onChange, cantMax, repeticiones = 
   const manejarCambio = (e) => {
     let val = e.target.value;
     const regex = /^\d*$/;
+    const rawValue = val.replace(/,/g, "");
 
-    if (val === "" || regex.test(val)) {
+    if (rawValue === "" || regex.test(rawValue)) {
       // Quitar ceros a la izquierda (preserva "0", "0.5" y "0,5")
       val = val.replace(/^0+(?=\d)/, "");
-      e.target.value = val;
 
-      const numValor = parseInt(val, 10);
+      const numValor = parseInt(rawValue, 10);
 
       if (!isNaN(numValor)) {
         if (numValor > maxPorUnidad) {

@@ -101,15 +101,19 @@ const Input = ({
      * antes de propagar el cambio — evita estados inválidos.
      */
     const handleChange = (e) => {
-        if (variante === "numero") {
-            const regex = numeroRegex[numeroTipo] || numeroRegex.entero;
-            if (!regex.test(e.target.value)) return;
-            return onChange(e);
-            
-        }
-        if (regex && e.target.value !== "" && !regex.test(e.target.value)) return;
-        onChange(e);
-    };
+    if (variante === "numero") {
+        const rawValue = e.target.value.replace(/,/g, "");
+        const numeroRgx = numeroRegex[numeroTipo] || numeroRegex.entero;
+        if (!numeroRgx.test(rawValue)) return;
+
+        const formatted = rawValue === "" ? "" : Number(rawValue).toLocaleString("en-US");
+        e.target.value = formatted;
+        return onChange(e);
+    }
+
+    if (regex && e.target.value !== "" && !regex.test(e.target.value)) return;
+    onChange(e);
+};
 
     // Props compartidos entre <input> y <textarea>
 
@@ -170,8 +174,7 @@ const Input = ({
                 />
             ) : (
                 <input {...sharedProps} {...numProps}
-                maxLength={variante === "numero" ? 5 : undefined}
-                maxLength={variante === "normal" ? 50 : undefined}
+                maxLength={variante === "normal" ? 50 : variante === "numero" ? 13 : undefined}
                 />
             )}
         </div>
