@@ -23,9 +23,6 @@ router.get('/especies', controller.get_inoculos_activos);
 // Ruta para encontrar los bloques por id de lote
 router.get('/detalle', controller.get_batch_by_id);
 
-// Actualizar la fase del lote
-router.put('/fase', controller.actualizar_fase);
-
 // Ruta para eliminar un lote
 router.delete('/:id_lote', controller.delete_batch);
 
