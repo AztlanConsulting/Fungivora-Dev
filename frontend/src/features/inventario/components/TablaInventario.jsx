@@ -63,9 +63,11 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
       <div className={`hidden md:grid ${gridLayout} items-center min-h-[60px]`} style={{ backgroundColor: colorBordeHeader }}>
         {columnasHeader.map((col, i) => (
           <div key={i} className="px-6 flex items-center">
-            <Text variante="medium" style={{ color: colores.azul, fontWeight: "600", fontSize: "16px", lineHeight: "4" }}>
-              {col.label}
-            </Text>
+              <Text 
+                  variante="medium" 
+                  style={{ color: colores.azul, fontWeight: "600", fontSize: "16px", lineHeight: "4", whiteSpace: "nowrap" }}>
+                  {col.label}
+              </Text>
           </div>
         ))}
       </div>
