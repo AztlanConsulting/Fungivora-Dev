@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
@@ -20,7 +20,7 @@ function RutaProtegida({ children, rolPermitido }) {
     if (rolPermitido === "Administrador" && !decoded?.isAdmin) {
       return <Navigate to="/home" replace />;
     }
-  } catch (error) {
+  } catch {
     return <Navigate to="/" replace />;
   }
 

@@ -8,8 +8,6 @@ const useLogin = () => {
   const login = useCallback(async (usuario, password) => {
     setCargando(true);
     setError(null);
-    
-    console.log("1. Enviando credenciales al servicio...");
 
     try {
       const data = await loginService.login(usuario, password);
