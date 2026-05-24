@@ -14,6 +14,7 @@ function RutaProtegida({ children, rolPermitido }) {
     const tokenExpirado = decoded && decoded.exp * 1000 < Date.now();
 
     if (tokenExpirado) {
+      localStorage.removeItem("token");
       return <Navigate to="/" replace />;
     }
 
@@ -21,6 +22,7 @@ function RutaProtegida({ children, rolPermitido }) {
       return <Navigate to="/home" replace />;
     }
   } catch {
+    localStorage.removeItem("token");
     return <Navigate to="/" replace />;
   }
 

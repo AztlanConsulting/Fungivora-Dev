@@ -17,6 +17,13 @@ const handleResponse = async (res) => {
         let data = null;
         try { data = await res.json(); } catch { /* body no-JSON */ }
 
+        if (data?.code === "TOKEN_EXPIRED") {
+            localStorage.removeItem("token");
+            if (typeof window !== "undefined" && window.location.pathname !== "/") {
+                window.location.href = "/";
+            }
+        }
+
         const mensaje = data?.msg || data?.error || `Error ${res.status}: ${res.statusText}`;
         const err = new Error(mensaje);
         err.status = res.status;
