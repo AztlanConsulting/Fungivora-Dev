@@ -1,6 +1,6 @@
-import React from "react";
-import { colores } from "../basics/colores";
-import Text from "../basics/texto";
+import React, { useRef, useState, useEffect } from "react";
+import { colores } from "../basics/Colores";
+import Text from "../basics/Texto";
 
 /**
 * Stepper 
@@ -22,7 +22,17 @@ const Stepper = ({
 }) => {
     const isVerde = colorTheme === "verde";
     const totalSteps = steps.length;
-    const shouldZigZag = totalSteps > 4; //Cambia el orden de los labels si el espacio es reducido
+    const containerRef = useRef(null);
+    const [shouldZigZag, setShouldZigZag] = useState(false);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+        const observer = new ResizeObserver(([entry]) => {
+            setShouldZigZag(entry.contentRect.width / totalSteps < 80);
+        });
+        observer.observe(containerRef.current);
+        return () => observer.disconnect();
+    }, [totalSteps]);
 
     const mainColor = isVerde ? colores.verde : colores.azul; // Colores de pasos que ya pasaron
     const activeColor = isVerde ? colores.verdeOscuro : colores.azulOscuro; // Colores del paso seleccionado
@@ -38,21 +48,30 @@ const Stepper = ({
     return (
 
         // Div para hacer un zig zag del texto por espacio reducido
-        <div className={`w-full pt-12 ${shouldZigZag ? "pb-12 md:pb-4" : "pb-4"}`}>
-            <div className="flex items-center justify-between w-full relative">
+        <div className={`w-full ${shouldZigZag ? "pt-14 pb-14" : "pt-10 pb-4"}`}>
+            <div ref={containerRef} className="flex items-center justify-between w-full relative">
                 {steps.map((step, index) => {
                     const isCompleted = index < currentStep;
                     const isActive = index === currentStep;
                     const isReached = index <= currentStep;
+                    const isFirst = index === 0;
+                    const isLast = index === totalSteps - 1;
 
                     const circleColor = isActive ? activeColor : (isCompleted ? mainColor : "#FFF");
                     const borderColor = isReached ? (isActive ? activeColor : mainColor) : inactiveColor;
+
                     const isEven = index % 2 === 0;
 
                     // Si hay más de 4 pasos, los impares bajan en móvil. Si no, todos estan arriba.
-                    const labelPosition = (shouldZigZag && !isEven)
-                        ? "top-9 md:-top-9"
-                        : "-top-9";
+                    const labelGoesDown = shouldZigZag && !isEven;
+
+                    // FIX posición vertical del label
+                    const labelVertical = labelGoesDown
+                        ? "top-[calc(100%+6px)]"
+                        : "bottom-[calc(100%+6px)]";
+
+                    // FIX alineación horizontal: primero ancla izquierda, último ancla derecha, resto centrado
+                    const labelHorizontal = "left-1/2 -translate-x-1/2 text-center";
 
                     const CircleContainer = readOnly ? "div" : "button";
 
@@ -60,32 +79,28 @@ const Stepper = ({
                         <div key={index} className="flex flex-col items-center relative flex-1">
 
                             {/* Clase para poder tener los labels */}
-                            <div className={`absolute w-full text-center px-1 transition-all duration-300 ${labelPosition}`}>
-                                <Text variante="input">
-                                    <span
-                                        className="block leading-tight"
-                                        style={{
-                                            color: textColor,
-                                            fontWeight: isActive ? "700" : "400",
-                                            fontSize: "clamp(12px, 1.5vw, 16px)",
-                                            whiteSpace: "normal"
-                                        }}
-                                    >
-                                        {step.label}
-                                    </span>
-                                </Text>
-                            </div>
+                            <span
+                                className={`absolute w-max max-w-[64px] leading-tight pointer-events-none ${labelVertical} ${labelHorizontal}`}
+                                style={{
+                                    color: textColor,
+                                    fontWeight: isActive ? "700" : "400",
+                                    fontSize: "clamp(10px, 3vw, 13px)",
+                                    whiteSpace: "normal"
+                                }}
+                            >
+                                {step.label}
+                            </span>
 
                             {/* Círculos*/}
                             <CircleContainer
                                 onClick={() => handleStepClick(index)}
-                                className={`relative z-10 transition-all outline-none ${readOnly
+                                className={`relative z-10 outline-none transition-all ${readOnly
                                     ? "cursor-default"
                                     : "cursor-pointer hover:scale-110 active:scale-95"
                                     }`}
                             >
                                 <div
-                                    className="w-5 h-5 md:w-6 md:h-6 rounded-full border-2 transition-all duration-500 flex items-center justify-center"
+                                    className="w-5 h-5 md:w-6 md:h-6 rounded-full border-2 transition-all duration-500"
                                     style={{
                                         backgroundColor: circleColor,
                                         borderColor: borderColor,
@@ -94,7 +109,7 @@ const Stepper = ({
                             </CircleContainer>
 
                             {/* Línea central */}
-                            {index !== steps.length - 1 && (
+                            {index !== totalSteps - 1 && (
                                 <div
                                     className="absolute h-[3px] transition-all duration-500"
                                     style={{

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { colores } from "../basics/colores";
+import { colores } from "../basics/Colores";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
     CheckmarkCircle02Icon,
@@ -32,7 +32,7 @@ const VARIANTES = {
     },
 };
 
-const AUTO_DISMISS_MS = 4000; // 4 segundos
+const AUTO_DISMISS_MS = 6000; // 6 segundos
 
 /**
  * ModalAlerta

@@ -9,10 +9,10 @@ vi.mock('../../../features/inoculos/hooks/useInoculoCard')
 import useInoculoCard from '../../../features/inoculos/hooks/useInoculoCard'
 
 // Mock de componentes UI compartidos
-vi.mock('../../../shared/components/ui/basics/texto', () => ({
+vi.mock('../../../shared/components/ui/basics/Texto', () => ({
     default: ({ children }) => <p>{children}</p>,
 }))
-vi.mock('../../../shared/components/ui/inputs/seleccionar_texto', () => ({
+vi.mock('../../../shared/components/ui/inputs/SeleccionarTexto', () => ({
     default: ({ value, onChange, options }) => (
         <select value={value} onChange={onChange} data-testid="select-tipo">
             {options.map((op) => (
@@ -88,7 +88,7 @@ describe('InoculoCard — renderizado base', () => {
         renderComponente()
         expect(screen.getByText('Etiqueta')).toBeInTheDocument()
         expect(screen.getByText('Cantidad actual')).toBeInTheDocument()
-        expect(screen.getByText('Stock mínimo')).toBeInTheDocument()
+        expect(screen.getByText('Stock recomendado')).toBeInTheDocument()
         expect(screen.getByText('Fecha Creación')).toBeInTheDocument()
     })
 

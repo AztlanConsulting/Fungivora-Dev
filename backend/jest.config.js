@@ -8,4 +8,5 @@ module.exports = {
         'models/**/*.js',
     ],
     coverageReporters: ['text', 'html'],
+    setupFiles: ['./test/setup.js']
 }

@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import InfoLote from '../../../features/lotes/components/InfoLote'
 
 // Mock de Text para aislar InfoLote de la tipografía
-vi.mock('../../../shared/components/ui/basics/texto', () => ({
+vi.mock('../../../shared/components/ui/basics/Texto', () => ({
     default: ({ children, variante, style }) => (
         <p data-testid="text" data-variante={variante} style={style}>
             {children}
@@ -20,7 +20,7 @@ vi.mock('@hugeicons/react', () => ({
 }))
 
 // Mock de colores (objeto plano)
-vi.mock('../../../shared/components/ui/basics/colores', () => ({
+vi.mock('../../../shared/components/ui/basics/Colores', () => ({
     colores: { azul: '#3b3fb6' },
 }))
 

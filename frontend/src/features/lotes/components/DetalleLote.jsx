@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import useDetalleLote from '../hooks/useDetalleLote';
 import BannerLote from '../components/BannerLote';
-import TablaBloques from '../components/TablaBloques';
+import TablaBloques from '../components/TablaBloquesLote';
 import SeccionFaseBuscar from '../components/SeccionFaseBuscar';
 import { Titulo, Text, ModalConfirmacion, ModalAlerta } from '../../../shared/components/ui';
-import { colores } from '../../../shared/components/ui/basics/colores';
+import { colores } from '../../../shared/components/ui/basics/Colores';
 import { Base } from '../../../shared/components/layout';
 import { CheckmarkCircle02Icon } from '@hugeicons/core-free-icons';
 
@@ -23,7 +23,6 @@ const DetalleLote = () => {
     } = useDetalleLote(
         id_lote,
         state?.id_inoculo,
-        state?.id_inoculo_usado,
         state?.fase
     );
 
@@ -38,7 +37,8 @@ const DetalleLote = () => {
 
         // Verificar cambios en bloques
         const bloquesModificados = nuevosBloques.some((bloque, index) => {
-            const bloqueInicial = bloquesIniciales[index];
+            const bloqueInicial = bloquesIniciales?.[index];
+            if (!bloqueInicial) return false;
 
             return (
                 bloque.contaminado !== bloqueInicial?.contaminado
@@ -73,6 +73,10 @@ const DetalleLote = () => {
         setIsModalOpen(false);
         const resultado = await guardarCambios(bloques, fase);
         if (resultado.success) {
+            setBloquesIniciales(
+                bloques.map(b => ({ ...b }))
+            );
+            setFaseInicialNum(fase);
             setEditado(false);
             setAlerta({
                 visible: true,
@@ -89,14 +93,14 @@ const DetalleLote = () => {
     };
 
 
-   const loteData = {
-        fecha: state?.fecha_lote 
+    const loteData = {
+        fecha: state?.fecha_lote
             ? new Date(state.fecha_lote).toLocaleDateString('es-MX', {
                 day: '2-digit', month: 'long', year: 'numeric'
             }) : 'Sin fecha',
         especie: cargando ? 'Cargando...' : especie || 'S/N',
         sustrato: state?.tipo_sustrato || 'No especificado',
-        ubicacion: state?.ubicacion_lote || 'Sin ubicación', 
+        ubicacion: state?.ubicacion_lote || 'Sin ubicación',
         inoculo: cargando ? 'Cargando...' : codigoInoculo || 'S/N'
     };
 
@@ -107,9 +111,9 @@ const DetalleLote = () => {
 
 
     const codigoParaTabla = state?.codigo_fungivora || codigoLoteBD || "";
-        return (
-            <>
-                <Titulo>Lote: {state?.codigo_fungivora || 'Detalle'}</Titulo>
+    return (
+        <>
+            <Titulo>Lote: {state?.codigo_fungivora || 'Detalle'}</Titulo>
             {editado && (
                 <button
                     onClick={() => setIsModalOpen(true)}
@@ -131,31 +135,31 @@ const DetalleLote = () => {
                 </button>
             )}
 
-                <Base margen_arriba="mt-16 md:mt-8">
-                    <div className="p-6 flex flex-col gap-8">
-                        <BannerLote data={loteData} />
+            <Base margen_arriba="mt-16 md:mt-8">
+                <div className="p-6 flex flex-col gap-8">
+                    <BannerLote data={loteData} />
 
-                        <SeccionFaseBuscar
-                            fases={fases}
-                            fase={fase}
-                            setFase={handleLocalChangeFase}
-                            //busqueda={busqueda}
-                            //setBusqueda={setBusqueda}
+                    <SeccionFaseBuscar
+                        fases={fases}
+                        fase={fase}
+                        setFase={handleLocalChangeFase}
+                    //busqueda={busqueda}
+                    //setBusqueda={setBusqueda}
+                    />
+
+                    <div className="flex flex-col gap-4">
+                        {error && (
+                            <div className="text-red-500 px-2 font-medium">Error: {error}</div>
+                        )}
+
+                        <TablaBloques
+                            bloques={bloquesFiltrados}
+                            loading={cargando}
+                            onToggleContaminado={handleLocalToggleContaminado}
+                            codigo_lote={codigoParaTabla}
                         />
-
-                        <div className="flex flex-col gap-4">
-                            {error && (
-                                <div className="text-red-500 px-2 font-medium">Error: {error}</div>
-                            )}
-
-                            <TablaBloques
-                                bloques={bloquesFiltrados}
-                                loading={cargando}
-                                onToggleContaminado={handleLocalToggleContaminado}
-                                codigo_lote={codigoParaTabla}
-                            />
-                        </div>
                     </div>
+                </div>
             </Base>
 
             <ModalAlerta

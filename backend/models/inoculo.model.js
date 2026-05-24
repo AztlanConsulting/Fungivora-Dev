@@ -82,8 +82,7 @@ module.exports = class Inoculo {
     // Obtiene todos los inóculos registrados en la tabla Inoculos
     static fetchInoculos() {
         return db.execute(`
-            SELECT id_inoculo, codigo_fungivora,
-                tipo, especie, fecha, cantidad_disponible
+            SELECT *
             FROM Inoculos
             ORDER BY fecha DESC
         `);

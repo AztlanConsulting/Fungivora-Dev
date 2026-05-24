@@ -1,5 +1,5 @@
 const dotenv = require('dotenv');
-dotenv.config({ path: require('path').join(__dirname, '../.env') });
+dotenv.config({ quiet: true, path: require('path').join(__dirname, '../.env') });
 
 const app = require('./app');
 

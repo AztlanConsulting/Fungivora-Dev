@@ -1,6 +1,6 @@
 import React from "react";
-import { colores } from "../basics/colores";
-import Text from "../basics/texto";
+import { colores } from "../basics/Colores";
+import Text from "../basics/Texto";
 
 // Colores relacionados al tipo de boton
 const variants = {
@@ -46,29 +46,29 @@ const Button = ({
   isOutline = false,
   icon: Icon,
   disabled,
-  ...props 
+  ...props
 }) => {
   const colorKey = variants[variant] || "azul";
   const mainColor = colores[colorKey] || colores.azul;
   const textColor = isOutline ? mainColor : "#FFFFFF";
   const buttonStyle = isOutline
     ? {
-        backgroundColor: "#FFFFFF",
-        border: `2px solid ${mainColor}`,
-        opacity: disabled ? 0.6 : 1, 
-      }
+      backgroundColor: "#FFFFFF",
+      border: `2px solid ${mainColor}`,
+      opacity: disabled ? 0.6 : 1,
+    }
     : {
-        backgroundColor: mainColor,
-        border: `2px solid transparent`,
-        opacity: disabled ? 0.6 : 1, 
-      };
+      backgroundColor: mainColor,
+      border: `2px solid transparent`,
+      opacity: disabled ? 0.6 : 1,
+    };
 
   return (
     <button
       type={type}
       onClick={onClick}
-      disabled={disabled} 
-      {...props}      
+      disabled={disabled}
+      {...props}
       className={`
         flex items-center justify-center gap-2
         transition-all 
