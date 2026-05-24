@@ -70,7 +70,7 @@ const Input = ({
     className = "",
     type = "text", 
     roundedClass = "rounded-md",
-    regex= /^[a-zA-Záéíóú\s]*$/,
+    regex= /^[0-9a-zA-Záéíóú\s]*$/,
 }) => {
     const [isFocused, setIsFocused] = useState(false);
     /** Referencia al elemento del DOM para calcular altura */
