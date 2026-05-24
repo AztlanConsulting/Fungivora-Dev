@@ -38,13 +38,16 @@ const Input = ({
     value,
     onChange,
     className = "",
-    type = "text",
+    type = "text", 
+    roundedClass = "rounded-md",
+    regex = null, 
     ...props 
 }) => {
     const [isFocused, setIsFocused] = useState(false);
     const textAreaRef = useRef(null);
-
-    const sizeClass = sizes[variante] || sizes.normal;
+    const tieneAnchoCustom = /\bw-\d+|\bw-auto|\bw-full\b/.test(className);
+    const sizeClass = tieneAnchoCustom ? "" : (sizes[variante] || sizes.normal);
+    
     const alignmentClass = alignments[variante] || alignments.normal;
 
     useEffect(() => {
@@ -59,11 +62,21 @@ const Input = ({
     };
 
     const handleChange = (e) => {
+        if (!onChange) return;
+
         if (variante === "numero") {
-            const regex = numeroRegex[numeroTipo] || numeroRegex.entero;
-            if (!regex.test(e.target.value)) return;
+            const rawValue = e.target.value.replace(/,/g, "");
+            const numeroRgx = numeroRegex[numeroTipo] || numeroRegex.entero;
+            if (!numeroRgx.test(rawValue)) return;
+
+            const formatted = rawValue === "" ? "" : Number(rawValue).toLocaleString("en-US");
+            e.target.value = formatted;
+            return onChange(e);
         }
-        if (onChange) onChange(e);
+
+        if (regex && e.target.value !== "" && !regex.test(e.target.value)) return;
+
+        onChange(e);
     };
 
     const sharedProps = {
@@ -75,7 +88,7 @@ const Input = ({
         className: `
             flex-1 h-full px-4 py-2 bg-transparent outline-none resize-none relative z-10
             [appearance:textfield]
-            disabled:bg-transparent
+            disabled:bg-transparent disabled:cursor-not-allowed
             [&::-webkit-outer-spin-button]:appearance-none
             [&::-webkit-inner-spin-button]:appearance-none
             ${variante === "amplio" ? "overflow-hidden" : ""}
@@ -92,7 +105,8 @@ const Input = ({
     return (
         <div
             className={`
-                ${sizeClass} rounded-md overflow-hidden transition-all relative flex items-center bg-white
+                bg-white transition-all relative flex items-center
+                ${sizeClass} ${roundedClass} overflow-hidden
                 ${isFocused ? "ring-4" : "ring-2"} ring-[var(--input-ring)]
             `}
             style={{ "--input-ring": isFocused ? colores.azul : colores.grisClaro }}
@@ -106,7 +120,11 @@ const Input = ({
             {variante === "amplio" ? (
                 <textarea ref={textAreaRef} rows={1} {...sharedProps} />
             ) : (
-                <input {...sharedProps} {...numProps} />
+                <input 
+                    {...sharedProps} 
+                    {...numProps}
+                    maxLength={variante === "normal" ? 50 : variante === "numero" ? 6 : undefined}
+                />
             )}
         </div>
     );
