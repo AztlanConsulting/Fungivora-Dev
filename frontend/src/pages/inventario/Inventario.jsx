@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Base from "../../shared/components/layout/Base";
 import Titulo from "../../shared/components/ui/basics/Titulo";
 import Text from "../../shared/components/ui/basics/Texto";
@@ -23,8 +23,13 @@ const Inventario = () => {
   const [tipoOperacion, setTipoOperacion] = useState("incremento");
   const [alerta, setAlerta] = useState({ visible: false, mensaje: "", variante: "exito" });
 
+   useEffect(() => {
+    if (errorValidacion) setErrorValidacion("");
+  }, [nuevaFila]);
+
+
   // Grid de la tabla
-  const gridLayout = "grid-cols-1 md:grid-cols-[1.5fr_1.8fr_1fr_1fr]";
+  const gridLayout = "grid-cols-1 md:grid-cols-[1.5fr_2.2fr_1fr_1fr]";
 
   const lanzarAlerta = (mensaje, variante = "exito") => setAlerta({ visible: true, mensaje, variante });
 
@@ -88,19 +93,26 @@ const Inventario = () => {
   };
 
   // Guardar el nuevo insumo
-  const handleGuardarInsumo = async () => {
+const [guardando, setGuardando] = useState(false);
+
+const handleGuardarInsumo = async () => {
     if (!nuevaFila.nombre || !nuevaFila.cantidad || !nuevaFila.unidad) {
-      setErrorValidacion("Completa todos los campos");
-      return;
+        setErrorValidacion("Completa todos los campos");
+        return;
     }
-    const exito = await addInsumo(nuevaFila);
-    if (exito) {
-      setNuevaFila({ nombre: "", cantidad: "", stock_recomendado: "", unidad: "" });
-      setVerFormulario(false);
-      setErrorValidacion("");
-      lanzarAlerta("Insumo creado con éxito");
+    setGuardando(true);
+    const resultado = await addInsumo(nuevaFila);
+    setGuardando(false);
+
+    if (resultado.success) {
+        setNuevaFila({ nombre: "", cantidad: "", stock_recomendado: "", unidad: "" });
+        setVerFormulario(false);
+        setErrorValidacion("");
+        lanzarAlerta("Insumo creado con éxito");
+    } else {
+        setErrorValidacion(resultado.error);
     }
-  };
+};
 
   return (
     <>
@@ -111,19 +123,17 @@ const Inventario = () => {
         <div className="lg:hidden flex justify-start mb-6">
           <div
             onClick={() => setVerFormulario(!verFormulario)}
-            className={`px-5 py-2 rounded-[12px] border-2 bg-white transition-all active:scale-95 cursor-pointer shadow-sm flex items-center justify-center
-            ${verFormulario ? "border-[#3b3fb6]" : "border-gray-200"}`}
-            style={{ width: "fit-content" }}
-          >
+            className={`px-6 py-3 rounded-[12px] border-2 bg-white transition-all active:scale-95 cursor-pointer shadow-sm flex items-center justify-center
+              ${verFormulario ? "border-[#3b3fb6]" : "border-[#3b3fb6]"}`}
+            style={{ width: "fit-content" }}>
             <Text
               variante="label"
               style={{
-                color: verFormulario ? colores.azul : "#6B7280",
-                fontWeight: "600",
-                fontSize: "13px",
+                color: colores.azul,
+                fontWeight: "700",
+                fontSize: "15px",
                 lineHeight: "1"
-              }}
-            >
+              }}>
               {verFormulario ? "Ver Inventario" : "Crear insumo"}
             </Text>
           </div>

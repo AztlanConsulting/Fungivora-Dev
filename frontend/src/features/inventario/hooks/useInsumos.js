@@ -47,6 +47,7 @@ const useInsumos = () => {
                 await fetchInsumos();
                 return true;
             }
+            return { success: false, error: res.error || 'Error al crear el insumo' };
         } catch (err) {
             console.error("Error al crear:", err);
         }
