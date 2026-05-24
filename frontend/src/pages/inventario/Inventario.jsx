@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import Base from "../../shared/components/layout/base";
-import Titulo from "../../shared/components/ui/basics/titulo";
-import Text from "../../shared/components/ui/basics/texto";
-import { colores } from "../../shared/components/ui/basics/colores";
+import Base from "../../shared/components/layout/Base";
+import Titulo from "../../shared/components/ui/basics/Titulo";
+import Text from "../../shared/components/ui/basics/Texto";
+import { colores } from "../../shared/components/ui/basics/Colores";
 import useInsumos from "../../features/inventario/hooks/useInsumos";
 import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
-import Button from "../../shared/components/ui/buttons/botones";
-import Input from "../../shared/components/ui/inputs/input_texto";
+import Button from "../../shared/components/ui/buttons/Botones";
+import Input from "../../shared/components/ui/inputs/InputTexto";
 import ModalEditarInsumo from "../../features/inventario/components/ModalEditarInsumos";
 
 import TablaInventario from "../../features/inventario/components/TablaInventario";
@@ -64,10 +64,10 @@ const Inventario = () => {
       return;
     }
 
-    let nuevaCantidad = tipoOperacion === "incremento" 
-      ? cantidadActual + cambio 
+    let nuevaCantidad = tipoOperacion === "incremento"
+      ? cantidadActual + cambio
       : cantidadActual - cambio;
-    
+
     nuevaCantidad = parseFloat(nuevaCantidad.toFixed(2));
 
     const exito = await updateInsumo(modalEdicion.insumo.id_insumo, { cantidad: nuevaCantidad });
@@ -92,7 +92,7 @@ const Inventario = () => {
     if (campo === "cantidad" || campo === "stock_recomendado") {
       const valorEstandarizado = valor.replace(",", ".");
       const regex = /^\d{0,5}(\.\d{0,2})?$/;
-      
+
       if (regex.test(valorEstandarizado)) {
         setNuevaFila(prev => ({ ...prev, [campo]: valorEstandarizado }));
       }
@@ -120,34 +120,34 @@ const Inventario = () => {
     <>
       <Titulo>Inventario</Titulo>
       <Base margen_arriba="mt-20 md:mt-20">
-        
-      {/* Botón Móvil */}
-      <div className="lg:hidden flex justify-start mb-6">
-        <div
-          onClick={() => setVerFormulario(!verFormulario)}
-          className={`px-5 py-2 rounded-[12px] border-2 bg-white transition-all active:scale-95 cursor-pointer shadow-sm flex items-center justify-center
+
+        {/* Botón Móvil */}
+        <div className="lg:hidden flex justify-start mb-6">
+          <div
+            onClick={() => setVerFormulario(!verFormulario)}
+            className={`px-5 py-2 rounded-[12px] border-2 bg-white transition-all active:scale-95 cursor-pointer shadow-sm flex items-center justify-center
             ${verFormulario ? "border-[#3b3fb6]" : "border-gray-200"}`}
-          style={{ width: "fit-content" }}
-        >
-          <Text 
-            variante="label" 
-            style={{ 
-              color: verFormulario ? colores.azul : "#6B7280", 
-              fontWeight: "600",
-              fontSize: "13px",
-              lineHeight: "1" 
-            }}
+            style={{ width: "fit-content" }}
           >
-            {verFormulario ? "Ver Inventario" : "Crear insumo"}
-          </Text>
+            <Text
+              variante="label"
+              style={{
+                color: verFormulario ? colores.azul : "#6B7280",
+                fontWeight: "600",
+                fontSize: "13px",
+                lineHeight: "1"
+              }}
+            >
+              {verFormulario ? "Ver Inventario" : "Crear insumo"}
+            </Text>
+          </div>
         </div>
-      </div>
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Columnas*/}
           <div className={`w-full lg:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} lg:block`}>
-            <TablaInventario 
-              insumos={insumos} 
+            <TablaInventario
+              insumos={insumos}
               loading={loading}
               filaSeleccionada={filaSeleccionada}
               setFilaSeleccionada={setFilaSeleccionada}
@@ -159,7 +159,7 @@ const Inventario = () => {
 
           {/* Formulario */}
           <div className={`w-full lg:w-[440px] bg-white rounded-[32px] shadow-sm border p-8 ${verFormulario ? "block" : "hidden"} lg:block lg:mt-0`}>
-            <FormularioInsumo 
+            <FormularioInsumo
               nuevaFila={nuevaFila}
               handleNuevaFila={handleNuevaFila}
               handleGuardarInsumo={handleGuardarInsumo}
@@ -172,28 +172,28 @@ const Inventario = () => {
         {/* Modal de editar cantidad*/}
         {modalEdicion.visible && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setModalEdicion({ visible: false, insumo: null })} />
-             <div className="relative bg-white rounded-[30px] p-9 w-full max-w-lg shadow-2xl flex flex-col gap-6 border animate-in zoom-in duration-200">
-                <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", textAlign: "center" }}>{modalEdicion.insumo?.nombre}</Text>
-                
-                <div className="flex bg-gray-100 p-1 rounded-xl">
-                  <button onClick={() => setTipoOperacion("incremento")} className={`flex-1 py-2 rounded-lg text-sm font-semibold ${tipoOperacion === "incremento" ? "bg-green-100 shadow-sm text-green-600" : "text-gray-500"}`}>Entrada</button>
-                  <button onClick={() => setTipoOperacion("reduccion")} className={`flex-1 py-2 rounded-lg text-sm font-semibold ${tipoOperacion === "reduccion" ? "bg-red-100 shadow-sm text-red-600" : "text-gray-500"}`}>Salida</button>
-                </div>
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setModalEdicion({ visible: false, insumo: null })} />
+            <div className="relative bg-white rounded-[30px] p-9 w-full max-w-lg shadow-2xl flex flex-col gap-6 border animate-in zoom-in duration-200">
+              <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", textAlign: "center" }}>{modalEdicion.insumo?.nombre}</Text>
 
-                <Input 
-                  variante="decimal" 
-                  placeholder="0.00" 
-                  value={ajusteCantidad} 
-                  onChange={(e) => handleCambioAjuste(e.target.value)} 
-                />
-                {errorModal && <Text variante="label" style={{ color: "#E53E3E", fontSize: "13px" }}>{errorModal}</Text>}
+              <div className="flex bg-gray-100 p-1 rounded-xl">
+                <button onClick={() => setTipoOperacion("incremento")} className={`flex-1 py-2 rounded-lg text-sm font-semibold ${tipoOperacion === "incremento" ? "bg-green-100 shadow-sm text-green-600" : "text-gray-500"}`}>Entrada</button>
+                <button onClick={() => setTipoOperacion("reduccion")} className={`flex-1 py-2 rounded-lg text-sm font-semibold ${tipoOperacion === "reduccion" ? "bg-red-100 shadow-sm text-red-600" : "text-gray-500"}`}>Salida</button>
+              </div>
 
-                <div className="flex gap-4">
-                  <Button variant="cancelar" isOutline onClick={() => setModalEdicion({ visible: false, insumo: null })} className="flex-1">Cancelar</Button>
-                  <Button variant="confirmar" onClick={handleConfirmarAjuste} className="flex-1">Confirmar</Button>
-                </div>
-             </div>
+              <Input
+                variante="decimal"
+                placeholder="0.00"
+                value={ajusteCantidad}
+                onChange={(e) => handleCambioAjuste(e.target.value)}
+              />
+              {errorModal && <Text variante="label" style={{ color: "#E53E3E", fontSize: "13px" }}>{errorModal}</Text>}
+
+              <div className="flex gap-4">
+                <Button variant="cancelar" isOutline onClick={() => setModalEdicion({ visible: false, insumo: null })} className="flex-1">Cancelar</Button>
+                <Button variant="confirmar" onClick={handleConfirmarAjuste} className="flex-1">Confirmar</Button>
+              </div>
+            </div>
           </div>
         )}
 
@@ -206,7 +206,7 @@ const Inventario = () => {
             />
         )}
       </Base>
-      
+
       <ModalAlerta visible={alerta.visible} variante={alerta.variante} mensaje={alerta.mensaje} onClose={() => setAlerta({ ...alerta, visible: false })} />
     </>
   );

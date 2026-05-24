@@ -69,13 +69,13 @@ describe('useLotes Hook', () => {
 
     // transformación de Sustratos
     expect(result.current.sustratos).toEqual([{ value: 'Paja', label: 'Paja' }]);
-    
+
     // transformación de Ubicaciones
     expect(result.current.ubicaciones).toEqual([{ value: 'Estante A', label: 'Estante A' }]);
-    
+
     // transformación de Especies
-    expect(result.current.especies).toEqual([
-      { value: 10, label: 'INC-01 / Pleurotus' }
+    expect(result.current.especiesDisponibles).toEqual([
+      { value: 'Pleurotus', label: 'Pleurotus' }
     ]);
 
     //  datos de lotes
@@ -89,7 +89,7 @@ describe('useLotes Hook', () => {
     const { result } = renderHook(() => useLotes());
 
     await waitFor(() => expect(result.current.cargando).toBe(false));
-    
+
     expect(result.current.error).toBe("Error al cargar lotes");
     expect(result.current.datos).toEqual([]);
   });
@@ -100,13 +100,13 @@ describe('useLotes Hook', () => {
     const { result } = renderHook(() => useLotes());
 
     await waitFor(() => expect(result.current.cargando).toBe(false));
-    
+
     expect(result.current.error).toBe("Error de conexión");
   });
 
   it('llamar al servicio, true y refrescar la lista', async () => {
     const nuevoLote = { tipo_sustrato: "Paja", ubicacion_lote: "Estante A", id_inoculo: 10 };
-    
+
     vi.mocked(loteService.addLote).mockResolvedValue({ success: true });
     vi.mocked(loteService.getLotes).mockResolvedValue(mockLotesData);
 
@@ -118,7 +118,7 @@ describe('useLotes Hook', () => {
       resultadoAccion = await result.current.addLote(nuevoLote);
     });
 
-    expect(resultadoAccion).toBe(true);
+    expect(resultadoAccion.success).toBe(true);
     expect(loteService.addLote).toHaveBeenCalledWith(nuevoLote);
     expect(loteService.getLotes).toHaveBeenCalledTimes(2);
   });
@@ -135,7 +135,7 @@ describe('useLotes Hook', () => {
       resultadoAccion = await result.current.addLote({});
     });
 
-    expect(resultadoAccion).toBe(false);
+    expect(resultadoAccion.success).toBe(false);
     expect(loteService.getLotes).toHaveBeenCalledTimes(1);
   });
 });

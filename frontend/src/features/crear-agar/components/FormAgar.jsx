@@ -1,62 +1,64 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
-import SelectField   from "../../../shared/components/ui/inputs/seleccionar_texto";
-import InputFecha    from "../../../shared/components/ui/inputs/input_fecha";
-import InputCantidad from "../../../shared/components/ui/inputs/input_cantidad";
-import InputNota     from "../../../shared/components/ui/inputs/input_nota";
-import Button        from "../../../shared/components/ui/buttons/botones";
-import ModalAlerta   from "../../../shared/components/ui/popups/ModalAlerta";
+import SelectField from "../../../shared/components/ui/inputs/SeleccionarTexto";
+import InputFecha from "../../../shared/components/ui/inputs/InputFecha";
+import InputCantidad from "../../../shared/components/ui/inputs/InputCantidad";
+import InputNota from "../../../shared/components/ui/inputs/InputNota";
+import Button from "../../../shared/components/ui/buttons/Botones";
+import ModalAlerta from "../../../shared/components/ui/popups/ModalAlerta";
 
-import { EntradaLista } from "../../crear-medio/components/seleccionar_cantidades";
-import ResumenSemilla   from "../../crear-medio/components/ResumenSemilla";
-import insumosService   from "../../crear-medio/services/inoculos.service";
-import { crearInoculoDTO } from "../../crear-medio/dto/crearInoculoDto";
-import { traducirError }  from "../../../shared/utils/traducirError";
+import { EntradaLista } from "../../../shared/crear-inoculos/components/SeleccionarCantidades";
+import Resumen from "../../../shared/crear-inoculos/components/Resumen";
+import insumosService from "../../../shared/crear-inoculos/services/inoculos.service";
+import { crearInoculoDTO } from "../../../shared/crear-inoculos/dto/crearInoculoDto";
 
-import useEspecies     from "../../inoculos/hooks/useEspecies";
-import useCategorias   from "../../crear-medio/hooks/useCategorias";
-import useInoculo      from "../../crear-medio/hooks/useInoculo";
-import useIngredientesAgar from "../../crear-medio/hooks/useIngredientesAgar";
+import { traducirError } from "../../../shared/utils/traducirError";
+
+import useEspecies from "../../inoculos/hooks/useEspecies";
+
+import useCategorias from "../../../shared/crear-inoculos/hooks/useCategorias";
+import useInoculo from "../../../shared/crear-inoculos/hooks/useInoculo";
+import useIngredientesAgar from "../hooks/useIngredientesAgar";
 
 import {
   generarCodigos,
   normalizarTipoInoculo,
-} from "../../crear-medio/utils/generarCodigoInoculo";
+} from "../../../shared/crear-inoculos/utils/generarCodigoInoculo";
 
-import Titulo      from "../../../shared/components/ui/basics/titulo";
-import Text        from "../../../shared/components/ui/basics/texto";
-import { Base }    from "../../../shared/components/layout";
-import { colores } from "../../../shared/components/ui/basics/colores";
-import { cantAgar } from "../../crear-medio/types/inoculos.type";
+import Titulo from "../../../shared/components/ui/basics/Titulo";
+import Text from "../../../shared/components/ui/basics/Texto";
+import { Base } from "../../../shared/components/layout";
+import { colores } from "../../../shared/components/ui/basics/Colores";
+import { cantAgar } from "../../../shared/crear-inoculos/types/inoculos.types";
 
 const TIPO_CREACION = "agar";
 
 const FormAgar = () => {
   const navigate = useNavigate();
 
-  const [especie,  setEspecie]  = useState("");
-  const [inoculo,  setInoculo]  = useState("");
+  const [especie, setEspecie] = useState("");
+  const [inoculo, setInoculo] = useState("");
   const [cantidad, setCantidad] = useState(1);
   const hoy = new Date();
   const [fecha, setFecha] = useState({
-    day:   String(hoy.getDate()).padStart(2, "0"),
+    day: String(hoy.getDate()).padStart(2, "0"),
     month: String(hoy.getMonth() + 1).padStart(2, "0"),
-    year:  String(hoy.getFullYear()),
+    year: String(hoy.getFullYear()),
   });
   const [nota, setNota] = useState("");
 
   const [registrando, setRegistrando] = useState(false);
   const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
 
-  const { especies,  loading: loadingEspecies,  error: errorEspecies  } = useEspecies();
+  const { especies, loading: loadingEspecies, error: errorEspecies } = useEspecies();
   const { opciones: inoculos, loading: loadingInoculos, error: errorInoculos } = useInoculo(especie, TIPO_CREACION);
   const { categorias, loading: loadingCategorias } = useCategorias();
 
   const inoculoSeleccionado = (inoculos ?? []).find((ino) => ino.codigo === inoculo);
-  const tipoInoculo         = normalizarTipoInoculo(inoculoSeleccionado?.raw?.tipo);
-  const inoculoDisponible   = inoculoSeleccionado?.raw?.cantidad_disponible ?? 0;
-  const codigoInoculo       = inoculoSeleccionado?.codigo ?? "";
+  const tipoInoculo = normalizarTipoInoculo(inoculoSeleccionado?.raw?.tipo);
+  const inoculoDisponible = inoculoSeleccionado?.raw?.cantidad_disponible ?? 0;
+  const codigoInoculo = inoculoSeleccionado?.codigo ?? "";
 
   const {
     items: itemsComposicion,
@@ -80,7 +82,7 @@ const FormAgar = () => {
   const codigos = useMemo(() => {
     if (loadingCategorias) return { base: "", lista: [] };
     return generarCodigos({
-      tipoCreacion:  TIPO_CREACION,
+      tipoCreacion: TIPO_CREACION,
       tipoInoculo,
       nombreEspecie: especie,
       categorias,
@@ -94,9 +96,9 @@ const FormAgar = () => {
     setInoculo("");
     setCantidad(1);
     setFecha({
-      day:   String(hoy.getDate()).padStart(2, "0"),
+      day: String(hoy.getDate()).padStart(2, "0"),
       month: String(hoy.getMonth() + 1).padStart(2, "0"),
-      year:  String(hoy.getFullYear()),
+      year: String(hoy.getFullYear()),
     });
     setNota("");
   };
@@ -106,7 +108,7 @@ const FormAgar = () => {
     try {
       const datos = crearInoculoDTO({
         codigo: codigos.base,
-        tipo:   TIPO_CREACION,
+        tipo: TIPO_CREACION,
         especie,
         fecha,
         cantidadFinal: cantAgar.agar,
@@ -123,7 +125,7 @@ const FormAgar = () => {
         state: {
           alerta: {
             variante: "exito",
-            mensaje:  `Registro con éxito de: ${codigos.base}`,
+            mensaje: `Registro con éxito de: ${codigos.base}`,
           },
         },
       });
@@ -202,7 +204,7 @@ const FormAgar = () => {
               </div>
             </div>
 
-            <ResumenSemilla
+            <Resumen
               especie={especie}
               codigoInoculo={codigoInoculo}
               composicion={itemsComposicion}

@@ -12,8 +12,6 @@ router.get('/', controller.get_login);
 //Acceder como usuario y verificar su rol
 router.get('/usuario', auth, verificarRol(true), controller.get_usuario);
 
-//RBAC
-router.get('/first', controller.get_first);
 //Hashing de contraseñas
 router.post('/hash', controller.post_hash);
 router.post('/compare', controller.post_comparacion);
