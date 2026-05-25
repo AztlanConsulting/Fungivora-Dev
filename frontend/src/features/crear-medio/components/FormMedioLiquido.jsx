@@ -70,7 +70,7 @@ const FormMedioLiquido = () => {
     valores: valoresComposicion,
     tieneErrores: tieneErroresComposicion,
     loading: loadingInsumos,
-  } = useIngredientesMedioLiquido({ carbohidrato, inoculoDisponible, tipoInoculo });
+  } = useIngredientesMedioLiquido({ carbohidrato, inoculoDisponible, tipoInoculo, codigoInoculo });
 
   // Cantidad de inóculo padre a usar (parseada — acepta coma decimal)
   const cantInoculo = parseFloat(String(valoresComposicion?.cantInoculo ?? "").replace(",", ".")) || 0;

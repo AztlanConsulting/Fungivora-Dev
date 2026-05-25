@@ -35,6 +35,7 @@ const useIngredientesMedioLiquido = ({
   carbohidrato = "",
   inoculoDisponible = 0,
   tipoInoculo = null,
+  codigoInoculo = "",
 }) => {
   const [insumos, setInsumos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -123,7 +124,7 @@ const useIngredientesMedioLiquido = ({
     {
       id: null,
       tipo: "inoculo",
-      nombre: "Inóculo",
+      nombre: codigoInoculo || "Inóculo",
       unidad: "ml",
       value: cantInoculo,
       onChange: (e) => setCantInoculo(e.target.value),
