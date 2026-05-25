@@ -1,13 +1,15 @@
 import React from 'react'
-import { render, screen} from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import { Inventario } from '../../../pages'
 
-// Mock del hook
 vi.mock('../../../features/inventario/hooks/useInsumos')
 import useInsumos from '../../../features/inventario/hooks/useInsumos'
 
+vi.mock('../../../features/inventario/components/FormularioInsumo', () => ({
+    default: () => <div data-testid="formulario-insumo" />
+}))
 
 const unidadesMock = [
   { id: 1, opcion: 'ml' },

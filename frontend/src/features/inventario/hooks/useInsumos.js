@@ -13,11 +13,7 @@ const useInsumos = () => {
             try {
                 const response = await api.get('/inventario/unidades');
                 const unidadesData = Array.isArray(response) ? response : (response?.data || []);
-                if (Array.isArray(unidadesData)) {
-                    setUnidades(unidadesData);
-                } else {
-                    setUnidades([]);
-                }
+                setUnidades(Array.isArray(unidadesData) ? unidadesData : []);
             } catch (err) {
                 console.error("Error cargando unidades:", err);
                 setUnidades([]); 
@@ -26,7 +22,6 @@ const useInsumos = () => {
         cargarUnidades();
     }, []);
 
-    // Recuperar los insumos
     const fetchInsumos = async () => {
         setLoading(true);
         try {
@@ -40,23 +35,8 @@ const useInsumos = () => {
         }
     };
 
-    // Cargar insumos al montar
     useEffect(() => {
         fetchInsumos();
-    }, []);
-
-    // Cargar unidades al montar (con token via api.js)
-    useEffect(() => {
-        const cargarUnidades = async () => {
-            try {
-                const data = await api.get('/inventario/unidades');
-                setUnidades(Array.isArray(data) ? data : []);
-            } catch (err) {
-                console.error("Error cargando unidades", err);
-                setUnidades([]);
-            }
-        };
-        cargarUnidades();
     }, []);
 
     const addInsumo = async (nuevoInsumo) => {

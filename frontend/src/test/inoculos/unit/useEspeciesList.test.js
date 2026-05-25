@@ -6,6 +6,13 @@ import useEspeciesList from '../../../features/inoculos/hooks/useEspeciesList'
 vi.mock('../../../features/inoculos/services/inoculo.service')
 import inoculoService from '../../../features/inoculos/services/inoculo.service'
 
+vi.mock('../../../shared/utils/traducirError', () => ({
+    traducirError: vi.fn((err) => ({
+        variante: 'error',
+        mensaje: err?.message || 'Error desconocido',
+    })),
+}))
+
 // Por simplicidad, usamos las abreviaciones
 const especiesMock = [
     { opcion: 'HE' },

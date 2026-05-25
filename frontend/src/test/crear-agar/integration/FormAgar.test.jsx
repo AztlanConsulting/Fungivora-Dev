@@ -3,24 +3,28 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
-import FormMedioLiquido from '../../../features/crear-medio/components/FormMedioLiquido'
-import useEspecies from '../../../features/inoculos/hooks/useEspecies'
-import useInoculo from '../../../shared/crear-inoculos/hooks/useInoculo'
-import useCategorias from '../../../shared/crear-inoculos/hooks/useCategorias'
-import useIngredientesMedioLiquido from '../../../features/crear-medio/hooks/useIngredientesMedioLiquido'
-import insumosService from '../../../shared/crear-inoculos/services/inoculos.service'
+import FormAgar from '../../../features/crear-agar/components/FormAgar'
 
+// Mocks de hooks 
 vi.mock('../../../features/inoculos/hooks/useEspecies')
 vi.mock('../../../shared/crear-inoculos/hooks/useInoculo')
 vi.mock('../../../shared/crear-inoculos/hooks/useCategorias')
-vi.mock('../../../features/crear-medio/hooks/useIngredientesMedioLiquido')
+vi.mock('../../../features/crear-agar/hooks/useIngredientesAgar')
 
+import useEspecies from '../../../features/inoculos/hooks/useEspecies'
+import useInoculo from '../../../shared/crear-inoculos/hooks/useInoculo'
+import useCategorias from '../../../shared/crear-inoculos/hooks/useCategorias'
+import useIngredientesAgar from '../../../features/crear-agar/hooks/useIngredientesAgar'
+import insumosService from '../../../shared/crear-inoculos/services/inoculos.service'
+
+// Mock del servicio
 vi.mock('../../../shared/crear-inoculos/services/inoculos.service', () => ({
     default: { postInoculo: vi.fn() },
 }))
 
+// Mocks de utilidades 
 vi.mock('../../../shared/crear-inoculos/utils/generarCodigoInoculo', () => ({
-    generarCodigos: vi.fn(() => ({ base: 'ML-SH-200526', lista: ['ML-SH-200526'] })),
+    generarCodigos: vi.fn(() => ({ base: 'AG-SH-240526', lista: ['AG-SH-240526'] })),
     normalizarTipoInoculo: vi.fn(() => 'agar'),
 }))
 
@@ -35,6 +39,7 @@ vi.mock('../../../shared/utils/traducirError', () => ({
     })),
 }))
 
+// Mocks de componentes
 vi.mock('../../../shared/crear-inoculos/components/SeleccionarCantidades', () => ({
     EntradaLista: () => <div data-testid="entrada-lista" />,
 }))
@@ -61,7 +66,7 @@ vi.mock('../../../shared/components/ui/inputs/SeleccionarTexto', () => ({
 
 vi.mock('../../../shared/components/ui/inputs/InputCantidad', () => ({
     default: ({ value, onChange }) => (
-        <input type="number" value={value} onChange={(e) => onChange(Number(e.target.value))} />
+        <input type="number" data-testid="input-cantidad" value={value} onChange={(e) => onChange(Number(e.target.value))} />
     ),
 }))
 
@@ -81,6 +86,10 @@ vi.mock('../../../shared/components/ui/buttons/Botones', () => ({
             {children}
         </button>
     ),
+}))
+
+vi.mock('../../../shared/components/ui/basics/Titulo', () => ({
+    default: ({ children }) => <h1>{children}</h1>,
 }))
 
 vi.mock('../../../shared/components/ui/basics/Texto', () => ({
@@ -108,9 +117,9 @@ const setupHooks = () => {
     })
     useInoculo.mockReturnValue({
         opciones: [{
-            codigo: 'ML-001',
-            label: 'ML-001 — Medio Líquido (100 ml)',
-            raw: { tipo: 'Medio Líquido', cantidad_disponible: 100, id_inoculo: 42 },
+            codigo: 'AG-001',
+            label: 'AG-001 — Agar (100 ml)',
+            raw: { tipo: 'Agar', cantidad_disponible: 100, id_inoculo: 15 },
         }],
         loading: false, error: null,
     })
@@ -120,9 +129,9 @@ const setupHooks = () => {
         ],
         loading: false,
     })
-    useIngredientesMedioLiquido.mockReturnValue({
+    useIngredientesAgar.mockReturnValue({
         items: [],
-        valores: { cantInoculo: '1' },
+        valores: { cantInoculo: '5' }, 
         loading: false,
     })
 }
@@ -135,25 +144,25 @@ beforeEach(() => {
 const renderForm = () =>
     render(
         <MemoryRouter>
-            <FormMedioLiquido />
+            <FormAgar />
         </MemoryRouter>
     )
 
 const completarForm = async (user) => {
-    const [especie, inoculo, carbohidrato] = screen.getAllByRole('combobox')
+    const [especie, inoculo] = screen.getAllByRole('combobox')
     await user.selectOptions(especie, 'Shiitake')
-    await user.selectOptions(inoculo, 'ML-001')
-    await user.selectOptions(carbohidrato, 'miel')
+    await user.selectOptions(inoculo, 'AG-001')
 }
 
-describe('FormMedioLiquido', () => {
-    it('renderiza los 3 selectores y el botón Registrar', () => {
+describe('FormAgar', () => {
+    it('renderiza el título, los selectores requeridos y el botón Registrar', () => {
         renderForm()
-        expect(screen.getAllByRole('combobox')).toHaveLength(3)
+        expect(screen.getByRole('heading', { name: /crear agar/i })).toBeInTheDocument()
+        expect(screen.getAllByRole('combobox')).toHaveLength(2) 
         expect(screen.getByTestId('btn-registrar')).toBeInTheDocument()
     })
 
-    it('Registrar arranca deshabilitado y se habilita al completar los campos requeridos', async () => {
+    it('el botón Registrar arranca deshabilitado y se habilita al seleccionar especie e inóculo', async () => {
         const user = userEvent.setup()
         renderForm()
 
@@ -164,7 +173,21 @@ describe('FormMedioLiquido', () => {
         expect(screen.getByTestId('btn-registrar')).not.toBeDisabled()
     })
 
-    it('postea y navega a /inoculos con alerta de éxito tras un submit válido', async () => {
+    it('deshabilita el botón Registrar si la cantidad de inóculo calculada es menor o igual a cero', async () => {
+        const user = userEvent.setup()
+        useIngredientesAgar.mockReturnValue({
+            items: [],
+            valores: { cantInoculo: '0' },
+            loading: false,
+        })
+        
+        renderForm()
+        await completarForm(user)
+
+        expect(screen.getByTestId('btn-registrar')).toBeDisabled()
+    })
+
+    it('postea los datos transformados por el DTO y navega a /inoculos con la alerta de éxito tras registrar', async () => {
         insumosService.postInoculo.mockResolvedValue({ success: true })
         const user = userEvent.setup()
         renderForm()
@@ -178,15 +201,18 @@ describe('FormMedioLiquido', () => {
                 '/inoculos',
                 expect.objectContaining({
                     state: expect.objectContaining({
-                        alerta: expect.objectContaining({ variante: 'exito' }),
+                        alerta: expect.objectContaining({ 
+                            variante: 'exito',
+                            mensaje: expect.stringContaining('AG-SH-240526')
+                        }),
                     }),
                 })
             )
         })
     })
 
-    it('muestra ModalAlerta de error cuando el POST falla', async () => {
-        insumosService.postInoculo.mockRejectedValue(new Error('STOCK_INSUFICIENTE'))
+    it('muestra el ModalAlerta de error cuando la petición POST falla', async () => {
+        insumosService.postInoculo.mockRejectedValue(new Error('ERROR_DE_ALMACENAMIENTO'))
         const user = userEvent.setup()
         renderForm()
 
@@ -195,6 +221,7 @@ describe('FormMedioLiquido', () => {
 
         await waitFor(() => {
             expect(screen.getByTestId('alerta-error')).toBeInTheDocument()
+            expect(screen.getByText('ERROR_DE_ALMACENAMIENTO')).toBeInTheDocument()
         })
     })
 })
