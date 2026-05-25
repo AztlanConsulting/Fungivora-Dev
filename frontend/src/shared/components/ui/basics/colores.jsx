@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 export const colores = {
   blanco: "#fff",
   azul: "#3b3fb6",

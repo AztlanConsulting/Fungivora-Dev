@@ -51,7 +51,9 @@ const ModalAlerta = ({
     useEffect(() => {
         if (!visible) return undefined;
 
-        setSaliendo(false);
+        const reset = requestAnimationFrame(() => {
+            setSaliendo(false);
+        });
 
         const timerSalida = setTimeout(
             () => setSaliendo(true),
@@ -63,6 +65,7 @@ const ModalAlerta = ({
         );
 
         return () => {
+            cancelAnimationFrame(reset);
             clearTimeout(timerSalida);
             clearTimeout(timerClose);
         };

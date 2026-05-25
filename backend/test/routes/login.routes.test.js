@@ -1,12 +1,13 @@
 const request = require('supertest');
-const app = require('../../app'); 
+const app = require('../../app');
 const Usuario = require('../../models/usuario.model');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const jwtUtils = require('../../util/jwtUtils');
+//const jwtUtils = require('../../util/jwtUtils');
 
 // Mocks de los modelos
 jest.mock('../../models/usuario.model');
+/* Not used yet
 jest.mock('../../util/jwtUtils', () => {
     const originalModule = jest.requireActual('../../util/jwtUtils');
     const cltSecret = process.env.APP_ACCESS_KEY || "test_secret_key";
@@ -16,6 +17,7 @@ jest.mock('../../util/jwtUtils', () => {
         generarRefreshToken: (payload) => require('jsonwebtoken').sign({ id: payload.id }, cltSecret, { expiresIn: '24h' })
     };
 });
+*/
 
 // Mock de métricas 
 jest.mock('../../config/metrics', () => ({
@@ -57,7 +59,7 @@ describe('Auth Routes — /api/login', () => {
                 is_user_admin: 0
             };
 
-            Object.assign(mockUser, { 0: mockUser }); 
+            Object.assign(mockUser, { 0: mockUser });
             Usuario.fetch_one.mockResolvedValue(mockUser);
 
             const res = await request(app)
@@ -107,7 +109,7 @@ describe('Auth Routes — /api/login', () => {
             const res = await request(app)
                 .get('/api/login/usuario')
                 .set('authorization', `Bearer ${tokenValido}`);
-            
+
             expect(res.statusCode).toBe(200);
             expect(res.body.msg).toBe('Acceso autorizado');
         });

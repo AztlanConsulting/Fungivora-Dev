@@ -78,12 +78,12 @@ exports.post_bloques = async (req, res) => {
             const nuevoBloque = {
                 id_bloque: crypto.randomUUID(),
                 id_lote: id_lote,
-                produccion: produccion, 
+                produccion: produccion,
                 peso_gr: peso_gr || 0,
                 contaminado: 0, // por default 0 - no esta contaminado
                 contenedor: contenedor
             };
-            
+
             bloquesGenerados.push(nuevoBloque.id_bloque);
             data.push(Bloque.crear_bloque(nuevoBloque));
         }
@@ -110,7 +110,7 @@ exports.get_contenedores = async (req, res) => {
     try {
         const [contenedores] = await Categoria.fetchOpciones('Contenedor', false);
         res.status(200).json(contenedores);
-    } catch (error) {
+    } catch {
         res.status(500).json({ success: false, error: 'Error al obtener contenedores' });
     }
 };

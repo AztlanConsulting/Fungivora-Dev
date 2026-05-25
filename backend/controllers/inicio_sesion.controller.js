@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const _jwt = require('jsonwebtoken');
 const Usuario = require('../models/usuario.model');
 
 exports.get_login = (req, res) => {
@@ -64,7 +64,7 @@ Metodo que toma la contraseña guardada por el cuadro de texto
 @param contrasena, contrasena_hasheada
 */
 let contrasena_hasheada = null;
-exports.post_hash = async (request, response, next) => {
+exports.post_hash = async (request, response, _next) => {
     try {
         const { contrasena } = request.body;
 
@@ -87,7 +87,7 @@ Metodo que toma la contraseña guardada y la
 compara con la que esta en el cuadro de texto
 @param contrasena, contrasena_hasheada
 */
-exports.post_comparacion = async (request, response, next) => {
+exports.post_comparacion = async (request, response, _next) => {
     try {
         const { contrasena } = request.body;
 
@@ -96,6 +96,8 @@ exports.post_comparacion = async (request, response, next) => {
         }
 
         const result = await bcrypt.compare(contrasena, contrasena_hasheada);
+
+        if (!result) return response.status(401).json({ error: "Contraseña incorrecta" })
 
     } catch (error) {
         console.error(error);

@@ -18,10 +18,18 @@ import ModalAlerta from '../../../shared/components/ui/popups/ModalAlerta';
 const BibliotecaView = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const [alerta, setAlerta] = useState({
-        visible: false,
-        variante: "exito",
-        mensaje: "",
+    const [alerta, setAlerta] = useState(() => {
+        if (location.state?.alerta) {
+            return {
+                ...location.state.alerta,
+                visible: true,
+            };
+        }
+        return {
+            visible: false,
+            variante: "exito",
+            mensaje: "",
+        };
     });
     const { especies, loading, error } = useEspeciesList();
     const [modalVisible, setModalVisible] = useState(false);
@@ -29,7 +37,6 @@ const BibliotecaView = () => {
     useEffect(() => {
         if (!location.state?.alerta) return;
 
-        setAlerta({ ...location.state.alerta, visible: true });
         // Limpiar el state del history para que back/forward no reabra la alerta.
         navigate(location.pathname + location.search, {
             replace: true,

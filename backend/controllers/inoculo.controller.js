@@ -1,7 +1,7 @@
 // backend/controllers/inoculo.controller.js
 const Inoculo = require('../models/inoculo.model');
 
-exports.get_especies = async (req, res, next) => {
+exports.get_especies = async (req, res, _next) => {
     try {
         const [especies] = await Inoculo.fetchEspecies();
         res.status(200).json({ success: true, data: especies });
@@ -11,7 +11,7 @@ exports.get_especies = async (req, res, next) => {
     }
 };
 
-exports.get_inoculos_filtrados = async (req, res, next) => {
+exports.get_inoculos_filtrados = async (req, res, _next) => {
     try {
         const especie = req.query.especie || 'Shiitake';
         const tipo = req.query.tipo || 'Agar';
@@ -23,7 +23,7 @@ exports.get_inoculos_filtrados = async (req, res, next) => {
     }
 };
 
-exports.get_inoculos = async (req, res, next) => {
+exports.get_inoculos = async (req, res, _next) => {
     try {
         const [inoculos] = await Inoculo.fetchInoculos();
         res.status(200).json({ success: true, data: inoculos });
@@ -33,7 +33,7 @@ exports.get_inoculos = async (req, res, next) => {
     }
 };
 
-exports.get_cantidad_ingredientes = async (req, res, next) => {
+exports.get_cantidad_ingredientes = async (req, res, _next) => {
     try {
         const [cantidad] = await Inoculo.fetchCantidadIngredientes();
         res.status(200).json({ success: true, data: cantidad });
@@ -46,7 +46,7 @@ exports.get_cantidad_ingredientes = async (req, res, next) => {
 /** Obtiene los inóculos disponibles para ser usados como inóculo madre
  *  en la preparación de semillas (tipo Agar o Medio Líquido con stock > 0).
  */
-exports.get_inoculos_para_semilla = async (req, res, next) => {
+exports.get_inoculos_para_semilla = async (req, res, _next) => {
     try {
         const [inoculos] = await Inoculo.fetchInoculosParaSemilla();
         res.status(200).json({ success: true, data: inoculos });
@@ -63,15 +63,15 @@ exports.get_inoculos_para_semilla = async (req, res, next) => {
 exports.post_crear_inoculo = async (req, res, next) => {
     const {
         codigo_fungivora,
-        tipo, 
-        especie, 
+        tipo,
+        especie,
         fecha,
-        cantidad_disponible, 
-        unidad, 
+        cantidad_disponible,
+        unidad,
         num_repeticiones,
-        nota, 
+        nota,
         stock_recomendado,
-        inoculo_usado, 
+        inoculo_usado,
         ingredientes
     } = req.body;
 
@@ -81,7 +81,7 @@ exports.post_crear_inoculo = async (req, res, next) => {
 
     try {
         for (let i = 1; i <= num_repeticiones && i <= 15; i++) {
-            const codigo_actual = i > 1 ? `${codigo_fungivora}-${i}` :  `${codigo_fungivora}-${"1"}`;
+            const codigo_actual = i > 1 ? `${codigo_fungivora}-${i}` : `${codigo_fungivora}-${"1"}`;
 
             const inoculoId = await Inoculo.insertInoculo({
                 id_inoculo_usado: inoculo_usado.id,
@@ -110,9 +110,9 @@ exports.post_crear_inoculo = async (req, res, next) => {
                 }, connection);
             }
 
-            await Inoculo.updateInoculo({ 
-                cantidad_disponible: inoculo_usado.cantidad, 
-                id: inoculo_usado.id 
+            await Inoculo.updateInoculo({
+                cantidad_disponible: inoculo_usado.cantidad,
+                id: inoculo_usado.id
             }, connection);
 
             for (const ingrediente of ingredientes) {
