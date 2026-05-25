@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
     CheckmarkCircle02Icon,
@@ -32,6 +32,7 @@ const VARIANTES = {
 };
 
 const AUTO_DISMISS_MS = 6000;
+const ANIMACION_SALIDA_MS = 300;
 
 const ModalAlerta = ({
     visible,
@@ -42,24 +43,34 @@ const ModalAlerta = ({
     const [saliendo, setSaliendo] = useState(false);
     const config = VARIANTES[variante] ?? VARIANTES.exito;
 
+    const onCloseRef = useRef(onClose);
     useEffect(() => {
-        if (!visible) return;
+        onCloseRef.current = onClose;
+    }, [onClose]);
 
-        const timerSalida = setTimeout(() => setSaliendo(true), AUTO_DISMISS_MS);
-        const timerClose = setTimeout(() => {
-            onClose?.();
-        }, AUTO_DISMISS_MS + 300);
+    useEffect(() => {
+        if (!visible) return undefined;
+
+        setSaliendo(false);
+
+        const timerSalida = setTimeout(
+            () => setSaliendo(true),
+            AUTO_DISMISS_MS
+        );
+        const timerClose = setTimeout(
+            () => onCloseRef.current?.(),
+            AUTO_DISMISS_MS + ANIMACION_SALIDA_MS
+        );
 
         return () => {
             clearTimeout(timerSalida);
             clearTimeout(timerClose);
-            setSaliendo(false);
         };
-    }, [visible, onClose]);
+    }, [visible]);
 
     const handleClose = () => {
         setSaliendo(true);
-        setTimeout(() => onClose?.(), 300);
+        setTimeout(() => onCloseRef.current?.(), ANIMACION_SALIDA_MS);
     };
 
     if (!visible) return null;
