@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Titulo, Text } from '../../../shared/components/ui';
 import { colores } from '../../../shared/components/ui/basics/Colores';
@@ -17,15 +17,25 @@ import ModalAlerta from '../../../shared/components/ui/popups/ModalAlerta';
  */
 const BibliotecaView = () => {
     const location = useLocation();
-    const [alerta, setAlerta] = useState(
-        location.state?.alerta
-            ? { ...location.state.alerta, visible: true }
-            : { visible: false, variante: "exito", mensaje: "" }
-    );
+    const navigate = useNavigate();
+    const [alerta, setAlerta] = useState({
+        visible: false,
+        variante: "exito",
+        mensaje: "",
+    });
     const { especies, loading, error } = useEspeciesList();
     const [modalVisible, setModalVisible] = useState(false);
 
-    const navigate = useNavigate();
+    useEffect(() => {
+        if (!location.state?.alerta) return;
+
+        setAlerta({ ...location.state.alerta, visible: true });
+        // Limpiar el state del history para que back/forward no reabra la alerta.
+        navigate(location.pathname + location.search, {
+            replace: true,
+            state: null,
+        });
+    }, [location.state, location.pathname, location.search, navigate]);
 
     const RUTAS_TIPO = {
         'Agar': '/inoculos/crear/agar',
