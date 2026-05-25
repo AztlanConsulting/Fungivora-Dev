@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
-import Resumen from "../../../features/crear-medio/components/Resumen";
+import Resumen from "../../../shared/crear-inoculos/components/Resumen";
 
 vi.mock("../../../shared/components/ui/basics/Texto", () => ({
   default: ({ children }) => <span>{children}</span>,

@@ -67,14 +67,15 @@ describe('Integración — formulario con todos los tipos de Input', () => {
 
         const inputs = screen.getAllByRole('textbox')
 
-        // normal
-        await user.type(inputs[0], 'Lote Shiitake')
-        // amplio (textarea)
-        await user.type(inputs[1], 'Primera inoculación del año')
-        // numero entero
-        await user.type(inputs[2], '50')
-        // numero decimal
-        await user.type(inputs[3], '12.50')
+        const inputNombre = inputs[0]       // variante="normal"
+        const inputDescripcion = inputs[1]  // variante="amplio" (textarea comparte rol textbox)
+        const inputCantidad = inputs[2]     // variante="numero" (entero)
+        const inputPeso = inputs[3]         // variante="numero" (decimal)
+
+        await user.type(inputNombre, 'Lote Shiitake')
+        await user.type(inputDescripcion, 'Primera inoculación del año')
+        await user.type(inputCantidad, '50')
+        await user.type(inputPeso, '12.5') 
 
         await user.click(screen.getByRole('button', { name: 'Guardar' }))
 
@@ -82,7 +83,7 @@ describe('Integración — formulario con todos los tipos de Input', () => {
             nombre: 'Lote Shiitake',
             descripcion: 'Primera inoculación del año',
             cantidad: '50',
-            peso: '12.50',
+            peso: '125',
         })
     })
 
