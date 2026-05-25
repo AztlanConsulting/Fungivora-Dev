@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import insumosService from "../../../shared/crear-inoculos/services/inoculos.service";
 import { cantAgar, TAMANOS_COMPOSICION } from "../../../shared/crear-inoculos/types/inoculos.types";
+import { validarStockComposicion } from "../../../shared/crear-inoculos/utils/validarStockComposicion";
 
 const normalizarUnidad = (unidad = "") => {
   const u = (unidad || "").toLowerCase();
@@ -18,7 +19,8 @@ const normalizarUnidad = (unidad = "") => {
 const useIngredientesAgar = ({
   inoculoDisponible = 0,
   codigoInoculo = "",
-  tipoInoculo = null
+  tipoInoculo = null,
+  cantidad = 1,
 }) => {
   const [insumos, setInsumos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -129,9 +131,12 @@ const useIngredientesAgar = ({
     },
   ];
 
+  const { items: itemsValidados, tieneErrores } = validarStockComposicion(items, cantidad);
+
   return {
-    items,
+    items: itemsValidados,
     valores: { agua, agaragar, peptona, extracto, cantInoculo },
+    tieneErrores,
     loading,
     error,
   };

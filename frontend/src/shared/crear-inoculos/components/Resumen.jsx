@@ -16,9 +16,11 @@ const Resumen = ({
   composicion = [],
   codigos = [],
   cantidad = 1,
+  children,
 }) => {
   const codigoUnico = codigos.length === 1 ? codigos[0] : null;
   const varioscodigos = codigos.length > 1 ? codigos : null;
+  const mostrarRango = varioscodigos && varioscodigos.length > 3;
 
 
   const estiloEtiqueta = { color: colores.negro, fontWeight: 500 };
@@ -43,7 +45,7 @@ const Resumen = ({
           </Text>
         )}
 
-        {varioscodigos && (
+        {varioscodigos && !mostrarRango && (
           <div className="flex flex-col gap-1.5 mt-1">
             {varioscodigos.map((codigo, i) => (
               <div key={i} className="flex items-center gap-2">
@@ -70,6 +72,70 @@ const Resumen = ({
                 </Text>
               </div>
             ))}
+          </div>
+        )}
+
+        {mostrarRango && (
+          <div className="flex flex-col mt-1">
+            <div className="flex items-center gap-2">
+              <Text
+                variante="body"
+                as="span"
+                style={{
+                  backgroundColor: colores.azul + "1A",
+                  color: colores.azul,
+                  fontWeight: 600,
+                  borderRadius: "9999px",
+                  minWidth: "22px",
+                  height: "22px",
+                  padding: "0 6px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                1
+              </Text>
+              <Text variante="body" as="span" style={{ color: colores.gris, fontFamily: "monospace" }}>
+                {varioscodigos[0]}
+              </Text>
+            </div>
+
+            <div
+              className="my-1"
+              style={{
+                width: "2px",
+                height: "16px",
+                backgroundColor: colores.azul + "40",
+                marginLeft: "10px",
+              }}
+            />
+
+            <div className="flex items-center gap-2">
+              <Text
+                variante="body"
+                as="span"
+                style={{
+                  backgroundColor: colores.azul + "1A",
+                  color: colores.azul,
+                  fontWeight: 600,
+                  borderRadius: "9999px",
+                  minWidth: "22px",
+                  height: "22px",
+                  padding: "0 6px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                {varioscodigos.length}
+              </Text>
+              <Text variante="body" as="span" style={{ color: colores.gris, fontFamily: "monospace" }}>
+                {varioscodigos[varioscodigos.length - 1]}
+              </Text>
+            </div>
           </div>
         )}
 
@@ -100,9 +166,10 @@ const Resumen = ({
         <Text variante="label" style={estiloEtiqueta}>Composición</Text>
 
         {composicion.map((item, index) => {
-          const valorNum = parseFloat(String(item.value).replace(",", ".")) || 0;
-          const total = +(valorNum * cantidad).toFixed(2);
+          const valorNum = parseFloat(String(item.value).replace(/,/g, "")) || 0;
+          const total = item.total ?? +(valorNum * cantidad).toFixed(2);
           const hayValor = valorNum > 0;
+          const excede = !!item.excedeTotal;
 
           return (
             <div key={index} className="flex flex-col gap-0.5">
@@ -130,17 +197,34 @@ const Resumen = ({
                   variante="body"
                   as="span"
                   style={{
-                    color: hayValor ? colores.negro : colores.grisClaro,
+                    color: excede ? "red" : (hayValor ? colores.negro : colores.grisClaro),
                     fontWeight: hayValor ? 500 : 400,
                   }}
                 >
                   {hayValor ? total : "0"} {item.unidad}
                 </Text>
               </div>
+
+              {excede && (
+                <div className="pl-2">
+                  <span style={{ color: "red", fontSize: "10px", fontWeight: 600 }}>
+                    {item.mensajeErrorTotal}
+                  </span>
+                </div>
+              )}
             </div>
           );
         })}
       </div>
+
+      {children && (
+        <>
+          <div className="w-full h-[1px]" style={{ backgroundColor: colores.grisClaro }} />
+          <div className="flex flex-col items-center gap-2">
+            {children}
+          </div>
+        </>
+      )}
     </div>
   );
 };

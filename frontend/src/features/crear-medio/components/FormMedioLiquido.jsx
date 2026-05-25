@@ -68,6 +68,7 @@ const FormMedioLiquido = () => {
   const {
     items: itemsComposicion,
     valores: valoresComposicion,
+    tieneErrores: tieneErroresComposicion,
     loading: loadingInsumos,
   } = useIngredientesMedioLiquido({ carbohidrato, inoculoDisponible, tipoInoculo });
 
@@ -97,6 +98,14 @@ const FormMedioLiquido = () => {
   }, [tipoInoculo, especie, categorias, fecha, loadingCategorias]);
 
   const handleRegistrar = async () => {
+    if (tieneErroresComposicion) {
+      setAlerta({
+        visible: true,
+        variante: "error",
+        mensaje: "Algún ingrediente excede el stock disponible. Revisa la composición.",
+      });
+      return;
+    }
     setRegistrando(true);
     try {
       const datos = crearInoculoDTO({
@@ -203,21 +212,19 @@ const FormMedioLiquido = () => {
               codigoInoculo={codigoInoculo}
               composicion={itemsComposicion}
               codigos={codigos.lista}
-            />
-
-          </div>
-
-          <div className="flex justify-end gap-4 pb-8">
-            <Button variant="cancelar" isOutline onClick={() => navigate(-1)}>
-              Cancelar
-            </Button>
-            <Button
-              variant="registrar"
-              onClick={handleRegistrar}
-              disabled={registrando || !inoculo || !carbohidrato || cantInoculo <= 0}
             >
-              {registrando ? "Registrando..." : "Registrar"}
-            </Button>
+              <Button
+                variant="registrar"
+                onClick={handleRegistrar}
+                disabled={registrando || !inoculo || !carbohidrato || cantInoculo <= 0 || tieneErroresComposicion}
+              >
+                {registrando ? "Registrando..." : "Registrar"}
+              </Button>
+              <Button variant="cancelar" isOutline onClick={() => navigate(-1)}>
+                Cancelar
+              </Button>
+            </Resumen>
+
           </div>
 
         </div>

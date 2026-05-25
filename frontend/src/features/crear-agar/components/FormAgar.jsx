@@ -62,8 +62,9 @@ const FormAgar = () => {
 
   const {
     items: itemsComposicion,
-    valores: valoresComposicion
-  } = useIngredientesAgar({ inoculoDisponible, codigoInoculo, tipoInoculo });
+    valores: valoresComposicion,
+    tieneErrores: tieneErroresComposicion,
+  } = useIngredientesAgar({ inoculoDisponible, codigoInoculo, tipoInoculo, cantidad });
 
   const cantInoculo = parseFloat(String(valoresComposicion?.cantInoculo ?? "").replace(",", ".")) || 0;
 
@@ -91,6 +92,14 @@ const FormAgar = () => {
   }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias]);
 
   const handleRegistrar = async () => {
+    if (tieneErroresComposicion) {
+      setAlerta({
+        visible: true,
+        variante: "error",
+        mensaje: "Algún ingrediente excede el stock disponible. Revisa la composición.",
+      });
+      return;
+    }
     setRegistrando(true);
     try {
       const datos = crearInoculoDTO({
@@ -167,7 +176,7 @@ const FormAgar = () => {
                 </div>
               </div>
 
-              <EntradaLista items={itemsComposicion} repeticiones={cantidad} />
+              <EntradaLista items={itemsComposicion} />
 
               <div className="bg-white rounded-[32px] shadow-sm border p-6 md:p-8 flex flex-col gap-6">
 
@@ -197,21 +206,19 @@ const FormAgar = () => {
               composicion={itemsComposicion}
               codigos={codigos.lista}
               cantidad={cantidad}
-            />
-
-          </div>
-
-          <div className="flex justify-end gap-4 pb-8">
-            <Button variant="cancelar" isOutline onClick={() => navigate(-1)}>
-              Cancelar
-            </Button>
-            <Button
-              variant="registrar"
-              onClick={handleRegistrar}
-              disabled={registrando || !inoculo || !cantidad || cantidad < 1 || cantInoculo <= 0}
             >
-              {registrando ? "Registrando ..." : "Registrar"}
-            </Button>
+              <Button
+                variant="registrar"
+                onClick={handleRegistrar}
+                disabled={registrando || !inoculo || !cantidad || cantidad < 1 || cantInoculo <= 0 || tieneErroresComposicion}
+              >
+                {registrando ? "Registrando ..." : "Registrar"}
+              </Button>
+              <Button variant="cancelar" isOutline onClick={() => navigate(-1)}>
+                Cancelar
+              </Button>
+            </Resumen>
+
           </div>
 
         </div>

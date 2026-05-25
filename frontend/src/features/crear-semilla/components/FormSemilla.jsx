@@ -71,6 +71,7 @@ const FormSemillas = () => {
     items: itemsComposicion,
     valores: valoresComposicion,
     opcionesMijo,
+    tieneErrores: tieneErroresComposicion,
     loading: loadingInsumos,
   } = useIngredientesSemilla({
     inoculoDisponible,
@@ -78,6 +79,7 @@ const FormSemillas = () => {
     codigoInoculo,
     tamano,
     tipoInoculo,
+    cantidad,
   });
 
   const opcionesEspecies = especies.map((esp) => ({
@@ -103,6 +105,14 @@ const FormSemillas = () => {
   }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias]);
 
   const handleRegistrar = async () => {
+    if (tieneErroresComposicion) {
+      setAlerta({
+        visible: true,
+        variante: "error",
+        mensaje: "Algún ingrediente excede el stock disponible. Revisa la composición.",
+      });
+      return;
+    }
     setRegistrando(true);
     try {
       const datos = crearInoculoDTO({
@@ -200,7 +210,7 @@ const FormSemillas = () => {
                 </div>
               </div>
 
-              <EntradaLista items={itemsComposicion} repeticiones={cantidad} />
+              <EntradaLista items={itemsComposicion} />
 
               <div className="bg-white rounded-[32px] shadow-sm border p-6 md:p-8 flex flex-col gap-6">
 
@@ -230,21 +240,19 @@ const FormSemillas = () => {
               composicion={itemsComposicion}
               codigos={codigos.lista}
               cantidad={cantidad}
-            />
-
-          </div>
-
-          <div className="flex justify-end gap-4 pb-8">
-            <Button variant="cancelar" isOutline onClick={() => navigate(-1)}>
-              Cancelar
-            </Button>
-            <Button
-              variant="registrar"
-              onClick={handleRegistrar}
-              disabled={registrando || !tamano}
             >
-              {registrando ? "Registrando..." : "Registrar"}
-            </Button>
+              <Button
+                variant="registrar"
+                onClick={handleRegistrar}
+                disabled={registrando || !tamano || tieneErroresComposicion}
+              >
+                {registrando ? "Registrando..." : "Registrar"}
+              </Button>
+              <Button variant="cancelar" isOutline onClick={() => navigate(-1)}>
+                Cancelar
+              </Button>
+            </Resumen>
+
           </div>
         </div>
       </Base>
