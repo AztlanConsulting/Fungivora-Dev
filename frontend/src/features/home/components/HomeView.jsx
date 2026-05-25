@@ -134,11 +134,13 @@ const PantallaPrincipalView = () => {
                                 <Text variante="subtitle" style={{ color: colores.azul, fontWeight: 700, fontSize: 20 }}>
                                     Resumen general
                                 </Text>
-                                <Text variante="small" style={{ color: colores.gris }}>
-                                    Actividad actual
-                                </Text>
                             </div>
-                            <div className="flex gap-3 flex-1">
+
+                            <Text variante="small" style={{ color: colores.gris }}>
+                                Actividad actual
+                            </Text>
+
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 flex-1">
                                 <MetricaCard valor={resumen.lotesActivos} label="Lotes activos" />
                                 <MetricaCard valor={resumen.bloquesNoContaminados} label="Bloques saludables" />
                                 <MetricaCard valor={resumen.bloquesContaminados} label="Bloques contaminados" />

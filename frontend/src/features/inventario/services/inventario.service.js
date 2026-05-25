@@ -1,26 +1,34 @@
+import api from "../../../shared/utils/api";
 
 const inventarioService = {
     getInsumos: async () => {
-        const res = await fetch("/api/inventario");
-        return await res.json();
+        try {
+            return await api.get("/inventario");
+        } catch (error) {
+            console.error("Error al obtener insumos:", error);
+            throw error;
+        }
     },
 
     crearInsumo: async (nuevoInsumo) => {
-        const res = await fetch("/api/inventario/crear-insumo", { 
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(nuevoInsumo),
-        });
-        return await res.json();
+        try {
+            return await api.post("/inventario/crear-insumo", nuevoInsumo);
+        } catch (error) {
+            console.error("Error al crear insumo:", error);
+            throw error;
+        }
     },
     
     actualizarInsumo: async (id_insumo, datos) => {
-        const res = await fetch("/api/inventario/update-cantidad", {
-            method: "POST", 
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id_insumo, cantidad: datos.cantidad }), 
-        });
-        return await res.json();
+        try {
+            return await api.post("/inventario/update-cantidad", { 
+                id_insumo, 
+                cantidad: datos.cantidad 
+            });
+        } catch (error) {
+            console.error("Error al actualizar insumo:", error);
+            throw error;
+        }
     },
 
     actualizarInoculo: async (id_inoculo, datos) => {

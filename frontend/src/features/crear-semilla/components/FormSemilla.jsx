@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import SelectField from "../../../shared/components/ui/inputs/SeleccionarTexto";
 import InputFecha from "../../../shared/components/ui/inputs/InputFecha";
@@ -119,7 +119,6 @@ const FormSemillas = () => {
         itemsComposicion,
       });
 
-      // En handleRegistrar — primero el navigate con state, sin setAlerta
       await insumosService.postInoculo(datos);
       navigate("/inoculos", {
         state: {

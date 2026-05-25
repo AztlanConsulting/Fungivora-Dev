@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import inventarioService from "../services/inventario.service";
+import api from "../../../shared/utils/api"; 
 
 const useInsumos = () => {
     const [insumos, setInsumos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [unidades, setUnidades] = useState([]);
+    const [unidades, setUnidades] = useState([]); 
 
     useEffect(() => {
         const cargarUnidades = async () => {
@@ -14,7 +15,7 @@ const useInsumos = () => {
                 const data = await response.json();
                 setUnidades(data);
             } catch (err) {
-                console.error("Error cargando unidades", err);
+                console.error("Error cargando unidades en el hook:", err);
             }
         };
         cargarUnidades();
@@ -27,7 +28,7 @@ const useInsumos = () => {
             const json = await inventarioService.getInsumos();
             if (json.success) setInsumos(json.data);
             else setError("No se pudieron cargar los insumos");
-        } catch (err) {
+        } catch {
             setError("Error de conexión");
         } finally {
             setLoading(false);
