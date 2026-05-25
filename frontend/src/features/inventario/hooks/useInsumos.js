@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import inventarioService from "../services/inventario.service";
-import api from "../../../shared/utils/api"; 
+import api from "../../../shared/utils/api";
 
 const useInsumos = () => {
     const [insumos, setInsumos] = useState([]);
@@ -11,15 +11,16 @@ const useInsumos = () => {
     useEffect(() => {
         const cargarUnidades = async () => {
             try {
-                const data = await api.get('/inventario/unidades'); 
-                
-                if (Array.isArray(data)) {
-                    setUnidades(data);
-                } else if (data && Array.isArray(data.data)) {
-                    setUnidades(data.data);
+                const response = await api.get('/inventario/unidades');
+                const unidadesData = Array.isArray(response) ? response : (response?.data || []);
+                if (Array.isArray(unidadesData)) {
+                    setUnidades(unidadesData);
+                } else {
+                    setUnidades([]);
                 }
             } catch (err) {
-                console.error("Error cargando unidades en el hook:", err);
+                console.error("Error cargando unidades:", err);
+                setUnidades([]); 
             }
         };
         cargarUnidades();
@@ -39,42 +40,56 @@ const useInsumos = () => {
         }
     };
 
+    // Cargar insumos al montar
     useEffect(() => {
         fetchInsumos();
     }, []);
 
-    // Agregar nuevo insumo
+    // Cargar unidades al montar (con token via api.js)
+    useEffect(() => {
+        const cargarUnidades = async () => {
+            try {
+                const data = await api.get('/inventario/unidades');
+                setUnidades(Array.isArray(data) ? data : []);
+            } catch (err) {
+                console.error("Error cargando unidades", err);
+                setUnidades([]);
+            }
+        };
+        cargarUnidades();
+    }, []);
+
     const addInsumo = async (nuevoInsumo) => {
         try {
             const res = await inventarioService.crearInsumo(nuevoInsumo);
             if (res.success) {
                 await fetchInsumos();
-                return true;
+                return { success: true };
             }
+            return { success: false, error: res.error || 'Error al crear el insumo' };
         } catch (err) {
             console.error("Error al crear:", err);
+            return { success: false, error: 'Error de conexión' };
         }
-        return false;
     };
 
-    // Actualizar cantidad 
-    const updateInsumo = async (id, datosActualizados) => {
+    const updateInsumo = async (id, datosActualizados, tipo = 'insumo') => {
         try {
-            const res = await inventarioService.actualizarInsumo(id, datosActualizados);
+            const res = tipo === 'inoculo'
+                ? await inventarioService.actualizarInoculo(id, datosActualizados)
+                : await inventarioService.actualizarInsumo(id, datosActualizados);
 
             if (res.success) {
                 setInsumos((prev) =>
                     prev.map((item) =>
-                        item.id_insumo === id
+                        (item.id === id || item.id_insumo === id)
                             ? { ...item, ...datosActualizados }
                             : item
                     )
                 );
                 return true;
-            } else {
-                console.error("Error del backend:", res.message);
-                return false;
             }
+            return false;
         } catch (err) {
             console.error("Error al actualizar:", err);
             return false;

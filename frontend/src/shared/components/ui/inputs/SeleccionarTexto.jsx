@@ -57,7 +57,7 @@ const SelectField = ({
       <div
         className={`
           relative overflow-hidden rounded-xl transition-all
-          ${sizeClass}
+          w-full
           ${isFocused ? "ring-4" : "ring-2"}
         `}
         style={{
