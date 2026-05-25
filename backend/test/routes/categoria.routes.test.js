@@ -9,7 +9,7 @@ const fetchCategoriasMock = Categoria.fetchCategorias;
 const fetchOpcionesMock = Categoria.fetchOpciones;
 
 describe('Rutas de Categorías', () => {
-    let tokenTest; 
+    let tokenTest;
 
     beforeAll(() => {
         const SECRET = process.env.APP_ACCESS_KEY || 'test_secret_key';
@@ -61,7 +61,7 @@ describe('Rutas de Categorías', () => {
 
             const res = await request(app)
                 .get('/api/categorias/opciones?categoria=Especies&abreviado=false')
-                .set('Authorization', `Bearer ${tokenTest}`); 
+                .set('Authorization', `Bearer ${tokenTest}`);
 
             expect(res.statusCode).toBe(200);
             expect(res.body).toMatchObject({
@@ -75,7 +75,7 @@ describe('Rutas de Categorías', () => {
 
             const res = await request(app)
                 .get('/api/categorias/opciones?categoria=Especies&abreviado=false')
-                .set('Authorization', `Bearer ${tokenTest}`); 
+                .set('Authorization', `Bearer ${tokenTest}`);
 
             expect(res.statusCode).toBe(500);
             expect(res.body).toMatchObject({
@@ -87,7 +87,7 @@ describe('Rutas de Categorías', () => {
         it('utiliza "Especies" como valor predeterminado para el parámetro "categoria" cuando no se proporciona', async () => {
             fetchOpcionesMock.mockResolvedValue([[{ id: 1, nombre: 'Opcion 1' }]]);
 
-            const res = await request(app)
+            await request(app)
                 .get('/api/categorias/opciones?abreviado=false')
                 .set('Authorization', `Bearer ${tokenTest}`);
 

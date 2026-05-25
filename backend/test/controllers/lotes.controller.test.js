@@ -1,13 +1,11 @@
 const { get_batches, post_batch, get_sustratos } = require('../../controllers/lotes.controller');
 const Lotes = require('../../models/lotes.model');
 const Categoria = require('../../models/categoria.model');
-const Bloque = require('../../models/bloque.model');
 const crypto = require('crypto');
 
 // Mocks de los modelos
 jest.mock('../../models/lotes.model');
 jest.mock('../../models/categoria.model');
-jest.mock('../../models/bloque.model');
 jest.mock('crypto');
 
 const mockRes = () => {
@@ -18,10 +16,10 @@ const mockRes = () => {
 };
 
 describe('Lotes Controller', () => {
-    
+
     beforeEach(() => {
         jest.clearAllMocks();
-        jest.spyOn(console, 'error').mockImplementation(() => {});
+        jest.spyOn(console, 'error').mockImplementation(() => { });
     });
 
     describe('Obtener lotes', () => {
@@ -80,9 +78,9 @@ describe('Lotes Controller', () => {
                 [{ abreviatura_opcion: 'PL' }]
             ]);
 
-            Lotes.count_lotes_similares.mockResolvedValue(5); 
+            Lotes.count_lotes_similares.mockResolvedValue(5);
             crypto.randomUUID.mockReturnValue('uuid-generado-123');
-            
+
             const Bloque = require('../../models/bloque.model');
             jest.mock('../../models/bloque.model');
             Bloque.crear_bloque = jest.fn().mockResolvedValue(true);
@@ -103,21 +101,21 @@ describe('Lotes Controller', () => {
         });
 
         it('400 - inóculo no encontrado', async () => {
-            const req = { 
-                body: { 
+            const req = {
+                body: {
                     bloques: [{ id_inoculo: 999 }],
-                    fecha_lote: '2026-05-09' 
-                } 
+                    fecha_lote: '2026-05-09'
+                }
             };
             const res = mockRes();
-            
+
             Lotes.fetch_inoculos_disponibles.mockResolvedValue([
                 { id_inoculo: 10, especie: 'Pleurotus' }
             ]);
 
             await post_batch(req, res);
 
-            expect(res.status).toHaveBeenCalledWith(400); 
+            expect(res.status).toHaveBeenCalledWith(400);
             expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
                 success: false,
                 message: "Inóculo no encontrado"

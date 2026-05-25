@@ -60,7 +60,7 @@ exports.get_sustratos = async (req, res) => {
     try {
         const [sustratos] = await Categoria.fetchOpciones('Sustrato', false);
         res.status(200).json(sustratos);
-    } catch (error) {
+    } catch {
         res.status(500).json({ success: false, error: 'Error al obtener sustratos' });
     }
 };
@@ -74,7 +74,7 @@ exports.get_ubicaciones = async (req, res) => {
     try {
         const [ubicaciones] = await Categoria.fetchOpciones('Ubicacion', false);
         res.status(200).json(ubicaciones);
-    } catch (error) {
+    } catch {
         res.status(500).json({ success: false, error: 'Error al obtener ubicaciones' });
     }
 };
@@ -120,18 +120,18 @@ exports.post_batch = async (req, res) => {
         const infoInoculo = inoculosDisponibles.find(i => i.id_inoculo == idInoculoReferencia);
 
         if (!infoInoculo) {
-            return res.status(400).json({ 
-                success: false, 
-                message: "Inóculo no encontrado" 
+            return res.status(400).json({
+                success: false,
+                message: "Inóculo no encontrado"
             });
         }
-        
+
         const [abreviaturaResult] = await Categoria.fetchAbreviaturaPorNombre(infoInoculo.especie);
         const abreviatura = abreviaturaResult[0].abreviatura_opcion;
 
         const fechaParaCodigo = new Date(fecha_lote);
         const fechaStr = `${String(fechaParaCodigo.getUTCDate()).padStart(2, '0')}${String(fechaParaCodigo.getUTCMonth() + 1).padStart(2, '0')}${fechaParaCodigo.getUTCFullYear().toString().slice(-2)}`;
-        
+
         const prefijoBase = `LC-${abreviatura}-${fechaStr}`;
         const cantidadGrupo = await Lotes.count_lotes_similares(prefijoBase);
         const codigo_fungivora = `${prefijoBase}-${cantidadGrupo + 1}`;
@@ -158,7 +158,7 @@ exports.post_batch = async (req, res) => {
                     Bloque.crear_bloque({
                         id_bloque: crypto.randomUUID(),
                         id_lote: id_lote,
-                        id_inoculo: b.id_inoculo, 
+                        id_inoculo: b.id_inoculo,
                         produccion: (b.produccion !== undefined) ? b.produccion : produccion,
                         peso_gr: b.peso_gr || 0,
                         contaminado: 0,
@@ -190,7 +190,7 @@ exports.actualizar_fase = async (req, res) => {
         await Lotes.actualizar_fase(id_lote, nuevaFase);
 
         const fasesGranja = ["Fructificación", "Cosecha 1", "Cosecha 2", "Finalización"];
-        
+
         if (fasesGranja.includes(nuevaFase)) {
             await Lotes.actualizar_ubicacion(id_lote, "Granja");
         }
@@ -219,9 +219,9 @@ exports.get_batch_by_id = async (req, res) => {
         if (!id_lote) {
             return res.status(400).json({ message: "ID de lote requerido" });
         }
-        
+
         const lote = await Lotes.fetch_by_id(id_lote);
-        
+
         if (!lote) {
             return res.status(404).json({ message: "Lote no encontrado" });
         }
@@ -249,7 +249,7 @@ exports.get_especies_unicas = async (req, res) => {
             success: true,
             data: especiesUnicas
         });
-    } catch (error) {
+    } catch {
         res.status(500).json({ success: false, message: 'Error al obtener especies' });
     }
 };
@@ -286,7 +286,7 @@ exports.delete_batch = async (req, res) => {
     }
 };
 
-exports.revisar_lotes = async (req, res, next) => {
+exports.revisar_lotes = async (req, res, _next) => {
     try {
         const { ids } = req.body;
 

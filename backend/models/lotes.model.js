@@ -11,27 +11,6 @@ class Lotes {
         this.fase = fase;
     }
 
-    static async fetch_all() {
-        try {
-            const [filas] = await db.execute(`
-                SELECT 
-                    id_lote, 
-                    tipo_sustrato, 
-                    codigo_fungivora, 
-                    fecha_lote, 
-                    ubicacion_lote, 
-                    activo, 
-                    fase 
-                FROM Lotes 
-                ORDER BY fecha_lote DESC
-            `);
-            return filas;
-        } catch (err) {
-            console.error("Error en fetch_all lotes:", err);
-            throw err;
-        }
-    }
-
     // Obtiene todas las categorías
     static fetch_categorias = async () => {
         const [filas] = await db.execute('SELECT * FROM Categorias');

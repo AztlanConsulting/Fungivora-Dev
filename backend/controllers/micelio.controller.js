@@ -3,7 +3,7 @@ const Micelio = require('../models/micelio.model');
 const Inventario = require('../models/inventario.model');
 const db = require('../util/database'); // Tu conexión a la DB
 
-exports.post_crear_medio_liquido = async (req, res, next) => {
+exports.post_crear_medio_liquido = async (req, res, _next) => {
     const { id_usuario, id_base, notas, cantidad_final, ingredientes, foto } = req.body;
 
     // 1. Iniciar transacción para asegurar el "descuento automático" e integridad
@@ -48,11 +48,11 @@ exports.post_crear_medio_liquido = async (req, res, next) => {
 
         // Si todo sale bien, confirmamos los cambios
         await conn.commit();
-        
+
         // Respuesta para que React realice el navigate('/inventario')
-        res.status(201).json({ 
-            success: true, 
-            message: 'Medio líquido creado y stock actualizado correctamente' 
+        res.status(201).json({
+            success: true,
+            message: 'Medio líquido creado y stock actualizado correctamente'
         });
 
     } catch (error) {

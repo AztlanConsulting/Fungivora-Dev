@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 function User() {
-  const [setMensaje] = useState("");
+  const [mensaje, setMensaje] = useState("");
   const [texto, setTexto] = useState("");
 
   useEffect(() => {
@@ -15,7 +15,7 @@ function User() {
     <div>
       <h1>User</h1>
 
-      {/*<p>{mensaje}</p>*/}
+      <p>{mensaje}</p>
       <p>Escribir contraseña</p>
       <input
         type="text"

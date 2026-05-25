@@ -3,7 +3,7 @@ const Categoria = require('../models/categoria.model');
 /**
  * Obtiene todas las categorías disponibles
  */
-exports.get_categorias = async (req, res, next) => {
+exports.get_categorias = async (req, res, _next) => {
     try {
         const [categorias] = await Categoria.fetchCategorias();
 
@@ -25,7 +25,7 @@ exports.get_categorias = async (req, res, next) => {
  * @param {string} categoria - Nombre de la categoría (default: 'Especies')
  * @param {boolean} abreviado - Indica si se deben obtener las abreviaturas o los nombres completos
  */
-exports.get_opciones = async (req, res, next) => {
+exports.get_opciones = async (req, res, _next) => {
     try {
         const categoria = req.query.categoria || 'Especies';
         const abreviado = req.query.abreviado === 'true';
@@ -49,11 +49,11 @@ exports.get_opciones = async (req, res, next) => {
  */
 
 exports.get_categorias_completo = async (req, res) => {
-  try {
-    const [rows] = await Categoria.fetchTodasLasCategorias();
-    res.status(200).json({ success: true, data: rows });
-  } catch (error) {
-    console.error("Error al obtener Categorias:", error);
-    res.status(500).json({ success: false, message: "Error al obtener categorías" });
-  }
+    try {
+        const [rows] = await Categoria.fetchTodasLasCategorias();
+        res.status(200).json({ success: true, data: rows });
+    } catch (error) {
+        console.error("Error al obtener Categorias:", error);
+        res.status(500).json({ success: false, message: "Error al obtener categorías" });
+    }
 };
