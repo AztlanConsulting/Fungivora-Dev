@@ -115,7 +115,7 @@ const Resumen = ({
         <Text variante="label" style={estiloEtiqueta}>Composición</Text>
 
         {composicion.map((item, index) => {
-          const valorNum = parseFloat(String(item.value).replace(/,/g, "")) || 0;
+          const valorNum = parseFloat(String(item.value).replace(",", ".")) || 0;
           const total = item.total ?? +(valorNum * cantidad).toFixed(2);
           const hayValor = valorNum > 0;
           const excede = !!item.excedeTotal;

@@ -45,7 +45,11 @@ vi.mock('../../../shared/crear-inoculos/components/SeleccionarCantidades', () =>
 }))
 
 vi.mock('../../../shared/crear-inoculos/components/Resumen', () => ({
-    default: () => <div data-testid="resumen" />,
+    default: ({ children }) => (
+        <div data-testid="resumen">
+            {children}
+        </div>
+    ),
 }))
 
 vi.mock('../../../shared/components/ui/popups/ModalAlerta', () => ({
@@ -131,7 +135,7 @@ const setupHooks = () => {
     })
     useIngredientesAgar.mockReturnValue({
         items: [],
-        valores: { cantInoculo: '5' }, 
+        valores: { cantInoculo: '5' },
         loading: false,
     })
 }
@@ -158,7 +162,7 @@ describe('FormAgar', () => {
     it('renderiza el título, los selectores requeridos y el botón Registrar', () => {
         renderForm()
         expect(screen.getByRole('heading', { name: /crear agar/i })).toBeInTheDocument()
-        expect(screen.getAllByRole('combobox')).toHaveLength(2) 
+        expect(screen.getAllByRole('combobox')).toHaveLength(2)
         expect(screen.getByTestId('btn-registrar')).toBeInTheDocument()
     })
 
@@ -180,7 +184,7 @@ describe('FormAgar', () => {
             valores: { cantInoculo: '0' },
             loading: false,
         })
-        
+
         renderForm()
         await completarForm(user)
 
@@ -201,7 +205,7 @@ describe('FormAgar', () => {
                 '/inoculos',
                 expect.objectContaining({
                     state: expect.objectContaining({
-                        alerta: expect.objectContaining({ 
+                        alerta: expect.objectContaining({
                             variante: 'exito',
                             mensaje: expect.stringContaining('AG-SH-240526')
                         }),

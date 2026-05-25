@@ -40,7 +40,11 @@ vi.mock('../../../shared/crear-inoculos/components/SeleccionarCantidades', () =>
 }))
 
 vi.mock('../../../shared/crear-inoculos/components/Resumen', () => ({
-    default: () => <div data-testid="resumen" />,
+    default: ({ children }) => (
+        <div data-testid="resumen">
+            {children}
+        </div>
+    ),
 }))
 
 vi.mock('../../../shared/components/ui/popups/ModalAlerta', () => ({
