@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import inoculoService from '../services/inoculo.service';
+import { traducirError } from '../../../shared/utils/traducirError';
 
 /**
  * Carga la lista de especies disponibles al montar.
@@ -28,7 +29,7 @@ const useEspeciesList = () => {
                 }));
                 if (!cancelled) setEspecies(lista);
             } catch (err) {
-                if (!cancelled) setError(err?.message ?? 'Error al cargar especies');
+                if (!cancelled) setError(traducirError(err).mensaje);
             } finally {
                 if (!cancelled) setLoading(false);
             }
