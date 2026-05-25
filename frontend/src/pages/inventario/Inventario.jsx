@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import Base from "../../shared/components/layout/Base";
 import Titulo from "../../shared/components/ui/basics/Titulo";
 import Text from "../../shared/components/ui/basics/Texto";
@@ -25,11 +25,6 @@ const Inventario = () => {
   const [alerta, setAlerta] = useState({ visible: false, mensaje: "", variante: "exito" });
   const [guardando, setGuardando] = useState(false);
   const [modalConfirmacion, setModalConfirmacion] = useState({ visible: false, datos: null });
-
-  useEffect(() => {
-    setErrorValidacion("");
-  }, [nuevaFila]);
-
 
   // Grid de la tabla
   const gridLayout = "grid-cols-1 md:grid-cols-[1.5fr_2.2fr_1fr_1fr]";
@@ -83,8 +78,10 @@ const Inventario = () => {
     if (regex.test(valorEstandarizado)) setAjusteCantidad(valorEstandarizado);
   };
 
-  // Añadir nueva fila de insumo (Mantiene sincronizada la misma regla del componente hijo)
+  // Añadir nueva fila de insumo 
   const handleNuevaFila = (campo, valor) => {
+    if (errorValidacion) setErrorValidacion("");
+
     if (campo === "cantidad" || campo === "stock_recomendado") {
       const valorEstandarizado = valor.replace(",", ".");
       const regex = /^\d{0,5}(\.\d{0,2})?$/;
