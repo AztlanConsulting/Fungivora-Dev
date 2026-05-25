@@ -11,11 +11,16 @@ const useInsumos = () => {
     useEffect(() => {
         const cargarUnidades = async () => {
             try {
-                const response = await fetch('/api/inventario/unidades');
-                const data = await response.json();
-                setUnidades(data);
+                const response = await api.get('/inventario/unidades');
+                const unidadesData = Array.isArray(response) ? response : (response?.data || []);
+                if (Array.isArray(unidadesData)) {
+                    setUnidades(unidadesData);
+                } else {
+                    setUnidades([]);
+                }
             } catch (err) {
-                console.error("Error cargando unidades en el hook:", err);
+                console.error("Error cargando unidades:", err);
+                setUnidades([]); 
             }
         };
         cargarUnidades();

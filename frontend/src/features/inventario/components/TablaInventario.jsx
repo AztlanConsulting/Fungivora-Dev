@@ -28,15 +28,21 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
   // Conversión cada 1000 ml/g a L/Kg
   const renderizarCantidad = (cantidad, unidad) => {
     const num = parseFloat(cantidad) || 0;
-    const uniNormalizada = unidad ? unidad.trim().toLowerCase() : "";
-
-    if ((uniNormalizada.startsWith("gramo") || uniNormalizada === "g") && num >= 1000) {
-      return `${formatearNumero(num / 1000)} Kilogramo(s)`;
+    const uniNormalizada = unidad ? unidad.trim().toLowerCase().replace(/\.$/, "") : "";
+    if (uniNormalizada === "g" || uniNormalizada === "gr" || uniNormalizada.startsWith("gramo")) {
+      if (num >= 1000) {
+        return `${formatearNumero(num / 1000)} Kilogramo(s)`;
+      }
+      return `${formatearNumero(num)} Gramo(s)`;
     }
 
-    if ((uniNormalizada.startsWith("mililitro") || uniNormalizada === "ml") && num >= 1000) {
-      return `${formatearNumero(num / 1000)} Litro(s)`;
+    if (uniNormalizada === "ml" || uniNormalizada.startsWith("mililitro")) {
+      if (num >= 1000) {
+        return `${formatearNumero(num / 1000)} Litro(s)`;
+      }
+      return `${formatearNumero(num)} Mililitro(s)`;
     }
+
     return `${formatearNumero(num)} ${unidad}`;
   };
 
