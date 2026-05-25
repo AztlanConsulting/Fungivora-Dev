@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import inventarioService from "../services/inventario.service";
 
@@ -11,7 +10,7 @@ const useInsumos = () => {
     useEffect(() => {
         const cargarUnidades = async () => {
             try {
-                const response = await fetch('/api/inventario/unidades'); // Ruta de las unidades
+                const response = await fetch('/api/inventario/unidades');
                 const data = await response.json();
                 setUnidades(data);
             } catch (err) {
@@ -45,33 +44,33 @@ const useInsumos = () => {
             const res = await inventarioService.crearInsumo(nuevoInsumo);
             if (res.success) {
                 await fetchInsumos();
-                return true;
+                return { success: true };
             }
             return { success: false, error: res.error || 'Error al crear el insumo' };
         } catch (err) {
             console.error("Error al crear:", err);
+            return { success: false, error: 'Error de conexión' };
         }
-        return false;
     };
 
     // Actualizar cantidad 
-    const updateInsumo = async (id, datosActualizados) => {
+    const updateInsumo = async (id, datosActualizados, tipo = 'insumo') => {
         try {
-            const res = await inventarioService.actualizarInsumo(id, datosActualizados);
+            const res = tipo === 'inoculo'
+                ? await inventarioService.actualizarInoculo(id, datosActualizados)
+                : await inventarioService.actualizarInsumo(id, datosActualizados);
 
             if (res.success) {
                 setInsumos((prev) =>
                     prev.map((item) =>
-                        item.id_insumo === id
+                        (item.id === id || item.id_insumo === id)
                             ? { ...item, ...datosActualizados }
                             : item
                     )
                 );
                 return true;
-            } else {
-                console.error("Error del backend:", res.message);
-                return false;
             }
+            return false;
         } catch (err) {
             console.error("Error al actualizar:", err);
             return false;

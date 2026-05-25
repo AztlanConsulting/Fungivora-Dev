@@ -27,6 +27,7 @@ const FormularioInsumo = ({ nuevaFila, handleNuevaFila, handleGuardarInsumo, uni
           placeholder="Ej. Harina de Trigo"
           value={nuevaFila.nombre}
           onChange={(e) => handleNuevaFila("nombre", e.target.value)}
+          className="w-full"
         />
       </div>
 
@@ -36,6 +37,7 @@ const FormularioInsumo = ({ nuevaFila, handleNuevaFila, handleGuardarInsumo, uni
           placeholder="0.00"
           value={nuevaFila.cantidad}
           onChange={(e) => handleCambioNumero("cantidad", e.target.value)}
+          className="w-full"
         />
       </div>
 
@@ -45,6 +47,7 @@ const FormularioInsumo = ({ nuevaFila, handleNuevaFila, handleGuardarInsumo, uni
           placeholder="0.00"
           value={nuevaFila.stock_recomendado}
           onChange={(e) => handleCambioNumero("stock_recomendado", e.target.value)}
+          className="w-full"
         />
       </div>
 
@@ -56,6 +59,7 @@ const FormularioInsumo = ({ nuevaFila, handleNuevaFila, handleGuardarInsumo, uni
           value={nuevaFila.unidad}
           onChange={(e) => handleNuevaFila("unidad", e.target.value)}
           options={unidades.map(u => ({ value: u.opcion, label: u.opcion }))}
+          className="w-full"
         />
       </div>
 

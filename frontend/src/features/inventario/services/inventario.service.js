@@ -23,6 +23,15 @@ const inventarioService = {
         return await res.json();
     },
 
+    actualizarInoculo: async (id_inoculo, datos) => {
+        const res = await fetch("/api/inventario/update-inoculo", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id_inoculo, cantidad: datos.cantidad }),
+        });
+        return await res.json();
+    },
+
 };
 
 export default inventarioService;

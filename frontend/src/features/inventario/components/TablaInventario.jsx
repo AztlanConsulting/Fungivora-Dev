@@ -63,11 +63,11 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
       <div className={`hidden md:grid ${gridLayout} items-center min-h-[60px]`} style={{ backgroundColor: colorBordeHeader }}>
         {columnasHeader.map((col, i) => (
           <div key={i} className="px-6 flex items-center">
-              <Text 
-                  variante="medium" 
-                  style={{ color: colores.azul, fontWeight: "600", fontSize: "16px", lineHeight: "4", whiteSpace: "nowrap" }}>
-                  {col.label}
-              </Text>
+            <Text
+              variante="medium"
+              style={{ color: colores.azul, fontWeight: "600", fontSize: "16px", lineHeight: "4", whiteSpace: "nowrap" }}>
+              {col.label}
+            </Text>
           </div>
         ))}
       </div>
@@ -75,12 +75,13 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
       {/* Tabla */}
       <div className="h-auto max-h-[65vh] md:max-h-[550px] overflow-y-auto flex flex-col gap-4 md:gap-0">
         {insumos.map((item) => {
-          const esSeleccionado = filaSeleccionada === item.id_insumo;
+          const itemId = item.id ?? item.id_insumo;
+          const esSeleccionado = filaSeleccionada === itemId;
           const estado = obtenerEstado(item.cantidad, item.stock_recommended || item.stock_recomendado);
 
           return (
-            <div key={item.id_insumo} onClick={() => setFilaSeleccionada(item.id_insumo)} className="group cursor-pointer">
-              {/* Filas */}
+            <div key={itemId} onClick={() => setFilaSeleccionada(itemId)} className="group cursor-pointer">
+              {/* Filas Desktop */}
               <div className={`hidden md:grid ${gridLayout} items-center border-b border-gray-50 hover:bg-gray-50 transition-colors`}>
                 <div className="px-6 py-4">
                   <Text variante="option" style={{ color: "black", fontWeight: "600", fontSize: "15px" }}>{item.nombre}</Text>
@@ -102,10 +103,10 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                 </div>
               </div>
 
-              {/* Cartas de movil*/}
+              {/* Cartas Móvil */}
               <div className="md:hidden mb-1">
                 <div className={`bg-white rounded-2xl border p-4 shadow-sm transition-all ${esSeleccionado ? 'ring-2' : ''}`}
-                  style={{ borderColor: colorBordeHeader, ringColor: colores.azul }}>
+                  style={{ borderColor: colorBordeHeader }}>
                   <div className="flex justify-between items-start mb-3">
                     <Text variante="option" style={{ color: "black", fontWeight: "600", fontSize: "16px" }}>{item.nombre}</Text>
                     <button onClick={(e) => { e.stopPropagation(); abrirModalEdicion(item); }}>

@@ -5,6 +5,7 @@ import Text from "../../shared/components/ui/basics/Texto";
 import { colores } from "../../shared/components/ui/basics/Colores";
 import useInsumos from "../../features/inventario/hooks/useInsumos";
 import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
+import ModalConfirmacion from "../../shared/components/ui/popups/ModalConfirmacion";
 import Button from "../../shared/components/ui/buttons/Botones";
 import Input from "../../shared/components/ui/inputs/InputTexto";
 
@@ -22,9 +23,11 @@ const Inventario = () => {
   const [ajusteCantidad, setAjusteCantidad] = useState("");
   const [tipoOperacion, setTipoOperacion] = useState("incremento");
   const [alerta, setAlerta] = useState({ visible: false, mensaje: "", variante: "exito" });
+  const [guardando, setGuardando] = useState(false);
+  const [modalConfirmacion, setModalConfirmacion] = useState({ visible: false, datos: null });
 
-   useEffect(() => {
-    if (errorValidacion) setErrorValidacion("");
+  useEffect(() => {
+    setErrorValidacion("");
   }, [nuevaFila]);
 
 
@@ -61,7 +64,12 @@ const Inventario = () => {
 
     nuevaCantidad = parseFloat(nuevaCantidad.toFixed(2));
 
-    const exito = await updateInsumo(modalEdicion.insumo.id_insumo, { cantidad: nuevaCantidad });
+    const esInoculo = modalEdicion.insumo.tipo !== 'insumo';
+    const id = esInoculo
+      ? modalEdicion.insumo.id
+      : (modalEdicion.insumo.id_insumo ?? modalEdicion.insumo.id);
+
+    const exito = await updateInsumo(id, { cantidad: nuevaCantidad }, esInoculo ? 'inoculo' : 'insumo');
     if (exito) {
       setModalEdicion({ visible: false, insumo: null });
       lanzarAlerta("¡Stock actualizado correctamente!");
@@ -72,10 +80,7 @@ const Inventario = () => {
   const handleCambioAjuste = (valor) => {
     const valorEstandarizado = valor.replace(",", ".");
     const regex = /^\d{0,6}(\.\d{0,2})?$/;
-
-    if (regex.test(valorEstandarizado)) {
-      setAjusteCantidad(valorEstandarizado);
-    }
+    if (regex.test(valorEstandarizado)) setAjusteCantidad(valorEstandarizado);
   };
 
   // Añadir nueva fila de insumo (Mantiene sincronizada la misma regla del componente hijo)
@@ -92,27 +97,29 @@ const Inventario = () => {
     }
   };
 
-  // Guardar el nuevo insumo
-const [guardando, setGuardando] = useState(false);
-
-const handleGuardarInsumo = async () => {
+  const handleGuardarInsumo = () => {
     if (!nuevaFila.nombre || !nuevaFila.cantidad || !nuevaFila.unidad) {
-        setErrorValidacion("Completa todos los campos");
-        return;
+      setErrorValidacion("Completa todos los campos");
+      return;
     }
+    setModalConfirmacion({ visible: true, datos: nuevaFila });
+  };
+
+  const handleConfirmarCreacion = async () => {
+    setModalConfirmacion({ visible: false, datos: null });
     setGuardando(true);
     const resultado = await addInsumo(nuevaFila);
     setGuardando(false);
 
     if (resultado.success) {
-        setNuevaFila({ nombre: "", cantidad: "", stock_recomendado: "", unidad: "" });
-        setVerFormulario(false);
-        setErrorValidacion("");
-        lanzarAlerta("Insumo creado con éxito");
+      setNuevaFila({ nombre: "", cantidad: "", stock_recomendado: "", unidad: "" });
+      setVerFormulario(false);
+      setErrorValidacion("");
+      lanzarAlerta("Insumo creado con éxito");
     } else {
-        setErrorValidacion(resultado.error);
+      setErrorValidacion(resultado.error);
     }
-};
+  };
 
   return (
     <>
@@ -121,22 +128,16 @@ const handleGuardarInsumo = async () => {
 
         {/* Botón Móvil */}
         <div className="lg:hidden flex justify-start mb-6">
-          <div
+          <Button
             onClick={() => setVerFormulario(!verFormulario)}
-            className={`px-6 py-3 rounded-[12px] border-2 bg-white transition-all active:scale-95 cursor-pointer shadow-sm flex items-center justify-center
-              ${verFormulario ? "border-[#3b3fb6]" : "border-[#3b3fb6]"}`}
-            style={{ width: "fit-content" }}>
+            className="px-5 py-2 rounded-[12px] border-2"
+            isOutline={true}>
             <Text
               variante="label"
-              style={{
-                color: colores.azul,
-                fontWeight: "700",
-                fontSize: "15px",
-                lineHeight: "1"
-              }}>
+              style={{ color: colores.azul, fontWeight: "600", fontSize: "13px" }}>
               {verFormulario ? "Ver Inventario" : "Crear insumo"}
             </Text>
-          </div>
+          </Button>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
@@ -160,17 +161,19 @@ const handleGuardarInsumo = async () => {
               handleGuardarInsumo={handleGuardarInsumo}
               unidades={unidades}
               errorValidacion={errorValidacion}
+              guardando={guardando}
             />
           </div>
         </div>
 
         {/* Modal de editar cantidad*/}
         {modalEdicion.visible && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-hidden">
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setModalEdicion({ visible: false, insumo: null })} />
-            <div className="relative bg-white rounded-[30px] p-9 w-full max-w-lg shadow-2xl flex flex-col gap-6 border animate-in zoom-in duration-200">
-              <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", textAlign: "center" }}>{modalEdicion.insumo?.nombre}</Text>
-
+              <div className="relative bg-white rounded-[30px] p-9 w-full max-w-lg shadow-2xl flex flex-col gap-6 border animate-in zoom-in duration-200">
+              <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", textAlign: "center" }}>
+                {modalEdicion.insumo?.nombre}
+              </Text>
               <div className="flex bg-gray-100 p-1 rounded-xl">
                 <button onClick={() => setTipoOperacion("incremento")} className={`flex-1 py-2 rounded-lg text-sm font-semibold ${tipoOperacion === "incremento" ? "bg-green-100 shadow-sm text-green-600" : "text-gray-500"}`}>Entrada</button>
                 <button onClick={() => setTipoOperacion("reduccion")} className={`flex-1 py-2 rounded-lg text-sm font-semibold ${tipoOperacion === "reduccion" ? "bg-red-100 shadow-sm text-red-600" : "text-gray-500"}`}>Salida</button>
@@ -181,16 +184,30 @@ const handleGuardarInsumo = async () => {
                 placeholder="0.00"
                 value={ajusteCantidad}
                 onChange={(e) => handleCambioAjuste(e.target.value)}
+                className="w-full"
               />
               {errorModal && <Text variante="label" style={{ color: "#E53E3E", fontSize: "13px" }}>{errorModal}</Text>}
-
-              <div className="flex gap-4">
-                <Button variant="cancelar" isOutline onClick={() => setModalEdicion({ visible: false, insumo: null })} className="flex-1">Cancelar</Button>
-                <Button variant="confirmar" onClick={handleConfirmarAjuste} className="flex-1">Confirmar</Button>
+                <div className="flex flex-row gap-3 w-full justify-center">
+                  <Button variant="cancelar" isOutline onClick={() => setModalEdicion({ visible: false, insumo: null })}>Cancelar</Button>
+                  <Button variant="confirmar" isOutline onClick={handleConfirmarAjuste}>Confirmar</Button>
+                </div>
               </div>
             </div>
-          </div>
         )}
+
+        <ModalConfirmacion
+          visible={modalConfirmacion.visible}
+          titulo="¿Crear este insumo?"
+          descripcion={
+            modalConfirmacion.datos
+              ? `Se creará "${modalConfirmacion.datos.nombre}" con ${modalConfirmacion.datos.cantidad} ${modalConfirmacion.datos.unidad}.`
+              : ""
+          }
+          textoConfirmar="Crear"
+          textoCancelar="Cancelar"
+          onConfirm={handleConfirmarCreacion}
+          onCancel={() => setModalConfirmacion({ visible: false, datos: null })}
+        />
       </Base>
 
       <ModalAlerta visible={alerta.visible} variante={alerta.variante} mensaje={alerta.mensaje} onClose={() => setAlerta({ ...alerta, visible: false })} />
