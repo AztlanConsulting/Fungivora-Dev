@@ -32,14 +32,16 @@ const inventarioService = {
     },
 
     actualizarInoculo: async (id_inoculo, datos) => {
-        const res = await fetch("/api/inventario/update-inoculo", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id_inoculo, cantidad: datos.cantidad }),
-        });
-        return await res.json();
+        try {
+            return await api.post("/inventario/update-inoculo", { 
+                id_inoculo, 
+                cantidad: datos.cantidad 
+            });
+        } catch (error) {
+            console.error("Error al actualizar inoculo:", error);
+            throw error;
+        }
     },
-
 };
 
 export default inventarioService;

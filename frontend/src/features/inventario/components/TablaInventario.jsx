@@ -84,6 +84,7 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
           const itemId = item.id ?? item.id_insumo;
           const esSeleccionado = filaSeleccionada === itemId;
           const estado = obtenerEstado(item.cantidad, item.stock_recommended || item.stock_recomendado);
+          const esInsumo = item.tipo === 'insumo'; 
 
           return (
             <div key={itemId} onClick={() => setFilaSeleccionada(itemId)} className="group cursor-pointer">
@@ -102,10 +103,19 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                     {estado.label}
                   </span>
                 </div>
-                <div className="flex justify-center p-2" onClick={(e) => { e.stopPropagation(); abrirModalEdicion(item); }}>
-                  <div className="hover:scale-110 transition-transform">
-                    <HugeiconsIcon icon={PlusMinus02Icon} size={20} color={colores.azul} />
-                  </div>
+                
+                {/* Acciones Desktop Condicionado */}
+                <div className="flex justify-center p-2">
+                  {esInsumo ? (
+                    <div 
+                      className="hover:scale-110 transition-transform" 
+                      onClick={(e) => { e.stopPropagation(); abrirModalEdicion(item); }}
+                    >
+                      <HugeiconsIcon icon={PlusMinus02Icon} size={20} color={colores.azul} />
+                    </div>
+                  ) : (
+                    <span className=""></span>
+                  )}
                 </div>
               </div>
 
@@ -115,9 +125,13 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                   style={{ borderColor: colorBordeHeader }}>
                   <div className="flex justify-between items-start mb-3">
                     <Text variante="option" style={{ color: "black", fontWeight: "600", fontSize: "16px" }}>{item.nombre}</Text>
-                    <button onClick={(e) => { e.stopPropagation(); abrirModalEdicion(item); }}>
-                      <HugeiconsIcon icon={PlusMinus02Icon} size={22} color={colores.azul} />
-                    </button>
+                    
+                    {/* Icono Móvil Condicionado */}
+                    {esInsumo && (
+                      <button onClick={(e) => { e.stopPropagation(); abrirModalEdicion(item); }}>
+                        <HugeiconsIcon icon={PlusMinus02Icon} size={22} color={colores.azul} />
+                      </button>
+                    )}
                   </div>
                   <div className="flex justify-between items-center border-t pt-3 mt-1" style={{ borderColor: colorBordeHeader }}>
                     <span className="px-3 py-1 rounded-full text-[10px] font-semibold uppercase" style={{ backgroundColor: estado.bg, color: estado.color }}>

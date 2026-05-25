@@ -33,6 +33,11 @@ const Inventario = () => {
 
   // Modal de editar cantidad
   const abrirModalEdicion = (item) => {
+    if (item.tipo !== 'insumo') {
+      lanzarAlerta("Los inóculos no se pueden editar desde el inventario", "alerta");
+      return;
+    }
+
     setModalEdicion({ visible: true, insumo: item });
     setAjusteCantidad("");
     setTipoOperacion("incremento");
