@@ -1,25 +1,12 @@
 import { useState, useEffect } from "react";
 import inventarioService from "../services/inventario.service";
-import api from "../../../shared/utils/api"; 
+import api from "../../../shared/utils/api";
 
 const useInsumos = () => {
     const [insumos, setInsumos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [unidades, setUnidades] = useState([]); 
-
-    useEffect(() => {
-        const cargarUnidades = async () => {
-            try {
-                const response = await fetch('/api/inventario/unidades');
-                const data = await response.json();
-                setUnidades(data);
-            } catch (err) {
-                console.error("Error cargando unidades en el hook:", err);
-            }
-        };
-        cargarUnidades();
-    }, []);
+    const [unidades, setUnidades] = useState([]);
 
     // Recuperar los insumos
     const fetchInsumos = async () => {
@@ -35,11 +22,25 @@ const useInsumos = () => {
         }
     };
 
+    // Cargar insumos al montar
     useEffect(() => {
         fetchInsumos();
     }, []);
 
-    // Agregar nuevo insumo
+    // Cargar unidades al montar (con token via api.js)
+    useEffect(() => {
+        const cargarUnidades = async () => {
+            try {
+                const data = await api.get('/inventario/unidades');
+                setUnidades(Array.isArray(data) ? data : []);
+            } catch (err) {
+                console.error("Error cargando unidades", err);
+                setUnidades([]);
+            }
+        };
+        cargarUnidades();
+    }, []);
+
     const addInsumo = async (nuevoInsumo) => {
         try {
             const res = await inventarioService.crearInsumo(nuevoInsumo);
@@ -54,7 +55,6 @@ const useInsumos = () => {
         }
     };
 
-    // Actualizar cantidad 
     const updateInsumo = async (id, datosActualizados, tipo = 'insumo') => {
         try {
             const res = tipo === 'inoculo'
