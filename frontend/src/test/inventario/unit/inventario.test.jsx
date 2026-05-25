@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
-import Inventario from '../../../pages/inventario/inventario'
+import Inventario from '../../../pages/inventario/Inventario'
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
