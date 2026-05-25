@@ -1,6 +1,5 @@
 import React from 'react'
-import { render, screen, fireEvent, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen} from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import { Inventario } from '../../../pages'
@@ -9,10 +8,6 @@ import { Inventario } from '../../../pages'
 vi.mock('../../../features/inventario/hooks/useInsumos')
 import useInsumos from '../../../features/inventario/hooks/useInsumos'
 
-const insumosMock = [
-  { id_insumo: 1, nombre: 'Agua destilada', cantidad: 2000, unidad: 'ml', stock_recomendado: 200 },
-  { id_insumo: 2, nombre: 'Peptona',         cantidad: 200,   unidad: 'g',  stock_recommended: 200 },
-]
 
 const unidadesMock = [
   { id: 1, opcion: 'ml' },

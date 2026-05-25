@@ -62,11 +62,9 @@ const FormAgar = () => {
 
   const {
     items: itemsComposicion,
-    valores: valoresComposicion,
-    loading: loadingInsumos,
+    valores: valoresComposicion
   } = useIngredientesAgar({ inoculoDisponible, codigoInoculo, tipoInoculo });
 
-  // Cantidad de inóculo a usar (parseada — acepta coma decimal del input)
   const cantInoculo = parseFloat(String(valoresComposicion?.cantInoculo ?? "").replace(",", ".")) || 0;
 
   const opcionesEspecies = especies.map((esp) => ({
@@ -87,21 +85,10 @@ const FormAgar = () => {
       nombreEspecie: especie,
       categorias,
       fecha,
+      amount: cantidad, 
       cantidad,
     });
   }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias]);
-
-  const resetForm = () => {
-    setEspecie("");
-    setInoculo("");
-    setCantidad(1);
-    setFecha({
-      day: String(hoy.getDate()).padStart(2, "0"),
-      month: String(hoy.getMonth() + 1).padStart(2, "0"),
-      year: String(hoy.getFullYear()),
-    });
-    setNota("");
-  };
 
   const handleRegistrar = async () => {
     setRegistrando(true);

@@ -5,7 +5,6 @@ const Categoria = require('../../models/categoria.model');
 const Bloque = require('../../models/bloque.model'); 
 const jwt = require('jsonwebtoken');
 
-// Mocks
 jest.mock('../../models/lotes.model');
 jest.mock('../../models/categoria.model');
 jest.mock('../../models/bloque.model'); 
@@ -17,7 +16,7 @@ jest.mock('../../config/metrics', () => ({
 }));
 
 describe('Lotes Routes — /api/lotes', () => {
-    const JWT_SECRET = "secreto_super_seguro"; 
+    const JWT_SECRET = process.env.APP_ACCESS_KEY || "test_secret_key"; 
     let tokenValido;
 
     beforeAll(() => {
@@ -39,7 +38,7 @@ describe('Lotes Routes — /api/lotes', () => {
 
             const res = await request(app)
                 .get('/api/lotes')
-                .set('authorization', tokenValido);
+                .set('authorization', `Bearer ${tokenValido}`);
 
             expect(res.statusCode).toBe(200);
             expect(res.body.success).toBe(true);
@@ -53,9 +52,6 @@ describe('Lotes Routes — /api/lotes', () => {
             Categoria.fetchAbreviaturaPorNombre.mockResolvedValue([[{ abreviatura_opcion: 'OS' }]]);
             Lotes.count_lotes_similares.mockResolvedValue(0);
             Lotes.crear_lote.mockResolvedValue([{}]);
-            
-            const Bloque = require('../../models/bloque.model');
-            jest.mock('../../models/bloque.model');
             Bloque.crear_bloque.mockResolvedValue({});
 
             const nuevoLote = {
@@ -70,7 +66,7 @@ describe('Lotes Routes — /api/lotes', () => {
 
             const res = await request(app)
                 .post('/api/lotes/crear')
-                .set('authorization', tokenValido)
+                .set('authorization', `Bearer ${tokenValido}`)
                 .send(nuevoLote);
 
             expect(res.statusCode).toBe(201);
@@ -85,7 +81,7 @@ describe('Lotes Routes — /api/lotes', () => {
 
             const res = await request(app)
                 .post('/api/lotes/crear')
-                .set('authorization', tokenValido)
+                .set('authorization', `Bearer ${tokenValido}`)
                 .send({ 
                     fecha_lote: '2026-05-10',
                     bloques: [{ id_inoculo: 999, cantidad: 1 }] 
@@ -103,7 +99,7 @@ describe('Lotes Routes — /api/lotes', () => {
 
             const res = await request(app)
                 .get('/api/lotes/sustratos')
-                .set('authorization', tokenValido);
+                .set('authorization', `Bearer ${tokenValido}`);
 
             expect(res.statusCode).toBe(200);
             expect(Array.isArray(res.body)).toBe(true);
@@ -115,7 +111,7 @@ describe('Lotes Routes — /api/lotes', () => {
 
             const res = await request(app)
                 .get('/api/lotes/especies')
-                .set('authorization', tokenValido);
+                .set('authorization', `Bearer ${tokenValido}`);
 
             expect(res.statusCode).toBe(200);
             expect(res.body.data[0].especie).toBe('Pleurotus');

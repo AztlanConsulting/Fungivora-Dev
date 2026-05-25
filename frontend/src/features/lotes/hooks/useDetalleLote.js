@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { LoteService } from '../services/lote.service';
+import { traducirError } from '../../../shared/utils/traducirError';
 
 const FASES_CONFIG = [
     { label: "Inoculación" }, { label: "Colonización" }, { label: "Fructificación" },
@@ -45,7 +46,7 @@ const useDetalleLote = (id_lote, faseInicial) => {
 
             } catch (err) {
                 console.error("Error en fetchData:", err);
-                setError(err.message);
+                setError(traducirError(err).mensaje);
             } finally {
                 setCargando(false);
             }

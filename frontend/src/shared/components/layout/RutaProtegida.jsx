@@ -1,33 +1,32 @@
+import React from "react";
 import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
-/*
-* ruta_protegida
-Mediante el token tener o no acceso a las rutas
-Metodo que bloquea la entrada a otras rutas sin haber tenido acceso antes
-@param children (rutas hijas)
-*/
-function ruta_protegida({ children }) {
+function RutaProtegida({ children, rolPermitido }) {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   try {
     const decoded = jwtDecode(token);
-    
-    if (decoded.exp * 1000 < Date.now()) {
+    const tokenExpirado = decoded && decoded.exp * 1000 < Date.now();
+
+    if (tokenExpirado) {
       localStorage.removeItem("token");
-      return <Navigate to="/" />;
+      return <Navigate to="/" replace />;
     }
 
-    return children;
-
-  } catch (error) {
+    if (rolPermitido === "Administrador" && !decoded?.isAdmin) {
+      return <Navigate to="/home" replace />;
+    }
+  } catch {
     localStorage.removeItem("token");
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
+
+  return children;
 }
 
-export default ruta_protegida;
+export default RutaProtegida;

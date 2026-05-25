@@ -140,6 +140,10 @@ const DetalleLote = () => {
 
             <Base margen_arriba="mt-16 md:mt-8">
                 <div className="p-6 flex flex-col gap-8">
+                    {error && (
+                        <div className="text-red-500 px-2 font-medium">Error: {error}</div>
+                    )}
+
                     <BannerLote data={loteData} />
 
                     <SeccionFaseBuscar
@@ -151,10 +155,6 @@ const DetalleLote = () => {
                     />
 
                     <div className="flex flex-col gap-4">
-                        {error && (
-                            <div className="text-red-500 px-2 font-medium">Error: {error}</div>
-                        )}
-
                         <TablaBloques
                             bloques={bloquesFiltrados}
                             loading={cargando}

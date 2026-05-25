@@ -121,3 +121,31 @@ exports.post_update_cantidad = async (req, res) => {
         res.status(500).json({ success: false, error: 'Error interno del servidor' });
     }
 };
+
+/*
+* post_update_cantidad_inoculo
+* Cambia la cantidad de un inóculo y registra el movimiento en logs
+*/
+exports.post_update_cantidad_inoculo = async (req, res) => {
+    try {
+        const { id_inoculo, cantidad } = req.body;
+        const nuevaCantidad = parseFloat(cantidad);
+
+        if (!id_inoculo || isNaN(nuevaCantidad)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Datos insuficientes'
+            });
+        }
+
+        await Inventario.update_cantidad_inoculo(id_inoculo, nuevaCantidad);
+
+        res.status(200).json({
+            success: true,
+            message: 'Inóculo actualizado'
+        });
+    } catch (error) {
+        console.error("ERROR:", error);
+        res.status(500).json({ success: false, error: 'Error interno del servidor' });
+    }
+};

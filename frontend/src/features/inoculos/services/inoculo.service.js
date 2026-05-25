@@ -16,9 +16,4 @@ const inoculoService = {
 
 };
 
-<<<<<<< HEAD
 export default inoculoService;
-=======
-export default inoculoService;
-
->>>>>>> ffbb6870b59ca268f2d7d260684bd7dc9c493efc

@@ -17,7 +17,7 @@ jest.mock('../../config/metrics', () => ({
 }));
 
 describe('Bloques Routes', () => {
-    const JWT_SECRET = "secreto_super_seguro"; 
+    const JWT_SECRET = process.env.APP_ACCESS_KEY || "test_secret_key"; 
     let tokenValido;
 
     beforeAll(() => {
@@ -30,7 +30,7 @@ describe('Bloques Routes', () => {
     });
 
     describe('GET / ', () => {
-        it('200 - ista de bloques de un lote', async () => {
+        it('200 - lista de bloques de un lote', async () => {
             const mockBloques = [
                 { id_bloque: 'u-1', id_lote: 'L-1', produccion: 'P1', contaminado: 0 },
                 { id_bloque: 'u-2', id_lote: 'L-1', produccion: 'P1', contaminado: 1 }
@@ -39,7 +39,7 @@ describe('Bloques Routes', () => {
 
             const res = await request(app)
                 .get('/api/bloques?id_lote=L-1')
-                .set('authorization', tokenValido);
+                .set('authorization', `Bearer ${tokenValido}`);
 
             expect(res.statusCode).toBe(200);
             expect(res.body.success).toBe(true);
@@ -62,7 +62,7 @@ describe('Bloques Routes', () => {
 
             const res = await request(app)
                 .post('/api/bloques/crear')
-                .set('authorization', tokenValido)
+                .set('authorization', `Bearer ${tokenValido}`) 
                 .send(nuevoSetBloques);
 
             expect(res.statusCode).toBe(201);
@@ -74,7 +74,7 @@ describe('Bloques Routes', () => {
         it('400 -  datos incompletos', async () => {
             const res = await request(app)
                 .post('/api/bloques/crear')
-                .set('authorization', tokenValido)
+                .set('authorization', `Bearer ${tokenValido}`)
                 .send({ id_lote: 'solo-id' }); 
 
             expect(res.statusCode).toBe(400);
@@ -90,12 +90,11 @@ describe('Bloques Routes', () => {
 
             const res = await request(app)
                 .get('/api/bloques/contenedores')
-                .set('authorization', tokenValido);
+                .set('authorization', `Bearer ${tokenValido}`); 
 
             expect(res.statusCode).toBe(200);
             expect(Array.isArray(res.body)).toBe(true);
             expect(res.body[0].nombre).toBe('Bolsa 2kg');
         });
     });
-
 });

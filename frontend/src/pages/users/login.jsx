@@ -9,45 +9,39 @@ import fondoMovil from "../../assets/images/fondo-fungivora-plano.png";
 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ViewOffIcon, ViewIcon, User03Icon, Key01Icon } from '@hugeicons/core-free-icons';
+import useLogin from "../../features/login/hooks/useLogin";
 
 const Login = () => {
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [cargando, setCargando] = useState(false);
+  
+  const { ejecutarLogin, cargando, error } = useLogin();
+
+  const handleUsuarioChange = (e) => {
+    const valor = e.target.value;
+    if (valor.length <= 30) setUsuario(valor);
+  };
+
+  const handlePasswordChange = (e) => {
+    const valor = e.target.value;
+    if (valor.length <= 30) setPassword(valor);
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
-    setCargando(true);
+    if (!usuario || !password) return;
 
-    // función para dirijirse al backend
     try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nombre_usuario: usuario,
-          contrasena: password,
-        }),
-      });
-
-      // Mensaje de error y redirección
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("token", data.token);
+      const resultado = await ejecutarLogin(usuario, password);
+      if (resultado) {
         window.location.href = "/home";
-      } else {
-        setError("Usuario y/o contraseña incorrectos");
       }
     } catch (err) {
-      console.error("Error de red:", err);
-      setError("Usuario y/o contraseña incorrectos");
-    } finally {
-      setCargando(false);
+      console.error("Error en el proceso de autenticación:", err);
     }
   };
+  const autofillClasses = "autofill:shadow-[0_0_0_1000px_#eff6ff_inset] transition-colors duration-5000";
 
   return (
     <div className="relative h-screen w-full overflow-hidden flex items-center">
@@ -63,10 +57,10 @@ const Login = () => {
 
       {/* Formulario */}
       <div className="relative z-10 w-full md:w-1/2 flex justify-center items-center p-6">
-        <div className="w-full max-w-lg rounded-[3rem] bg-white p-8 sm:p-12 shadow-2xl overflow-y-auto max-h-[90vh]">
-          <form onSubmit={handleLogin} className="flex flex-col items-start w-full">
+        <div className="w-full max-w-lg rounded-[3rem] bg-white p-8 sm:p-12 shadow-2xl overflow-y-auto max-h-[90vh] flex flex-col items-center">
+          <form onSubmit={handleLogin} className="flex flex-col items-center w-full">
 
-            {/* Titulos */}
+            {/* Títulos */}
             <div className="w-full text-center mb-10">
               <Text variante="title" style={{ color: colores.azul }}>Devora</Text>
               <div className="mt-2">
@@ -74,43 +68,43 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="flex flex-col gap-8 w-full items-stretch">
+            {/* Campos del Formulario */}
+            <div className="flex flex-col gap-8 items-center w-full">
 
               {/* Usuario */}
-              <div className="flex flex-col gap-3 w-full">
+              <div className="flex flex-col gap-3 items-start w-auto">
                 <div className="flex items-center gap-2">
                   <HugeiconsIcon icon={User03Icon} size={20} className="text-gray-500" />
                   <Text variante="label" style={{ color: colores.gris }}>Usuario</Text>
                 </div>
-                <div className="relative w-full flex items-center">
-                  <Input
-                    placeholder="Escribe tu usuario..."
-                    value={usuario}
-                    onChange={(e) => setUsuario(e.target.value)}
-                    disabled={cargando}
-                    className="w-full pr-12"
-                  />
-                </div>
+                <Input
+                  placeholder="Escribe tu usuario..."
+                  value={usuario}
+                  onChange={handleUsuarioChange}
+                  disabled={cargando}
+                  maxLength={30} 
+                  className={autofillClasses}
+                />
               </div>
 
               {/* Contraseña */}
-              <div className="flex flex-col gap-3 w-full">
+              <div className="flex flex-col gap-3 items-start w-auto">
                 <div className="flex items-center gap-2">
                   <HugeiconsIcon icon={Key01Icon} size={20} className="text-gray-500" />
                   <Text variante="label" style={{ color: colores.gris }}>Contraseña</Text>
                 </div>
-
-                <div className="relative w-full flex items-center">
+                <div className="relative flex items-center">
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Escribe tu contraseña..."
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={handlePasswordChange}
                     disabled={cargando}
-                    className="w-full pr-12 md:pr-20"
+                    maxLength={30}
+                    className={`pr-10 ${autofillClasses}`}
                   />
                   <div
-                    className="absolute right-4 md:right-12 flex items-center justify-center cursor-pointer select-none"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer select-none z-20 text-gray-500 hover:text-gray-700 h-5 w-5"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     <HugeiconsIcon
@@ -122,7 +116,7 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Mensaje de error */}
+            {/* Mensaje de Error */}
             {error && (
               <div className="mt-6 w-full text-center">
                 <Text variante="label" style={{ color: "#E53E3E" }}>{error}</Text>

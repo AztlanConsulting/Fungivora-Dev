@@ -2,64 +2,34 @@ import React, { useState, useRef, useEffect } from "react";
 import { colores } from "../basics/Colores";
 import Text from "../basics/Texto";
 
-// Estilos y configuración estática
-
-/** Tipografía compartida para el texto escrito dentro del input */
 const inputTextStyle = {
     fontSize: "clamp(16px, 1.5vw, 14px)",
     color: colores.gris
 };
 
-/** Clases de tamaño según variante */
 const sizes = {
-    normal: "w-80 h-7 md:w-96 md:h-10",
-    /** Se cambia altura fija por min-h para que pueda crecer */
+    normal: "w-80 h-10 md:w-96 md:h-12", 
     amplio: "w-80 h-auto min-h-[4rem] md:w-96 md:min-h-[6rem]",
-    numero: "w-24 h-7 md:w-32 md:h-10",
-}
+    numero: "w-24 h-10 md:w-32 md:h-12",
+};
 
-/** Alineación interna del placeholder según variante */
 const alignments = {
     normal: "flex items-center",
     amplio: "py-2",
     numero: "flex items-center",
-}
-
-// Configuración para variante numérica
-
-/**
- * Atributos HTML que activan el teclado numérico correcto en móvil.
- * Se pasan directamente al <input>.
- */
-const numeroConfig = {
-    entero: { type: "text", inputMode: "numeric", pattern: "[0-9]*" },
-}
-
-/** Regex que valida el valor completo al escribir */
-const numeroRegex = {
-    entero: /^\d*$/,
 };
 
-/** Caracteres que pueden romper el formato */
-const caracteresBase = ["<", ">", "{", "}", "[", "]", "\\", "`", "^", "~"];
+const numeroConfig = {
+    entero: { type: "text", inputMode: "numeric", pattern: "[0-9]*" },
+    decimal: { type: "text", inputMode: "decimal", pattern: "[0-9]*[.,]?[0-9]{0,2}" },
+};
 
-/**
- * Input — campo de texto reutilizable con soporte para:
- * - Texto de una línea           (variante "normal")
- * - Textarea multilínea           (variante "amplio")
- * - Número entero sin negativo    (variante "numero", numeroTipo "entero")
- * - Número decimal sin negativo   (variante "numero", numeroTipo "decimal")
- *
- * El ring de foco cambia de azul → verde para retroalimentación visual.
- * El placeholder usa el componente <Text> para mantener consistencia tipográfica.
- *
- * @param {string}   variante    - "normal" | "amplio" | "numero"
- * @param {string}   numeroTipo  - "entero"  (solo aplica si variante === "numero")
- * @param {string}   placeholder - Texto de ayuda
- * @param {string}   value       - Valor controlado
- * @param {Function} onChange    - Handler de cambio del input
- * @param {string}   type        - Tipo de input (text, password, etc)
- */
+const numeroRegex = {
+    entero: /^\d*$/,
+    decimal: /^\d*[.,]?\d{0,2}$/,
+};
+
+const caracteresBase = ["<", ">", "{", "}", "[", "]", "\\", "`", "^", "~"];
 
 const Input = ({
     variante = "normal",
@@ -70,17 +40,16 @@ const Input = ({
     className = "",
     type = "text", 
     roundedClass = "rounded-md",
-    regex= /^[0-9a-zA-Záéíóú\s]*$/,
+    regex = null, 
+    ...props 
 }) => {
     const [isFocused, setIsFocused] = useState(false);
-    /** Referencia al elemento del DOM para calcular altura */
     const textAreaRef = useRef(null);
-
-    // Clases de tamaño y alineación según variante
-    const sizeClass = className.includes("w-") ? "" : (sizes[variante] || sizes.normal);
+    const tieneAnchoCustom = /\bw-\d+|\bw-auto|\bw-full\b/.test(className);
+    const sizeClass = tieneAnchoCustom ? "" : (sizes[variante] || sizes.normal);
+    
     const alignmentClass = alignments[variante] || alignments.normal;
 
-    /** Ajusta la altura del textarea dinámicamente según el contenido */
     useEffect(() => {
         if (variante === "amplio" && textAreaRef.current) {
             textAreaRef.current.style.height = "auto";
@@ -88,34 +57,27 @@ const Input = ({
         }
     }, [value, variante]);
 
-    // Handlers y validación
-
-    /** Bloquea teclas no permitidas antes de que modifiquen el input. */
     const handleKeyDown = (e) => {
-        const bloqueados = caracteresBase;
-        if (bloqueados.includes(e.key)) e.preventDefault();
+        if (caracteresBase.includes(e.key)) e.preventDefault();
     };
 
-    /**
-     * Para inputs numéricos, valida el valor completo con regex
-     * antes de propagar el cambio — evita estados inválidos.
-     */
     const handleChange = (e) => {
-    if (variante === "numero") {
-        const rawValue = e.target.value.replace(/,/g, "");
-        const numeroRgx = numeroRegex[numeroTipo] || numeroRegex.entero;
-        if (!numeroRgx.test(rawValue)) return;
+        if (!onChange) return;
 
-        const formatted = rawValue === "" ? "" : Number(rawValue).toLocaleString("en-US");
-        e.target.value = formatted;
-        return onChange(e);
-    }
+        if (variante === "numero") {
+            const rawValue = e.target.value.replace(/,/g, "");
+            const numeroRgx = numeroRegex[numeroTipo] || numeroRegex.entero;
+            if (!numeroRgx.test(rawValue)) return;
 
-    if (regex && e.target.value !== "" && !regex.test(e.target.value)) return;
-    onChange(e);
-};
+            const formatted = rawValue === "" ? "" : Number(rawValue).toLocaleString("en-US");
+            e.target.value = formatted;
+            return onChange(e);
+        }
 
-    // Props compartidos entre <input> y <textarea>
+        if (regex && e.target.value !== "" && !regex.test(e.target.value)) return;
+
+        onChange(e);
+    };
 
     const sharedProps = {
         value,
@@ -123,58 +85,45 @@ const Input = ({
         onKeyDown: handleKeyDown,
         onFocus: () => setIsFocused(true),
         onBlur: () => setIsFocused(false),
-        // Elimina el spinner nativo de inputs numéricos en Chrome/Safari y da el estilo inicial
-        // Se agrega overflow-hidden para la variante amplia para evitar scrollbars feos mientras crece
         className: `
-            w-full h-full px-3 py-2 bg-[#FFFFFF] outline-none resize-none
+            flex-1 h-full px-4 py-2 bg-transparent outline-none resize-none relative z-10
             [appearance:textfield]
+            disabled:bg-transparent disabled:cursor-not-allowed
             [&::-webkit-outer-spin-button]:appearance-none
             [&::-webkit-inner-spin-button]:appearance-none
             ${variante === "amplio" ? "overflow-hidden" : ""}
             ${className} 
         `,
         style: inputTextStyle,
+        ...props 
     };
 
-    // Props extra para activar el teclado numérico correcto en móvil
-    // Se cambia el type fijo "text" por la prop dinámica type
-    const numProps
-        = variante === "numero"
-            ? numeroConfig[numeroTipo] || numeroConfig.entero
-            : { type: type };
-
-
-    // Render
+    const numProps = variante === "numero"
+        ? numeroConfig[numeroTipo] || numeroConfig.entero
+        : { type: type };
 
     return (
         <div
             className={`
-                tu-clase-base ${className}
-                ${sizeClass} ${roundedClass} overflow-hidden transition-all relative
+                bg-white transition-all relative flex items-center
+                ${sizeClass} ${roundedClass} overflow-hidden
                 ${isFocused ? "ring-4" : "ring-2"} ring-[var(--input-ring)]
             `}
             style={{ "--input-ring": isFocused ? colores.azul : colores.grisClaro }}
         >
-            {/** Placeholder visual que usa Text para coincidir con el diseño*/}
             {!value && (
-                <div className={`
-                    absolute inset-0 px-3 pointer-events-none z-0 ${alignmentClass} ${className}
-                `}>
+                <div className={`absolute left-4 inset-y-0 pointer-events-none z-0 ${alignmentClass}`}>
                     <Text variante="input">{placeholder}</Text>
                 </div>
             )}
 
-            {/** Renderiza un <textarea> para la variante "amplio" y un <input> para las demás */}
             {variante === "amplio" ? (
-                <textarea
-                    ref={textAreaRef}
-                    rows={1}
-                    {...sharedProps}
-
-                />
+                <textarea ref={textAreaRef} rows={1} {...sharedProps} />
             ) : (
-                <input {...sharedProps} {...numProps}
-                maxLength={variante === "normal" ? 50 : variante === "numero" ? 6 : undefined}
+                <input 
+                    {...sharedProps} 
+                    {...numProps}
+                    maxLength={variante === "normal" ? 50 : variante === "numero" ? 6 : undefined}
                 />
             )}
         </div>

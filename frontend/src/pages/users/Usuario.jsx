@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 function User() {
-  const [mensaje, setMensaje] = useState("");
+  const [setMensaje] = useState("");
   const [texto, setTexto] = useState("");
 
   useEffect(() => {

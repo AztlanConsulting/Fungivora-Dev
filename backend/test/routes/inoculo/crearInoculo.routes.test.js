@@ -1,4 +1,5 @@
 const request = require('supertest');
+const jwt = require('jsonwebtoken'); 
 
 jest.mock('../../../util/db');
 const db = require('../../../util/db');
@@ -27,7 +28,7 @@ const bodyBase = {
     tipo: 'semilla',
     especie: 'Shiitake',
     fecha: '2026-05-14',
-    cantidad_disponible: 500,
+    amount_disponible: 500,
     unidad: 'gr',
     num_repeticiones: 3,
     nota: 'Lote de prueba',
@@ -40,6 +41,12 @@ const bodyBase = {
 };
 
 describe('POST /api/inoculos/crear', () => {
+    let tokenTest; 
+
+    beforeAll(() => {
+        const SECRET = process.env.APP_ACCESS_KEY || 'test_secret_key';
+        tokenTest = jwt.sign({ id: 1, usuario: 'test_user', isAdmin: true }, SECRET, { expiresIn: '1h' });
+    });
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -67,7 +74,8 @@ describe('POST /api/inoculos/crear', () => {
     it('responde 201 con success true cuando todo funciona', async () => {
         const res = await request(app)
             .post('/api/inoculos/crear')
-            .send(bodyBase);
+            .send(bodyBase)
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(res.statusCode).toBe(201);
         expect(res.body).toMatchObject({
@@ -79,7 +87,8 @@ describe('POST /api/inoculos/crear', () => {
     it('responde con Content-Type application/json', async () => {
         const res = await request(app)
             .post('/api/inoculos/crear')
-            .send(bodyBase);
+            .send(bodyBase)
+            .set('Authorization', `Bearer ${tokenTest}`); 
 
         expect(res.headers['content-type']).toMatch(/application\/json/);
     });
@@ -87,7 +96,8 @@ describe('POST /api/inoculos/crear', () => {
     it('llama insertInoculo una vez por repetición', async () => {
         await request(app)
             .post('/api/inoculos/crear')
-            .send({ ...bodyBase, num_repeticiones: 3 });
+            .send({ ...bodyBase, num_repeticiones: 3 })
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(Inoculo.insertInoculo).toHaveBeenCalledTimes(3);
     });
@@ -95,7 +105,8 @@ describe('POST /api/inoculos/crear', () => {
     it('limita a 15 repeticiones aunque num_repeticiones sea mayor', async () => {
         await request(app)
             .post('/api/inoculos/crear')
-            .send({ ...bodyBase, num_repeticiones: 50 });
+            .send({ ...bodyBase, num_repeticiones: 50 })
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(Inoculo.insertInoculo).toHaveBeenCalledTimes(15);
     });
@@ -103,7 +114,8 @@ describe('POST /api/inoculos/crear', () => {
     it('NO llama insertBitacora cuando nota es string vacío', async () => {
         await request(app)
             .post('/api/inoculos/crear')
-            .send({ ...bodyBase, nota: '' });
+            .send({ ...bodyBase, nota: '' })
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(Inoculo.insertBitacora).not.toHaveBeenCalled();
     });
@@ -111,7 +123,8 @@ describe('POST /api/inoculos/crear', () => {
     it('NO llama insertBitacora cuando nota es null', async () => {
         await request(app)
             .post('/api/inoculos/crear')
-            .send({ ...bodyBase, nota: null });
+            .send({ ...bodyBase, nota: null })
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(Inoculo.insertBitacora).not.toHaveBeenCalled();
     });
@@ -119,7 +132,8 @@ describe('POST /api/inoculos/crear', () => {
     it('llama insertBitacora una vez por repetición cuando nota tiene contenido', async () => {
         await request(app)
             .post('/api/inoculos/crear')
-            .send({ ...bodyBase, num_repeticiones: 2, nota: 'Con nota' });
+            .send({ ...bodyBase, num_repeticiones: 2, nota: 'Con nota' })
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(Inoculo.insertBitacora).toHaveBeenCalledTimes(2);
     });
@@ -131,7 +145,8 @@ describe('POST /api/inoculos/crear', () => {
 
         const res = await request(app)
             .post('/api/inoculos/crear')
-            .send(bodyBase);
+            .send(bodyBase)
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(res.statusCode).toBe(422);
         expect(res.body).toMatchObject({
@@ -145,7 +160,8 @@ describe('POST /api/inoculos/crear', () => {
 
         await request(app)
             .post('/api/inoculos/crear')
-            .send(bodyBase);
+            .send(bodyBase)
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(mockConnection.rollback).toHaveBeenCalled();
     });
@@ -155,7 +171,8 @@ describe('POST /api/inoculos/crear', () => {
 
         await request(app)
             .post('/api/inoculos/crear')
-            .send(bodyBase);
+            .send(bodyBase)
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(mockConnection.commit).not.toHaveBeenCalled();
     });

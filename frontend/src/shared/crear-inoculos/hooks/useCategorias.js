@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import api from "../../../shared/utils/api"; 
 
 /**
  * Hook para obtener todos los registros de la tabla Categorías.
@@ -11,16 +12,24 @@ const useCategorias = () => {
 
   useEffect(() => {
     const fetchCategorias = async () => {
-      try {
-        const res  = await fetch("/api/categorias/todas");
-        const json = await res.json();
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
-        if (json.success) {
-          setCategorias(json.data);
+      try {
+        setLoading(true);
+        const json = await api.get("/categorias/todas");
+
+        if (json && json.success) {
+          setCategorias(json.data || []);
+        } else if (Array.isArray(json)) {
+          setCategorias(json);
         } else {
           setError("No se pudieron cargar las categorías");
         }
-      } catch  {
+      } catch (err) {
+        console.error("Error en useCategorias:", err);
+        setError("Error de conexión");
+      } finally {
         setLoading(false);
       }
     };
@@ -33,8 +42,10 @@ const useCategorias = () => {
    * @param {string} nombreCategoria 
    * @returns {Array}
    */
-  const getByCategoria = (nombreCategoria) =>
-    categorias.filter((c) => c.nombre_categoria === nombreCategoria);
+  const getByCategoria = (nombreCategoria) => {
+    if (!Array.isArray(categorias)) return [];
+    return categorias.filter((c) => c && c.nombre_categoria === nombreCategoria);
+  };
 
   return { categorias, getByCategoria, loading, error };
 };

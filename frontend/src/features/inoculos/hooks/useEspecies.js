@@ -10,13 +10,13 @@ const useEspecies = () => {
         const fetchEspecies = async () => {
             try {
                 const json = await inoculoService.getAllEspecies();
-
                 if (json.success) {
-                    setEspecies(json.data.map ((item) => ({especie:item.opcion})));
+                    setEspecies(json.data.map((item) => ({ especie: item.opcion })));
                 } else {
                     setError("No se pudieron cargar las especies");
                 }
             } catch (err) {
+                console.error("Error en useEspecies:", err);
                 setError("Error de conexión");
             } finally {
                 setLoading(false);

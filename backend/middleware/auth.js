@@ -1,25 +1,27 @@
 const jwt = require('jsonwebtoken');
+const jwtUtils = require('../util/jwtUtils')
 
-/*
-* auth
-Tener un token de autenticación para entrar al sistema
-Metodo que decodifica y encuntre el token para dar acceso con un rol
-@param token, decoded
-*/
 module.exports = (req, res, next) => {
-    const token = req.headers['authorization'];
+    const authHeader = req.headers['authorization'];
+
+    const token = authHeader && authHeader.startsWith('Bearer ') 
+        ? authHeader.split(' ')[1] 
+        : authHeader;
 
     if (!token) {
-        return res.json({ msg: "No autorizado" });
+        return res.status(401).json({ msg: "No autorizado: Token faltante" });
     }
 
     try {
-        const decoded = jwt.verify(token, "secreto_super_seguro");
-
+        const secretoAsignado = jwtUtils.SECRET || process.env.APP_ACCESS_KEY;
+        
+        const decoded = jwt.verify(token, secretoAsignado);
         req.user = decoded;
-
         next();
     } catch (error) {
-        return res.json({ msg: "Token inválido" });
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ msg: "Token expirado", code: "TOKEN_EXPIRED" });
+        }
+        return res.status(403).json({ msg: "Token inválido" });
     }
 };
