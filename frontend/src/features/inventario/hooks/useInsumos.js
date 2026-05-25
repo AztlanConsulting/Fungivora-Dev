@@ -6,7 +6,6 @@ const useInsumos = () => {
     const [insumos, setInsumos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-<<<<<<< HEAD
     const [unidades, setUnidades] = useState([]); 
 
     useEffect(() => {
@@ -26,9 +25,6 @@ const useInsumos = () => {
         };
         cargarUnidades();
     }, []);
-=======
-    const [unidades, setUnidades] = useState([]);
->>>>>>> 3226f17b0bfbf7e696b5fd740d27364e7217b468
 
     // Recuperar los insumos
     const fetchInsumos = async () => {
