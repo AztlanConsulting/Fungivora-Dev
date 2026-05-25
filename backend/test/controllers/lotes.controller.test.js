@@ -1,11 +1,15 @@
 const { get_batches, post_batch, get_sustratos } = require('../../controllers/lotes.controller');
 const Lotes = require('../../models/lotes.model');
 const Categoria = require('../../models/categoria.model');
+const Bloque = require('../../models/bloque.model');
 const crypto = require('crypto');
 
 // Mocks de los modelos
 jest.mock('../../models/lotes.model');
 jest.mock('../../models/categoria.model');
+jest.mock('../../models/bloque.model', () => ({
+    crear_bloque: jest.fn(),
+}));
 jest.mock('crypto');
 
 const mockRes = () => {
@@ -81,9 +85,7 @@ describe('Lotes Controller', () => {
             Lotes.count_lotes_similares.mockResolvedValue(5);
             crypto.randomUUID.mockReturnValue('uuid-generado-123');
 
-            const Bloque = require('../../models/bloque.model');
-            jest.mock('../../models/bloque.model');
-            Bloque.crear_bloque = jest.fn().mockResolvedValue(true);
+            Bloque.crear_bloque.mockResolvedValue(true);
 
             await post_batch(req, res);
 
