@@ -2,6 +2,17 @@ const Lotes = require('../models/lotes.model');
 const Categoria = require('../models/categoria.model');
 const Bloque = require('../models/bloque.model');
 const crypto = require('crypto');
+const cron = require('node-cron');
+
+// Se limpiar a las 00:00 a.m.
+cron.schedule('0 0 * * *', async () => {
+    console.log('Iniciando revisión automática de lotes...');
+    try {
+        await Lotes.limpiar_lotes_antiguos();
+    } catch (error) {
+        console.error('rror al ejecutar la limpieza automática:', error);
+    }
+});
 
 /*
 * get_batches

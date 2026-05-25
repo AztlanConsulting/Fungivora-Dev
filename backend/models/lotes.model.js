@@ -135,6 +135,38 @@ class Lotes {
         }
     }
 
+    // Método para eliminar automáticamente lotes mayores a 3 meses y sus bloques
+    static async limpiar_lotes_antiguos() {
+        const connection = await db.getConnection();
+        try {
+            await connection.beginTransaction();
+
+            // Si la fecha es mayor a 3 meses
+            await connection.execute(`
+                DELETE FROM Bloques 
+                WHERE id_lote IN (
+                    SELECT id_lote FROM Lotes 
+                    WHERE fecha_lote < DATE_SUB(NOW(), INTERVAL 3 MONTH)
+                )
+            `);
+
+            // Eliminarlo
+            const [result] = await connection.execute(`
+                DELETE FROM Lotes 
+                WHERE fecha_lote < DATE_SUB(NOW(), INTERVAL 3 MONTH)
+            `);
+
+            await connection.commit();
+            return result;
+        } catch (err) {
+            await connection.rollback();
+            console.error("Error en la limpieza automática de lotes:", err);
+            throw err;
+        } finally {
+            connection.release();
+        }
+    }
+
     // Método para revisar varios lotes
     static async revision_lotes(ids) {
         try {
