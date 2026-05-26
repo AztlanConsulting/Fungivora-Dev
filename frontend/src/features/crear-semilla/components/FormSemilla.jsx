@@ -44,6 +44,7 @@ const FormSemillas = () => {
 
   const [especie, setEspecie] = useState("");
   const [inoculo, setInoculo] = useState("");
+  const [esComprado, setEsComprado] = useState(false);
   const [mijo, setMijo] = useState("");
   const [tamano, setTamano] = useState("");
   const [cantidad, setCantidad] = useState(1);
@@ -61,12 +62,12 @@ const FormSemillas = () => {
   const [registrando, setRegistrando] = useState(false);
   const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
 
-  const inoculoSeleccionado = (inoculos ?? []).find((ino) => ino.codigo === inoculo);
+  const inoculoSeleccionado = !esComprado ? (inoculos ?? []).find((ino) => ino.codigo === inoculo) : null;
   const tipoInoculo = normalizarTipoInoculo(inoculoSeleccionado?.raw?.tipo);
   const inoculoDisponible = inoculoSeleccionado?.raw?.cantidad_disponible ?? 0;
-  const codigoInoculo = inoculoSeleccionado?.codigo ?? "";
+  const codigoInoculo = esComprado ? "Comprado" : (inoculoSeleccionado?.codigo ?? "");
   const cantidadFinal = BOLSAS[tamano] ?? cantidad;
-
+  
   const {
     items: itemsComposicion,
     valores: valoresComposicion,
@@ -96,7 +97,7 @@ const FormSemillas = () => {
     if (loadingCategorias) return { base: "", lista: [] };
     return generarCodigos({
       tipoCreacion: TIPO_CREACION,
-      tipoInoculo,
+      tipoInoculo: esComprado ? "Comprado" : tipoInoculo,
       nombreEspecie: especie,
       categorias,
       fecha,
@@ -108,7 +109,7 @@ const FormSemillas = () => {
     if (tieneErroresComposicion) {
       setAlerta({
         visible: true,
-        variante: "error",
+        variant: "error",
         mensaje: "Algún ingrediente excede el stock disponible. Revisa la composición.",
       });
       return;
@@ -124,10 +125,12 @@ const FormSemillas = () => {
         cantidad,
         nota,
         unidad: "g",
-        inoculoSeleccionado,
+        inoculoSeleccionado: esComprado ? { id: null, raw: { id_inoculo: null } } : inoculoSeleccionado,
         valoresComposicion,
-        itemsComposicion,
+        itemsComposicion: itemsComposicion,
       });
+
+      datos.inoculo_usado = esComprado ? { id: null, cantidad: 0 } : { id: inoculoSeleccionado?.raw?.id_inoculo, cantidad: 0 };
 
       await insumosService.postInoculo(datos);
       navigate("/inoculos", {
@@ -157,64 +160,89 @@ const FormSemillas = () => {
           <div className="flex flex-col lg:flex-row gap-6 items-start">
 
             <div className="flex flex-col gap-6 flex-1 min-w-0">
-
               <div className="bg-white rounded-[32px] shadow-sm border p-6 md:p-8">
                 <div className="flex flex-col md:flex-row gap-6 flex-wrap">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
 
-                  <div className="flex flex-col gap-2">
-                    <Text variante="label" style={{ color: colores.gris }}>Especie</Text>
-                    <SelectField
-                      value={especie}
-                      onChange={(e) => setEspecie(e.target.value)}
-                      placeholder="Selecciona especie"
-                      options={opcionesEspecies}
-                      loading={loadingEspecies}
-                      error={errorEspecies}
-                    />
+                    {/* Especie */}
+                    <div className="flex flex-col gap-2 w-full">
+                      <Text variante="label" style={{ color: colores.gris }}>Especie</Text>
+                      <SelectField
+                        value={especie}
+                        onChange={(e) => setEspecie(e.target.value)}
+                        placeholder="Selecciona especie"
+                        options={opcionesEspecies}
+                        loading={loadingEspecies}
+                        error={errorEspecies}
+                      />
+                    </div>
+
+                    {/* Inóculo con Checkbox */}
+                    <div className="flex flex-col gap-2 w-full">
+                      <div className="flex justify-between items-center mb-1">
+                        <Text variante="label" style={{ color: colores.gris }}>Inóculo</Text>
+                        <label className="flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-blue-600 select-none">
+                          <input 
+                            type="checkbox" 
+                            checked={esComprado} 
+                            onChange={(e) => {
+                              setEsComprado(e.target.checked);
+                              setInoculo(""); 
+                            }}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          ¿Es comprado?
+                        </label>
+                      </div>
+                      
+                      {!esComprado ? (
+                        <SelectField
+                          value={inoculo}
+                          onChange={(e) => setInoculo(e.target.value)}
+                          placeholder="Selecciona inóculo"
+                          options={opcionesInoculos}
+                          loading={loadingInoculos}
+                          error={errorInoculos}
+                          disabled={!especie}
+                        />
+                      ) : (
+                        <div className="h-[42px] flex items-center px-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl text-sm font-medium">
+                          Inóculo comprado
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Mijo */}
+                    <div className="flex flex-col gap-2 w-full">
+                      <Text variante="label" style={{ color: colores.gris }}>Mijo</Text>
+                      <SelectField
+                        value={mijo}
+                        onChange={(e) => setMijo(e.target.value)}
+                        placeholder="Selecciona mijo"
+                        options={opcionesMijo}
+                        loading={loadingInsumos}
+                      />
+                    </div>
+
+                    {/* Tamaño */}
+                    <div className="flex flex-col gap-2 w-full">
+                      <Text variante="label" style={{ color: colores.gris }}>Tamaño</Text>
+                      <SelectField
+                        value={tamano}
+                        onChange={(e) => setTamano(e.target.value)}
+                        placeholder="Selecciona tamaño"
+                        options={OPCIONES_TAMANO}
+                      />
+                    </div>
+
                   </div>
-
-                  <div className="flex flex-col gap-2">
-                    <Text variante="label" style={{ color: colores.gris }}>Inóculo</Text>
-                    <SelectField
-                      value={inoculo}
-                      onChange={(e) => setInoculo(e.target.value)}
-                      placeholder="Selecciona inóculo"
-                      options={opcionesInoculos}
-                      loading={loadingInoculos}
-                      error={errorInoculos}
-                      disabled={!especie}
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    <Text variante="label" style={{ color: colores.gris }}>Mijo</Text>
-                    <SelectField
-                      value={mijo}
-                      onChange={(e) => setMijo(e.target.value)}
-                      placeholder="Selecciona mijo"
-                      options={opcionesMijo}
-                      loading={loadingInsumos}
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    <Text variante="label" style={{ color: colores.gris }}>Tamaño</Text>
-                    <SelectField
-                      value={tamano}
-                      onChange={(e) => setTamano(e.target.value)}
-                      placeholder="Selecciona tamaño"
-                      options={OPCIONES_TAMANO}
-                    />
-                  </div>
-
                 </div>
               </div>
 
               <EntradaLista items={itemsComposicion} />
 
               <div className="bg-white rounded-[32px] shadow-sm border p-6 md:p-8 flex flex-col gap-6">
-
-                <div className="flex flex-col md:flex-row gap-8 items-start flex-wrap">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                   <div className="flex flex-col gap-3">
                     <Text variante="medium">Cantidad</Text>
                     <InputCantidad value={cantidad} onChange={setCantidad} />
@@ -226,12 +254,12 @@ const FormSemillas = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 w-full">
                   <Text variante="medium">Notas</Text>
                   <InputNota value={nota} onChange={setNota} />
                 </div>
-
               </div>
+
             </div>
 
             <Resumen
@@ -256,6 +284,7 @@ const FormSemillas = () => {
           </div>
         </div>
       </Base>
+      
       <ModalAlerta
         visible={alerta.visible}
         variante={alerta.variante}

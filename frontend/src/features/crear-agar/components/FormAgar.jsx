@@ -39,6 +39,7 @@ const FormAgar = () => {
 
   const [especie, setEspecie] = useState("");
   const [inoculo, setInoculo] = useState("");
+  const [esComprado, setEsComprado] = useState(false);
   const [cantidad, setCantidad] = useState(1);
   const hoy = new Date();
   const [fecha, setFecha] = useState({
@@ -55,16 +56,21 @@ const FormAgar = () => {
   const { opciones: inoculos, loading: loadingInoculos, error: errorInoculos } = useInoculo(especie, TIPO_CREACION);
   const { categorias, loading: loadingCategorias } = useCategorias();
 
-  const inoculoSeleccionado = (inoculos ?? []).find((ino) => ino.codigo === inoculo);
+  const inoculoSeleccionado = !esComprado ? (inoculos ?? []).find((ino) => ino.codigo === inoculo) : null;
   const tipoInoculo = normalizarTipoInoculo(inoculoSeleccionado?.raw?.tipo);
   const inoculoDisponible = inoculoSeleccionado?.raw?.cantidad_disponible ?? 0;
-  const codigoInoculo = inoculoSeleccionado?.codigo ?? "";
+  const codigoInoculo = esComprado ? "Comprado" : (inoculoSeleccionado?.codigo ?? "");
 
   const {
     items: itemsComposicion,
     valores: valoresComposicion,
     tieneErrores: tieneErroresComposicion,
   } = useIngredientesAgar({ inoculoDisponible, codigoInoculo, tipoInoculo, cantidad });
+
+  const itemsFiltrados = useMemo(() => {
+    if (!esComprado) return itemsComposicion;
+    return itemsComposicion.filter(item => item.tipo !== "inoculo");
+  }, [itemsComposicion, esComprado]);
 
   const cantInoculo = parseFloat(String(valoresComposicion?.cantInoculo ?? "").replace(",", ".")) || 0;
 
@@ -82,7 +88,7 @@ const FormAgar = () => {
     if (loadingCategorias) return { base: "", lista: [] };
     return generarCodigos({
       tipoCreacion: TIPO_CREACION,
-      tipoInoculo,
+      tipoInoculo: esComprado ? "Comprado" : tipoInoculo,
       nombreEspecie: especie,
       categorias,
       fecha,
@@ -111,10 +117,12 @@ const FormAgar = () => {
         cantidad,
         nota,
         unidad: "ml",
-        inoculoSeleccionado,
+        inoculoSeleccionado: esComprado ? { id: null, raw: { id_inoculo: null } } : inoculoSeleccionado,
         valoresComposicion,
         itemsComposicion,
       });
+
+      datos.inoculo_usado = esComprado ? { id: null, cantidad: 0 } : { id: inoculoSeleccionado?.raw?.id_inoculo, cantidad: cantInoculo };
 
       await insumosService.postInoculo(datos);
       navigate("/inoculos", {
@@ -160,17 +168,38 @@ const FormAgar = () => {
                     />
                   </div>
 
-                  <div className="flex flex-col gap-2">
-                    <Text variante="label" style={{ color: colores.gris }}>Inóculo</Text>
-                    <SelectField
-                      value={inoculo}
-                      onChange={(e) => setInoculo(e.target.value)}
-                      placeholder="Selecciona inóculo"
-                      options={opcionesInoculos}
-                      loading={loadingInoculos}
-                      error={errorInoculos}
-                      disabled={!especie}
-                    />
+                  <div className="flex flex-col gap-2 flex-1 min-w-[200px]">
+                    <div className="flex justify-between items-center mb-1">
+                      <Text variante="label" style={{ color: colores.gris }}>Inóculo</Text>
+                      <label className="flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-blue-600 select-none">
+                        <input 
+                          type="checkbox" 
+                          checked={esComprado} 
+                          onChange={(e) => {
+                            setEsComprado(e.target.checked);
+                            setInoculo(""); 
+                          }}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        ¿Es comprado?
+                      </label>
+                    </div>
+                    
+                    {!esComprado ? (
+                      <SelectField
+                        value={inoculo}
+                        onChange={(e) => setInoculo(e.target.value)}
+                        placeholder="Selecciona inóculo"
+                        options={opcionesInoculos}
+                        loading={loadingInoculos}
+                        error={errorInoculos}
+                        disabled={!especie}
+                      />
+                    ) : (
+                      <div className="h-[42px] flex items-center px-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl text-sm font-medium">
+                        Inóculo comprado
+                      </div>
+                    )}
                   </div>
 
                 </div>
@@ -210,7 +239,7 @@ const FormAgar = () => {
               <Button
                 variant="registrar"
                 onClick={handleRegistrar}
-                disabled={registrando || !inoculo || !cantidad || cantidad < 1 || cantInoculo <= 0 || tieneErroresComposicion}
+                disabled={registrando || !cantidad || cantidad < 1 || cantInoculo <= 0 || tieneErroresComposicion}
               >
                 {registrando ? "Registrando ..." : "Registrar"}
               </Button>
