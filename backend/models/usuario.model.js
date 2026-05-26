@@ -21,6 +21,14 @@ class Usuario {
 
     return filas[0];
   };
+
+  static fetch_by_id = async (id) => {
+    const [filas] = await db.execute(
+        `SELECT is_user_admin FROM Usuarios WHERE id_usuario = ?`,
+        [id]
+    );
+    return filas[0];
+  };
 }
 
 module.exports = Usuario;
