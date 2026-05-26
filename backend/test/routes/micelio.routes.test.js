@@ -1,7 +1,6 @@
 const request = require('supertest');
 const app = require('../../app'); 
 const Micelio = require('../../models/micelio.model');
-const Inventario = require('../../models/inventario.model');
 const jwt = require('jsonwebtoken');
 
 jest.mock('../../models/micelio.model');
