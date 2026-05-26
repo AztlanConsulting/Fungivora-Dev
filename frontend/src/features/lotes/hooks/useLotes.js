@@ -3,7 +3,6 @@ import loteService from "../services/lotes.service";
 
 const useLotes = () => {
     const [datos, setDatos] = useState([]);
-    const [sustratos, setSustratos] = useState([]);
     const [ubicaciones, setUbicaciones] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
@@ -31,15 +30,10 @@ const useLotes = () => {
 
     const cargarCatalogos = useCallback(async () => {
         try {
-            const [dataSus, dataUbi, jsonEsp] = await Promise.all([
-                loteService.getSustratos(),
+            const [dataUbi, jsonEsp] = await Promise.all([
                 loteService.getUbicaciones(),
                 loteService.getEspecies()
             ]);
-
-            // Procesar Sustratos 
-            const listSus = Array.isArray(dataSus) ? dataSus : (dataSus?.data || []);
-            setSustratos(listSus.map(s => ({ value: s.opcion, label: s.opcion })));
 
             // Procesar Ubicaciones
             const listUbi = Array.isArray(dataUbi) ? dataUbi : (dataUbi?.data || []);
@@ -120,7 +114,6 @@ const useLotes = () => {
 
     return {
         datos,
-        sustratos,
         ubicaciones,
         especiesDisponibles,
         getInoculosPorEspecie,

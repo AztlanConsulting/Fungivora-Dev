@@ -10,15 +10,6 @@ const loteService = {
     }
   },
 
-  getSustratos: async () => {
-    try {
-      return await api.get("/lotes/sustratos");
-    } catch (error) {
-      console.error("Error en getSustratos:", error);
-      return []; 
-    }
-  },
-
   getUbicaciones: async () => {
     try {
       return await api.get("/lotes/ubicaciones");

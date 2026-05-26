@@ -11,9 +11,6 @@ router.post('/crear', controller.post_batch);
 // Ruta para actualizar la fase de un lote
 router.put('/fase', controller.actualizar_fase);
 
-// Obtener todas los sustratos de categorias
-router.get('/sustratos', controller.get_sustratos);
-
 // Obtener todas las ubicacionesde categorias
 router.get('/ubicaciones', controller.get_ubicaciones);
 

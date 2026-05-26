@@ -63,20 +63,6 @@ exports.get_categorias = async (req, res) => {
 };
 
 /*
-* get_sustratos
-* Obtiene todas los sustratos de la tabla de categorias
-* Funciona al tener el fetch por 'Sustrato'
-*/
-exports.get_sustratos = async (req, res) => {
-    try {
-        const [sustratos] = await Categoria.fetchOpciones('Sustrato', false);
-        res.status(200).json(sustratos);
-    } catch {
-        res.status(500).json({ success: false, error: 'Error al obtener sustratos' });
-    }
-};
-
-/*
 * get_ubicaciones
 * Obtiene todas las ubicaciones de la tabla de categorias
 * Funciona al tener el fetch por 'Ubicacion'
@@ -120,7 +106,7 @@ Metodo que añade la información de lotes a la tabla
 */
 exports.post_batch = async (req, res) => {
     try {
-        const { ubicacion_lote, tipo_sustrato, fecha_lote, bloques, produccion } = req.body;
+        const { ubicacion_lote, fecha_lote, bloques, produccion } = req.body;
 
         if (!bloques || bloques.length === 0) {
             return res.status(400).json({ success: false, message: "No hay bloques para registrar" });
@@ -131,10 +117,7 @@ exports.post_batch = async (req, res) => {
         const infoInoculo = inoculosDisponibles.find(i => i.id_inoculo == idInoculoReferencia);
 
         if (!infoInoculo) {
-            return res.status(400).json({
-                success: false,
-                message: "Inóculo no encontrado"
-            });
+            return res.status(400).json({ success: false, message: "Inóculo no encontrado" });
         }
 
         const [abreviaturaResult] = await Categoria.fetchAbreviaturaPorNombre(infoInoculo.especie);
@@ -149,10 +132,8 @@ exports.post_batch = async (req, res) => {
 
         const id_lote = crypto.randomUUID();
 
-        // Crear el Lote 
         await Lotes.crear_lote(
             id_lote,
-            tipo_sustrato,
             codigo_fungivora,
             fecha_lote,
             ubicacion_lote,
@@ -160,7 +141,6 @@ exports.post_batch = async (req, res) => {
             "Inoculación"
         );
 
-        // Crear los Bloques 
         const promesasBloques = [];
         for (const b of bloques) {
             const numBloques = Number(b.cantidad) || 1;
@@ -173,7 +153,8 @@ exports.post_batch = async (req, res) => {
                         produccion: (b.produccion !== undefined) ? b.produccion : produccion,
                         peso_gr: b.peso_gr || 0,
                         contaminado: 0,
-                        contenedor: b.contenedor
+                        contenedor: b.contenedor,
+                        tipo_sustrato: b.tipo_sustrato 
                     })
                 );
             }

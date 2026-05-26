@@ -7,10 +7,17 @@ import Button from "../../../shared/components/ui/buttons/Botones";
 import Input from "../../../shared/components/ui/inputs/InputTexto";
 
 // Form para poder crear un bloque, con sus inserts
-const FormCrearBloque = ({ contenedores, bloqueForm, setBloqueForm, handleBloqueForm, onAgregar, error,
+const FormCrearBloque = ({ 
+  contenedores, 
+  sustratos,
+  bloqueForm, 
+  setBloqueForm, 
+  handleBloqueForm, 
+  onAgregar, 
+  error,
   especieSeleccionada, 
   getInoculosPorEspecie
- }) => {
+}) => {
 
   // Validar el número
   const validarEntero = (valor, limite) => {
@@ -50,6 +57,7 @@ const FormCrearBloque = ({ contenedores, bloqueForm, setBloqueForm, handleBloque
         <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "22px" }}>Crear Bloques</Text>
       </div>
 
+      {/* Insert de Semilla */}
       <div className="rounded-xl flex flex-col gap-2">
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Semilla ({especieSeleccionada})</Text>
         <SelectField 
@@ -61,7 +69,19 @@ const FormCrearBloque = ({ contenedores, bloqueForm, setBloqueForm, handleBloque
         />
       </div>
 
-        {/* Insert de tamaño - contenedores*/}
+      {/* Insert de tipo de sustrato */}
+      <div className="flex flex-col gap-2">
+        <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Sustrato</Text>
+        <SelectField 
+          options={sustratos} 
+          placeholder="Selecciona sustrato" 
+          size="forms" 
+          value={bloqueForm.tipo_sustrato} 
+          onChange={(op) => handleBloqueForm("tipo_sustrato", op)} 
+        />
+      </div>
+
+      {/* Insert de tamaño - contenedores*/}
       <div className="flex flex-col gap-2">
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Tamaño</Text>
         <SelectField options={contenedores} placeholder="Selecciona tamaño" size="forms" value={bloqueForm.contenedor} onChange={(op) => handleBloqueForm("contenedor", op)} />

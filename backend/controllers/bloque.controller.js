@@ -55,17 +55,30 @@ exports.actualizar_bloques_masivo = async (req, res) => {
     }
 }
 
+/*
+* get_sustratos
+* Obtiene todas los sustratos de la tabla de categorias
+* Funciona al tener el fetch por 'Sustrato'
+*/
+exports.get_sustratos = async (req, res) => {
+    try {
+        const [sustratos] = await Categoria.fetchOpciones('Sustrato', false);
+        res.status(200).json(sustratos);
+    } catch {
+        res.status(500).json({ success: false, error: 'Error al obtener sustratos' });
+    }
+};
 
 /**
  * post_bloques
- * Registra un nuevo bloque ligado un lote
+ * Registra un nuevo bloque ligado un lote incluyendo su tipo de sustrato
  * Metodo que hace un insert con la información de los bloques
  * @param {*} req 
  * @param {*} res 
  */
 exports.post_bloques = async (req, res) => {
     try {
-        const { id_lote, produccion, peso_gr, contenedor, cantidad } = req.body;
+        const { id_lote, produccion, peso_gr, contenedor, cantidad, tipo_sustrato } = req.body;
 
         if (!produccion || !id_lote || !cantidad || cantidad <= 0) {
             return res.status(400).json({ success: false, message: "Datos incompletos o cantidad inválida" });
@@ -80,8 +93,9 @@ exports.post_bloques = async (req, res) => {
                 id_lote: id_lote,
                 produccion: produccion,
                 peso_gr: peso_gr || 0,
-                contaminado: 0, // por default 0 - no esta contaminado
-                contenedor: contenedor
+                contaminado: 0,
+                contenedor: contenedor,
+                tipo_sustrato: tipo_sustrato 
             };
 
             bloquesGenerados.push(nuevoBloque.id_bloque);

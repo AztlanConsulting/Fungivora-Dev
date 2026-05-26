@@ -11,13 +11,22 @@ const bloqueService = {
     }
   },
 
+  // Obtener sustratos de la tabla categorías
+  getSustratos: async () => {
+    try {
+      return await api.get("/bloques/sustratos");
+    } catch (error) {
+      console.error("Error en getSustratos:", error);
+      return [];
+    }
+  },
+
   // Guardar lotes con los bloques
   registrarTodo: async (datosLote, listaBloques) => {
     try {
       const dataLote = await api.post("/lotes/crear", datosLote);
 
       if (!dataLote.success) throw new Error("Error al crear el lote");
-
       return await api.post("/bloques/crear", {
         id_lote: dataLote.id,
         bloques: listaBloques 

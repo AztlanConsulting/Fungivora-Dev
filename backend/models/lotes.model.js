@@ -1,9 +1,8 @@
 const db = require('../util/db');
 
 class Lotes {
-    constructor(id_lote, tipo_sustrato, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase) {
+    constructor(id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase) {
         this.id_lote = id_lote;
-        this.tipo_sustrato = tipo_sustrato;
         this.codigo_fungivora = codigo_fungivora;
         this.fecha_lote = fecha_lote;
         this.ubicacion_lote = ubicacion_lote;
@@ -18,15 +17,15 @@ class Lotes {
     }
 
     // Metodo para asignar valores a la tabla de lotes
-    static async crear_lote(id_lote, tipo_sustrato, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase) {
+    static async crear_lote(id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase) {
         try {
             return await db.execute(`
                 INSERT INTO Lotes (
-                    id_lote, tipo_sustrato, codigo_fungivora, 
+                    id_lote, codigo_fungivora, 
                     fecha_lote, ubicacion_lote, activo, fase
                 ) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            `, [id_lote, tipo_sustrato, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase]);
+                VALUES (?, ?, ?, ?, ?, ?)
+            `, [id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase]);
         } catch (err) {
             console.error("Error en crear_lote model:", err);
             throw err;
@@ -93,7 +92,6 @@ class Lotes {
             const [filas] = await db.execute(`
                 SELECT 
                     id_lote, 
-                    tipo_sustrato, 
                     codigo_fungivora, 
                     fecha_lote, 
                     ubicacion_lote, 
