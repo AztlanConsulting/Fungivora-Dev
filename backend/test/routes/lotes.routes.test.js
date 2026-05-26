@@ -7,7 +7,6 @@ const jwt = require('jsonwebtoken');
 jest.mock('../../models/lotes.model');
 jest.mock('../../models/categoria.model');
 jest.mock('../../models/bloque.model'); 
-
 jest.mock('node-cron', () => ({
     schedule: jest.fn()
 }));
