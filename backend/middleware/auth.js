@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
     }
 
     try {
-        const secretoAsignado = jwtUtils.SECRET || process.env.APP_ACCESS_KEY;
+        const secretoAsignado = jwtUtils.getSecret(); 
         
         const decoded = jwt.verify(token, secretoAsignado);
         req.user = decoded;

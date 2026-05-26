@@ -17,6 +17,8 @@ jest.mock('../../../config/metrics', () => ({
     },
 }));
 
+process.env.APP_ACCESS_KEY = 'test_secret_key';
+
 const app = require('../../../app');
 
 
