@@ -140,9 +140,9 @@ function Lotes() {
 
   // Agregar el bloque y su validación
   const handleAgregarBloque = () => {
-    const { peso_gr, cantidad, id_inoculo, contenedor, tipo_sustrato } = bloqueForm;
+    const { peso_gr, cantidad, id_inoculo, contenedor, tipo_sustrato, produccion } = bloqueForm;
 
-    if (!id_inoculo || !contenedor || !peso_gr || !cantidad || !tipo_sustrato) {
+    if (!id_inoculo || !contenedor || !peso_gr || !cantidad || !tipo_sustrato || !produccion) {
       setErrorValidacion("Completa todos los campos");
       return;
     }
