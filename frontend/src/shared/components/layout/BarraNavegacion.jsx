@@ -1,15 +1,14 @@
 import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { colores } from "../ui/basics/Colores";
 import Text from "../ui/basics/Texto";
-import ModalConfirmacion from "../ui/popups/ModalConfirmacion";
+import { ModalConfirmacion } from "../ui";
 import useLogout from '../../../features/logout/hooks/useLogout';
 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Home07FreeIcons, BookOpenTextFreeIcons, PackageIcon, MushroomIcon, Logout02Icon, Door01Icon } from '@hugeicons/core-free-icons';
 
-const fungivora = "/icons/icon-splash-blue.png";
-
+// Contenedor de la navbar
 const Contenedor_principal = `
     flex flex-row gap-2 p-2 justify-between items-center
     bg-white text-center w-full h-[4.5rem]
@@ -19,17 +18,20 @@ const Contenedor_principal = `
     md:text-left md:sticky md:top-0
 `
 
+// Configuracion del icono de fungivora
+const fungivora = "/icons/icon-splash-blue.png";
+
 const LogoDiv = `
   hidden 
   md:flex md:flex-col md:p-2 md:flex-row
 `;
 
-/* Si algo truena de la imagen revisa aqui primero*/
 const LogoImg = `
   hidden 
   md:block
 `;
 
+// Contenedor interno principal y botones
 const Contenedor_iconos = `
     flex flex-1 flex-row gap-1 justify-evenly p-2
     md:flex-col md:gap-8 md:justify-center
@@ -43,7 +45,6 @@ const Tooltip = `
     transition-opacity duration-200
     hover:opacity-0 md:group-hover:opacity-100
 `
-
 const Botones = `
     flex relative items-center justify-center
     p-2 self-center rounded-lg transition-colors
@@ -54,6 +55,7 @@ const Barra_navegacion = () => {
     const [showModal, setShowModal] = useState(false);
     const { ejecutarLogout } = useLogout();
 
+    // Logica del logout, ultimo boton
     const confirmarCerrarSesion = () => {
         ejecutarLogout();
         setShowModal(false);
@@ -84,9 +86,11 @@ const Barra_navegacion = () => {
                     {/* lotes */}
                     <NavLink
                         to="/lotes"
+                        state={{ resetPaso: true }} 
                         className={({ isActive }) =>
                             `${Botones} ${isActive ? "bg-blue-100" : "hover:bg-gray-100"}`
-                        }>
+                        }
+                    >
                         <HugeiconsIcon icon={BookOpenTextFreeIcons} size={33} color={colores.azul} strokeWidth={1.5} />
                         <span className={Tooltip}
                             style={{ backgroundColor: colores.azul, color: colores.blanco }}>

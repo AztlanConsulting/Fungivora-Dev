@@ -4,20 +4,28 @@ import bloqueService from "../services/bloques.service";
 const useBloques = () => {
   const [bloquesTemporales, setBloquesTemporales] = useState([]);
   const [contenedores, setContenedores] = useState([]);
-  const [cargando, setCargando] = useState(false);
+  const [sustratos, setSustratos] = useState([]); 
+  const [cargando] = useState(false);
 
   useEffect(() => {
-    // Cargar los contenedores
-    const cargarContenedores = async () => {
+    const cargarCatalogos = async () => {
       try {
-        const data = await bloqueService.getContenedores();
-        const lista = Array.isArray(data) ? data : (data.data || []);
-        setContenedores(lista.map(c => ({ value: c.opcion, label: c.opcion })));
+        const [dataContenedores, dataSustratos] = await Promise.all([
+          bloqueService.getContenedores(),
+          bloqueService.getSustratos()
+        ]);
+
+        const listaContenedores = Array.isArray(dataContenedores) ? dataContenedores : (dataContenedores.data || []);
+        setContenedores(listaContenedores.map(c => ({ value: c.opcion, label: c.opcion })));
+
+        const listaSustratos = Array.isArray(dataSustratos) ? dataSustratos : (dataSustratos.data || []);
+        setSustratos(listaSustratos.map(s => ({ value: s.opcion, label: s.opcion })));
+
       } catch (e) {
-        console.error("Error cargando contenedores", e);
+        console.error("Error cargando los catálogos del bloque", e);
       }
     };
-    cargarContenedores();
+    cargarCatalogos();
   }, []);
 
   // Agregar los bloques a la lista
@@ -36,6 +44,7 @@ const useBloques = () => {
   return {
     bloquesTemporales,
     contenedores,
+    sustratos, 
     agregarBloqueALista,
     eliminarBloqueDeLista,
     limpiarLista,

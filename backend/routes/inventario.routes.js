@@ -17,4 +17,7 @@ router.post('/crear-insumo', controller.post_crear_insumo);
 // Actualizar cantidad
 router.post('/update-cantidad', controller.post_update_cantidad);
 
+// Actualizar cantidad de inóculo
+router.post('/update-inoculo', controller.post_update_cantidad_inoculo);
+
 module.exports = router;

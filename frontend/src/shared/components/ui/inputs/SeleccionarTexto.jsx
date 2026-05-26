@@ -14,7 +14,6 @@ const SelectField = ({
   label = null,
   disabled = false,
 }) => {
-  // Estado para controlar el foco y el ring
   const [isFocused, setIsFocused] = useState(false);
 
   const sizes = {
@@ -27,7 +26,6 @@ const SelectField = ({
   const textColor = colores.gris;
   const sizeClass = sizes[size] || sizes.normal;
 
-  // Clases base del select
   const selectClase = `
     w-full
     px-3 py-2 pr-10
@@ -47,7 +45,6 @@ const SelectField = ({
 
   return (
     <div className="flex flex-col gap-2">
-      {/* Título opcional */}
       {label && (
         <span style={{ fontSize: "28px", color: colores.negro, fontWeight: "500", fontStyle: "italic" }}>
           {label}
@@ -57,12 +54,11 @@ const SelectField = ({
       <div
         className={`
           relative overflow-hidden rounded-xl transition-all
-          ${sizeClass}
+          ${sizeClass} 
           ${isFocused ? "ring-4" : "ring-2"}
         `}
         style={{
           backgroundColor: "#FFFFFF",
-          ringColor: isFocused ? colores.azul : colores.grisClaro,
           boxShadow: `0 0 0 ${isFocused ? '4px' : '2px'} ${isFocused ? colores.azul : colores.grisClaro}`
         }}
       >

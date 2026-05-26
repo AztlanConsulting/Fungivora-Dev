@@ -24,11 +24,11 @@ const ModalCrearInoculo = ({ visible, onConfirm, onCancel }) => {
 
     const handleConfirm = () => {
         onConfirm(tipoSeleccionado);
-        setTipoSeleccionado(TIPOS_INOCULO[0].value); // reset
+        setTipoSeleccionado(TIPOS_INOCULO[0].value);
     };
 
     const handleCancel = () => {
-        setTipoSeleccionado(TIPOS_INOCULO[0].value); // reset
+        setTipoSeleccionado(TIPOS_INOCULO[0].value);
         onCancel();
     };
 
@@ -70,11 +70,11 @@ const ModalCrearInoculo = ({ visible, onConfirm, onCancel }) => {
 
                 {/* Botones */}
                 <div className="flex flex-row gap-6 w-full justify-center">
-                    <Button variant="confirmar" isOutline={true} onClick={handleConfirm}>
-                        Confirmar
-                    </Button>
                     <Button variant="cancelar" isOutline={true} onClick={handleCancel}>
                         Cancelar
+                    </Button>
+                    <Button variant="confirmar" isOutline={true} onClick={handleConfirm}>
+                        Confirmar
                     </Button>
                 </div>
             </div>

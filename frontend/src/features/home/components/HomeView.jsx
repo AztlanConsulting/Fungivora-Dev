@@ -28,49 +28,39 @@ const PantallaPrincipalView = () => {
     const navigate = useNavigate();
     const [esAdmin, setEsAdmin] = useState(false);
 
-    useEffect(() => {
-        try {
-            let token = localStorage.getItem('token'); 
+    const { dashboard, loading, error, revisarLotes } = useHome();
 
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        try {
+            let tokenToParse = token;
             if (token.startsWith('{')) {
                 const parsedTokenObj = JSON.parse(token);
-                token = parsedTokenObj.token || parsedTokenObj.data?.token;
+                tokenToParse = parsedTokenObj.token || parsedTokenObj.data?.token;
             }
 
-            const payload = parseJwt(token);
-
+            const payload = parseJwt(tokenToParse);
             if (payload) {
-
-                const esAdministrador = payload.isAdmin === true || payload.isAdmin === 1 || payload.user?.isAdmin === true;
-                
-                if (esAdministrador) {
-                    setEsAdmin(true);
-                } else {
-                    console.log("Usuario autenticado correctamente");
-                }
-            } else {
-                console.error("No se pudo decodificar");
+                const esAdministrador = payload.isAdmin === true || 
+                                       payload.isAdmin === 1 || 
+                                       payload.user?.isAdmin === true;
+                setEsAdmin(!!esAdministrador);
             }
         } catch (err) {
-            console.error("Error leyendoautenticación", err);
+            console.error("Error validando sesión:", err);
         }
     }, []);
-
-    const {
-        dashboard,
-        loading,
-        error,
-        revisarLotes
-    } = useHome();
 
     const cards = dashboard?.cards || {};
     const listas = dashboard?.listas || {};
     const lotes = dashboard?.lotes || {};
 
     const resumen = {
-        lotesActivos: cards.lotesActivos,
-        bloquesNoContaminados: cards.bloquesNoContaminados,
-        bloquesContaminados: cards.bloquesContaminados,
+        lotesActivos: cards.lotesActivos || 0,
+        bloquesNoContaminados: cards.bloquesNoContaminados || 0,
+        bloquesContaminados: cards.bloquesContaminados || 0,
     };
 
     const RUTAS_RAPIDAS = [
@@ -97,90 +87,90 @@ const PantallaPrincipalView = () => {
         }
     };
 
+    if (loading) {
+        return (
+            <Base margen_arriba="mt-24 md:mt-20">
+                <Text variante="medium" style={{ color: colores.azul, textAlign: 'center' }}>
+                    Cargando dashboard...
+                </Text>
+            </Base>
+        );
+    }
+
+    if (error) {
+        return (
+            <Base margen_arriba="mt-24 md:mt-20">
+                <Text variante="medium" style={{ color: '#E53E3E', textAlign: 'center' }}>
+                    Error al cargar los datos del servidor.
+                </Text>
+            </Base>
+        );
+    }
+    
+    // Render 
     return (
-    <>
-        <Base margen_arriba="mt-24 md:mt-20">
-            <div className="flex flex-col gap-6">
-
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 border-b border-gray-100 pb-4">
-                    <div>
+            <Base margen_arriba="mt-24 md:mt-20">
+                <div className="flex flex-col gap-6">
+                    {/* Header */}
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 border-b border-gray-100 pb-4">
                         <Titulo>¡Bienvenid@ a Devora!</Titulo>
+                        {esAdmin && (
+                            <Button variant="cancelar" isOutline={true} onClick={() => navigate('/usuarios')}>
+                                Usuarios
+                            </Button>
+                        )}
                     </div>
 
-                    {esAdmin && (
-                        <Button
-                        variant="cancelar" isOutline = {true}
-                            onClick={() => navigate('/usuarios')} >
-                            Usuarios
-                        </Button>
-                    )}
-                </div>
+                    {/* Paneles de Listas */}
+                    <div className="flex flex-col md:flex-row gap-4">
+                        <PanelLista
+                            icono={<HugeiconsIcon icon={Clock01Icon} size={22} color={colores.azul} strokeWidth={2} />}
+                            titulo="Lotes por revisar"
+                            items={listas.lotesRevision || []}
+                            lotes={lotes || []}
+                            checked={checkedLotes}
+                            onToggle={toggleLote}
+                            onRevisar={handleRevisarLotes}
+                            onVerTodo={() => navigate('/lotes')}
+                            mostrarChecks={true}
+                        />
+                        <PanelLista
+                            icono={<HugeiconsIcon icon={PackageIcon} size={22} color={colores.azul} strokeWidth={2} />}
+                            titulo="Inventario bajo"
+                            items={listas.inventarioBajo || []}
+                            checked={checkedInv}
+                            onToggle={toggleInv}
+                            onVerTodo={() => navigate('/inventario')}
+                            mostrarChecks={false}
+                        />
+                    </div>
 
-                <div className="flex flex-col md:flex-row gap-4">
-                    <PanelLista
-                        icono={
-                            <HugeiconsIcon
-                                icon={Clock01Icon}
-                                size={22}
-                                color={colores.azul}
-                                strokeWidth={2}
-                            />
-                        }
-                        titulo="Lotes por revisar"
-                        items={listas.lotesRevision || []}
-                        lotes={lotes || []}
-                        checked={checkedLotes}
-                        onToggle={toggleLote}
-                        onRevisar={handleRevisarLotes}
-                        onVerTodo={() => navigate('/lotes')}
-                        mostrarChecks={true}
-                    />
-                    <PanelLista
-                        icono={
-                            <HugeiconsIcon
-                                icon={PackageIcon}
-                                size={22}
-                                color={colores.azul}
-                                strokeWidth={2}
-                            />
-                        }
-                        titulo="Inventario bajo"
-                        items={listas.inventarioBajo || []}
-                        checked={checkedInv}
-                        onToggle={toggleInv}
-                        onVerTodo={() => navigate('/inventario')}
-                        mostrarChecks={false}
-                    />
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {RUTAS_RAPIDAS.map((item) => (
-                        <AccesoRapido key={item.label} {...item} />
-                    ))}
-                </div>
-
-                <div className="bg-white rounded-2xl p-6 shadow-sm">
-                    <div className="flex flex-col md:flex-row md:items-center gap-4">
-                        <div className="flex-shrink-0">
-                            <Text variante="subtitle" style={{ color: colores.azul, fontWeight: 700, fontSize: 20 }}>
-                                Resumen general
-                            </Text>
-                            <Text variante="small" style={{ color: colores.gris }}>
-                                Actividad actual
-                            </Text>
-                        </div>
-                        <div className="flex gap-3 flex-1">
-                            <MetricaCard valor={resumen.lotesActivos} label="Lotes activos" />
-                            <MetricaCard valor={resumen.bloquesNoContaminados} label="Bloques saludables" />
-                            <MetricaCard valor={resumen.bloquesContaminados} label="Bloques contaminados" />
+                    {/* Accesos Rápidos */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {RUTAS_RAPIDAS.map((item) => (
+                            <AccesoRapido key={item.label} {...item} />
+                        ))}
+                    </div>
+                    
+                    {/* Resumen general */}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                        <div className="flex flex-col md:flex-row md:items-center gap-4">
+                            <div className="flex-shrink-0">
+                                <Text variante="subtitle" style={{ color: colores.azul, fontWeight: 700, fontSize: 20 }}>
+                                    Resumen general
+                                </Text>
+                            </div>
+                            <Text variante="small" style={{ color: colores.gris }}>Actividad actual</Text>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 flex-1">
+                                <MetricaCard valor={resumen.lotesActivos} label="Lotes activos" />
+                                <MetricaCard valor={resumen.bloquesNoContaminados} label="Bloques saludables" />
+                                <MetricaCard valor={resumen.bloquesContaminados} label="Bloques contaminados" />
+                            </div>
                         </div>
                     </div>
                 </div>
-
-            </div>
-        </Base>
-    </>
-);
+            </Base>
+    );
 };
 
 export default PantallaPrincipalView;

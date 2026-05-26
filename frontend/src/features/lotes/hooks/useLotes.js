@@ -3,24 +3,26 @@ import loteService from "../services/lotes.service";
 
 const useLotes = () => {
     const [datos, setDatos] = useState([]);
-    const [sustratos, setSustratos] = useState([]);
     const [ubicaciones, setUbicaciones] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
     const [especiesDisponibles, setEspeciesDisponibles] = useState([]);
     const [inoculosRaw, setInoculosRaw] = useState([]);
 
+    // Recuperar los lotes
     const fetchLotes = useCallback(async () => {
+        setCargando(true);
         try {
             const json = await loteService.getLotes();
-            if (json.success) {
-                setDatos(json.data);
+            if (json && json.success) {
+                setDatos(json.data || []);
                 setError(null);
             } else {
-                setError("Error al cargar lotes")
+                setError(json?.message || "Error al cargar lotes");
             }
         } catch (err) {
-            setError("Error de conexión");
+            console.error("Error en fetchLotes:", err);
+            setError("Error de conexión con el servidor");
         } finally {
             setCargando(false);
         }
@@ -28,48 +30,45 @@ const useLotes = () => {
 
     const cargarCatalogos = useCallback(async () => {
         try {
-            const [resSus, resUbi, resEsp] = await Promise.all([
-                fetch('/api/lotes/sustratos'),
-                fetch('/api/lotes/ubicaciones'),
-                fetch('/api/lotes/especies')
+            const [dataUbi, jsonEsp] = await Promise.all([
+                loteService.getUbicaciones(),
+                loteService.getEspecies()
             ]);
-
-            const [dataSus, dataUbi, jsonEsp] = await Promise.all([
-                resSus.json(),
-                resUbi.json(),
-                resEsp.json()
-            ]);
-
-            // Procesar Sustratos
-            const listSus = Array.isArray(dataSus) ? dataSus : (dataSus.data || []);
-            setSustratos(listSus.map(s => ({ value: s.opcion, label: s.opcion })));
 
             // Procesar Ubicaciones
-            const listUbi = Array.isArray(dataUbi) ? dataUbi : (dataUbi.data || []);
+            const listUbi = Array.isArray(dataUbi) ? dataUbi : (dataUbi?.data || []);
             setUbicaciones(listUbi.map(u => ({ value: u.opcion, label: u.opcion })));
 
-            // Procesar Inóculos y Especies Únicas
-            const dataIno = jsonEsp.data || [];
+            // Procesar Inóculos / Especies
+            const dataIno = Array.isArray(jsonEsp) ? jsonEsp : (jsonEsp?.data || []);
             setInoculosRaw(dataIno);
 
-            const nombresUnicos = [...new Set(dataIno.map(i => i.especie))];
+            const nombresUnicos = [...new Set(dataIno.map(i => i.especie).filter(Boolean))];
             setEspeciesDisponibles(nombresUnicos.map(e => ({ value: e, label: e })));
 
         } catch (err) {
-            console.error("Error cargando catálogos:", err);
+            console.error("Error al inicializar formularios (catálogos):", err);
+            setError("Error al inicializar formularios (catálogos)");
         }
     }, []);
 
+    // Disparador controlado por montaje seguro
     useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.warn("useLotes: Esperando por la asignación del token de sesión...");
+            return;
+        }
+
         fetchLotes();
         cargarCatalogos();
     }, [fetchLotes, cargarCatalogos]);
 
-    // Función para filtrar inóculos basada en el nombre de la especie
+    // Filtrado secundario por expresiones regulares para inóculos válidos
     const getInoculosPorEspecie = useCallback((especieNombre) => {
-        const regexCodigoValido = /^[A-Z].G-[A-Z]{2,3}-\d+/;
+        const regexCodigoValido = /^[A-Z0-9.-]+/i; 
 
-        return inoculosRaw
+        return (inoculosRaw || [])
             .filter(i =>
                 i.especie === especieNombre &&
                 regexCodigoValido.test(i.codigo_fungivora)
@@ -81,32 +80,40 @@ const useLotes = () => {
             }));
     }, [inoculosRaw]);
 
+    // Agregar lote
     const addLote = async (nuevoLote) => {
         try {
             const res = await loteService.addLote(nuevoLote);
-            if (res.success) await fetchLotes();
+            if (res && res.success) await fetchLotes();
             return res;
         } catch (err) {
-            return { success: false, message: "Error de conexión" };
+            console.error("Fallo al agregar lote:", err);
+            return { 
+                success: false, 
+                message: err.message || "Error de conexión al guardar" 
+            };
         }
     };
 
-
+    // Eliminar lote
     const deleteLote = async (id_lote) => {
         try {
             const res = await loteService.deleteLote(id_lote);
-            if (res.success) {
+            if (res && res.success) {
                 setDatos(prevDatos => prevDatos.filter(lote => lote.id_lote !== id_lote));
             }
             return res;
         } catch (err) {
-            return { success: false, message: "Error al intentar eliminar" };
+            console.error(`Error eliminando lote ${id_lote}:`, err);
+            return { 
+                success: false, 
+                message: "No se pudo eliminar el registro en este momento" 
+            };
         }
     };
 
     return {
         datos,
-        sustratos,
         ubicaciones,
         especiesDisponibles,
         getInoculosPorEspecie,

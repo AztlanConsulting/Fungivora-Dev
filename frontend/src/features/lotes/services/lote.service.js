@@ -1,4 +1,4 @@
-import api from '../../../shared/utils/api'; // Ajusta la ruta a tu archivo api.js
+import api from '../../../shared/utils/api'; 
 
 export const LoteService = {
     /**
@@ -46,5 +46,5 @@ export const LoteService = {
     getDetalleLote: async (id_lote) => {
         const response = await api.get(`/lotes/detalle?id_lote=${id_lote}`);
         return response.data; 
-    },
+    }
 };

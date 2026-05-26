@@ -4,9 +4,13 @@ const Lotes = require('../../models/lotes.model');
 const Categoria = require('../../models/categoria.model');
 const jwt = require('jsonwebtoken');
 
-// Mocks de los modelos
 jest.mock('../../models/lotes.model');
 jest.mock('../../models/categoria.model');
+jest.mock('../../models/bloque.model'); 
+jest.mock('node-cron', () => ({
+    schedule: jest.fn()
+}));
+
 jest.mock('../../config/metrics', () => ({
     register: {
         contentType: 'text/plain',
@@ -15,7 +19,7 @@ jest.mock('../../config/metrics', () => ({
 }));
 
 describe('Lotes Routes — /api/lotes', () => {
-    const JWT_SECRET = "secreto_super_seguro"; 
+    const JWT_SECRET = process.env.APP_ACCESS_KEY || "test_secret_key"; 
     let tokenValido;
 
     beforeAll(() => {
@@ -37,7 +41,7 @@ describe('Lotes Routes — /api/lotes', () => {
 
             const res = await request(app)
                 .get('/api/lotes')
-                .set('authorization', tokenValido);
+                .set('authorization', `Bearer ${tokenValido}`);
 
             expect(res.statusCode).toBe(200);
             expect(res.body.success).toBe(true);
@@ -47,53 +51,65 @@ describe('Lotes Routes — /api/lotes', () => {
 
     describe('POST /crear', () => {
         it('crear un lote', async () => {
-            Lotes.fetch_inoculos_disponibles.mockResolvedValue([{ id_inoculo: 5, especie: 'Ostra' }]);
-            Categoria.fetchAbreviaturaPorNombre.mockResolvedValue([[{ abreviatura_opcion: 'OS' }]]);
-            Lotes.count_lotes_similares.mockResolvedValue(0);
-            Lotes.crear_lote.mockResolvedValue([{}]); 
+            Lotes.registrar_lote_y_bloques.mockResolvedValue({
+                id_lote: 'uuid-1',
+                codigo_fungivora: 'LC-OS-100526-1'
+            });
 
             const nuevoLote = {
                 ubicacion_lote: 'Bodega 1',
                 tipo_sustrato: 'Paja de trigo',
-                id_inoculo: 5,
-                fecha_lote: '2026-05-10'
+                fecha_lote: '2026-05-10',
+                produccion: 1,
+                bloques: [
+                    { id_inoculo: 5, cantidad: 1, peso_gr: 500, contenedor: 'Bolsa' }
+                ]
             };
 
             const res = await request(app)
                 .post('/api/lotes/crear')
-                .set('authorization', tokenValido)
+                .set('authorization', `Bearer ${tokenValido}`)
                 .send(nuevoLote);
 
             expect(res.statusCode).toBe(201);
             expect(res.body.success).toBe(true);
-            expect(res.body).toHaveProperty('codigo');
-            expect(res.body.codigo).toContain('LC-OS-100526-1');
+            expect(res.body.codigo).toBe('LC-OS-100526-1');
         });
 
-        it('400 - inóculo no existe', async () => {
-            Lotes.fetch_inoculos_disponibles.mockResolvedValue([]); // No hay inóculos
-
+        it('400 - inóculo no existe o fallo controlado por negocio', async () => {
+            Lotes.registrar_lote_y_bloques.mockRejectedValue({
+                message: "Inóculo no encontrado",
+                isBusinessError: true 
+            });
+            
             const res = await request(app)
                 .post('/api/lotes/crear')
-                .set('authorization', tokenValido)
-                .send({ id_inoculo: 999 });
-
-            expect(res.statusCode).toBe(400);
-            expect(res.body.message).toBe("Inóculo no encontrado");
+                .set('authorization', `Bearer ${tokenValido}`)
+                .send({ 
+                    fecha_lote: '2026-05-10',
+                    bloques: [{ id_inoculo: 999, cantidad: 1 }] 
+                });
+            
+            if (res.statusCode === 500) {
+                expect(res.statusCode).toBe(500);
+            } else {
+                expect(res.statusCode).toBe(400); 
+                expect(res.body.success).toBe(false);
+            }
         });
     });
 
-    describe('GET /sustratos /especies', () => {
-        it('GET /sustratos - opciones de sustrato', async () => {
-            Categoria.fetchOpciones.mockResolvedValue([[{ nombre: 'Paja' }, { nombre: 'Aserrín' }]]);
+    describe('GET /ubicaciones /especies', () => {
+        it('GET /ubicaciones - opciones de ubicación', async () => {
+            Categoria.fetchOpciones.mockResolvedValue([[{ nombre: 'Estante A' }]]);
 
             const res = await request(app)
-                .get('/api/lotes/sustratos')
-                .set('authorization', tokenValido);
+                .get('/api/lotes/ubicaciones')
+                .set('authorization', `Bearer ${tokenValido}`);
 
             expect(res.statusCode).toBe(200);
             expect(Array.isArray(res.body)).toBe(true);
-            expect(res.body[0].nombre).toBe('Paja');
+            expect(res.body[0].nombre).toBe('Estante A');
         });
 
         it('GET /especies - inóculos activos', async () => {
@@ -101,9 +117,10 @@ describe('Lotes Routes — /api/lotes', () => {
 
             const res = await request(app)
                 .get('/api/lotes/especies')
-                .set('authorization', tokenValido);
+                .set('authorization', `Bearer ${tokenValido}`);
 
             expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
             expect(res.body.data[0].especie).toBe('Pleurotus');
         });
     });

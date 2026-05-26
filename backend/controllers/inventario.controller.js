@@ -1,6 +1,6 @@
 const Inventario = require('../models/inventario.model');
-const Categoria = require('../models/categoria.model'); 
-const crypto = require('crypto'); 
+const Categoria = require('../models/categoria.model');
+const crypto = require('crypto');
 
 /*
 * get_inventory
@@ -53,7 +53,7 @@ exports.get_unidades = async (req, res) => {
     try {
         const [unidades] = await Categoria.fetchOpciones('Unidad', false);
         res.status(200).json(unidades);
-    } catch (error) {
+    } catch {
         res.status(500).json({ success: false, error: 'Error al obtener unidades' });
     }
 };
@@ -79,17 +79,17 @@ exports.post_crear_insumo = async (req, res) => {
             return res.status(400).json({ success: false, error: 'El insumo ya existe' });
         }
 
-        const id_insumo = crypto.randomUUID(); 
+        const id_insumo = crypto.randomUUID();
 
         await Inventario.crear_insumo(id_insumo, nombre, cantidad, stock_recomendado, unidad);
 
         res.status(201).json({
             success: true,
             message: 'Insumo creado con éxito',
-            id: id_insumo 
+            id: id_insumo
         });
 
-    } catch (error) {
+    } catch {
         res.status(500).json({ success: false, error: 'Error interno del servidor' });
     }
 };
@@ -104,9 +104,9 @@ exports.post_update_cantidad = async (req, res) => {
         const nuevaCantidad = parseFloat(cantidad);
 
         if (!id_insumo || isNaN(nuevaCantidad)) {
-            return res.status(400).json({ 
-                success: false, 
-                error: 'Datos insuficientes' 
+            return res.status(400).json({
+                success: false,
+                error: 'Datos insuficientes'
             });
         }
 
@@ -118,6 +118,34 @@ exports.post_update_cantidad = async (req, res) => {
         });
     } catch (error) {
         console.error("DETAILED ERROR:", error);
+        res.status(500).json({ success: false, error: 'Error interno del servidor' });
+    }
+};
+
+/*
+* post_update_cantidad_inoculo
+* Cambia la cantidad de un inóculo y registra el movimiento en logs
+*/
+exports.post_update_cantidad_inoculo = async (req, res) => {
+    try {
+        const { id_inoculo, cantidad } = req.body;
+        const nuevaCantidad = parseFloat(cantidad);
+
+        if (!id_inoculo || isNaN(nuevaCantidad)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Datos insuficientes'
+            });
+        }
+
+        await Inventario.update_cantidad_inoculo(id_inoculo, nuevaCantidad);
+
+        res.status(200).json({
+            success: true,
+            message: 'Inóculo actualizado'
+        });
+    } catch (error) {
+        console.error("ERROR:", error);
         res.status(500).json({ success: false, error: 'Error interno del servidor' });
     }
 };
