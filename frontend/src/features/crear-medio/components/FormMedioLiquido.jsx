@@ -14,7 +14,8 @@ import { EntradaLista } from "../../../shared/crear-inoculos/components/Seleccio
 import Resumen from "../../../shared/crear-inoculos/components/Resumen";
 import insumosService from "../../../shared/crear-inoculos/services/inoculos.service";
 import { cantMedioLiquido } from "../../../shared/crear-inoculos/types/inoculos.types";
-import { crearInoculoDTO } from "../../../shared/crear-inoculos/dto/crearInoculoDto";
+import { crearInoculoDTO, crearInoculoCompradoDTO } from "../../../shared/crear-inoculos/dto/crearInoculoDto";
+import Input from "../../../shared/components/ui/inputs/InputTexto";
 import { traducirError } from "../../../shared/utils/traducirError";
 
 import useEspecies from "../../inoculos/hooks/useEspecies";
@@ -45,6 +46,7 @@ const FormMedioLiquido = () => {
   const [inoculo, setInoculo] = useState("");
   const [carbohidrato, setCarbohidrato] = useState("");
   const [esComprado, setEsComprado] = useState(false);
+  const [cantidadComprada, setCantidadComprada] = useState("");
 
   const hoy = new Date();
   const [fecha, setFecha] = useState({
@@ -61,10 +63,10 @@ const FormMedioLiquido = () => {
   const { opciones: inoculos, loading: loadingInoculos, error: errorInoculos } = useInoculo(especie, TIPO_CREACION);
   const { categorias, loading: loadingCategorias } = useCategorias();
 
-  const inoculoSeleccionado = !esComprado ? (inoculos ?? []).find((ino) => ino.codigo === inoculo) : null;
+  const inoculoSeleccionado = esComprado ? null : (inoculos ?? []).find((ino) => ino.codigo === inoculo);
   const tipoInoculo = normalizarTipoInoculo(inoculoSeleccionado?.raw?.tipo);
   const inoculoDisponible = inoculoSeleccionado?.raw?.cantidad_disponible ?? 0;
-  const codigoInoculo = esComprado ? "Comprado" : (inoculoSeleccionado?.codigo ?? "");
+  const codigoInoculo = inoculoSeleccionado?.codigo ?? "";
 
   const {
     items: itemsComposicion,
@@ -73,7 +75,7 @@ const FormMedioLiquido = () => {
     loading: loadingInsumos,
   } = useIngredientesMedioLiquido({ carbohidrato, inoculoDisponible, tipoInoculo, codigoInoculo });
 
-  const cantInoculo = parseFloat(String(valoresComposicion?.cantInoculo ?? "").replace(",", ".")) || 0;
+  const cantInoculo = parseFloat(String(valoresComposicion?.cantInoculo ?? "").replace(/,/g, "")) || 0;
 
   const opcionesEspecies = especies.map((esp) => ({
     value: esp.especie,
@@ -89,7 +91,7 @@ const FormMedioLiquido = () => {
     if (loadingCategorias) return { base: "", lista: [] };
     return generarCodigos({
       tipoCreacion: TIPO_CREACION,
-      tipoInoculo: esComprado ? "Comprado" : tipoInoculo,
+      tipoInoculo: esComprado ? null : tipoInoculo,
       nombreEspecie: especie,
       categorias,
       fecha,
@@ -98,7 +100,7 @@ const FormMedioLiquido = () => {
   }, [tipoInoculo, especie, categorias, fecha, loadingCategorias, esComprado]);
 
   const handleRegistrar = async () => {
-    if (tieneErroresComposicion) {
+    if (!esComprado && tieneErroresComposicion) {
       setAlerta({
         visible: true,
         variante: "error",
@@ -108,21 +110,29 @@ const FormMedioLiquido = () => {
     }
     setRegistrando(true);
     try {
-      const datos = crearInoculoDTO({
-        codigo: codigos.base,
-        tipo: TIPO_DB,
-        especie,
-        fecha,
-        cantidadFinal: cantMedioLiquido,   // volumen fijo de 600 ml
-        cantidad: REPETICIONES,        // siempre 1 — medio líquido no repite
-        nota,
-        unidad: "ml",
-        inoculoSeleccionado: esComprado ? { id: null, raw: { id_inoculo: null } } : inoculoSeleccionado,
-        valoresComposicion,
-        itemsComposicion,
-      });
-
-      datos.inoculo_usado = esComprado ? { id: null, cantidad: 0 } : { id: inoculoSeleccionado?.raw?.id_inoculo, cantidad: cantInoculo };
+      const datos = esComprado
+        ? crearInoculoCompradoDTO({
+            codigo: codigos.base,
+            tipo: TIPO_DB,
+            especie,
+            fecha,
+            cantidadDisponible: cantidadComprada,
+            nota,
+            unidad: "ml",
+          })
+        : crearInoculoDTO({
+            codigo: codigos.base,
+            tipo: TIPO_DB,
+            especie,
+            fecha,
+            cantidadFinal: cantMedioLiquido,
+            cantidad: REPETICIONES,
+            nota,
+            unidad: "ml",
+            inoculoSeleccionado,
+            valoresComposicion,
+            itemsComposicion,
+          });
 
       await insumosService.postInoculo(datos);
       navigate("/inoculos", {
@@ -167,22 +177,24 @@ const FormMedioLiquido = () => {
                     </div>
 
                     <div className="flex flex-col gap-2 w-full">
-                      <div className="flex justify-between items-center mb-1">
-                        <Text variante="label" style={{ color: colores.gris }}>Inóculo</Text>
-                        <label className="flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-blue-600 select-none">
-                          <input 
-                            type="checkbox" 
-                            checked={esComprado} 
-                            onChange={(e) => {
-                              setEsComprado(e.target.checked);
-                              setInoculo(""); 
-                            }}
-                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                          />
+                      <label className="flex items-center gap-1.5 cursor-pointer select-none w-fit">
+                        <input
+                          type="checkbox"
+                          checked={esComprado}
+                          onChange={(e) => {
+                            setEsComprado(e.target.checked);
+                            setInoculo("");
+                          }}
+                          className="cursor-pointer"
+                          style={{ accentColor: colores.azul }}
+                        />
+                        <Text variante="label" style={{ color: colores.azul, fontWeight: 600 }}>
                           ¿Es comprado?
-                        </label>
-                      </div>
-                      
+                        </Text>
+                      </label>
+
+                      <Text variante="label" style={{ color: colores.gris }}>Inóculo</Text>
+
                       {!esComprado ? (
                         <SelectField
                           value={inoculo}
@@ -194,30 +206,56 @@ const FormMedioLiquido = () => {
                           disabled={!especie}
                         />
                       ) : (
-                        <div className="h-[42px] flex items-center px-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl text-sm font-medium">
+                        <div
+                          className="h-[42px] flex items-center px-4 rounded-xl text-sm font-medium"
+                          style={{
+                            backgroundColor: colores.azul + "12",
+                            border: `1px solid ${colores.azul}33`,
+                            color: colores.azul,
+                          }}
+                        >
                           Inóculo comprado
                         </div>
                       )}
                     </div>
 
-                    <div className="flex flex-col gap-2 md:col-span-1">
-                      <Text variante="label" style={{ color: colores.gris }}>Carbohidrato</Text>
-                      <SelectField
-                        value={carbohidrato}
-                        onChange={(e) => setCarbohidrato(e.target.value)}
-                        placeholder="Selecciona carbohidrato"
-                        options={OPCIONES_CARBOHIDRATO}
-                        loading={loadingInsumos}
-                      />
-                    </div>
+                    {!esComprado && (
+                      <div className="flex flex-col gap-2 md:col-span-1">
+                        <Text variante="label" style={{ color: colores.gris }}>Carbohidrato</Text>
+                        <SelectField
+                          value={carbohidrato}
+                          onChange={(e) => setCarbohidrato(e.target.value)}
+                          placeholder="Selecciona carbohidrato"
+                          options={OPCIONES_CARBOHIDRATO}
+                          loading={loadingInsumos}
+                        />
+                      </div>
+                    )}
 
                   </div>
                 </div>
               </div>
 
-              <EntradaLista items={itemsComposicion} />
+              {!esComprado && <EntradaLista items={itemsComposicion} />}
 
               <div className="bg-white rounded-[32px] shadow-sm border p-6 md:p-8 flex flex-col gap-6">
+
+                {esComprado && (
+                  <div className="flex flex-col gap-3">
+                    <Text variante="medium">Cantidad disponible</Text>
+                    <div className="flex items-center gap-3">
+                      <Input
+                        variante="numero"
+                        numeroTipo="decimal"
+                        placeholder="0"
+                        value={cantidadComprada}
+                        onChange={(e) => setCantidadComprada(e.target.value)}
+                        roundedClass="rounded-xl"
+                      />
+                      <Text variante="label" style={{ color: colores.negro }}>ml</Text>
+                    </div>
+                  </div>
+                )}
 
                 <div className="flex flex-col gap-3">
                   <Text variante="medium">Fecha de creación</Text>
@@ -234,14 +272,22 @@ const FormMedioLiquido = () => {
 
             <Resumen
               especie={especie}
-              codigoInoculo={codigoInoculo}
-              composicion={itemsComposicion}
+              codigoInoculo={esComprado ? "" : codigoInoculo}
+              composicion={esComprado ? [] : itemsComposicion}
               codigos={codigos.lista}
+              cantidadDisponible={esComprado ? cantidadComprada : null}
+              unidadCantidad="ml"
             >
               <Button
                 variant="registrar"
                 onClick={handleRegistrar}
-                disabled={registrando || !carbohidrato || cantInoculo <= 0 || tieneErroresComposicion}
+                disabled={
+                  registrando ||
+                  !especie ||
+                  (esComprado
+                    ? (!cantidadComprada || Number(cantidadComprada) <= 0)
+                    : (!inoculo || !carbohidrato || cantInoculo <= 0 || tieneErroresComposicion))
+                }
               >
                 {registrando ? "Registrando..." : "Registrar"}
               </Button>

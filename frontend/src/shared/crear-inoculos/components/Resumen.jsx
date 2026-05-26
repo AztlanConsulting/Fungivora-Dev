@@ -16,6 +16,8 @@ const Resumen = ({
   composicion = [],
   codigos = [],
   cantidad = 1,
+  cantidadDisponible = null,
+  unidadCantidad = "ml",
   children,
 }) => {
   const codigoUnico = codigos.length === 1 ? codigos[0] : null;
@@ -109,8 +111,21 @@ const Resumen = ({
         }
       </div>
 
-      <div className="w-full h-px" style={{ backgroundColor: colores.grisClaro }} />
+      {(composicion.length > 0 || cantidadDisponible != null) && (
+        <div className="w-full h-px" style={{ backgroundColor: colores.grisClaro }} />
+      )}
 
+      {cantidadDisponible != null && (
+        <div className="flex flex-col gap-0.5">
+          <Text variante="label" style={estiloEtiqueta}>Cantidad disponible</Text>
+          {cantidadDisponible !== "" && Number(cantidadDisponible) > 0
+            ? <Text variante="body" style={{ color: colores.negro, fontWeight: 500 }}>{cantidadDisponible} {unidadCantidad}</Text>
+            : <Text variante="input">—</Text>
+          }
+        </div>
+      )}
+
+      {composicion.length > 0 && (
       <div className="flex flex-col gap-2">
         <Text variante="label" style={estiloEtiqueta}>Composición</Text>
 
@@ -165,6 +180,7 @@ const Resumen = ({
           );
         })}
       </div>
+      )}
 
       {children && (
         <>
