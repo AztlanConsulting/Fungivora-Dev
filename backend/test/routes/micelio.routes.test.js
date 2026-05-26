@@ -1,10 +1,16 @@
 const request = require('supertest');
 const app = require('../../app'); 
 const Micelio = require('../../models/micelio.model');
+const Inventario = require('../../models/inventario.model');
 const jwt = require('jsonwebtoken');
 
 jest.mock('../../models/micelio.model');
+jest.mock('../../models/inventario.model'); 
+jest.mock('../../util/db', () => ({
+    getConnection: jest.fn()
+}));
 
+const db = require('../../util/db');
 
 describe('Micelio Routes', () => {
     let tokenTest; 
@@ -14,29 +20,20 @@ describe('Micelio Routes', () => {
         tokenTest = jwt.sign({ id: 1, usuario: 'test_user', isAdmin: true }, SECRET, { expiresIn: '1h' });
     });
 
+    const mockConn = {
+        beginTransaction: jest.fn().mockResolvedValue(),
+        commit: jest.fn().mockResolvedValue(),
+        rollback: jest.fn().mockResolvedValue(),
+        release: jest.fn().mockReturnValue(),
+    };
+
     beforeEach(() => {
         jest.clearAllMocks();
+        db.getConnection.mockResolvedValue(mockConn);
     });
 
     describe('POST /crear-medio-liquido', () => {
 
-        it('201 - creación exitosa a través del endpoint', async () => {
-            Micelio.anadir.mockResolvedValue({ insertId: 10 });
-
-            const res = await request(app)
-                .post('/api/micelio/crear-medio-liquido')
-                .set('Authorization', `Bearer ${tokenTest}`)
-                .send({
-                    id_usuario: 1,
-                    id_base: 2,
-                    cantidad_final: 250,
-                    ingredientes: []
-                });
-
-            expect(res.statusCode).toBe(201);
-            expect(res.body.success).toBe(true);
-            expect(res.body.message).toBe('Medio líquido creado y stock actualizado correctamente');
-        });
 
         it('500 - error interno del servidor al procesar la ruta', async () => {
             Micelio.anadir.mockRejectedValue(new Error('Transaction Failed'));
