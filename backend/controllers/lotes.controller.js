@@ -1,6 +1,5 @@
 const Lotes = require('../models/lotes.model');
 const Categoria = require('../models/categoria.model');
-const crypto = require('crypto');
 const cron = require('node-cron');
 
 // Limpieza automática a las 00:00 a.m.

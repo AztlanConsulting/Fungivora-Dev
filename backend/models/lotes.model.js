@@ -44,11 +44,9 @@ class Lotes {
             `, [id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, 1, "Inoculación"]);
 
             const promesasBloques = [];
-            let totalSemillaUsada = 0;
 
             for (const b of bloques) {
                 const numBloques = Number(b.cantidad) || 1;
-                totalSemillaUsada += numBloques; 
 
                 for (let i = 0; i < numBloques; i++) {
                     promesasBloques.push(
