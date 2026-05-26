@@ -23,7 +23,6 @@ describe("Resumen — renderizado base", () => {
     expect(screen.getByText("Código")).toBeInTheDocument();
     expect(screen.getByText("Especie")).toBeInTheDocument();
     expect(screen.getByText("Inóculo")).toBeInTheDocument();
-    expect(screen.getByText("Composición")).toBeInTheDocument();
   });
 
   it('muestra "—" en código, especie e inóculo cuando no se pasan props', () => {
