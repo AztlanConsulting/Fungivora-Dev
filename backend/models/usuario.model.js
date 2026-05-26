@@ -30,7 +30,7 @@ class Usuario {
         nuevoUsuario.correo_usuario, 
         nuevoUsuario.contrasena_usuario, 
         nuevoUsuario.estatus_usuario || 'Activo', 
-        nuevoUsuario.is_user_admin || 0 
+        nuevoUsuario.is_user_admin ?? 0 
       ]
     );
   };

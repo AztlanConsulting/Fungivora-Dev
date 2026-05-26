@@ -1,5 +1,5 @@
-// FormCrearLote.jsx
-import React from "react"; // Quitamos useMemo porque ya no se usa
+
+import React from "react"; 
 import Titulo from "../../../shared/components/ui/basics/Titulo";
 import Text from "../../../shared/components/ui/basics/Texto";
 import { colores } from "../../../shared/components/ui/basics/Colores";

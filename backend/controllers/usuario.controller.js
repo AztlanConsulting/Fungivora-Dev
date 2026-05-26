@@ -2,7 +2,7 @@ const Usuario = require('../models/usuario.model');
 const bcrypt = require('bcrypt');
 
 exports.post_crear_usuario = async (req, res, next) => {
-    const { nombre_usuario, correo_usuario, contrasena_usuario, estatus_usuario, is_user_admin } = req.body;
+    const { nombre_usuario, correo_usuario, contrasena_usuario, estatus_usuario } = req.body;
 
     try {
         const usuarioExistente = await Usuario.fetch_one(nombre_usuario);
@@ -22,7 +22,7 @@ exports.post_crear_usuario = async (req, res, next) => {
             correo_usuario,
             contrasena_usuario: contrasenaHasheada, 
             estatus_usuario,
-            is_user_admin
+            is_user_admin: 0 
         });
 
         res.status(201).json({ 
