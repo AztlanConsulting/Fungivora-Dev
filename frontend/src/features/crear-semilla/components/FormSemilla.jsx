@@ -103,7 +103,7 @@ const FormSemillas = () => {
       fecha,
       cantidad,
     });
-  }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias]);
+  }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias, esComprado]);
 
   const handleRegistrar = async () => {
     if (tieneErroresComposicion) {
@@ -240,26 +240,27 @@ const FormSemillas = () => {
               </div>
 
               <EntradaLista items={itemsComposicion} />
+                <div className="bg-white rounded-[32px] shadow-sm border p-6 md:p-8 flex flex-col gap-6">
+                  <div className="flex flex-col md:flex-row gap-6 w-full">
 
-              <div className="bg-white rounded-[32px] shadow-sm border p-6 md:p-8 flex flex-col gap-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-                  <div className="flex flex-col gap-3">
-                    <Text variante="medium">Cantidad</Text>
-                    <InputCantidad value={cantidad} onChange={setCantidad} />
+                    <div className="flex flex-col gap-3 w-full md:w-[160px] shrink-0">
+                      <Text variante="medium">Cantidad</Text>
+                      <InputCantidad value={cantidad} onChange={setCantidad} />
+                    </div>
+
+                    <div className="flex flex-col gap-3 flex-1">
+                      <Text variante="medium">Fecha de creación</Text>
+                      <InputFecha value={fecha} onChange={setFecha} />
+                    </div>
+
                   </div>
 
-                  <div className="flex flex-col gap-3">
-                    <Text variante="medium">Fecha de creación</Text>
-                    <InputFecha value={fecha} onChange={setFecha} />
+                  <div className="flex flex-col gap-3 w-full">
+                    <Text variante="medium">Notas</Text>
+                    <InputNota value={nota} onChange={setNota} />
                   </div>
+                  
                 </div>
-
-                <div className="flex flex-col gap-3 w-full">
-                  <Text variante="medium">Notas</Text>
-                  <InputNota value={nota} onChange={setNota} />
-                </div>
-              </div>
-
             </div>
 
             <Resumen

@@ -95,10 +95,10 @@ const FormAgar = () => {
       amount: cantidad, 
       cantidad,
     });
-  }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias]);
+  }, [tipoInoculo, especie, categorias, fecha, cantidad, loadingCategorias, esComprado]);
 
   const handleRegistrar = async () => {
-    if (tieneErroresComposicion) {
+    if (tieneErroresComposicion && !esComprado) {
       setAlerta({
         visible: true,
         variante: "error",
@@ -119,7 +119,7 @@ const FormAgar = () => {
         unidad: "ml",
         inoculoSeleccionado: esComprado ? { id: null, raw: { id_inoculo: null } } : inoculoSeleccionado,
         valoresComposicion,
-        itemsComposicion,
+        itemsComposicion: itemsFiltrados,
       });
 
       datos.inoculo_usado = esComprado ? { id: null, cantidad: 0 } : { id: inoculoSeleccionado?.raw?.id_inoculo, cantidad: cantInoculo };
@@ -205,7 +205,8 @@ const FormAgar = () => {
                 </div>
               </div>
 
-              <EntradaLista items={itemsComposicion} />
+              {/* Corregido: Se inyectan los items filtrados sin inóculos si es comprado */}
+              <EntradaLista items={itemsFiltrados} />
 
               <div className="bg-white rounded-[32px] shadow-sm border p-6 md:p-8 flex flex-col gap-6">
 
@@ -232,14 +233,20 @@ const FormAgar = () => {
             <Resumen
               especie={especie}
               codigoInoculo={codigoInoculo}
-              composicion={itemsComposicion}
+              composicion={itemsFiltrados} // Corregido: Se pasa la composición filtrada
               codigos={codigos.lista}
+              amount={cantidad}
               cantidad={cantidad}
             >
               <Button
                 variant="registrar"
                 onClick={handleRegistrar}
-                disabled={registrando || !cantidad || cantidad < 1 || cantInoculo <= 0 || tieneErroresComposicion}
+                disabled={
+                  registrando || 
+                  !cantidad || 
+                  cantidad < 1 || 
+                  (!esComprado && (cantInoculo <= 0 || tieneErroresComposicion))
+                }
               >
                 {registrando ? "Registrando ..." : "Registrar"}
               </Button>

@@ -73,11 +73,6 @@ const FormMedioLiquido = () => {
     loading: loadingInsumos,
   } = useIngredientesMedioLiquido({ carbohidrato, inoculoDisponible, tipoInoculo, codigoInoculo });
 
-    const itemsFiltrados = useMemo(() => {
-      if (!esComprado) return itemsComposicion;
-      return itemsComposicion.filter(item => item.tipo !== "inoculo");
-    }, [itemsComposicion, esComprado]);
-
   const cantInoculo = parseFloat(String(valoresComposicion?.cantInoculo ?? "").replace(",", ".")) || 0;
 
   const opcionesEspecies = especies.map((esp) => ({
@@ -100,7 +95,7 @@ const FormMedioLiquido = () => {
       fecha,
       cantidad: REPETICIONES,
     });
-  }, [tipoInoculo, especie, categorias, fecha, loadingCategorias]);
+  }, [tipoInoculo, especie, categorias, fecha, loadingCategorias, esComprado]);
 
   const handleRegistrar = async () => {
     if (tieneErroresComposicion) {

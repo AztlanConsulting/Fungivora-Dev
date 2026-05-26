@@ -100,6 +100,7 @@ const Input = ({
         ? numeroConfig[numeroTipo] || numeroConfig.entero
         : { type: type };
 
+
     return (
         <div
             className={`
@@ -116,11 +117,19 @@ const Input = ({
             )}
 
             {variante === "amplio" ? (
-                <textarea ref={textAreaRef} rows={1} {...sharedProps} />
+                <textarea 
+                    ref={textAreaRef} 
+                    rows={1} 
+                    placeholder={placeholder}
+                    {...sharedProps} 
+                    className={`${sharedProps.className} placeholder-transparent`} 
+                />
             ) : (
                 <input 
                     {...sharedProps} 
                     {...numProps}
+                    placeholder={placeholder}
+                    className={`${sharedProps.className} placeholder-transparent`} 
                     maxLength={variante === "normal" ? 50 : variante === "numero" ? 8 : undefined}
                 />
             )}

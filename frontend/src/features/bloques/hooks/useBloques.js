@@ -5,7 +5,7 @@ const useBloques = () => {
   const [bloquesTemporales, setBloquesTemporales] = useState([]);
   const [contenedores, setContenedores] = useState([]);
   const [sustratos, setSustratos] = useState([]); 
-  const [cargando, setCargando] = useState(false);
+  const [cargando] = useState(false);
 
   useEffect(() => {
     const cargarCatalogos = async () => {
