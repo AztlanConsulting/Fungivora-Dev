@@ -177,23 +177,24 @@ const FormMedioLiquido = () => {
                     </div>
 
                     <div className="flex flex-col gap-2 w-full">
-                      <label className="flex items-center gap-1.5 cursor-pointer select-none w-fit">
-                        <input
-                          type="checkbox"
-                          checked={esComprado}
-                          onChange={(e) => {
-                            setEsComprado(e.target.checked);
-                            setInoculo("");
-                          }}
-                          className="cursor-pointer"
-                          style={{ accentColor: colores.azul }}
-                        />
-                        <Text variante="label" style={{ color: colores.azul, fontWeight: 600 }}>
-                          ¿Es comprado?
-                        </Text>
-                      </label>
-
-                      <Text variante="label" style={{ color: colores.gris }}>Inóculo</Text>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <Text variante="label" style={{ color: colores.gris }}>Inóculo</Text>
+                        <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={esComprado}
+                            onChange={(e) => {
+                              setEsComprado(e.target.checked);
+                              setInoculo("");
+                            }}
+                            className="cursor-pointer"
+                            style={{ accentColor: colores.azul }}
+                          />
+                          <Text variante="label" style={{ color: colores.azul, fontWeight: 600 }}>
+                            ¿Es comprado?
+                          </Text>
+                        </label>
+                      </div>
 
                       {!esComprado ? (
                         <SelectField
