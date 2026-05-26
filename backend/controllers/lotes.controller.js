@@ -1,71 +1,80 @@
 const Lotes = require('../models/lotes.model');
 const Categoria = require('../models/categoria.model');
-const Bloque = require('../models/bloque.model');
 const crypto = require('crypto');
 const cron = require('node-cron');
 
-// Se limpiar a las 00:00 a.m.
+// Limpieza automática a las 00:00 a.m.
 cron.schedule('0 0 * * *', async () => {
     console.log('Iniciando revisión automática de lotes...');
     try {
         await Lotes.limpiar_lotes_antiguos();
     } catch (error) {
-        console.error('rror al ejecutar la limpieza automática:', error);
+        console.error('Error al ejecutar la limpieza automática:', error);
     }
 });
 
 /*
-* get_batches
-Obtener la información de los lotes
-Metodo que hace una llamada al modelo para obtener la info necesaria
-@param filas
+* post_batch
+* Registra el lote delegando la lógica transaccional completa al modelo.
 */
-exports.get_batches = async (req, res) => {
+exports.post_batch = async (req, res) => {
     try {
-        const lotes = await Lotes.fetch_all();
+        const { ubicacion_lote, fecha_lote, bloques, produccion } = req.body;
 
-        res.status(200).json({
-            success: true,
-            data: lotes
+        if (!bloques || bloques.length === 0) {
+            return res.status(400).json({ success: false, message: "No hay bloques para registrar" });
+        }
+
+        const resultado = await Lotes.registrar_lote_y_bloques({
+            ubicacion_lote,
+            fecha_lote,
+            bloques,
+            produccion
         });
 
-    } catch (err) {
-        console.error("Error en get_batches controller:", err);
+        res.status(201).json({ 
+            success: true, 
+            codigo: resultado.codigo_fungivora, 
+            id: resultado.id_lote 
+        });
 
-        res.status(500).json({
-            success: false,
-            message: "Hubo un error al recuperar los lotes",
-            error: err.message
+    } catch (error) {
+        console.error("Error crítico en post_batch controller:", error);
+        res.status(500).json({ 
+            success: false, 
+            error: error.message || 'Error interno al procesar e inocular el lote' 
         });
     }
 };
 
+/*
+* get_batches
+*/
+exports.get_batches = async (req, res) => {
+    try {
+        const lotes = await Lotes.fetch_all();
+        res.status(200).json({ success: true, data: lotes });
+    } catch (err) {
+        console.error("Error en get_batches controller:", err);
+        res.status(500).json({ success: false, message: "Hubo un error al recuperar los lotes", error: err.message });
+    }
+};
 
 /*
 * get_categorias
-* Obtiene todas las categorías disponibles
 */
 exports.get_categorias = async (req, res) => {
     try {
         const rows = await Lotes.fetch_categorias();
-
-        res.status(200).json({
-            success: true,
-            categorias: rows,
-        });
+        res.status(200).json({ success: true, categorias: rows });
     } catch (error) {
         console.error('Error al obtener categorías:', error);
-        res.status(500).json({
-            success: false,
-            error: error.message
-        });
+        res.status(500).json({ success: false, error: error.message });
     }
 };
 
 /*
 * get_ubicaciones
-* Obtiene todas las ubicaciones de la tabla de categorias
-* Funciona al tener el fetch por 'Ubicacion'
 */
 exports.get_ubicaciones = async (req, res) => {
     try {
@@ -78,103 +87,20 @@ exports.get_ubicaciones = async (req, res) => {
 
 /*
 * get_inoculos_activos
-* Obtiene todos inoculos activos existentes en la tabla de inoculos
-* Funciona al tener el fetch desde la tabla de inoculos
 */
 exports.get_inoculos_activos = async (req, res) => {
     try {
         const inoculos = await Lotes.fetch_inoculos_disponibles();
-
-        res.status(200).json({
-            success: true,
-            data: inoculos
-        });
+        res.status(200).json({ success: true, data: inoculos });
     } catch (error) {
         console.error('Error al obtener inóculos:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error al obtener la lista de inóculos'
-        });
+        res.status(500).json({ success: false, message: 'Error al obtener la lista de inóculos' });
     }
 };
 
 /*
-* post_batch
-Mandar la información del lote
-Metodo que añade la información de lotes a la tabla
-@param ubicacion_lote, tipo_sustrato, id_inoculo 
+* actualizar_fase
 */
-exports.post_batch = async (req, res) => {
-    try {
-        const { ubicacion_lote, fecha_lote, bloques, produccion } = req.body;
-
-        if (!bloques || bloques.length === 0) {
-            return res.status(400).json({ success: false, message: "No hay bloques para registrar" });
-        }
-
-        const idInoculoReferencia = bloques[0].id_inoculo;
-        const inoculosDisponibles = await Lotes.fetch_inoculos_disponibles();
-        const infoInoculo = inoculosDisponibles.find(i => i.id_inoculo == idInoculoReferencia);
-
-        if (!infoInoculo) {
-            return res.status(400).json({ success: false, message: "Inóculo no encontrado" });
-        }
-
-        const [abreviaturaResult] = await Categoria.fetchAbreviaturaPorNombre(infoInoculo.especie);
-        const abreviatura = abreviaturaResult[0].abreviatura_opcion;
-
-        const fechaParaCodigo = new Date(fecha_lote);
-        const fechaStr = `${String(fechaParaCodigo.getUTCDate()).padStart(2, '0')}${String(fechaParaCodigo.getUTCMonth() + 1).padStart(2, '0')}${fechaParaCodigo.getUTCFullYear().toString().slice(-2)}`;
-
-        const prefijoBase = `LC-${abreviatura}-${fechaStr}`;
-        const cantidadGrupo = await Lotes.count_lotes_similares(prefijoBase);
-        const codigo_fungivora = `${prefijoBase}-${cantidadGrupo + 1}`;
-
-        const id_lote = crypto.randomUUID();
-
-        await Lotes.crear_lote(
-            id_lote,
-            codigo_fungivora,
-            fecha_lote,
-            ubicacion_lote,
-            1,
-            "Inoculación"
-        );
-
-        const promesasBloques = [];
-        for (const b of bloques) {
-            const numBloques = Number(b.cantidad) || 1;
-            for (let i = 0; i < numBloques; i++) {
-                promesasBloques.push(
-                    Bloque.crear_bloque({
-                        id_bloque: crypto.randomUUID(),
-                        id_lote: id_lote,
-                        id_inoculo: b.id_inoculo,
-                        produccion: (b.produccion !== undefined) ? b.produccion : produccion,
-                        peso_gr: b.peso_gr || 0,
-                        contaminado: 0,
-                        contenedor: b.contenedor,
-                        tipo_sustrato: b.tipo_sustrato 
-                    })
-                );
-            }
-        }
-        await Promise.all(promesasBloques);
-
-        res.status(201).json({ success: true, codigo: codigo_fungivora, id: id_lote });
-
-    } catch (error) {
-        console.error("Error en post_batch:", error);
-        res.status(500).json({ success: false, error: 'Error interno' });
-    }
-};
-
-/**
- * Actualizar Fase del Lote
- * Permite actualizar la fase de un lote específico
- * @param {string} id_lote - El ID del lote a actualizar
- * @param {string} nuevaFase - La nueva fase a asignar al lote
- */
 exports.actualizar_fase = async (req, res) => {
     try {
         const { id_lote } = req.query;
@@ -182,42 +108,26 @@ exports.actualizar_fase = async (req, res) => {
         await Lotes.actualizar_fase(id_lote, nuevaFase);
 
         const fasesGranja = ["Fructificación", "Cosecha 1", "Cosecha 2", "Finalización"];
-
         if (fasesGranja.includes(nuevaFase)) {
             await Lotes.actualizar_ubicacion(id_lote, "Granja");
         }
 
-        res.status(200).json({
-            success: true,
-            message: 'Fase (y ubicación si aplica) actualizada con éxito'
-        });
+        res.status(200).json({ success: true, message: 'Fase (y ubicación si aplica) actualizada con éxito' });
     } catch (error) {
         console.error("Error en actualizar_fase controller:", error);
-        res.status(500).json({
-            success: false,
-            message: 'Error al actualizar la fase del lote'
-        });
+        res.status(500).json({ success: false, message: 'Error al actualizar la fase del lote' });
     }
 };
 
-/**
- * Obtener el lote por el id
- * Permite encontrar el id del lote seleccionado
- * @param {string} id_lote - El ID del lote 
- */
+/*
+* get_batch_by_id
+*/
 exports.get_batch_by_id = async (req, res) => {
     const { id_lote } = req.query;
     try {
-        if (!id_lote) {
-            return res.status(400).json({ message: "ID de lote requerido" });
-        }
-
+        if (!id_lote) return res.status(400).json({ message: "ID de lote requerido" });
         const lote = await Lotes.fetch_by_id(id_lote);
-
-        if (!lote) {
-            return res.status(404).json({ message: "Lote no encontrado" });
-        }
-
+        if (!lote) return res.status(404).json({ message: "Lote no encontrado" });
         res.json(lote);
     } catch (error) {
         console.error("Error en get_batch_by_id:", error);
@@ -225,22 +135,14 @@ exports.get_batch_by_id = async (req, res) => {
     }
 };
 
-/**
- * Obtener las especies y luego el inoculo
- * Permite encontrar las especies relacionadas con los inóculos
- * @param {string} inoculos - Los inoculos en la base
- */
+/*
+* get_especies_unicas
+*/
 exports.get_especies_unicas = async (req, res) => {
     try {
         const inoculos = await Lotes.fetch_inoculos_disponibles();
-
-        // Especies sin repetir
         const especiesUnicas = [...new Set(inoculos.map(i => i.especie))];
-
-        res.status(200).json({
-            success: true,
-            data: especiesUnicas
-        });
+        res.status(200).json({ success: true, data: especiesUnicas });
     } catch {
         res.status(500).json({ success: false, message: 'Error al obtener especies' });
     }
@@ -248,55 +150,35 @@ exports.get_especies_unicas = async (req, res) => {
 
 /*
 * delete_batch
-* Elimina un lote y todos sus bloques asociados por ID
 */
 exports.delete_batch = async (req, res) => {
     try {
         const { id_lote } = req.params;
-
-        if (!id_lote) {
-            return res.status(400).json({ success: false, message: "ID de lote no proporcionado" });
-        }
+        if (!id_lote) return res.status(400).json({ success: false, message: "ID de lote no proporcionado" });
 
         const result = await Lotes.eliminar_lote(id_lote);
+        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Lote no encontrado" });
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ success: false, message: "Lote no encontrado" });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: 'Lote y sus bloques asociados eliminados con éxito'
-        });
+        res.status(200).json({ success: true, message: 'Lote y sus bloques asociados eliminados con éxito' });
     } catch (error) {
         console.error("Error en delete_batch controller:", error);
-        res.status(500).json({
-            success: false,
-            message: 'Error al eliminar el lote',
-            error: error.message
-        });
+        res.status(500).json({ success: false, message: 'Error al eliminar el lote', error: error.message });
     }
 };
 
-exports.revisar_lotes = async (req, res, _next) => {
+/*
+* revisar_lotes
+*/
+exports.revisar_lotes = async (req, res) => {
     try {
         const { ids } = req.body;
-
         if (!ids || !Array.isArray(ids) || ids.length === 0) {
-            return res.status(400).json({
-                message: "Ids inválidos"
-            });
+            return res.status(400).json({ message: "Ids inválidos" });
         }
-
         await Lotes.revision_lotes(ids);
-        return res.status(200).json({
-            message: "Lotes revisados correctamente"
-        });
+        return res.status(200).json({ message: "Lotes revisados correctamente" });
     } catch (err) {
         console.error("Error en revisar_lotes:", err);
-
-        return res.status(500).json({
-            message: "Error marcando lotes como revisados"
-        });
+        return res.status(500).json({ message: "Error marcando lotes como revisados" });
     }
 };

@@ -1,4 +1,5 @@
 const db = require('../util/db');
+const crypto = require('crypto');
 
 class Lotes {
     constructor(id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase) {
@@ -10,212 +11,198 @@ class Lotes {
         this.fase = fase;
     }
 
-    // Obtiene todas las categorías
+    static async registrar_lote_y_bloques({ ubicacion_lote, fecha_lote, bloques, produccion }) {
+        const connection = await db.getConnection();
+        try {
+            await connection.beginTransaction();
+
+            const idInoculoReferencia = bloques[0].id_inoculo;
+            const inoculosDisponibles = await this.fetch_inoculos_disponibles(connection);
+            const infoInoculo = inoculosDisponibles.find(i => i.id_inoculo == idInoculoReferencia);
+
+            if (!infoInoculo) {
+                throw new Error("Inóculo no encontrado o sin existencias disponibles");
+            }
+
+            const [abreviaturaResult] = await connection.execute(
+                'SELECT abreviatura_opcion FROM Categorias WHERE nombre_opcion = ?', 
+                [infoInoculo.especie]
+            );
+            const abreviatura = abreviaturaResult[0]?.abreviatura_opcion || "GEN";
+            const fechaParaCodigo = new Date(fecha_lote);
+            const fechaStr = `${String(fechaParaCodigo.getUTCDate()).padStart(2, '0')}${String(fechaParaCodigo.getUTCMonth() + 1).padStart(2, '0')}${fechaParaCodigo.getUTCFullYear().toString().slice(-2)}`;
+
+            const prefijoBase = `LC-${abreviatura}-${fechaStr}`;
+            const cantidadGrupo = await this.count_lotes_similares(prefijoBase);
+            const codigo_fungivora = `${prefijoBase}-${cantidadGrupo + 1}`;
+
+            const id_lote = crypto.randomUUID();
+
+            await connection.execute(`
+                INSERT INTO Lotes (id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase) 
+                VALUES (?, ?, ?, ?, ?, ?)
+            `, [id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, 1, "Inoculación"]);
+
+            const promesasBloques = [];
+            let totalSemillaUsada = 0;
+
+            for (const b of bloques) {
+                const numBloques = Number(b.cantidad) || 1;
+                totalSemillaUsada += numBloques; 
+
+                for (let i = 0; i < numBloques; i++) {
+                    promesasBloques.push(
+                        connection.execute(`
+                            INSERT INTO Bloques (id_bloque, id_lote, id_inoculo, produccion, peso_gr, contaminado, contenedor, tipo_sustrato)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        `, [
+                            crypto.randomUUID(),
+                            id_lote,
+                            b.id_inoculo,
+                            (b.produccion !== undefined) ? b.produccion : produccion,
+                            b.peso_gr || 0,
+                            0,
+                            b.contenedor,
+                            b.tipo_sustrato
+                        ])
+                    );
+                }
+            }
+            await Promise.all(promesasBloques);
+
+            const regexInoculoConsumible = /^[A-Z0-9]{1,3}-/;
+            const esInoculoRestable = regexInoculoConsumible.test(infoInoculo.codigo_fungivora.toUpperCase());
+
+            if (esInoculoRestable) {
+                await this.usar_inoculo_transaccional(connection, idInoculoReferencia);
+            }
+            await connection.commit();
+            return { id_lote, codigo_fungivora };
+
+        } catch (error) {
+            await connection.rollback();
+            throw error; 
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async usar_inoculo_transaccional(connection, id_inoculo) {
+        await connection.execute(`
+            UPDATE Inoculos 
+            SET cantidad_disponible = 0 
+            WHERE id_inoculo = ?
+        `, [id_inoculo]);
+    }
+
     static fetch_categorias = async () => {
         const [filas] = await db.execute('SELECT * FROM Categorias');
         return filas;
     }
 
-    // Metodo para asignar valores a la tabla de lotes
     static async crear_lote(id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase) {
-        try {
-            return await db.execute(`
-                INSERT INTO Lotes (
-                    id_lote, codigo_fungivora, 
-                    fecha_lote, ubicacion_lote, activo, fase
-                ) 
-                VALUES (?, ?, ?, ?, ?, ?)
-            `, [id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase]);
-        } catch (err) {
-            console.error("Error en crear_lote model:", err);
-            throw err;
-        }
+        return await db.execute(`
+            INSERT INTO Lotes (id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase) 
+            VALUES (?, ?, ?, ?, ?, ?)
+        `, [id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase]);
     }
 
-    //  Metodo para actualizar la fase del lote
     static async actualizar_fase(id_lote, nuevaFase) {
-        try {
-            const activo = (nuevaFase === "Finalización") ? 0 : 1;
-            return await db.execute(`
-                UPDATE Lotes 
-                SET fase = ?, activo = ?
-                WHERE id_lote = ?
-            `, [nuevaFase, activo, id_lote]);
-        } catch (err) {
-            console.error("Error en actualizar_fase model:", err);
-            throw err;
-        }
+        const activo = (nuevaFase === "Finalización") ? 0 : 1;
+        return await db.execute(`
+            UPDATE Lotes SET fase = ?, activo = ? WHERE id_lote = ?
+        `, [nuevaFase, activo, id_lote]);
     }
 
-    // Metodo para encontrar los inoculos activos
-    static async fetch_inoculos_disponibles() {
-        try {
-            const [filas] = await db.execute(`
-                SELECT
-                    i.id_inoculo,
-                    i.codigo_fungivora,
-                    i.especie,
-                    i.cantidad_disponible,
-                    i.unidad,
-                    c.abreviatura_opcion AS abreviatura
-                FROM Inoculos i
-                LEFT JOIN Categorias c ON i.especie = c.nombre_opcion
-                WHERE i.cantidad_disponible > 0
-                ORDER BY i.fecha DESC
-            `);
-            return filas;
-        } catch (err) {
-            console.error("Error en fetch_inoculos_disponibles:", err);
-            throw err;
-        }
+    static async fetch_inoculos_disponibles(connection = null) {
+        const ejecutor = connection || db;
+        const [filas] = await ejecutor.execute(`
+            SELECT i.id_inoculo, i.codigo_fungivora, i.especie, i.cantidad_disponible, i.unidad, c.abreviatura_opcion AS abreviatura
+            FROM Inoculos i
+            LEFT JOIN Categorias c ON i.especie = c.nombre_opcion
+            WHERE i.cantidad_disponible > 0
+            ORDER BY i.fecha DESC
+        `);
+        return filas;
     }
 
-    // Metodo para contar si ya existe un código igual e ir sumando 1
     static async count_lotes_similares(prefijo) {
-        try {
-            const [result] = await db.execute(`
-                SELECT COUNT(*) as total 
-                FROM Lotes 
-                WHERE codigo_fungivora LIKE ?
-            `, [`${prefijo}-%`]);
-
-            return result[0].total;
-        } catch (err) {
-            console.error("Error en count_lotes_similares:", err);
-            throw err;
-        }
+        const [result] = await db.execute(`
+            SELECT COUNT(*) as total FROM Lotes WHERE codigo_fungivora LIKE ?
+        `, [`${prefijo}-%`]);
+        return result[0].total;
     }
 
-    // Metodo para ordenar por codigo_fungivora la tabla de valores
     static async fetch_all() {
-        try {
-            const [filas] = await db.execute(`
-                SELECT 
-                    id_lote, 
-                    codigo_fungivora, 
-                    fecha_lote, 
-                    ubicacion_lote, 
-                    activo, 
-                    fase 
-                FROM Lotes 
-                ORDER BY 
-                    fecha_lote DESC,
-                    SUBSTRING_INDEX(SUBSTRING_INDEX(codigo_fungivora, '-', 2), '-', -1) ASC,
-                    CAST(SUBSTRING_INDEX(codigo_fungivora, '-', -1) AS UNSIGNED) DESC
-            `);
-            return filas;
-        } catch (err) {
-            console.error("Error en fetch_all lotes:", err);
-            throw err;
-        }
+        const [filas] = await db.execute(`
+            SELECT id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase 
+            FROM Lotes 
+            ORDER BY fecha_lote DESC,
+                     SUBSTRING_INDEX(SUBSTRING_INDEX(codigo_fungivora, '-', 2), '-', -1) ASC,
+                     CAST(SUBSTRING_INDEX(codigo_fungivora, '-', -1) AS UNSIGNED) DESC
+        `);
+        return filas;
     }
 
-    // Metodo para eliminar un lote y sus bloques
     static async eliminar_lote(id_lote) {
         const connection = await db.getConnection();
         try {
             await connection.beginTransaction();
-
-            // Bloques asociados
             await connection.execute('DELETE FROM Bloques WHERE id_lote = ?', [id_lote]);
-
-            // Lote
             const [result] = await connection.execute('DELETE FROM Lotes WHERE id_lote = ?', [id_lote]);
-
             await connection.commit();
             return result;
         } catch (err) {
             await connection.rollback();
-            console.error("Error en eliminar_lote model:", err);
             throw err;
         } finally {
             connection.release();
         }
     }
 
-    // Método para eliminar automáticamente lotes mayores a 3 meses y sus bloques
     static async limpiar_lotes_antiguos() {
         const connection = await db.getConnection();
         try {
             await connection.beginTransaction();
-
-            // Si la fecha es mayor a 3 meses
             await connection.execute(`
-                DELETE FROM Bloques 
-                WHERE id_lote IN (
-                    SELECT id_lote FROM Lotes 
-                    WHERE fecha_lote < DATE_SUB(NOW(), INTERVAL 3 MONTH)
-                )
+                DELETE FROM Bloques WHERE id_lote IN (SELECT id_lote FROM Lotes WHERE fecha_lote < DATE_SUB(NOW(), INTERVAL 3 MONTH))
             `);
-
-            // Eliminarlo
             const [result] = await connection.execute(`
-                DELETE FROM Lotes 
-                WHERE fecha_lote < DATE_SUB(NOW(), INTERVAL 3 MONTH)
+                DELETE FROM Lotes WHERE fecha_lote < DATE_SUB(NOW(), INTERVAL 3 MONTH)
             `);
-
             await connection.commit();
             return result;
         } catch (err) {
             await connection.rollback();
-            console.error("Error en la limpieza automática de lotes:", err);
             throw err;
         } finally {
             connection.release();
         }
     }
 
-    // Método para revisar varios lotes
     static async revision_lotes(ids) {
-        try {
-            if (!ids || ids.length === 0) {
-                return;
-            }
-
-            // (?, ?, ?, ...)
-            const placeholders = ids.map(() => '?').join(',');
-
-            await db.execute(`
-                UPDATE Lotes
-                SET fecha_ultima_revision = NOW()
-                WHERE id_lote IN (${placeholders})
-            `, ids);
-        } catch (err) {
-            console.error("Error en revision_lotes:", err);
-            throw err;
-        }
+        if (!ids || ids.length === 0) return;
+        const placeholders = ids.map(() => '?').join(',');
+        await db.execute(`
+            UPDATE Lotes SET fecha_ultima_revision = NOW() WHERE id_lote IN (${placeholders})
+        `, ids);
     }
 
     static async actualizar_ubicacion(id_lote, nuevaUbicacion) {
-        try {
-            return await db.execute(`
-                UPDATE Lotes 
-                SET ubicacion_lote = ? 
-                WHERE id_lote = ?
-            `, [nuevaUbicacion, id_lote]);
-        } catch (err) {
-            console.error("Error en actualizar_ubicacion model:", err);
-            throw err;
-        }
+        return await db.execute(`
+            UPDATE Lotes SET ubicacion_lote = ? WHERE id_lote = ?
+        `, [nuevaUbicacion, id_lote]);
     }
 
     static async fetch_by_id(id_lote) {
-        try {
-            const [rows] = await db.execute(`
-                SELECT 
-                    l.*, 
-                    i.especie 
-                FROM Lotes l
-                LEFT JOIN Bloques b ON l.id_lote = b.id_lote
-                LEFT JOIN Inoculos i ON b.id_inoculo = i.id_inoculo
-                WHERE l.id_lote = ?
-                LIMIT 1
-            `, [id_lote]);
-            return rows[0];
-        } catch (err) {
-            console.error("Error en fetch_by_id:", err);
-            throw err;
-        }
+        const [rows] = await db.execute(`
+            SELECT l.*, i.especie 
+            FROM Lotes l
+            LEFT JOIN Bloques b ON l.id_lote = b.id_lote
+            LEFT JOIN Inoculos i ON b.id_inoculo = i.id_inoculo
+            WHERE l.id_lote = ? LIMIT 1
+        `, [id_lote]);
+        return rows[0];
     }
 }
 

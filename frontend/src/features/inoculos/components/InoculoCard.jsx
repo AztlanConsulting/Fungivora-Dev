@@ -52,40 +52,42 @@ const InoculoCard = ({ especie }) => {
     const datosOrdenados = useMemo(() => {
         if (!datos) return [];
         
-        return [...datos].sort((a, b) => {
-            const fechaA = a.fecha ? new Date(a.fecha).getTime() : 0;
-            const fechaB = b.fecha ? new Date(b.fecha).getTime() : 0;
+        return [...datos]
+            .filter((fila) => Number(fila.cantidad_disponible) > 0)
+            .sort((a, b) => {
+                const fechaA = a.fecha ? new Date(a.fecha).getTime() : 0;
+                const fechaB = b.fecha ? new Date(b.fecha).getTime() : 0;
 
-            if (fechaB !== fechaA) {
-                return fechaB - fechaA; 
-            }
+                if (fechaB !== fechaA) {
+                    return fechaB - fechaA; 
+                }
 
-            const obtenerPrefijo = (codigo) => {
-                if (!codigo) return '';
-                const partes = codigo.split('-');
-                return partes.slice(0, -1).join('-'); 
-            };
+                const obtenerPrefijo = (codigo) => {
+                    if (!codigo) return '';
+                    const partes = codigo.split('-');
+                    return partes.slice(0, -1).join('-'); 
+                };
 
-            const prefijoA = obtenerPrefijo(a.codigo_fungivora);
-            const prefijoB = obtenerPrefijo(b.codigo_fungivora);
+                const prefijoA = obtenerPrefijo(a.codigo_fungivora);
+                const prefijoB = obtenerPrefijo(b.codigo_fungivora);
 
-            if (prefijoA !== prefijoB) {
-                return prefijoA.localeCompare(prefijoB); 
-            }
+                if (prefijoA !== prefijoB) {
+                    return prefijoA.localeCompare(prefijoB); 
+                }
 
-            const extraerNumero = (codigo) => {
-                if (!codigo) return 0;
-                const partes = codigo.split('-');
-                const ultimoSegmento = partes[partes.length - 1];
-                const numero = parseInt(ultimoSegmento, 10);
-                return isNaN(numero) ? 0 : numero;
-            };
+                const extraerNumero = (codigo) => {
+                    if (!codigo) return 0;
+                    const partes = codigo.split('-');
+                    const ultimoSegmento = partes[partes.length - 1];
+                    const numero = parseInt(ultimoSegmento, 10);
+                    return isNaN(numero) ? 0 : numero;
+                };
 
-            const numA = extraerNumero(a.codigo_fungivora);
-            const numB = extraerNumero(b.codigo_fungivora);
+                const numA = extraerNumero(a.codigo_fungivora);
+                const numB = extraerNumero(b.codigo_fungivora);
 
-            return numA - numB; 
-        });
+                return numA - numB; 
+            });
     }, [datos]);
 
     const opcionesAbreviadas = TIPOS_INOCULO.map((tipo) => ({

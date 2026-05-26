@@ -172,7 +172,7 @@ function Lotes() {
       nombre_inoculo: inoculoSeleccionado ? inoculoSeleccionado.label : "N/A" 
     });
     
-    setBloqueForm({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+    setBloqueForm({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "", tipo_sustrato: "" });
     setErrorValidacion("");
   };
 
