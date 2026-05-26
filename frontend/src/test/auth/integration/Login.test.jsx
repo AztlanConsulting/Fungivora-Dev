@@ -1,15 +1,20 @@
 import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { BrowserRouter } from 'react-router-dom'
 import { Login } from '../../../pages'
+import useLogin from "../../../features/login/hooks/useLogin"
 
-// Mantenemos tus mocks de archivos tal cual los tienes
-vi.mock('../../../features/login/hooks/useLogin')
-import usePruebaDb from '../../../features/login/hooks/useLogin'
+vi.mock('../../../features/login/hooks/useLogin', () => ({
+    default: vi.fn(() => ({
+        ejecutarLogin: vi.fn(),
+        cargando: false,
+        error: null
+    }))
+}))
 
-// Mocks de ui
+// Mocks de UI
 vi.mock('../../../shared/components/ui/inputs/InputTexto', () => ({
     default: (props) => <input {...props} />
 }))
@@ -24,15 +29,13 @@ vi.mock('../../../shared/components/ui/basics/Texto', () => ({
     default: ({ children }) => <span>{children}</span>
 }))
 
-
-// Mocks de assets e iconos para evitar errores de carga
+// Mocks de assets e iconos
 vi.mock('../../../assets/images/fondo-fungivora.png', () => ({ default: '' }))
 vi.mock('../../../assets/images/fondo-fungivora-plano.png', () => ({ default: '' }))
 vi.mock('@hugeicons/react', () => ({
     HugeiconsIcon: () => <div data-testid="icon" />
 }))
 
-// Render de las vistas
 const renderWithRouter = (ui) => {
     return render(<BrowserRouter>{ui}</BrowserRouter>)
 }
@@ -40,19 +43,19 @@ const renderWithRouter = (ui) => {
 describe('Login — Pruebas completas', () => {
 
     beforeEach(() => {
-        global.fetch = vi.fn()
         vi.clearAllMocks()
-        localStorage.clear()
         delete window.location
         window.location = { href: vi.fn() }
     })
 
     it('Flujo completo', async () => {
         const user = userEvent.setup()
+        const mockEjecutarLogin = vi.fn().mockResolvedValue(true)
 
-        fetch.mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({ token: 'token-secreto-123' }),
+        vi.mocked(useLogin).mockReturnValue({
+            ejecutarLogin: mockEjecutarLogin,
+            cargando: false,
+            error: null
         })
 
         renderWithRouter(<Login />)
@@ -65,69 +68,45 @@ describe('Login — Pruebas completas', () => {
 
         const boton = screen.getByRole('button', { name: /entrar/i })
         await user.click(boton)
-
-        expect(fetch).toHaveBeenCalledWith("/api/login", expect.objectContaining({
-            method: "POST",
-            body: JSON.stringify({
-                nombre_usuario: "Eli",
-                contrasena: "123",
-            }),
-        }))
-
-        await waitFor(() => {
-            expect(localStorage.getItem("token")).toBe('token-secreto-123')
-        })
+        expect(mockEjecutarLogin).toHaveBeenCalledWith('Eli', '123')
+        
+        expect(window.location.href).toBe('/home')
     })
 
-    // Diferentes mensajes cuando el flujo no es exitoso
     it('Mensajes de error (401, 500, etc)', async () => {
-        const user = userEvent.setup()
+        
+        vi.mocked(useLogin).mockReturnValue({
+            ejecutarLogin: vi.fn(),
+            cargando: false,
+            error: "Usuario y/o contraseña incorrectos"
+        })
 
-        fetch.mockResolvedValueOnce({
-            ok: false,
-            json: async () => ({ msg: "Error de base de datos" }),
+        renderWithRouter(<Login />)
+        const errorMsg = screen.getByText(/Usuario y\/o contraseña incorrectos/i)
+        expect(errorMsg).toBeInTheDocument()
+    })
+
+    it('Mensajes sin conexión', async () => {
+        vi.mocked(useLogin).mockReturnValue({
+            ejecutarLogin: vi.fn(),
+            cargando: false,
+            error: "Error de red: Inténtelo más tarde"
         })
 
         renderWithRouter(<Login />)
 
-        const inputUsuario = screen.getByPlaceholderText(/Escribe tu usuario/i)
-        await user.type(inputUsuario, 'Eli')
-
-        const boton = screen.getByRole('button', { name: /entrar/i })
-        await user.click(boton)
-
-        const errorMsg = await screen.findByText(/Usuario y\/o contraseña incorrectos/i)
+        const errorMsg = screen.getByText(/Error de red: Inténtelo más tarde/i)
         expect(errorMsg).toBeInTheDocument()
     })
 
-    // Si en algun momento no hay conexión, aun hay mensajes de error
-    it('Mensajes sin conexión', async () => {
-        const user = userEvent.setup()
-
-        fetch.mockRejectedValueOnce(new Error("Network Error"))
-
-        renderWithRouter(<Login />)
-
-        const inputUsuario = screen.getByPlaceholderText(/Escribe tu usuario/i)
-        await user.type(inputUsuario, 'Eli')
-
-        const boton = screen.getByRole('button', { name: /entrar/i })
-        await user.click(boton)
-
-        const errorMsg = await screen.findByText(/Usuario y\/o contraseña incorrectos/i)
-        expect(errorMsg).toBeInTheDocument()
-    })
-
-    // Una vez el botón fue clickeado, cargará y no se puede volver a clickear
     it('Botón deshabilitado al cargar', async () => {
-        const user = userEvent.setup()
-        fetch.mockReturnValue(new Promise(() => { }))
+        vi.mocked(useLogin).mockReturnValue({
+            ejecutarLogin: vi.fn(),
+            cargando: true,
+            error: null
+        })
 
         renderWithRouter(<Login />)
-
-        const inputUsuario = screen.getByPlaceholderText(/Escribe tu usuario/i)
-        await user.type(inputUsuario, 'Eli')
-        await user.click(screen.getByRole('button', { name: /entrar/i }))
 
         const botonCargando = screen.getByRole('button', { name: /entrando/i })
         expect(botonCargando).toBeDisabled()

@@ -8,7 +8,7 @@
 export const traducirError = (error) => {
   switch (error?.message) {
 
-    case "FAILED_FETCH":
+    case "Failed to fetch":
       return { variante: "error", mensaje: "No hay conexión con el servidor." };
 
     case "TIMEOUT":

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import insumosService from "../../../shared/crear-inoculos/services/inoculos.service";
 import { COMPOSICION_MEDIO_LIQUIDO } from "../../../shared/crear-inoculos/types/inoculos.types";
+import { validarStockComposicion } from "../../../shared/crear-inoculos/utils/validarStockComposicion";
 
 const normalizarUnidad = (unidad = "") => {
   const u = unidad.toLowerCase();
@@ -34,6 +35,7 @@ const useIngredientesMedioLiquido = ({
   carbohidrato = "",
   inoculoDisponible = 0,
   tipoInoculo = null,
+  codigoInoculo = "",
 }) => {
   const [insumos, setInsumos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -82,6 +84,8 @@ const useIngredientesMedioLiquido = ({
   const claveCarbohidrato = CLAVE_CARBOHIDRATO[carbohidrato] ?? "";
   const carbohidratoInsumo = claveCarbohidrato ? buscar(claveCarbohidrato) : null;
 
+  const esSolido = codigoInoculo && codigoInoculo.split("-")[0].endsWith("G");
+
   const items = [
     {
       id: aguaInsumo?.id_insumo ?? null,
@@ -122,17 +126,21 @@ const useIngredientesMedioLiquido = ({
     {
       id: null,
       tipo: "inoculo",
-      nombre: "Inóculo",
-      unidad: "ml",
+      nombre: codigoInoculo || "Inóculo",
+      unidad: esSolido ? "g" : "ml",
       value: cantInoculo,
       onChange: (e) => setCantInoculo(e.target.value),
       cantidad: inoculoDisponible,
     },
   ];
 
+  // Medio líquido siempre se crea como 1 unidad — cantidad fija en 1.
+  const { items: itemsValidados, tieneErrores } = validarStockComposicion(items, 1);
+
   return {
-    items,
+    items: itemsValidados,
     valores: { agua, peptona, extracto, carbohidratoCant, cantInoculo },
+    tieneErrores,
     loading,
     error,
   };

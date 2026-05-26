@@ -7,7 +7,15 @@
     "install-all": "npm install --prefix frontend && npm install --prefix backend",
     "frontend": "npm run dev --prefix frontend",
     "backend": "npm start --prefix backend",
-    "dev": "concurrently \"npm run frontend\" \"npm run backend\""
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
+    "lint": "npm run lint --prefix frontend && npm run lint --prefix backend",
+    "lint:frontend": "npm run lint --prefix frontend",
+    "lint:backend": "npm run lint --prefix backend",
+    "test": "npm run test:run --prefix frontend && npm run test --prefix backend",
+    "test:frontend": "npm run test:run --prefix frontend",
+    "test:backend": "npm run test --prefix backend",
+    "coverage": "npm run test:coverage --prefix frontend && npm run test:coverage --prefix backend",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -23,6 +31,8 @@
   "homepage": "https://github.com/AztlanConsulting/Fungivora-Dev#readme",
   "devDependencies": {
     "concurrently": "^9.2.1",
-    "dotenv": "^17.4.0"
+    "dotenv": "^17.4.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0"
   }
 }

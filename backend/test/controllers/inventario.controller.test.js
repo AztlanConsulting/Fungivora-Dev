@@ -1,10 +1,8 @@
 const controller = require('../../controllers/inventario.controller');
 const Inventario = require('../../models/inventario.model');
-const Categoria = require('../../models/categoria.model');
 
 // Mocks de los modelos
 jest.mock('../../models/inventario.model');
-jest.mock('../../models/categoria.model');
 
 const mockRes = () => {
     const res = {};
@@ -16,7 +14,7 @@ const mockRes = () => {
 describe('Inventario Controller', () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        jest.spyOn(console, 'error').mockImplementation(() => {});
+        jest.spyOn(console, 'error').mockImplementation(() => { });
     });
 
     describe('crear_insumo', () => {
@@ -27,8 +25,8 @@ describe('Inventario Controller', () => {
                 { nombre: 'Agar', cantidad: 10 }
             ]);
 
-            const req = { 
-                body: { nombre: 'agar', cantidad: 5, stock_recommended: 2, unidad: 'g' } 
+            const req = {
+                body: { nombre: 'agar', cantidad: 5, stock_recommended: 2, unidad: 'g' }
             };
             const res = mockRes();
 
@@ -42,11 +40,11 @@ describe('Inventario Controller', () => {
 
         // El flujo de creación fue correcto
         it('201 - insumo creado éxitosamente', async () => {
-            Inventario.fetch_all.mockResolvedValue([]); 
+            Inventario.fetch_all.mockResolvedValue([]);
             Inventario.crear_insumo.mockResolvedValue({ affectedRows: 1 });
 
-            const req = { 
-                body: { nombre: 'Dextrosa', cantidad: 500, stock_recomendado: 100, unidad: 'g' } 
+            const req = {
+                body: { nombre: 'Dextrosa', cantidad: 500, stock_recomendado: 100, unidad: 'g' }
             };
             const res = mockRes();
 
@@ -96,13 +94,13 @@ describe('Inventario Controller', () => {
         it('500 - error de conexión', async () => {
             Inventario.fetch_all.mockRejectedValue(new Error('Connection lost'));
 
-            const req = { 
-                body: { nombre: 'Nitrógeno', cantidad: 10, stock_recomendado: 2, unidad: 'L' } 
+            const req = {
+                body: { nombre: 'Nitrógeno', cantidad: 10, stock_recomendado: 2, unidad: 'L' }
             };
             const res = mockRes();
 
             await controller.post_crear_insumo(req, res);
-            
+
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
                 success: false,

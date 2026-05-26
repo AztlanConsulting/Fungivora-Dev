@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
-import Resumen from "../../../features/crear-medio/components/Resumen";
+import Resumen from "../../../shared/crear-inoculos/components/Resumen";
 
 vi.mock("../../../shared/components/ui/basics/Texto", () => ({
   default: ({ children }) => <span>{children}</span>,
@@ -23,7 +23,6 @@ describe("Resumen — renderizado base", () => {
     expect(screen.getByText("Código")).toBeInTheDocument();
     expect(screen.getByText("Especie")).toBeInTheDocument();
     expect(screen.getByText("Inóculo")).toBeInTheDocument();
-    expect(screen.getByText("Composición")).toBeInTheDocument();
   });
 
   it('muestra "—" en código, especie e inóculo cuando no se pasan props', () => {

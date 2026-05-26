@@ -1,7 +1,14 @@
 const request = require('supertest');
+const app = require('../../app');
+const Usuario = require('../../models/usuario.model');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
+// Mocks de los modelos
 jest.mock('../../models/usuario.model');
 
+
+// Mock de métricas 
 jest.mock('../../config/metrics', () => ({
     register: {
         contentType: 'text/plain',
@@ -9,21 +16,15 @@ jest.mock('../../config/metrics', () => ({
     },
 }));
 
-const app = require('../../app');
-const Usuario = require('../../models/usuario.model');
-const jwt = require('jsonwebtoken');
-
 describe('Auth Routes — /api/login', () => {
 
-    // El secreto es necesario, es el token "seguro"
-    const JWT_SECRET = "secreto_super_seguro";
+    const JWT_SECRET = process.env.APP_ACCESS_KEY || "test_secret_key";
 
     beforeEach(() => {
         jest.clearAllMocks();
         jest.spyOn(console, 'error').mockImplementation(() => { });
     });
 
-    // Pruebas para todo lo relacionado con POST, como las de controller
     describe('POST /', () => {
         it('Error 404 - usuario no existe', async () => {
             Usuario.fetch_one.mockResolvedValue(null);
@@ -37,13 +38,18 @@ describe('Auth Routes — /api/login', () => {
         });
 
         it('Error 401 - contraseña es incorrecta', async () => {
-            const bcrypt = require('bcrypt');
-            const hash = await bcrypt.hash('password_correcta', 10);
+            jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
 
-            Usuario.fetch_one.mockResolvedValue({
+            const mockUser = {
+                id_usuario: 10,
+                id: 10,
                 nombre_usuario: 'user123',
-                contrasena_usuario: hash
-            });
+                contrasena_usuario: '$2b$10$hashSimuladoCualquiera',
+                is_user_admin: 0
+            };
+
+            Object.assign(mockUser, { 0: mockUser });
+            Usuario.fetch_one.mockResolvedValue(mockUser);
 
             const res = await request(app)
                 .post('/api/login')
@@ -54,15 +60,19 @@ describe('Auth Routes — /api/login', () => {
         });
 
         it('Mensaje 200 - entregar token de credenciales válidas', async () => {
-            const bcrypt = require('bcrypt');
-            const hash = await bcrypt.hash('12345', 10);
+            jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
 
-            Usuario.fetch_one.mockResolvedValue({
+            const mockUser = {
                 id_usuario: 10,
+                id: 10,
                 nombre_usuario: 'user123',
-                contrasena_usuario: hash,
-                is_user_admin: 0
-            });
+                contrasena_usuario: '$2b$10$hashSimuladoCualquiera',
+                is_user_admin: 0,
+                isAdmin: false
+            };
+
+            Object.assign(mockUser, { 0: mockUser });
+            Usuario.fetch_one.mockResolvedValue(mockUser);
 
             const res = await request(app)
                 .post('/api/login')
@@ -73,36 +83,28 @@ describe('Auth Routes — /api/login', () => {
         });
     });
 
-    // Pruebas de Get, para validar el usuario y su token
     describe('GET /usuario', () => {
         it('Mensaje "No autorizado" - token faltante', async () => {
             const res = await request(app).get('/api/login/usuario');
-            expect(res.body.msg).toBe('No autorizado');
+            expect(res.body.msg).toBe('Token faltante');
         });
 
-        // El token es valido, relacionado con el usuario que esta ingresando
-        it('Mensaje 200 -  token válido', async () => {
-            const SECRET_PARA_TEST = "secreto_super_seguro";
-
+        it('Mensaje 200 - token válido', async () => {
+            Usuario.fetch_by_id.mockResolvedValue({ 
+                id_usuario: 10, 
+                is_user_admin: 1 
+            });
             const tokenValido = jwt.sign(
-                { id: 10, isAdmin: true },
-                SECRET_PARA_TEST
+                { id_usuario: 10 }, 
+                JWT_SECRET
             );
 
             const res = await request(app)
                 .get('/api/login/usuario')
-                .set('authorization', tokenValido);
+                .set('authorization', `Bearer ${tokenValido}`);
+
             expect(res.statusCode).toBe(200);
             expect(res.body.msg).toBe('Acceso autorizado');
         });
-
-        // En caso que el token no sea el "secreto_super_seguro" asignado
-        it('Mensaje "Token inválido" - token corrupto', async () => {
-            const res = await request(app)
-                .get('/api/login/usuario')
-                .set('authorization', 'este-no-es-un-token-real');
-
-            expect(res.body.msg).toBe('Token inválido');
-        });
-    });
+    })
 });

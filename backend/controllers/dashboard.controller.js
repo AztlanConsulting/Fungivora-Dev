@@ -1,6 +1,6 @@
 const Dashboard = require('../models/dashboard.model');
 
-exports.fetch_dashboard = async (req, res, next) => {
+exports.fetch_dashboard = async (req, res, _next) => {
     try {
         const [
             lotesRevision,
@@ -23,8 +23,6 @@ exports.fetch_dashboard = async (req, res, next) => {
             detalle: new Date(lote.fecha_lote).toLocaleDateString('es-MX'),
             ruta: `/lotes/detalle/${lote.id_lote}`
         }));
-
-        const lotesSinFormato = lotesRevision;
 
         // Formatear inventario
         const inventarioFormateado = inventarioBajo.map(insumo => ({

@@ -1,0 +1,43 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - develop
+
+  push:
+    branches:
+      - develop
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Create .env
+        run: echo 'APP_ACCESS_KEY="db8ca260384a62e3d36b797825a0a38d1708d721bf0d8c0b"' >> .env
+        
+      - name: Install root dependencies
+        run: npm install
+
+      - name: Install dependencies
+        run: npm run install-all
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run tests
+        run: npm run test

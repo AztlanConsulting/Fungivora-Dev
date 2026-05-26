@@ -15,7 +15,7 @@ function User() {
     <div>
       <h1>User</h1>
 
-      {/*<p>{mensaje}</p>*/}
+      <p>{mensaje}</p>
       <p>Escribir contraseña</p>
       <input
         type="text"

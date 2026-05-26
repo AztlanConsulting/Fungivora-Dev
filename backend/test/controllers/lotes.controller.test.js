@@ -1,12 +1,13 @@
-const { get_batches, post_batch, get_sustratos } = require('../../controllers/lotes.controller');
+jest.mock('node-cron', () => ({
+    schedule: jest.fn()
+}));
+
+const { get_batches, post_batch } = require('../../controllers/lotes.controller');
 const Lotes = require('../../models/lotes.model');
-const Categoria = require('../../models/categoria.model');
-const crypto = require('crypto');
 
 // Mocks de los modelos
 jest.mock('../../models/lotes.model');
 jest.mock('../../models/categoria.model');
-jest.mock('crypto');
 
 const mockRes = () => {
     const res = {};
@@ -16,10 +17,10 @@ const mockRes = () => {
 };
 
 describe('Lotes Controller', () => {
-    
+
     beforeEach(() => {
         jest.clearAllMocks();
-        jest.spyOn(console, 'error').mockImplementation(() => {});
+        jest.spyOn(console, 'error').mockImplementation(() => { });
     });
 
     describe('Obtener lotes', () => {
@@ -56,48 +57,53 @@ describe('Lotes Controller', () => {
     });
 
     describe('Post lotes', () => {
-        it('201 - crear un lote', async () => {
-            // Datos de entrada
+        it('201 - crear un lote exitosamente', async () => {
             const req = {
                 body: {
                     ubicacion_lote: 'Estante A',
-                    tipo_sustrato: 'Paja',
-                    id_inoculo: 10,
-                    fecha_lote: '2026-05-09'
+                    fecha_lote: '2026-05-09',
+                    produccion: 1,
+                    bloques: [
+                        { id_inoculo: 10, cantidad: 2, peso_gr: 500, contenedor: 'Bolsa' }
+                    ]
                 }
             };
             const res = mockRes();
-
-            // Mocks
-            Lotes.fetch_inoculos_disponibles.mockResolvedValue([
-                { id_inoculo: 10, especie: 'Pleurotus' }
-            ]);
-            Categoria.fetchAbreviaturaPorNombre.mockResolvedValue([
-                [{ abreviatura_opcion: 'PL' }]
-            ]);
-            Lotes.count_lotes_similares.mockResolvedValue(5); 
-            crypto.randomUUID.mockReturnValue('uuid-generado-123');
+            Lotes.registrar_lote_y_bloques.mockResolvedValue({
+                id_lote: 'uuid-generado-123',
+                codigo_fungivora: 'LC-PL-090526-6'
+            });
 
             await post_batch(req, res);
 
-            expect(Lotes.crear_lote).toHaveBeenCalledWith(
-                'uuid-generado-123',
-                10,
-                'Paja',
-                expect.stringContaining('LC-PL-090526-6'),
-                '2026-05-09',
-                'Estante A',
-                1,
-                'Inoculación'
-            );
+            expect(Lotes.registrar_lote_y_bloques).toHaveBeenCalledWith({
+                ubicacion_lote: 'Estante A',
+                fecha_lote: '2026-05-09',
+                bloques: [
+                    { id_inoculo: 10, cantidad: 2, peso_gr: 500, contenedor: 'Bolsa' }
+                ],
+                produccion: 1
+            });
+
             expect(res.status).toHaveBeenCalledWith(201);
-            expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ success: true }));
+            expect(res.json).toHaveBeenCalledWith({
+                success: true,
+                codigo: 'LC-PL-090526-6',
+                id: 'uuid-generado-123'
+            });
         });
 
-        it('400 - inóculo no encontrado', async () => {
-            Lotes.fetch_inoculos_disponibles.mockResolvedValue([]); // Lista vacía
-            
-            const req = { body: { id_inoculo: 999 } };
+        it('400 - fallar si no se envían bloques', async () => {
+            const req = {
+
+
+                body: {
+                    ubicacion_lote: 'Estante A',
+                    fecha_lote: '2026-05-09',
+                    produccion: 1,
+                    bloques: [] 
+                }
+            };
             const res = mockRes();
 
             await post_batch(req, res);
@@ -105,23 +111,30 @@ describe('Lotes Controller', () => {
             expect(res.status).toHaveBeenCalledWith(400);
             expect(res.json).toHaveBeenCalledWith({
                 success: false,
-                message: "Inóculo no encontrado"
+                message: "No hay bloques para registrar"
             });
         });
-    });
 
-    describe('Obtener sustratos', () => {
-        it('200 - retornar sustratos', async () => {
-            const mockSustratos = [{ nombre: 'Aserrín' }, { nombre: 'Paja' }];
-            Categoria.fetchOpciones.mockResolvedValue([mockSustratos]);
-
-            const req = {};
+        it('500 - error interno en la base de datos', async () => {
+            const req = {
+                body: {
+                    ubicacion_lote: 'Estante A',
+                    fecha_lote: '2026-05-09',
+                    produccion: 1,
+                    bloques: [{ id_inoculo: 10, cantidad: 2 }]
+                }
+            };
             const res = mockRes();
 
-            await get_sustratos(req, res);
+            Lotes.registrar_lote_y_bloques.mockRejectedValue(new Error('Error de conexión transaccional'));
 
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith(mockSustratos);
+            await post_batch(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({
+                success: false,
+                error: 'Error de conexión transaccional'
+            });
         });
     });
 });
