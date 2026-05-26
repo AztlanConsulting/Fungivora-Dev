@@ -83,6 +83,8 @@ const useIngredientesAgar = ({
   const peptonaInsumo = buscar("peptona");
   const extractoInsumo = buscar("extracto");
 
+  const esSolido = codigoInoculo && codigoInoculo.split("-")[0].endsWith("G");
+
   const items = [
     {
       id: aguaInsumo?.id_insumo ?? null,
@@ -121,13 +123,13 @@ const useIngredientesAgar = ({
       cantidad: parseFloat(extractoInsumo?.cantidad) || 500,
     },
     {
-      id: null,
-      nombre: codigoInoculo || "Inóculo",
-      tipo: "inoculo",
-      unidad: "ml",
-      value: cantInoculo,
-      onChange: (e) => setInoculoCant(e.target.value),
-      cantidad: inoculoDisponible,
+        id: null,
+        nombre: codigoInoculo || "Inóculo",
+        tipo: "inoculo",
+        unidad: esSolido ? "g" : "ml",
+        value: cantInoculo,
+        onChange: (e) => setInoculoCant(e.target.value),
+        cantidad: inoculoDisponible,
     },
   ];
 
