@@ -25,7 +25,7 @@ describe('Auth Middleware Unit Tests', () => {
     });
 
     it('debe autorizar el acceso y llamar a next() si el token es válido', () => {
-        const payloadMock = { id: 1, usuario: 'tester', isAdmin: true };
+        const payloadMock = { id_usuario: 1, usuario: 'tester' }; 
         const tokenValido = jwt.sign(payloadMock, CLAVE_TEST, { expiresIn: '1h' });
         
         req.headers['authorization'] = `Bearer ${tokenValido}`;
@@ -37,7 +37,7 @@ describe('Auth Middleware Unit Tests', () => {
     });
 
     it('401 con código TOKEN_EXPIRED si el token ya expiró', () => {
-        const tokenExpirado = jwt.sign({ id: 1 }, CLAVE_TEST, { expiresIn: '-1s' });
+        const tokenExpirado = jwt.sign({ id_usuario: 1 }, CLAVE_TEST, { expiresIn: '-1s' });
         
         req.headers['authorization'] = `Bearer ${tokenExpirado}`;
 
