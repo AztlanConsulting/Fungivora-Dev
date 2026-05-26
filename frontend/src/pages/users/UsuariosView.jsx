@@ -113,7 +113,7 @@ const UsuariosView = () => {
                                 setVistaActual("crear");
                             }} 
                         >
-                            Registrar Usuario
+                            Crear Usuario
                         </Button>
                     ) : (
                         <Button
@@ -125,19 +125,20 @@ const UsuariosView = () => {
                         </Button>
                     )}
                 </div>
-
                 {vistaActual === "crear" ? (
+                <div className="w-full max-w-lg mx-auto bg-white rounded-[32px] shadow-sm border p-8">    
                     <div className="flex flex-col gap-4">
-                        <FormCrearUsuario 
-                            nuevoUsuario={nuevoUsuario}
-                            setNuevoUsuario={setNuevoUsuario}
-                            onGuardar={handleRegistrarUsuario}
-                            onCancelar={handleCancelarRegistro}
-                            cargando={guardando}
-                            error={errorFormulario} 
-                            setError={setErrorFormulario}
-                        />
-                    </div>
+                            <FormCrearUsuario 
+                                nuevoUsuario={nuevoUsuario}
+                                setNuevoUsuario={setNuevoUsuario}
+                                onGuardar={handleRegistrarUsuario}
+                                onCancelar={handleCancelarRegistro}
+                                cargando={guardando}
+                                error={errorFormulario} 
+                                setError={setErrorFormulario}
+                            />
+                        </div>
+                  </div>
                 ) : (
                     <>
                         {error && (
