@@ -9,7 +9,6 @@ import Button from "../../../shared/components/ui/buttons/Botones";
 
 const FormCrearLote = ({
   especiesDisponibles,
-  sustratos,
   ubicaciones,
   nuevaFila,
   fecha,
@@ -39,17 +38,6 @@ const FormCrearLote = ({
           options={especiesDisponibles}
           value={nuevaFila.especie}
           onChange={handleChangeEspecie}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Sustrato</Text>
-        <SelectField
-          placeholder="Selecciona un sustrato"
-          size="forms"
-          options={sustratos}
-          value={nuevaFila.tipo_sustrato}
-          onChange={(op) => handleNuevaFila("tipo_sustrato", op)}
         />
       </div>
 

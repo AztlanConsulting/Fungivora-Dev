@@ -35,8 +35,7 @@ exports.post_login = async (req, res) => {
         }
 
         const token = generarRefreshToken({
-            id: user.id_usuario,
-            isAdmin: user.is_user_admin === 1
+            id_usuario: user.id_usuario 
         });
 
         res.json({ token });

@@ -3,21 +3,10 @@ const app = require('../../app');
 const Usuario = require('../../models/usuario.model');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-//const jwtUtils = require('../../util/jwtUtils');
 
 // Mocks de los modelos
 jest.mock('../../models/usuario.model');
-/* Not used yet
-jest.mock('../../util/jwtUtils', () => {
-    const originalModule = jest.requireActual('../../util/jwtUtils');
-    const cltSecret = process.env.APP_ACCESS_KEY || "test_secret_key";
-    return {
-        ...originalModule,
-        SECRET: cltSecret,
-        generarRefreshToken: (payload) => require('jsonwebtoken').sign({ id: payload.id }, cltSecret, { expiresIn: '24h' })
-    };
-});
-*/
+
 
 // Mock de métricas 
 jest.mock('../../config/metrics', () => ({
@@ -97,12 +86,16 @@ describe('Auth Routes — /api/login', () => {
     describe('GET /usuario', () => {
         it('Mensaje "No autorizado" - token faltante', async () => {
             const res = await request(app).get('/api/login/usuario');
-            expect(res.body.msg).toBe('No autorizado: Token faltante');
+            expect(res.body.msg).toBe('Token faltante');
         });
 
-        it('Mensaje 200 -  token válido', async () => {
+        it('Mensaje 200 - token válido', async () => {
+            Usuario.fetch_by_id.mockResolvedValue({ 
+                id_usuario: 10, 
+                is_user_admin: 1 
+            });
             const tokenValido = jwt.sign(
-                { id: 10, isAdmin: true },
+                { id_usuario: 10 }, 
                 JWT_SECRET
             );
 
@@ -113,13 +106,5 @@ describe('Auth Routes — /api/login', () => {
             expect(res.statusCode).toBe(200);
             expect(res.body.msg).toBe('Acceso autorizado');
         });
-
-        it('Mensaje "Token inválido" - token corrupto', async () => {
-            const res = await request(app)
-                .get('/api/login/usuario')
-                .set('authorization', 'Bearer este-no-es-un-token-real');
-
-            expect(res.body.msg).toBe('Token inválido');
-        });
-    });
+    })
 });

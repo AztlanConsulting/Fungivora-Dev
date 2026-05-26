@@ -58,8 +58,7 @@ const BibliotecaView = () => {
     return (
         <>
             <Titulo>Biblioteca Genética</Titulo>
-
-            {/* FAB circular — esquina inferior derecha — No se usa Botones por falta de className en ese componente */}
+            
             <button
                 onClick={() => setModalVisible(true)}
                 aria-label="Crear inóculo"

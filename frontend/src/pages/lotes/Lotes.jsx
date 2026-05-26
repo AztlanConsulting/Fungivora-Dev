@@ -24,7 +24,6 @@ function Lotes() {
 
   const columnas = [
     { label: "Código de Lote", key: "codigo_fungivora" },
-    { label: "Sustrato", key: "tipo_sustrato" },
     { label: "Ubicación", key: "ubicacion_lote" },
     { label: "Estado", key: "fase" },
     { label: "Fecha", key: "fecha_lote" }
@@ -40,15 +39,15 @@ function Lotes() {
   });
 
   const {
-    datos, sustratos, ubicaciones, especiesDisponibles,
+    datos, ubicaciones, especiesDisponibles,
     getInoculosPorEspecie, cargando, error, addLote, deleteLote
   } = useLotes();
   const [verFormulario, setVerFormulario] = useState(false);
-  const [nuevaFila, setNuevaFila] = useState({ especie: "", tipo_sustrato: "", ubicacion_lote: ""});
+  const [nuevaFila, setNuevaFila] = useState({ especie: "", ubicacion_lote: ""});
   const [errorValidacion, setErrorValidacion] = useState("");
   const [codigoPrevisualizacion, setCodigoPrevisualizacion] = useState("");
   const [paso, setPaso] = useState(1);
-  const { bloquesTemporales, contenedores, agregarBloqueALista, eliminarBloqueDeLista } = useBloques();
+  const { bloquesTemporales, sustratos, contenedores, agregarBloqueALista, eliminarBloqueDeLista } = useBloques();
   const [mostrarModal, setMostrarModal] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
@@ -82,7 +81,7 @@ function Lotes() {
   }, [location.state, paso, bloquesTemporales.length, navigate, location.pathname]);
 
   const irAPasoBloques = () => {
-    if (!nuevaFila.especie || !nuevaFila.ubicacion_lote || !nuevaFila.tipo_sustrato) {
+    if (!nuevaFila.especie || !nuevaFila.ubicacion_lote) {
       setErrorValidacion("Por favor, completa los datos del lote");
       return;
     }
@@ -120,7 +119,7 @@ function Lotes() {
     experimental: { bg: "#E9EAFF", text: "#272CBA" }
   };
 
-  const [bloqueForm, setBloqueForm] = useState({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+  const [bloqueForm, setBloqueForm] = useState({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "", tipo_sustrato: "" });
 
   // Que cambie el valor de los inputs de select
   const handleInputChange = (setter) => (campo, valor) => {
@@ -141,10 +140,10 @@ function Lotes() {
 
   // Agregar el bloque y su validación
   const handleAgregarBloque = () => {
-    const { peso_gr, cantidad, id_inoculo, contenedor } = bloqueForm;
+    const { peso_gr, cantidad, id_inoculo, contenedor, tipo_sustrato } = bloqueForm;
 
-    if (!id_inoculo || !contenedor || !peso_gr || !cantidad) {
-      setErrorValidacion("Completa todos los campos, incluyendo el inóculo");
+    if (!id_inoculo || !contenedor || !peso_gr || !cantidad || !tipo_sustrato) {
+      setErrorValidacion("Completa todos los campos");
       return;
     }
 
@@ -173,7 +172,7 @@ function Lotes() {
       nombre_inoculo: inoculoSeleccionado ? inoculoSeleccionado.label : "N/A" 
     });
     
-    setBloqueForm({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+    setBloqueForm({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "", tipo_sustrato: "" });
     setErrorValidacion("");
   };
 
@@ -182,8 +181,8 @@ function Lotes() {
     bloquesTemporales.forEach(bloque => {
       eliminarBloqueDeLista(bloque.id_temp);
     });
-    setBloqueForm({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
-    setNuevaFila({ especie: "", tipo_sustrato: "", ubicacion_lote: "" }); 
+    setBloqueForm({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "", tipo_sustrato: "" });
+    setNuevaFila({ especie: "", ubicacion_lote: "" }); 
     setErrorValidacion("");
     setMostrarModalCancelar(false);
   };
@@ -334,7 +333,7 @@ function Lotes() {
                   columnas={columnas}
                   onVerDetalle={(lote) => navigate(`/lotes/detalle/${lote.id_lote}`, { state: lote })}
                   obtenerEstiloFase={obtenerEstiloFase}
-                  gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1fr_1.1fr_1.2fr_1fr_0.5fr]"
+                  gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1.1fr_1.2fr_1fr_0.5fr]"
                   colorBordeHeader="#F2F2FC"
                 />
               )}
@@ -360,7 +359,6 @@ function Lotes() {
             {paso === 1 ? (
               <FormCrearLote
                 especiesDisponibles={especiesDisponibles}
-                sustratos={sustratos}
                 ubicaciones={ubicaciones}
                 nuevaFila={nuevaFila}
                 fecha={fecha}
@@ -372,6 +370,7 @@ function Lotes() {
             ) : (
               <FormCrearBloque
                 codigo={codigoPrevisualizacion}
+                sustratos={sustratos}
                 contenedores={contenedores}
                 bloqueForm={bloqueForm}
                 setBloqueForm={setBloqueForm}

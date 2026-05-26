@@ -1,8 +1,14 @@
 const request = require('supertest');
 const jwt = require('jsonwebtoken'); 
 
+
 jest.mock('../../../util/db');
 const db = require('../../../util/db');
+
+jest.mock('../../../middleware/auth', () => (req, res, next) => {
+    req.user = { id: 1, usuario: 'test_user', isAdmin: true };
+    next();
+});
 
 jest.mock('../../../config/metrics', () => ({
     register: {
@@ -13,6 +19,8 @@ jest.mock('../../../config/metrics', () => ({
 
 jest.mock('../../../models/inoculo.model');
 const Inoculo = require('../../../models/inoculo.model');
+
+process.env.APP_ACCESS_KEY = 'test_secret_key';
 
 const app = require('../../../app');
 

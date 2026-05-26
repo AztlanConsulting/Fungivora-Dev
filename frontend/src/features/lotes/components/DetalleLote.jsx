@@ -94,7 +94,6 @@ const DetalleLote = () => {
                 day: '2-digit', month: 'long', year: 'numeric'
             }) : 'Sin fecha',
         especie: cargando ? 'Cargando...' : especie || 'S/N',
-        sustrato: state?.tipo_sustrato || 'No especificado',
         ubicacion: state?.ubicacion_lote || 'Sin ubicación',
         inoculo: cargando ? 'Cargando...' : codigoInoculo || 'S/N'
     };

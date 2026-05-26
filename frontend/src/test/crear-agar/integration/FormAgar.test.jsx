@@ -36,7 +36,7 @@ vi.mock('../../../shared/utils/traducirError', () => ({
     traducirError: vi.fn((err) => ({
         variante: 'error',
         mensaje: err?.message || 'Error desconocido',
-    })),
+     })),
 }))
 
 // Mocks de componentes
@@ -49,7 +49,7 @@ vi.mock('../../../shared/crear-inoculos/components/Resumen', () => ({
         <div data-testid="resumen">
             {children}
         </div>
-    ),
+     ),
 }))
 
 vi.mock('../../../shared/components/ui/popups/ModalAlerta', () => ({
@@ -65,13 +65,13 @@ vi.mock('../../../shared/components/ui/inputs/SeleccionarTexto', () => ({
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
         </select>
-    ),
+     ),
 }))
 
 vi.mock('../../../shared/components/ui/inputs/InputCantidad', () => ({
     default: ({ value, onChange }) => (
         <input type="number" data-testid="input-cantidad" value={value} onChange={(e) => onChange(Number(e.target.value))} />
-    ),
+     ),
 }))
 
 vi.mock('../../../shared/components/ui/inputs/InputFecha', () => ({
@@ -81,7 +81,7 @@ vi.mock('../../../shared/components/ui/inputs/InputFecha', () => ({
 vi.mock('../../../shared/components/ui/inputs/InputNota', () => ({
     default: ({ value, onChange }) => (
         <textarea value={value} onChange={(e) => onChange(e.target.value)} />
-    ),
+     ),
 }))
 
 vi.mock('../../../shared/components/ui/buttons/Botones', () => ({
@@ -89,7 +89,7 @@ vi.mock('../../../shared/components/ui/buttons/Botones', () => ({
         <button data-testid={`btn-${variant}`} onClick={onClick} disabled={disabled}>
             {children}
         </button>
-    ),
+     ),
 }))
 
 vi.mock('../../../shared/components/ui/basics/Titulo', () => ({
@@ -133,10 +133,12 @@ const setupHooks = () => {
         ],
         loading: false,
     })
-    useIngredientesAgar.mockReturnValue({
-        items: [],
-        valores: { cantInoculo: '5' },
-        loading: false,
+    
+    useIngredientesAgar.mockImplementation(({ codigoInoculo }) => {
+        if (!codigoInoculo || codigoInoculo === "") {
+            return { items: [], valores: { cantInoculo: '0' }, loading: false }
+        }
+        return { items: [], valores: { cantInoculo: '5' }, loading: false }
     })
 }
 
@@ -179,11 +181,12 @@ describe('FormAgar', () => {
 
     it('deshabilita el botón Registrar si la cantidad de inóculo calculada es menor o igual a cero', async () => {
         const user = userEvent.setup()
-        useIngredientesAgar.mockReturnValue({
+        
+        useIngredientesAgar.mockImplementation(() => ({
             items: [],
             valores: { cantInoculo: '0' },
             loading: false,
-        })
+        }))
 
         renderForm()
         await completarForm(user)

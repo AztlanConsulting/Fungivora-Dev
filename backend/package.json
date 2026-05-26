@@ -23,6 +23,7 @@
     "fungivora-dev": "file:..",
     "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.20.0",
+    "node-cron": "^4.2.1",
     "prom-client": "^15.1.3"
   },
   "devDependencies": {

@@ -1,13 +1,12 @@
 import React from "react";
 import Text from "../../../shared/components/ui/basics/Texto";
 import { colores } from "../../../shared/components/ui/basics/Colores";
-import Titulo from "../../../shared/components/ui/basics/Titulo";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { CancelCircleIcon } from '@hugeicons/core-free-icons';
 
 const TablaBloques = ({ bloques, onEliminar, estilosTipo, colorBordeHeader }) => {
   
-  const layout = "md:grid-cols-[1.2fr_1fr_0.8fr_1.1fr_0.8fr_0.5fr]";
+  const layout = "md:grid-cols-[1.1fr_1.1fr_1fr_0.8fr_1fr_0.6fr_0.4fr]";
 
   const formatearPeso = (gramos) => {
     const pesoNum = Number(gramos);
@@ -24,6 +23,7 @@ const TablaBloques = ({ bloques, onEliminar, estilosTipo, colorBordeHeader }) =>
         {/* Header de la tabla */}
         <div className={`hidden md:grid ${layout}`} style={{ backgroundColor: colorBordeHeader }}>
           <div className="px-6 py-4"><Text variante="medium" style={{ color: colores.azul, fontSize: "15px", fontWeight: '600' }}>Inóculo</Text></div>
+          <div className="px-6 py-4"><Text variante="medium" style={{ color: colores.azul, fontSize: "15px", fontWeight: '600' }}>Sustrato</Text></div>
           <div className="px-6 py-4"><Text variante="medium" style={{ color: colores.azul, fontSize: "15px", fontWeight: '600' }}>Tamaño</Text></div>
           <div className="px-6 py-4"><Text variante="medium" style={{ color: colores.azul, fontSize: "15px", fontWeight: '600' }}>Peso</Text></div>
           <div className="px-6 py-4"><Text variante="medium" style={{ color: colores.azul, fontSize: "15px", fontWeight: '600' }}>Clasificación</Text></div>
@@ -39,14 +39,15 @@ const TablaBloques = ({ bloques, onEliminar, estilosTipo, colorBordeHeader }) =>
               
               const nombreInoculo = bloque.nombre_inoculo || "Sin código"; 
               const nombreContenedor = typeof bloque.contenedor === 'object' ? (bloque.contenedor.label || bloque.contenedor.value) : bloque.contenedor;
+              const nombreSustrato = typeof bloque.tipo_sustrato === 'object' ? (bloque.tipo_sustrato.label || bloque.tipo_sustrato.value) : bloque.tipo_sustrato || "No asignado";
 
               return (
                 <div key={bloque.id_temp} className="w-full">
                   {/* Vista en desktop */}
                   <div className={`hidden md:grid ${layout} border-b hover:bg-slate-50 items-center`} style={{ borderColor: colorBordeHeader, backgroundColor: 'white' }}>
                     <div className="px-6 py-5"><Text variante="option" style={{ color: "black", fontSize: "14px", fontWeight: '600' }}>{nombreInoculo}</Text></div>
-                    <div className="px-6 py-5"><Text variante="option" style={{ color: "black", fontSize: "14px", fontWeight: '600' }}>{nombreContenedor}</Text></div>
-                    {/* Peso formateado aquí */}
+                    <div className="px-6 py-5"><Text variante="option" style={{ color: "black", fontSize: "14px" }}>{nombreSustrato}</Text></div>
+                    <div className="px-6 py-5"><Text variante="option" style={{ color: "black", fontSize: "14px" }}>{nombreContenedor}</Text></div>
                     <div className="px-6 py-5"><Text variante="option" style={{ color: "black", fontSize: "14px" }}>{formatearPeso(bloque.peso_gr)}</Text></div>
                     <div className="px-6 py-5">
                       <span className="px-2 py-1 rounded-md text-[10px] font-semibold border uppercase tracking-wider" style={{ backgroundColor: estilo.bg, color: estilo.text }}>
@@ -65,7 +66,7 @@ const TablaBloques = ({ bloques, onEliminar, estilosTipo, colorBordeHeader }) =>
                   <div className="md:hidden p-5 rounded-2xl border bg-white shadow-sm flex flex-col gap-3 mx-2 mb-1" style={{ borderColor: colorBordeHeader }}>
                     <div className="flex justify-between items-start">
                       <div className="flex flex-col gap-1">
-                        <Text variante="option" style={{ color: "black", fontWeight: '600', fontSize: '15px' }}>{nombreContenedor}</Text>
+                        <Text variante="option" style={{ color: "black", fontWeight: '600', fontSize: '15px' }}>{nombreContenedor} — <span className="font-normal text-gray-600">{nombreSustrato}</span></Text>
                         <Text variante="option" style={{ color: "black", fontSize: '12px', fontWeight: '400' }}>{nombreInoculo}</Text>
                       </div>
                       <button onClick={() => onEliminar(bloque.id_temp)} className="p-1 text-[#3b3fb6]"><HugeiconsIcon icon={CancelCircleIcon} size={24} /></button>

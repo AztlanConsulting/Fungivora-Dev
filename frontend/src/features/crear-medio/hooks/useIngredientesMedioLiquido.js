@@ -84,6 +84,8 @@ const useIngredientesMedioLiquido = ({
   const claveCarbohidrato = CLAVE_CARBOHIDRATO[carbohidrato] ?? "";
   const carbohidratoInsumo = claveCarbohidrato ? buscar(claveCarbohidrato) : null;
 
+  const esSolido = codigoInoculo && codigoInoculo.split("-")[0].endsWith("G");
+
   const items = [
     {
       id: aguaInsumo?.id_insumo ?? null,
@@ -125,7 +127,7 @@ const useIngredientesMedioLiquido = ({
       id: null,
       tipo: "inoculo",
       nombre: codigoInoculo || "Inóculo",
-      unidad: "ml",
+      unidad: esSolido ? "g" : "ml",
       value: cantInoculo,
       onChange: (e) => setCantInoculo(e.target.value),
       cantidad: inoculoDisponible,

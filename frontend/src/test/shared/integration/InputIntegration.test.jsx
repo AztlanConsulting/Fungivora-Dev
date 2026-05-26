@@ -4,9 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi } from 'vitest'
 import { Input } from '../../../shared/components/ui'
 
-// Formulario de prueba que combina los tres tipos de input y los dos tipos de entrada númerica
 function ConjuntoPrueba({ onSubmit }) {
-    // Variables de los inputs
     const [nombre, setNombre] = useState('')
     const [descripcion, setDescripcion] = useState('')
     const [cantidad, setCantidad] = useState('')
@@ -52,25 +50,21 @@ function ConjuntoPrueba({ onSubmit }) {
                 onChange={(e) => setPeso(e.target.value)}
             />
 
-            {/* Botón de envío, podría ser reemplazado por Button de los components */}
             <button onClick={handleSubmit}>Guardar</button>
         </div>
     )
 }
 
-// Pruebas
 describe('Integración — formulario con todos los tipos de Input', () => {
     it('captura valores de todos los inputs y los envía correctamente', async () => {
         const user = userEvent.setup()
         const onSubmit = vi.fn()
         render(<ConjuntoPrueba onSubmit={onSubmit} />)
 
-        const inputs = screen.getAllByRole('textbox')
-
-        const inputNombre = inputs[0]       // variante="normal"
-        const inputDescripcion = inputs[1]  // variante="amplio" (textarea comparte rol textbox)
-        const inputCantidad = inputs[2]     // variante="numero" (entero)
-        const inputPeso = inputs[3]         // variante="numero" (decimal)
+        const inputNombre = screen.getByPlaceholderText('Nombre del lote')
+        const inputDescripcion = screen.getByPlaceholderText('Descripción detallada')
+        const inputCantidad = screen.getByPlaceholderText('0')
+        const inputPeso = screen.getByPlaceholderText('0.00')
 
         await user.type(inputNombre, 'Lote Shiitake')
         await user.type(inputDescripcion, 'Primera inoculación del año')
@@ -83,7 +77,7 @@ describe('Integración — formulario con todos los tipos de Input', () => {
             nombre: 'Lote Shiitake',
             descripcion: 'Primera inoculación del año',
             cantidad: '50',
-            peso: '125',
+            peso: '12.5', 
         })
     })
 
@@ -92,7 +86,7 @@ describe('Integración — formulario con todos los tipos de Input', () => {
         const onSubmit = vi.fn()
         render(<ConjuntoPrueba onSubmit={onSubmit} />)
 
-        const inputNombre = screen.getAllByRole('textbox')[0]
+        const inputNombre = screen.getByPlaceholderText('Nombre del lote')
 
         await user.type(inputNombre, 'Nombre equivocado')
         await user.clear(inputNombre)
@@ -109,16 +103,21 @@ describe('Integración — formulario con todos los tipos de Input', () => {
         const user = userEvent.setup()
         render(<ConjuntoPrueba onSubmit={vi.fn()} />)
 
-        await user.tab()
-        expect(screen.getAllByRole('textbox')[0]).toHaveFocus()
+        const inputNombre = screen.getByPlaceholderText('Nombre del lote')
+        const inputDescripcion = screen.getByPlaceholderText('Descripción detallada')
+        const inputCantidad = screen.getByPlaceholderText('0')
+        const inputPeso = screen.getByPlaceholderText('0.00')
 
         await user.tab()
-        expect(screen.getAllByRole('textbox')[1]).toHaveFocus()
+        expect(inputNombre).toHaveFocus()
 
         await user.tab()
-        expect(screen.getAllByRole('textbox')[2]).toHaveFocus()
+        expect(inputDescripcion).toHaveFocus()
 
         await user.tab()
-        expect(screen.getAllByRole('textbox')[3]).toHaveFocus()
+        expect(inputCantidad).toHaveFocus()
+
+        await user.tab()
+        expect(inputPeso).toHaveFocus()
     })
 })

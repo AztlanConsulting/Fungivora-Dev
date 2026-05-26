@@ -70,6 +70,7 @@ const useIngredientesSemilla = ({
     : null;
 
   const aguaInsumo = insumos.find((i) => i.nombre.toLowerCase().includes("agua"));
+  const esSolido = codigoInoculo && codigoInoculo.split("-")[0].endsWith("G");
 
   const items = [
     {
@@ -94,7 +95,7 @@ const useIngredientesSemilla = ({
       id: null,
       tipo: "inoculo",
       nombre: codigoInoculo || "Inóculo",
-      unidad: "ml",
+      unidad: esSolido ? "g" : "ml",
       value: cantInoculo,
       onChange: (e) => setCantInoculo(e.target.value),
       cantidad: inoculoDisponible,

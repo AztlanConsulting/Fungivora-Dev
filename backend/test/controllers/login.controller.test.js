@@ -58,7 +58,7 @@ describe('Login Controller — post_login', () => {
         }));
     });
 
-    it('200 OK -  token de credenciales válidas', async () => {
+    it('200 OK - token de credenciales válidas', async () => {
         const mockUser = {
             id_usuario: 1,
             nombre_usuario: 'admin',
@@ -73,7 +73,8 @@ describe('Login Controller — post_login', () => {
         const res = mockRes();
 
         await post_login(req, res);
-        expect(generarRefreshToken).toHaveBeenCalledWith({ id: 1, isAdmin: true });
+        
+        expect(generarRefreshToken).toHaveBeenCalledWith({ id_usuario: 1 });
         expect(res.json).toHaveBeenCalledWith({ token: 'token_valido_xyz' });
     });
 

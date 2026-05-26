@@ -6,10 +6,10 @@ module.exports = class Inoculo {
     // Obtiene todas las especies únicas registradas en la tabla Inoculos
     static fetchEspecies() {
         return db.execute(`
-            SELECT DISTINCT especie
-            FROM Inoculos
-            WHERE especie IS NOT NULL
-            ORDER BY especie ASC
+            SELECT nombre_opcion AS especie
+            FROM Categorias 
+            WHERE nombre_categoria = 'Especies'
+            ORDER BY nombre_opcion ASC
         `);
     }
 

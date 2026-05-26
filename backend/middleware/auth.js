@@ -1,22 +1,18 @@
+// middleware/auth.js
 const jwt = require('jsonwebtoken');
-const jwtUtils = require('../util/jwtUtils')
+const jwtUtils = require('../util/jwtUtils');
 
 module.exports = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-
     const token = authHeader && authHeader.startsWith('Bearer ') 
         ? authHeader.split(' ')[1] 
         : authHeader;
 
-    if (!token) {
-        return res.status(401).json({ msg: "No autorizado: Token faltante" });
-    }
+    if (!token) return res.status(401).json({ msg: "Token faltante" });
 
     try {
-        const secretoAsignado = jwtUtils.SECRET || process.env.APP_ACCESS_KEY;
-        
-        const decoded = jwt.verify(token, secretoAsignado);
-        req.user = decoded;
+        const decoded = jwt.verify(token, jwtUtils.getSecret());
+        req.user = decoded; 
         next();
     } catch (error) {
         if (error.name === 'TokenExpiredError') {

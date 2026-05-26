@@ -13,18 +13,16 @@ vi.mock('../../../features/lotes/components/InfoLote', () => ({
     ),
 }))
 
-// Mock de íconos
+// Mock de íconos 
 vi.mock('@hugeicons/core-free-icons', () => ({
     Calendar03Icon: () => <div />,
     MushroomIcon: () => <div />,
-    MoneyBag01Icon: () => <div />,
     Location01Icon: () => <div />,
 }))
 
 const dataMock = {
     fecha: '27/04/2026',
     especie: 'Pleurotus Ostreatus',
-    sustrato: 'Paja de trigo',
     ubicacion: 'Invernadero A',
 }
 
@@ -40,9 +38,9 @@ describe('BannerLote — renderizado base', () => {
         expect(() => renderComponente()).not.toThrow()
     })
 
-    it('renderiza exactamente 4 InfoLote', () => {
+    it('renderiza exactamente 3 InfoLote', () => {
         renderComponente()
-        expect(screen.getAllByTestId('info-lote')).toHaveLength(4)
+        expect(screen.getAllByTestId('info-lote')).toHaveLength(3) 
     })
 })
 
@@ -51,7 +49,6 @@ describe('BannerLote — labels', () => {
         renderComponente()
         expect(screen.getByText('Fecha de creación')).toBeInTheDocument()
         expect(screen.getByText('Especie')).toBeInTheDocument()
-        expect(screen.getByText('Sustrato')).toBeInTheDocument()
         expect(screen.getByText('Ubicación')).toBeInTheDocument()
     })
 })
@@ -61,7 +58,6 @@ describe('BannerLote — valores de data', () => {
         renderComponente()
         expect(screen.getByText(dataMock.fecha)).toBeInTheDocument()
         expect(screen.getByText(dataMock.especie)).toBeInTheDocument()
-        expect(screen.getByText(dataMock.sustrato)).toBeInTheDocument()
         expect(screen.getByText(dataMock.ubicacion)).toBeInTheDocument()
     })
 })
@@ -80,10 +76,10 @@ describe('BannerLote — edge cases', () => {
     it('renderiza aunque los valores de data sean strings vacíos', () => {
         render(
             <BannerLote
-                data={{ fecha: '', especie: '', sustrato: '', ubicacion: '' }}
+                data={{ fecha: '', especie: '', ubicacion: '' }}
             />
         )
-        expect(screen.getAllByTestId('info-lote')).toHaveLength(4)
+        expect(screen.getAllByTestId('info-lote')).toHaveLength(3) 
     })
 
     it('refleja cambios en los datos dinámicamente', () => {

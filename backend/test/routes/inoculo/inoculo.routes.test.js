@@ -2,6 +2,13 @@ const request = require('supertest');
 const jwt = require('jsonwebtoken');
 
 jest.mock('../../../util/db');
+jest.mock('../../../middleware/auth', () => (req, res, next) => {
+    req.user = { id: 1, usuario: 'test_user', isAdmin: true };
+    next();
+});
+
+jest.mock('../../../models/inoculo.model');
+const Inoculo = require('../../../models/inoculo.model');
 
 jest.mock('../../../config/metrics', () => ({
     register: {
@@ -10,11 +17,10 @@ jest.mock('../../../config/metrics', () => ({
     },
 }));
 
-// Mockea el modelo para no tocar la DB real
-jest.mock('../../../models/inoculo.model');
-const Inoculo = require('../../../models/inoculo.model');
+process.env.APP_ACCESS_KEY = 'test_secret_key';
 
 const app = require('../../../app');
+
 
 describe('GET /api/inoculos/especies', () => {
     let tokenTest; 

@@ -9,7 +9,8 @@ const colorBordeDestacado = '#7F7FD5';
 
 const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) => {
 
-    // Función para formatear el peso dinámicamente
+ const gridLayoutBloques = "md:grid-cols-[1.2fr_1fr_1fr_1fr_1fr_1fr_0.5fr]";
+
     const formatearPeso = (gramos) => {
         const pesoNum = parseFloat(gramos || 0);
         if (pesoNum >= 1000) {
@@ -25,7 +26,12 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
         const comparacionInoculo = inoculoA.localeCompare(inoculoB);
 
         if (comparacionInoculo !== 0) return comparacionInoculo;
-        return b.produccion - a.produccion; 
+        const comparacionProduccion = b.produccion - a.produccion;
+        if (comparacionProduccion !== 0) return comparacionProduccion;
+
+        const sustratoA = (a.tipo_sustrato || '').toString();
+        const sustratoB = (b.tipo_sustrato || '').toString();
+        return sustratoA.localeCompare(sustratoB);
     });
 
     const generarCodigoBloque = (codigoInoculo, indiceGlobal) => {
@@ -84,11 +90,12 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
         <div className="w-full rounded-[32px] border shadow-sm p-4 md:p-6" style={{ backgroundColor: colores.blanco, borderColor: '#E0E0E0' }}>
             <div className="rounded-2xl border overflow-hidden" style={{ borderColor: '#F0F0F0' }}>
 
-                <div className="hidden md:grid grid-cols-6 py-5 px-8 gap-4 items-center" style={{ backgroundColor: colorHeaderTabla }}>
+                {/* Header */}
+                <div className={`hidden md:grid ${gridLayoutBloques} py-5 px-8 gap-4 items-center`} style={{ backgroundColor: colorHeaderTabla }}>
                     <div><Text variante="option" style={{ fontWeight: '600' }}>Código Bloque</Text></div>
                     <div><Text variante="option" style={{ fontWeight: '600' }}>Inóculo</Text></div>
+                    <div><Text variante="option" style={{ fontWeight: '600' }}>Sustrato</Text></div>
                     <div><Text variante="option" style={{ fontWeight: '600' }}>Tamaño</Text></div>
-                    {/* Header genérico para evitar confusión con las unidades */}
                     <div><Text variante="option" style={{ fontWeight: '600' }}>Peso</Text></div>
                     <div><Text variante="option" style={{ fontWeight: '600' }}>Clasificación</Text></div>
                     <div className="text-center"><Text variante="option" style={{ fontWeight: '600' }}>Contaminado</Text></div>
@@ -121,9 +128,10 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                                         </div>
                                         <div className="flex justify-between items-end">
                                             <div className="flex flex-col gap-1">
-                                                <Text variante="body" style={{ color: '#444', fontSize: '13px' }}>{bloque.contenedor}</Text>
-                                                {/* Aplicación de formatearPeso */}
-                                                <Text variante="body" style={{ color: '#444', fontSize: '13px', fontWeight: '600' }}>
+                                                <Text variante="body" style={{ color: '#444', fontSize: '13px' }}>
+                                                    {bloque.contenedor} <span className="text-gray-500 mx-1"></span> <span className="text-gray-500 font-medium">{bloque.tipo_sustrato}</span>
+                                                </Text>
+                                                <Text variante="body" style={{ color: '#444', fontSize: '13px', fontWeight: '500' }}>
                                                     {formatearPeso(bloque.peso_gr)}
                                                 </Text>
                                             </div>
@@ -132,14 +140,17 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                                     </div>
 
                                     {/* Vista desktop */}
-                                    <div className="hidden md:grid grid-cols-6 px-8 py-4 gap-4 items-center transition-colors hover:bg-slate-50 bg-white"
+                                    <div className={`hidden md:grid ${gridLayoutBloques} px-8 py-4 gap-4 items-center transition-colors hover:bg-slate-50 bg-white`}
                                         style={{ borderBottom: index === bloquesOrdenados.length - 1 ? 'none' : '1px solid #F0F0F0' }}>
                                         <Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text>
                                         <Text variante="body" style={{ fontWeight: '400', color: '#666', fontSize: '15px' }}>
                                             {codigoInoculo || 'S/N'} 
                                         </Text>
+                                        <Text variante="body" style={{ color: '#444', fontSize: '15px' }}>
+                                            {bloque.tipo_sustrato}
+                                        </Text>
+
                                         <Text variante="body" style={{ color: '#444' }}>{bloque.contenedor}</Text>
-                                        {/* Aplicación de formatearPeso */}
                                         <Text variante="body" style={{ color: '#444' }}>
                                             {formatearPeso(bloque.peso_gr)}
                                         </Text>

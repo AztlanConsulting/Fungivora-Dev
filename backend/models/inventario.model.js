@@ -32,6 +32,7 @@ class Inventario {
                 tipo
             FROM Inoculos
             WHERE cantidad_disponible > 0
+            AND codigo_fungivora NOT REGEXP '^[A-Za-z0-9]{2,3}-'
         `);
 
         return [...insumos, ...inoculos];

@@ -3,10 +3,11 @@
 //   G  → Semilla (Grain)
 //   ML → Medio Líquido
 //   A  → Agar
-//   PA → Agar creado desde esporas (sello o suspensión), sin inóculo intermedio.
 //
-// Para Medio Líquido el prefijo es siempre "ML" independientemente del inóculo fuente,
-// ya que en ese flujo el origen no se codifica en el ID.
+// Prefijos sin antecedente (inóculo comprado / origen desconocido):
+//   PA → Agar
+//   ML → Medio Líquido
+//   GR → Semilla (Grain)
 const MAPA_PREFIJOS = {
   semilla: {
     agar:         "A2G",
@@ -57,13 +58,18 @@ export const normalizarTipoInoculo = (tipo) => {
  * @param {"agar" | "semilla" | "medioLiquido" | "tejido" | "selloEsporas" | "esporasSuspendidas" | null} tipoInoculo
  * @returns {string} - El prefijo (ej. "A2G", "ML", "G2A", "PA")
  */
+// Prefijo a usar cuando el inóculo no tiene antecedente (p. ej. comprado).
+const FALLBACK_SIN_ANTECEDENTE = {
+  agar: "PA",
+  medioLiquido: "ML",
+  semilla: "GR",
+};
+
 export const obtenerPrefijo = (tipoCreacion, tipoInoculo) => {
   const mapaCreacion = MAPA_PREFIJOS[tipoCreacion];
-  if (!mapaCreacion) return "??"; 
+  if (!mapaCreacion) return "??";
 
-  // Si el tipo de inóculo es nulo o no está en el mapa, usamos el fallback.
-  // Para Agar: "PA". Para otros: el primer valor del mapa.
-  const fallback = tipoCreacion === "agar" ? "PA" : Object.values(mapaCreacion)[0];
+  const fallback = FALLBACK_SIN_ANTECEDENTE[tipoCreacion] ?? Object.values(mapaCreacion)[0];
 
   return mapaCreacion[tipoInoculo] ?? fallback;
 };

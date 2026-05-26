@@ -1,9 +1,9 @@
-const db = require('../util/database');
+const db = require('../util/db');
 
 module.exports = class Micelio {
     
     // Método para crear el nuevo registro (Trazabilidad)
-    static async registrar(datos, connection) {
+    static async anadir(datos, connection) {
         const { id_base, id_usuario, tipo, notas, cantidad_o_rendimiento, foto } = datos;
         
         // El id_resultado se genera automáticamente por la DB
@@ -32,7 +32,7 @@ module.exports = class Micelio {
         return await connection.execute(query, [id_usuario, id_resultado, accion]);
     }
     
-    // Método para obtener los agares base (JOIN para el Select de la UI)
+    // Método para obtener los agares base
     static fetchAllAgares() {
         return db.execute(`
             SELECT id_micelio_sustrato, tipo, fecha 

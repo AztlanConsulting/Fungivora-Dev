@@ -14,7 +14,6 @@ vi.mock('../../../features/lotes/services/lotes.service', () => ({
 }));
 
 describe('useLotes Hook', () => {
-  // Datos simulados estructurados según las respuestas esperadas
   const mockLotesData = {
     success: true,
     data: [
@@ -45,25 +44,22 @@ describe('useLotes Hook', () => {
     vi.mocked(loteService.getLotes).mockResolvedValue(mockLotesData);
 
     const { result } = renderHook(() => useLotes());
-
-    // Carga inicial
     expect(result.current.cargando).toBe(true);
 
     await waitFor(() => expect(result.current.cargando).toBe(false));
 
-    // Transformación de Sustratos
-    expect(result.current.sustratos).toEqual([{ value: 'Paja', label: 'Paja' }]);
+    await waitFor(() => {
+      expect(result.current.ubicaciones).toEqual([{ value: 'Estante A', label: 'Estante A' }]);
+    });
 
-    // Transformación de Ubicaciones
-    expect(result.current.ubicaciones).toEqual([{ value: 'Estante A', label: 'Estante A' }]);
+    await waitFor(() => {
+      expect(result.current.especiesDisponibles).toEqual([
+        { value: 'Pleurotus', label: 'Pleurotus' }
+      ]);
+    });
 
-    // Transformación de Especies
-    expect(result.current.especiesDisponibles).toEqual([
-      { value: 'Pleurotus', label: 'Pleurotus' }
-    ]);
-
-    // Datos de lotes
     expect(result.current.datos).toHaveLength(1);
+    expect(result.current.datos[0].codigo_fungivora).toBe('LOTE-001');
     expect(result.current.error).toBeNull();
   });
 
