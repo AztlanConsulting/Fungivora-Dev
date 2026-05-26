@@ -17,17 +17,15 @@ const EntradaCard = ({
 
   const manejarCambio = (e) => {
     const val = e.target.value;
-    // Las comas son separador de miles, no decimal.
     const rawValue = val.replace(/,/g, "");
 
-    if (rawValue !== "" && !/^\d*$/.test(rawValue)) return;
-
-    const numValor = parseInt(rawValue, 10);
-    const cap = Math.floor(Number(cantMax) || 0);
+    if (rawValue !== "" && !/^\d*[.]?\d{0,2}$/.test(rawValue)) return;
+    const numValor = parseFloat(rawValue);
+    const cap = Number(cantMax) || 0;
 
     if (!isNaN(numValor) && cap > 0 && numValor > cap) {
       setErrorLocal(true);
-      onChange({ target: { value: cap.toString() } });
+      onChange({ target: { value: cap.toFixed(2).replace(/\.00$/, "") } });
       setTimeout(() => setErrorLocal(false), 5000);
       return;
     }
@@ -52,7 +50,7 @@ const EntradaCard = ({
         <div className="flex flex-row items-center w-full mb-3 px-3 rounded-xl bg-white">
           <Input
             variante="numero"
-            numeroTipo="entero"
+            numeroTipo="decimal"
             placeholder="0"
             value={value}
             onChange={manejarCambio}

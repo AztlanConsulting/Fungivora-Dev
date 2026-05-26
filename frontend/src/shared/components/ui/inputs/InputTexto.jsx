@@ -21,15 +21,15 @@ const alignments = {
 
 const numeroConfig = {
     entero: { type: "text", inputMode: "numeric", pattern: "[0-9]*" },
-    decimal: { type: "text", inputMode: "decimal", pattern: "[0-9]*[.,]?[0-9]{0,2}" },
+    decimal: { type: "text", inputMode: "decimal", pattern: "[0-9]*([\\.][0-9]{0,2})?" },
 };
 
 const numeroRegex = {
     entero: /^\d*$/,
-    decimal: /^\d*[.,]?\d{0,2}$/,
+    decimal: /^\d*[.]?\d{0,2}$/,
 };
 
-const caracteresBase = ["<", ">", "{", "}", "[", "]", "\\", "`", "^", "~"];
+const caracteresBase = ["<", ">", "{", "}", "[", "]", "\\", "`", "^", "~", ","]; 
 
 const Input = ({
     variante = "normal",
@@ -65,12 +65,10 @@ const Input = ({
         if (!onChange) return;
 
         if (variante === "numero") {
-            const rawValue = e.target.value.replace(/,/g, "");
+            const rawValue = e.target.value;
             const numeroRgx = numeroRegex[numeroTipo] || numeroRegex.entero;
+        
             if (!numeroRgx.test(rawValue)) return;
-
-            const formatted = rawValue === "" ? "" : Number(rawValue).toLocaleString("en-US");
-            e.target.value = formatted;
             return onChange(e);
         }
 
@@ -123,7 +121,7 @@ const Input = ({
                 <input 
                     {...sharedProps} 
                     {...numProps}
-                    maxLength={variante === "normal" ? 50 : variante === "numero" ? 6 : undefined}
+                    maxLength={variante === "normal" ? 50 : variante === "numero" ? 8 : undefined}
                 />
             )}
         </div>
