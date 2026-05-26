@@ -148,11 +148,23 @@ function Lotes() {
     }
 
     const numPeso = Number(peso_gr);
-    const numCantidad = Number(cantidad);
+    const numCantidad = parseInt(cantidad, 10); 
 
     if (isNaN(numPeso) || numPeso <= 0 || isNaN(numCantidad) || numCantidad <= 0) {
       setErrorValidacion("Ingresa un número válido y mayor a cero");
       return;
+    }
+
+    const cantidadAcumulada = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad), 0);
+    const nuevoTotal = cantidadAcumulada + numCantidad;
+
+    if (nuevoTotal > 100) {
+      setErrorValidacion(`Capacidad máxima alcanzada - 100 bloques en total. Tienes ${cantidadAcumulada} bloques.`);
+      return;
+    }
+
+    if (nuevoTotal === 100) {
+      console.log("Has alcanzado el límite máximo de 100 bloques.");
     }
 
     const opcionesInoculo = getInoculosPorEspecie(nuevaFila.especie);
@@ -160,15 +172,9 @@ function Lotes() {
       opt => String(opt.value) === String(id_inoculo)
     );
 
-    const cantidadAcumulada = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad), 0);
-
-    if (cantidadAcumulada + numCantidad > 100) {
-      setErrorValidacion(`Límite excedido. Total acumulado: ${cantidadAcumulada}. No puedes superar 100 unidades.`);
-      return;
-    }
-
     agregarBloqueALista({ 
       ...bloqueForm, 
+      cantidad: String(numCantidad), 
       nombre_inoculo: inoculoSeleccionado ? inoculoSeleccionado.label : "N/A" 
     });
     
