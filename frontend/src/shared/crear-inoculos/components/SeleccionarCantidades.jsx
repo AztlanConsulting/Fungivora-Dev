@@ -36,7 +36,7 @@ const EntradaCard = ({
 
   const mostrarError = excede || errorLocal;
   const mensaje = errorLocal
-    ? `Máximo disponible: ${Math.floor(Number(cantMax) || 0)} ${unidad}`
+    ? `Máximo disponible: ${(Number(cantMax) || 0).toFixed(2).replace(/\.00$/, "")} ${unidad}`
     : mensajeError;
 
   return (
