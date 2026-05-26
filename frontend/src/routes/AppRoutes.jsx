@@ -26,6 +26,15 @@ export default function AppRoutes() {
                 {/* Ruta home */}
                 <Route path="/home" element={<HomePage />} />
 
+                <Route
+                    path="/usuarios"
+                    element={
+                        <RutaProtegida rolPermitido="Administrador">
+                            <Usuario /> 
+                        </RutaProtegida>
+                    }
+                />
+
                 {/* Ruta lotes */}
                 <Route path="/lotes" element={<Lotes />} />
                 <Route path="/lotes/detalle/:id_lote" element={<Lote />} />

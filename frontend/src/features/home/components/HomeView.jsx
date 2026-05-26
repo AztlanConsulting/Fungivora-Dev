@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Clock01Icon, PackageIcon } from '@hugeicons/core-free-icons';
@@ -9,18 +9,52 @@ import AccesoRapido from './AccesoRapido';
 import MetricaCard from './MetricaCard';
 import PanelLista from './PanelLista';
 import useHome from '../hooks/useHome';
+import Button from '../../../shared/components/ui/buttons/Botones';
+
+const parseJwt = (token) => {
+    try {
+        return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+        return null;
+    }
+};
 
 import accesoAgar from '../../../assets/images/acceso-agar.png';
 import accesoMedioLiquido from '../../../assets/images/acceso-medio-liquido.png';
 import accesoSemilla from '../../../assets/images/acceso-semilla.png';
 import accesoLote from '../../../assets/images/acceso-lote.png';
 
-/**
- * Vista principal / Dashboard de Devora.
- * Muestra lotes por revisar, inventario bajo, accesos rápidos y resumen general.
- */
 const PantallaPrincipalView = () => {
     const navigate = useNavigate();
+    const [esAdmin, setEsAdmin] = useState(false);
+
+    useEffect(() => {
+        try {
+            let token = localStorage.getItem('token'); 
+
+            if (token.startsWith('{')) {
+                const parsedTokenObj = JSON.parse(token);
+                token = parsedTokenObj.token || parsedTokenObj.data?.token;
+            }
+
+            const payload = parseJwt(token);
+
+            if (payload) {
+
+                const esAdministrador = payload.isAdmin === true || payload.isAdmin === 1 || payload.user?.isAdmin === true;
+                
+                if (esAdministrador) {
+                    setEsAdmin(true);
+                } else {
+                    console.log("Usuario autenticado correctamente");
+                }
+            } else {
+                console.error("No se pudo decodificar");
+            }
+        } catch (err) {
+            console.error("Error leyendoautenticación", err);
+        }
+    }, []);
 
     const {
         dashboard,
@@ -29,11 +63,8 @@ const PantallaPrincipalView = () => {
         revisarLotes
     } = useHome();
 
-    // Datos del hook
     const cards = dashboard?.cards || {};
-
     const listas = dashboard?.listas || {};
-
     const lotes = dashboard?.lotes || {};
 
     const resumen = {
@@ -49,7 +80,6 @@ const PantallaPrincipalView = () => {
         { label: 'Crear Lote', ruta: '/lotes', color: '#ffffff', acento: '#684cb6', imagen: accesoLote },
     ];
 
-    // Estado checkboxes 
     const [checkedLotes, setCheckedLotes] = useState({});
     const [checkedInv, setCheckedInv] = useState({});
 
@@ -58,98 +88,99 @@ const PantallaPrincipalView = () => {
 
     const handleRevisarLotes = async () => {
         try {
-            // Obtener ids marcados
-            const idsSeleccionados = Object.keys(checkedLotes)
-                .filter(id => checkedLotes[id]);
-            // Evitar llamada vacía
-            if (idsSeleccionados.length === 0) {
-                return;
-            }
-            // Hook
+            const idsSeleccionados = Object.keys(checkedLotes).filter(id => checkedLotes[id]);
+            if (idsSeleccionados.length === 0) return;
             await revisarLotes(idsSeleccionados);
-            // Limpiar checks
             setCheckedLotes({});
         } catch (err) {
             console.error(err);
         }
     };
 
-    // Render 
     return (
-        <>
-            <Titulo>¡Bienvenid@ a Devora!</Titulo>
+    <>
+        <Base margen_arriba="mt-24 md:mt-20">
+            <div className="flex flex-col gap-6">
 
-            <Base margen_arriba="mt-24 md:mt-20">
-                <div className="flex flex-col gap-6">
-
-                    {/* Fila 1 — Lotes por revisar + Inventario bajo */}
-                    <div className="flex flex-col md:flex-row gap-4">
-                        <PanelLista
-                            icono={
-                                <HugeiconsIcon
-                                    icon={Clock01Icon}
-                                    size={22}
-                                    color={colores.azul}
-                                    strokeWidth={2}
-                                />
-                            }
-                            titulo="Lotes por revisar"
-                            items={listas.lotesRevision || []}
-                            lotes={lotes || []}
-                            checked={checkedLotes}
-                            onToggle={toggleLote}
-                            onRevisar={handleRevisarLotes}
-                            onVerTodo={() => navigate('/lotes')}
-                            mostrarChecks={true}
-                        />
-                        <PanelLista
-                            icono={
-                                <HugeiconsIcon
-                                    icon={PackageIcon}
-                                    size={22}
-                                    color={colores.azul}
-                                    strokeWidth={2}
-                                />
-                            }
-                            titulo="Inventario bajo"
-                            items={listas.inventarioBajo || []}
-                            checked={checkedInv}
-                            onToggle={toggleInv}
-                            onVerTodo={() => navigate('/inventario')}
-                            mostrarChecks={false}
-                        />
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 border-b border-gray-100 pb-4">
+                    <div>
+                        <Titulo>¡Bienvenid@ a Devora!</Titulo>
                     </div>
 
-                    {/* Fila 2 — Accesos rápidos */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {RUTAS_RAPIDAS.map((item) => (
-                            <AccesoRapido key={item.label} {...item} />
-                        ))}
-                    </div>
+                    {esAdmin && (
+                        <Button
+                        variant="cancelar" isOutline = {true}
+                            onClick={() => navigate('/usuarios')} >
+                            Usuarios
+                        </Button>
+                    )}
+                </div>
 
-                    {/* Fila 3 — Resumen general */}
-                    <div className="bg-white rounded-2xl p-6 shadow-sm">
-                        <div className="flex flex-col md:flex-row md:items-center gap-4">
-                            <div className="flex-shrink-0">
-                                <Text variante="subtitle" style={{ color: colores.azul, fontWeight: 700, fontSize: 20 }}>
-                                    Resumen general
-                                </Text>
-                                <Text variante="small" style={{ color: colores.gris }}>
-                                    Actividad actual
-                                </Text>
-                            </div>
-                            <div className="flex gap-3 flex-1">
-                                <MetricaCard valor={resumen.lotesActivos} label="Lotes activos" />
-                                <MetricaCard valor={resumen.bloquesNoContaminados} label="Bloques saludables" />
-                                <MetricaCard valor={resumen.bloquesContaminados} label="Bloques contaminados" />
-                            </div>
+                <div className="flex flex-col md:flex-row gap-4">
+                    <PanelLista
+                        icono={
+                            <HugeiconsIcon
+                                icon={Clock01Icon}
+                                size={22}
+                                color={colores.azul}
+                                strokeWidth={2}
+                            />
+                        }
+                        titulo="Lotes por revisar"
+                        items={listas.lotesRevision || []}
+                        lotes={lotes || []}
+                        checked={checkedLotes}
+                        onToggle={toggleLote}
+                        onRevisar={handleRevisarLotes}
+                        onVerTodo={() => navigate('/lotes')}
+                        mostrarChecks={true}
+                    />
+                    <PanelLista
+                        icono={
+                            <HugeiconsIcon
+                                icon={PackageIcon}
+                                size={22}
+                                color={colores.azul}
+                                strokeWidth={2}
+                            />
+                        }
+                        titulo="Inventario bajo"
+                        items={listas.inventarioBajo || []}
+                        checked={checkedInv}
+                        onToggle={toggleInv}
+                        onVerTodo={() => navigate('/inventario')}
+                        mostrarChecks={false}
+                    />
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {RUTAS_RAPIDAS.map((item) => (
+                        <AccesoRapido key={item.label} {...item} />
+                    ))}
+                </div>
+
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <div className="flex flex-col md:flex-row md:items-center gap-4">
+                        <div className="flex-shrink-0">
+                            <Text variante="subtitle" style={{ color: colores.azul, fontWeight: 700, fontSize: 20 }}>
+                                Resumen general
+                            </Text>
+                            <Text variante="small" style={{ color: colores.gris }}>
+                                Actividad actual
+                            </Text>
+                        </div>
+                        <div className="flex gap-3 flex-1">
+                            <MetricaCard valor={resumen.lotesActivos} label="Lotes activos" />
+                            <MetricaCard valor={resumen.bloquesNoContaminados} label="Bloques saludables" />
+                            <MetricaCard valor={resumen.bloquesContaminados} label="Bloques contaminados" />
                         </div>
                     </div>
-
                 </div>
-            </Base>
-        </>
-    );
+
+            </div>
+        </Base>
+    </>
+);
 };
 
 export default PantallaPrincipalView;
