@@ -26,7 +26,12 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
         const comparacionInoculo = inoculoA.localeCompare(inoculoB);
 
         if (comparacionInoculo !== 0) return comparacionInoculo;
-        return b.produccion - a.produccion; 
+        const comparacionProduccion = b.produccion - a.produccion;
+        if (comparacionProduccion !== 0) return comparacionProduccion;
+
+        const sustratoA = (a.tipo_sustrato || '').toString();
+        const sustratoB = (b.tipo_sustrato || '').toString();
+        return sustratoA.localeCompare(sustratoB);
     });
 
     const generarCodigoBloque = (codigoInoculo, indiceGlobal) => {

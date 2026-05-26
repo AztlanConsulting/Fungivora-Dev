@@ -66,7 +66,7 @@ const useLotes = () => {
 
     // Filtrado secundario por expresiones regulares para inóculos válidos
     const getInoculosPorEspecie = useCallback((especieNombre) => {
-        const regexCodigoValido = /^[A-Z].G-[A-Z]{2,3}-\d+/;
+        const regexCodigoValido = /^[A-Z0-9.-]+/i; 
 
         return (inoculosRaw || [])
             .filter(i =>
@@ -77,7 +77,7 @@ const useLotes = () => {
                 value: i.id_inoculo,
                 label: i.codigo_fungivora,
                 abreviatura: i.abreviatura
-              }));
+            }));
     }, [inoculosRaw]);
 
     // Agregar lote
