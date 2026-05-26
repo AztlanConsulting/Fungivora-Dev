@@ -18,8 +18,29 @@ class Usuario {
           OR LOWER(TRIM(correo_usuario)) = LOWER(TRIM(?))`,
       [identificador, identificador] 
     );
-
     return filas[0];
+  };
+
+  static crear = async (nuevoUsuario) => {
+    return db.execute(
+      `INSERT INTO Usuarios (nombre_usuario, correo_usuario, contrasena_usuario, estatus_usuario, is_user_admin) 
+       VALUES (?, ?, ?, ?, ?)`
+      , [
+        nuevoUsuario.nombre_usuario, 
+        nuevoUsuario.correo_usuario, 
+        nuevoUsuario.contrasena_usuario, 
+        nuevoUsuario.estatus_usuario || 'Activo', 
+        nuevoUsuario.is_user_admin || 0 
+      ]
+    );
+  };
+
+  static fetch_all = async () => {
+    const [filas] = await db.execute(
+      `SELECT id_usuario, nombre_usuario, correo_usuario, estatus_usuario, is_user_admin 
+       FROM Usuarios`
+    );
+    return filas;
   };
 }
 
