@@ -11,17 +11,17 @@ const useLogin = () => {
         try {
             const data = await loginService.login(usuario, password);
             localStorage.setItem("token", data.token); //guarda localmente el token
-            return data; 
+            return data;
         } catch (err) {
             const mensaje = err.response?.data?.msg || "Usuario y/o contraseña incorrectos"; //Mensaje de error de usuario y/o contraseña
             setError(mensaje);
-            throw err; 
+            throw err;
         } finally {
             setCargando(false);
         }
     }, []);
 
-    return { ejecutarLogin: login, cargando, error }; 
+    return { ejecutarLogin: login, cargando, error };
 }
 
 export default useLogin;

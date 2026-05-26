@@ -1,11 +1,11 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import {
-    FirstPage, HomePage, Login, Usuario, Inventario,
+    HomePage, Login, Usuario, Inventario,
     Lotes, Lote, BibliotecaGenetica
 } from "../pages";
 import { MainLayout, RutaProtegida } from "../shared/components/layout";
 import CrearAgar from "../pages/inoculos/agar/CrearAgar";
-import FormMedioLiquido from "../pages/inoculos/medioLiquido/FormMedioLiquido";
+import CrearMedioLiquido from "../pages/inoculos/medioLiquido/CrearMedioLiquido";
 import CrearSemilla from "../pages/inoculos/semillas/CrearSemillas";
 import MiPagina from "../pages/raphael/pagina"
 
@@ -25,7 +25,6 @@ export default function AppRoutes() {
                 }
             >
                 {/* Ruta home */}
-                <Route path="/first" element={<FirstPage />} />
                 <Route path="/home" element={<HomePage />} />
 
                 {/* Ruta lotes */}
@@ -40,7 +39,7 @@ export default function AppRoutes() {
 
                 {/* Rutas inóculos */}
                 <Route path="/inoculos/crear/agar" element={<CrearAgar />} />
-                <Route path="/inoculos/crear/medio-liquido" element={<FormMedioLiquido />} />
+                <Route path="/inoculos/crear/medio-liquido" element={<CrearMedioLiquido />} />
                 <Route path="/inoculos/crear/semilla" element={<CrearSemilla />} />
 
                 {/* Rutas con rol específico */}

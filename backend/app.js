@@ -3,7 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const generalRoutes = require('./routes/general.routes');
 
-dotenv.config({ path: require('path').join(__dirname, '../.env') });
+dotenv.config({ quiet: true, path: require('path').join(__dirname, '../.env') });
 
 const { register } = require('./config/metrics');
 

@@ -24,21 +24,22 @@ vi.mock('../../../features/inoculos/components/ModalCrearInoculo', () => ({
         ) : null,
 }))
 
-vi.mock('../../../shared/components/ui/basics/titulo', () => ({
+vi.mock('../../../shared/components/ui/basics/Titulo', () => ({
     default: ({ children }) => <h1>{children}</h1>,
 }))
-vi.mock('../../../shared/components/layout/base', () => ({
+vi.mock('../../../shared/components/layout/Base', () => ({
     default: ({ children }) => <div>{children}</div>,
 }))
-vi.mock('../../../shared/components/ui/basics/texto', () => ({
+vi.mock('../../../shared/components/ui/basics/Texto', () => ({
     default: ({ children }) => <p>{children}</p>,
 }))
 vi.mock('@hugeicons/react', () => ({
     HugeiconsIcon: () => <span />,
 }))
-vi.mock('@hugeicons/core-free-icons', () => ({
-    Add01Icon: {},
-}))
+vi.mock('@hugeicons/core-free-icons', async (importOriginal) => {
+    const actual = await importOriginal()
+    return { ...actual }
+})
 
 // Mock de useNavigate
 const mockNavigate = vi.fn()
