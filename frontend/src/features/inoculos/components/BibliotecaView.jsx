@@ -10,6 +10,7 @@ import useEspeciesList from '../hooks/useEspeciesList';
 import InoculoCard from './InoculoCard';
 import ModalCrearInoculo from './ModalCrearInoculo';
 import ModalAlerta from '../../../shared/components/ui/popups/ModalAlerta';
+import BotonCrear from '../../../shared/components/ui/buttons/BotonFlotante';
 
 /**
  * Vista principal del módulo de inóculos.
@@ -59,23 +60,7 @@ const BibliotecaView = () => {
         <>
             <Titulo>Biblioteca Genética</Titulo>
             
-            <button
-                onClick={() => setModalVisible(true)}
-                aria-label="Crear inóculo"
-                className={`
-                    fixed bottom-20 right-10 md:bottom-10 md:right-16
-                    z-50 w-40 h-8 md:w-52 md:h-10 text-base md:text-lg
-                    rounded-full flex items-center justify-center shadow-lg
-                    transition-opacity hover:opacity-80 active:scale-95
-                `}
-
-                style={{
-                    backgroundColor: "#FFFFFF",
-                    border: `2px solid ${colores.azul}`
-                }}
-            >
-                <Text variante='button' style={{ color: colores.azul }}>Crear</Text>
-            </button>
+            <BotonCrear onClick={() => setModalVisible(true)} />
 
             <Base margen_arriba="mt-24 md:mt-20">
                 <div className="flex flex-col gap-4">
