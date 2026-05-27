@@ -19,8 +19,8 @@ export const validarStockComposicion = (items, cantidad = 1) => {
     const total = +(valNum * n).toFixed(2);
     const stockDisponible = Number(item.cantidad) || 0;
 
-    const excedeIndividual = stockDisponible > 0 && valNum > stockDisponible;
-    const excedeTotal = stockDisponible > 0 && total > stockDisponible;
+    const excedeIndividual = valNum > stockDisponible;
+    const excedeTotal = total > stockDisponible;
 
     return {
       ...item,

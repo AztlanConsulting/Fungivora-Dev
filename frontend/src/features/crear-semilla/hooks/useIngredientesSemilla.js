@@ -80,7 +80,7 @@ const useIngredientesSemilla = ({
       unidad: normalizarUnidad(mijoInsumo?.unidad) || "ml",
       value: cantMijo,
       onChange: (e) => setCantMijo(e.target.value),
-      cantidad: parseFloat(mijoInsumo?.cantidad) || 10000,
+      cantidad: parseFloat(mijoInsumo?.cantidad) || 0,
     },
     {
       id: aguaInsumo?.id_insumo ?? null,
@@ -89,7 +89,7 @@ const useIngredientesSemilla = ({
       unidad: normalizarUnidad(aguaInsumo?.unidad) || "ml",
       value: cantAgua,
       onChange: (e) => setCantAgua(e.target.value),
-      cantidad: parseFloat(aguaInsumo?.cantidad) || 5000,
+      cantidad: parseFloat(aguaInsumo?.cantidad) || 0,
     },
     {
       id: null,
