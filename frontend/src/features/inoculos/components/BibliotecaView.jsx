@@ -60,7 +60,11 @@ const BibliotecaView = () => {
         <>
             <Titulo>Biblioteca Genética</Titulo>
             
-            <BotonCrear onClick={() => setModalVisible(true)} />
+            <BotonCrear 
+                onClick={() => setModalVisible(true)} 
+                texto="Crear"
+                aria-label="Crear inóculo"
+            />
 
             <Base margen_arriba="mt-24 md:mt-20">
                 <div className="flex flex-col gap-4">
