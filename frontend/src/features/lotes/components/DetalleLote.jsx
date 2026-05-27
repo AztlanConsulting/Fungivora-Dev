@@ -22,7 +22,7 @@ const DetalleLote = () => {
         fases
     } = useDetalleLote(id_lote, state?.fase);
 
-    const [busqueda ] = useState("");
+    const [busqueda] = useState("");
     const [editado, setEditado] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
@@ -59,6 +59,16 @@ const DetalleLote = () => {
         handleLocalChanges(nuevosBloques, fase);
     };
 
+    const handleToggleTodosContaminados = (valor) => {
+        const nuevosBloques = bloques.map((bloque) => ({
+            ...bloque,
+            contaminado: valor ? 1 : 0
+        }));
+
+        setBloques(nuevosBloques);
+        handleLocalChanges(nuevosBloques, fase);
+    };
+
     // Cambio local de fase
     const handleLocalChangeFase = (nuevaFase) => {
         setFase(nuevaFase);
@@ -71,7 +81,7 @@ const DetalleLote = () => {
             setBloquesIniciales(bloques.map(b => ({ ...b })));
             setFaseInicialNum(fase);
             setEditado(false);
-            setIsModalOpen(false); 
+            setIsModalOpen(false);
             setAlerta({
                 visible: true,
                 variante: "exito",
@@ -103,6 +113,13 @@ const DetalleLote = () => {
         b.contenedor?.toLowerCase().includes(busqueda.toLowerCase())
     ) || [];
 
+    const todosContaminados =
+        bloquesFiltrados.length > 0 &&
+        bloquesFiltrados.every(
+            (bloque) =>
+                bloque.contaminado === 1 ||
+                bloque.contaminado === true
+        );
 
     const codigoParaTabla = state?.codigo_fungivora || codigoInoculo || "";
     return (
@@ -111,7 +128,7 @@ const DetalleLote = () => {
             {editado && (
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    disabled={cargando} 
+                    disabled={cargando}
                     className={`
                         fixed bottom-20 right-10 md:bottom-10 md:right-16
                         z-50 w-40 h-8 md:w-52 md:h-10 text-base md:text-lg
@@ -149,8 +166,10 @@ const DetalleLote = () => {
                         fases={fases}
                         fase={fase}
                         setFase={handleLocalChangeFase}
-                        //busqueda={busqueda}
-                        //setBusqueda={setBusqueda}
+                        todosContaminados={todosContaminados}
+                        onToggleTodosContaminados={handleToggleTodosContaminados}
+                    //busqueda={busqueda}
+                    //setBusqueda={setBusqueda}
                     />
 
                     <div className="flex flex-col gap-4">
