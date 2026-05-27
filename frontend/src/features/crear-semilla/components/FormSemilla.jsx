@@ -165,12 +165,12 @@ const FormSemillas = () => {
       <Titulo>Crear Semilla</Titulo>
 
       <Base margen_arriba="mt-16 md:mt-8">
-        <div className="p-6 flex flex-col gap-6">
+        <div className="p-3 sm:p-6 flex flex-col gap-6">
 
           <div className="flex flex-col lg:flex-row gap-6 items-start">
 
             <div className="flex flex-col gap-6 flex-1 min-w-0">
-              <div className="bg-white rounded-[32px] shadow-sm border p-6 md:p-8">
+              <div className="bg-white rounded-[32px] shadow-sm border p-4 sm:p-6 md:p-8">
                 <div className="flex flex-col md:flex-row gap-6 flex-wrap">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
 
@@ -261,7 +261,7 @@ const FormSemillas = () => {
               </div>
 
               {!esComprado && <EntradaLista items={itemsComposicion} />}
-                <div className="bg-white rounded-[32px] shadow-sm border p-6 md:p-8 flex flex-col gap-6">
+                <div className="bg-white rounded-[32px] shadow-sm border p-4 sm:p-6 md:p-8 flex flex-col gap-6">
                   <div className="flex flex-col md:flex-row gap-6 w-full">
 
                     {esComprado ? (
@@ -312,6 +312,7 @@ const FormSemillas = () => {
             >
               <Button
                 variant="registrar"
+                fullWidth
                 onClick={handleRegistrar}
                 disabled={
                   registrando ||
@@ -323,7 +324,7 @@ const FormSemillas = () => {
               >
                 {registrando ? "Registrando..." : "Registrar"}
               </Button>
-              <Button variant="cancelar" isOutline onClick={() => navigate(-1)}>
+              <Button variant="cancelar" fullWidth isOutline onClick={() => navigate(-1)}>
                 Cancelar
               </Button>
             </Resumen>

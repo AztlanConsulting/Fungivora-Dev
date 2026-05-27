@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Text from "../../../shared/components/ui/basics/Texto";
 import { colores } from "../../../shared/components/ui/basics/Colores";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { PlusMinus02Icon, InformationCircleIcon } from "@hugeicons/core-free-icons";
+import { Add01Icon, Remove01Icon, InformationCircleIcon } from "@hugeicons/core-free-icons";
 import ModalInfo from "../../../shared/components/ui/popups/ModalInfo";
 
 const MENSAJE_INFO_NO_EDITABLE = "No puedes editar la cantidad de este insumo manualmente";
@@ -88,7 +88,7 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
           const itemId = item.id ?? item.id_insumo;
           const esSeleccionado = filaSeleccionada === itemId;
           const estado = obtenerEstado(item.cantidad, item.stock_recommended || item.stock_recomendado);
-          const esInsumo = item.tipo === 'insumo'; 
+          const esInsumo = item.tipo === 'insumo';
 
           return (
             <div key={itemId} onClick={() => setFilaSeleccionada(itemId)} className="group cursor-pointer">
@@ -107,15 +107,42 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                     {estado.label}
                   </span>
                 </div>
-                
+
                 {/* Acciones Desktop Condicionado */}
                 <div className="flex justify-center p-2">
                   {esInsumo ? (
-                    <div
-                      className="hover:scale-110 transition-transform cursor-pointer"
-                      onClick={(e) => { e.stopPropagation(); abrirModalEdicion(item); }}
-                    >
-                      <HugeiconsIcon icon={PlusMinus02Icon} size={20} color={colores.azul} />
+                    <div className="flex items-center gap-3">
+                      {/* IN */}
+                      <button
+                        type="button"
+                        className="hover:scale-110 transition-transform cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          abrirModalEdicion(item, "incremento");
+                        }}
+                      >
+                        <HugeiconsIcon
+                          icon={Add01Icon}
+                          size={20}
+                          color={colores.azul}
+                        />
+                      </button>
+
+                      {/* OUT */}
+                      <button
+                        type="button"
+                        className="hover:scale-110 transition-transform cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          abrirModalEdicion(item, "reduccion");
+                        }}
+                      >
+                        <HugeiconsIcon
+                          icon={Remove01Icon}
+                          size={20}
+                          color={colores.azul}
+                        />
+                      </button>
                     </div>
                   ) : (
                     <button
@@ -136,12 +163,40 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                   style={{ borderColor: colorBordeHeader }}>
                   <div className="flex justify-between items-start mb-3">
                     <Text variante="option" style={{ color: "black", fontWeight: "600", fontSize: "16px" }}>{item.nombre}</Text>
-                    
+
                     {/* Icono Móvil Condicionado */}
                     {esInsumo ? (
-                      <button onClick={(e) => { e.stopPropagation(); abrirModalEdicion(item); }}>
-                        <HugeiconsIcon icon={PlusMinus02Icon} size={22} color={colores.azul} />
-                      </button>
+                      <div className="flex items-center gap-3">
+                        {/* IN */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            abrirModalEdicion(item, "incremento");
+                          }}
+                        >
+                          <HugeiconsIcon
+                            icon={Add01Icon}
+                            size={22}
+                            color={colores.azul}
+                          />
+                        </button>
+
+                        {/* OUT */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            abrirModalEdicion(item, "reduccion");
+                          }}
+                        >
+                          <HugeiconsIcon
+                            icon={Remove01Icon}
+                            size={22}
+                            color={colores.azul}
+                          />
+                        </button>
+                      </div>
                     ) : (
                       <button
                         type="button"

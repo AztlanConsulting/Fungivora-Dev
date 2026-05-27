@@ -6,7 +6,7 @@ const useInsumos = () => {
     const [insumos, setInsumos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [unidades, setUnidades] = useState([]); 
+    const [unidades, setUnidades] = useState([]);
 
     useEffect(() => {
         const cargarUnidades = async () => {
@@ -16,7 +16,7 @@ const useInsumos = () => {
                 setUnidades(Array.isArray(unidadesData) ? unidadesData : []);
             } catch (err) {
                 console.error("Error cargando unidades:", err);
-                setUnidades([]); 
+                setUnidades([]);
             }
         };
         cargarUnidades();
@@ -40,16 +40,27 @@ const useInsumos = () => {
     }, []);
 
     const addInsumo = async (nuevoInsumo) => {
+        setError(null);
         try {
             const res = await inventarioService.crearInsumo(nuevoInsumo);
             if (res.success) {
                 await fetchInsumos();
                 return { success: true };
             }
-            return { success: false, error: res.error || 'Error al crear el insumo' };
+            const mensaje = res.error || 'Error al crear el insumo';
+            setError(mensaje);
+            return {
+                success: false,
+                error: mensaje
+            };
         } catch (err) {
             console.error("Error al crear:", err);
-            return { success: false, error: 'Error de conexión' };
+            const mensaje = err.message || 'Error al crear el insumo';
+            setError(mensaje);
+            return {
+                success: false,
+                error: mensaje
+            };
         }
     };
 

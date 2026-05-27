@@ -8,9 +8,9 @@ const inputTextStyle = {
 };
 
 const sizes = {
-    normal: "w-80 h-10 md:w-96 md:h-12", 
-    amplio: "w-80 h-auto min-h-[4rem] md:w-96 md:min-h-[6rem]",
-    numero: "w-24 h-10 md:w-32 md:h-12",
+    normal: "w-full h-10 md:max-w-[24rem] md:h-12",
+    amplio: "w-full h-auto min-h-[4rem] md:max-w-[24rem] md:min-h-[6rem]",
+    numero: "w-full max-w-[8rem] h-10 md:h-12",
 };
 
 const alignments = {

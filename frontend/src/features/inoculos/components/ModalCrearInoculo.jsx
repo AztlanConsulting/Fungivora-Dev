@@ -69,12 +69,12 @@ const ModalCrearInoculo = ({ visible, onConfirm, onCancel }) => {
                 <div className="w-full h-[1.8px] bg-gray-200 rounded-full" />
 
                 {/* Botones */}
-                <div className="flex flex-row gap-6 w-full justify-center">
-                    <Button variant="cancelar" isOutline={true} onClick={handleCancel}>
-                        Cancelar
-                    </Button>
+                <div className="flex flex-col md:flex-row-reverse gap-3 w-full items-center md:justify-center">
                     <Button variant="confirmar" isOutline={true} onClick={handleConfirm}>
                         Confirmar
+                    </Button>
+                    <Button variant="cancelar" isOutline={true} onClick={handleCancel}>
+                        Cancelar
                     </Button>
                 </div>
             </div>

@@ -21,10 +21,10 @@ const SelectField = ({
   const dropdownRef = useRef(null);
 
   const sizes = {
-    forms: "w-80 md:w-[24rem]",
-    normal: "w-80 md:w-96",
-    amplio: "w-80 md:w-96",
-    numero: "w-28 md:w-36",
+    forms: "w-full md:max-w-[24rem]",
+    normal: "w-full md:max-w-[24rem]",
+    amplio: "w-full md:max-w-[24rem]",
+    numero: "w-full max-w-[9rem]",
   };
 
   const sizeClass = sizes[size] || sizes.normal;
