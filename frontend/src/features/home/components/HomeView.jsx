@@ -10,6 +10,7 @@ import MetricaCard from './MetricaCard';
 import PanelLista from './PanelLista';
 import useHome from '../hooks/useHome';
 import Button from '../../../shared/components/ui/buttons/Botones';
+import BotonCrear from '../../../shared/components/ui/buttons/BotonFlotante';
 
 const parseJwt = (token) => {
     try {
@@ -115,9 +116,12 @@ const PantallaPrincipalView = () => {
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 border-b border-gray-100 pb-4">
                         <Titulo>¡Bienvenid@ a Devora!</Titulo>
                         {esAdmin && (
-                            <Button variant="cancelar" isOutline={true} onClick={() => navigate('/usuarios')}>
-                                Usuarios
-                            </Button>
+                            <div className="fixed bottom-8 right-8 z-50">
+                                <BotonCrear
+                                    onClick={() => navigate('/usuarios')}
+                                    texto="Gestionar Usuarios"
+                                />
+                            </div>
                         )}
                     </div>
 

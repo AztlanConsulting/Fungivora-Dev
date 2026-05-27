@@ -7,6 +7,7 @@ import useUsuarios from '../../features/usuarios/hooks/useUsuarios';
 import { HugeiconsIcon } from "@hugeicons/react";
 import { CancelCircleIcon } from '@hugeicons/core-free-icons';
 import FormCrearUsuario from '../../features/usuarios/components/FormCrearUsuario';
+import BotonCrear from "../../shared/components/ui/buttons/BotonFlotante";
 
 const colorBordeHeader = "#F2F2FC";
 const gridLayoutUsuarios = "grid grid-cols-[2fr_2.5fr_1.5fr_1fr]"; 
@@ -96,34 +97,13 @@ const UsuariosView = () => {
 
     return (
         <Base margen_arriba="mt-24 md:mt-20">
-            <div className="flex flex-col gap-6">
                 
-                {/* Cabecera Principal */}
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-gray-100 pb-4">
-                    <div>
-                        <Titulo>Usuarios</Titulo>
-                    </div>
-                    
-                    {vistaActual === "lista" ? (
-                        <Button
-                            variant="cancelar" 
-                            isOutline={true}
-                            onClick={() => {
-                                setErrorFormulario(null);
-                                setVistaActual("crear");
-                            }} 
-                        >
-                            Crear Usuario
-                        </Button>
-                    ) : (
-                        <Button
-                            variant="cancelar" 
-                            isOutline={true}
-                            onClick={handleCancelarRegistro} 
-                        >
-                            Ver Usuarios
-                        </Button>
-                    )}
+                <Titulo>Usuarios</Titulo>
+                <div className="flex justify-start mb-6">
+                <BotonCrear
+                    onClick={() => setVistaActual(vistaActual === "lista" ? "crear" : "lista")}
+                    texto={vistaActual === "lista" ? "Crear Usuario" : "Ver Usuarios"}
+                />
                 </div>
                 {vistaActual === "crear" ? (
                 <div className="w-full max-w-lg mx-auto bg-white rounded-[32px] shadow-sm border p-8">    
@@ -138,16 +118,8 @@ const UsuariosView = () => {
                                 setError={setErrorFormulario}
                             />
                         </div>
-                  </div>
+                </div>
                 ) : (
-                    <>
-                        {error && (
-                            <div className="p-4 text-red-700 text-sm flex justify-between items-center">
-                                <span>{error}</span>
-                                <button onClick={refresh} className="underline font-semibold hover:text-red-800">Reintentar</button>
-                            </div>
-                        )}
-
                         <div className="flex flex-col md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
                             
                             {/* Header Desktop */}
@@ -178,95 +150,93 @@ const UsuariosView = () => {
                                         <Text variante="medium" style={{ color: colores.gris }}>No se encontraron usuarios en el sistema.</Text>
                                     </div>
                                 ) : (
-                                    usuarios.map((user) => {
-                                        const esSeleccionado = filaSeleccionada === user.id_usuario;
-                                        const emailFallback = user.correo_usuario || user.email || `${user.nombre_usuario.toLowerCase().replace(/\s+/g, '')}@devora.com`;
+                                    [...usuarios]
+                                        .sort((a, b) => b.is_user_admin - a.is_user_admin)
+                                        .map((user) => {
+                                            const esSeleccionado = filaSeleccionada === user.id_usuario;
+                                            const emailFallback = user.correo_usuario || user.email || `${user.nombre_usuario.toLowerCase().replace(/\s+/g, '')}@devora.com`;
 
-                                        return (
-                                            <div key={user.id_usuario} className="w-full">
-                                                
-                                                {/* Vista de Desktop */}
-                                                <div 
-                                                    onClick={() => setFilaSeleccionada(user.id_usuario)}
-                                                    className={`hidden md:grid ${gridLayoutUsuarios} cursor-pointer transition-all border-b hover:bg-slate-50`}
-                                                    style={{ borderColor: colorBordeHeader, backgroundColor: 'white' }}
-                                                >
-                                                    <div className="px-6 py-5 flex items-center">
-                                                        <Text variante="option" style={{ color: "black", fontWeight: "600", fontSize: "15px" }}>
-                                                            {user.nombre_usuario}
-                                                        </Text>
-                                                    </div>
-                                                    <div className="px-6 py-5 flex items-center truncate">
-                                                        <Text variante="option" style={{ color: colores.black, fontWeight: "400", fontSize: "15px" }}>
-                                                            {emailFallback}
-                                                        </Text>
-                                                    </div>
-                                                    <div className="px-6 py-5 flex items-center">
-                                                        {user.is_user_admin === 1 ? (
-                                                            <div className="px-4 py-1 rounded-lg text-sm font-semibold bg-yellow-50 text-yellow-700 border border-yellow-100">
-                                                                Administrador
-                                                            </div>
-                                                        ) : (
-                                                            <div className="px-4 py-1 rounded-lg text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-100">
-                                                                Granjero
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <div className="py-4 flex justify-center items-center">
-                                                        <button 
-                                                            onClick={(e) => handleEliminar(e, user.id_usuario)}
-                                                            className="hover:scale-110 transition-transform p-2"
-                                                            title="Eliminar del sistema"
-                                                        >
-                                                            <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
-                                                        </button>
-                                                    </div>
-                                                </div>
-
-                                                {/* Vista de Móvil */}
-                                                <div 
-                                                    onClick={() => setFilaSeleccionada(user.id_usuario)}
-                                                    className="md:hidden p-5 rounded-2xl border bg-white shadow-sm flex flex-col gap-4 cursor-pointer mb-4 mx-2"
-                                                    style={{ 
-                                                        borderColor: esSeleccionado ? colores.azul : colorBordeHeader,
-                                                        boxShadow: esSeleccionado ? '0 0 0 2px #F2F2FC' : '' 
-                                                    }}
-                                                >
-                                                    <div className="flex justify-between items-start">
-                                                        <div>
-                                                            <Text variante="option" style={{ color: "black", fontWeight: '500', fontSize: '18px' }}>
+                                            return (
+                                                <div key={user.id_usuario} className="w-full">
+                                                    
+                                                    {/* Vista de Desktop */}
+                                                    <div 
+                                                        onClick={() => setFilaSeleccionada(user.id_usuario)}
+                                                        className={`hidden md:grid ${gridLayoutUsuarios} cursor-pointer transition-all border-b hover:bg-slate-50`}
+                                                        style={{ borderColor: colorBordeHeader, backgroundColor: 'white' }}
+                                                    >
+                                                        <div className="px-6 py-5 flex items-center">
+                                                            <Text variante="option" style={{ color: "black", fontWeight: "600", fontSize: "15px" }}>
                                                                 {user.nombre_usuario}
                                                             </Text>
-                                                            <span className="text-sm text-gray-400 block mt-0.5">{emailFallback}</span>
                                                         </div>
-                                                        <button onClick={(e) => handleEliminar(e, user.id_usuario)}>
-                                                            <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
-                                                        </button>
+                                                        <div className="px-6 py-5 flex items-center truncate">
+                                                            <Text variante="option" style={{ color: colores.black, fontWeight: "400", fontSize: "15px" }}>
+                                                                {emailFallback}
+                                                            </Text>
+                                                        </div>
+                                                        <div className="px-6 py-5 flex items-center">
+                                                            {user.is_user_admin === 1 ? (
+                                                                <div className="px-4 py-1 rounded-lg text-sm font-semibold bg-green-50 text-green-700 border border-green-100">
+                                                                    Administrador
+                                                                </div>
+                                                            ) : (
+                                                                <div className="px-4 py-1 rounded-lg text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-100">
+                                                                    Granjero
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div className="py-4 flex justify-center items-center">
+                                                            <button 
+                                                                onClick={(e) => handleEliminar(e, user.id_usuario)}
+                                                                className="hover:scale-110 transition-transform p-2"
+                                                                title="Eliminar del sistema"
+                                                            >
+                                                                <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                    
-                                                    <div className="flex border-t pt-4" style={{ borderColor: colorBordeHeader }}>
-                                                        {user.is_user_admin === 1 ? (
-                                                            <span className="px-2 py-0.5 rounded-md text-[12px] font-semibold bg-yellow-50 text-yellow-700 border border-yellow-100">
-                                                                Administrador
-                                                            </span>
-                                                        ) : (
-                                                            <span className="px-2 py-0.5 rounded-md text-[12px] font-semibold bg-blue-50 text-blue-700 border border-blue-100">
-                                                                Granjero
-                                                            </span>
-                                                        )}
+
+                                                    {/* Vista de Móvil */}
+                                                    <div 
+                                                        onClick={() => setFilaSeleccionada(user.id_usuario)}
+                                                        className="md:hidden p-5 rounded-2xl border bg-white shadow-sm flex flex-col gap-4 cursor-pointer mb-4 mx-2"
+                                                        style={{ 
+                                                            borderColor: esSeleccionado ? colores.azul : colorBordeHeader,
+                                                            boxShadow: esSeleccionado ? '0 0 0 2px #F2F2FC' : '' 
+                                                        }}
+                                                    >
+                                                        <div className="flex justify-between items-start">
+                                                            <div>
+                                                                <Text variante="option" style={{ color: "black", fontWeight: '500', fontSize: '18px' }}>
+                                                                    {user.nombre_usuario}
+                                                                </Text>
+                                                                <span className="text-sm text-gray-400 block mt-0.5">{emailFallback}</span>
+                                                            </div>
+                                                            <button onClick={(e) => handleEliminar(e, user.id_usuario)}>
+                                                                <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
+                                                            </button>
+                                                        </div>
+                                                        
+                                                        <div className="flex border-t pt-4" style={{ borderColor: colorBordeHeader }}>
+                                                            {user.is_user_admin === 1 ? (
+                                                                <span className="px-2 py-0.5 rounded-md text-[12px] font-semibold bg-green-50 text-green-700 border border-green-100">
+                                                                    Administrador
+                                                                </span>
+                                                            ) : (
+                                                                <span className="px-2 py-0.5 rounded-md text-[12px] font-semibold bg-blue-50 text-blue-700 border border-blue-100">
+                                                                    Granjero
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
-
-                                            </div>
-                                        );
-                                    })
+                                            );
+                                        })
                                 )}
                             </div>
                         </div>
-                    </>
                 )}
-
-            </div>
         </Base>
     );
 };
