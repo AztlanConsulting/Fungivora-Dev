@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { colores } from "../basics/Colores";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
@@ -43,7 +43,7 @@ const SelectField = ({
   const hasValue = !!selectedOption;
 
   // Calcular si el dropdown debe abrirse hacia arriba o hacia abajo
-  const calculatePosition = () => {
+  const calculatePosition = useCallback(() => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const spaceBelow = window.innerHeight - rect.bottom;
@@ -55,7 +55,7 @@ const SelectField = ({
     } else {
       setDropdownPosition("bottom");
     }
-  };
+  }, [options.length]);
 
   const handleToggle = () => {
     if (isDisabled) return;
@@ -130,7 +130,7 @@ const SelectField = ({
       window.removeEventListener("scroll", handleReposition, true);
       window.removeEventListener("resize", handleReposition);
     };
-  }, [isOpen]);
+  }, [isOpen, calculatePosition]);
 
   return (
     <div className="flex flex-col gap-2">
