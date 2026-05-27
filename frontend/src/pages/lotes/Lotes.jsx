@@ -26,7 +26,8 @@ function Lotes() {
     { label: "Código de Lote", key: "codigo_fungivora" },
     { label: "Ubicación", key: "ubicacion_lote" },
     { label: "Estado", key: "fase" },
-    { label: "Fecha", key: "fecha_lote" }
+    { label: "Fecha", key: "fecha_lote" },
+    { label: "Eliminar", key: "eliminar"}
   ];
 
   // Tener la fecha de hoy en el input
@@ -334,7 +335,7 @@ function Lotes() {
 
       <div className="flex flex-col lg:flex-row gap-8 items-stretch relative">
         {/* Componente de las tablas*/}
-        <div className={`w-full bg-white rounded-[32px] shadow-sm border p-4 md:p-8 md:pl-16 min-h-[500px] ${verFormulario ? "hidden" : "block"} lg:block`}>
+        <div className={`w-full bg-white rounded-[32px] shadow-sm border p-4 md:p-8 md:pl-8 min-h-[500px] ${verFormulario ? "hidden" : "block"} lg:block`}>
           {paso === 1 ? (
             <>
               <Titulo>Lotes</Titulo>
