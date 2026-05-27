@@ -8,6 +8,7 @@ import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
 import ModalConfirmacion from "../../shared/components/ui/popups/ModalConfirmacion";
 import Button from "../../shared/components/ui/buttons/Botones";
 import Input from "../../shared/components/ui/inputs/InputTexto";
+import BotonCrear from "../../shared/components/ui/buttons/BotonFlotante";
 
 import TablaInventario from "../../features/inventario/components/TablaInventario";
 import FormularioInsumo from "../../features/inventario/components/FormularioInsumo";
@@ -130,16 +131,10 @@ const Inventario = () => {
 
         {/* Botón Móvil */}
         <div className="lg:hidden flex justify-start mb-6">
-          <Button
+          <BotonCrear
             onClick={() => setVerFormulario(!verFormulario)}
-            className="px-5 py-2 rounded-[12px] border-2"
-            isOutline={true}>
-            <Text
-              variante="label"
-              style={{ color: colores.azul, fontWeight: "600", fontSize: "13px" }}>
-              {verFormulario ? "Ver Inventario" : "Crear insumo"}
-            </Text>
-          </Button>
+            texto={verFormulario ? "Ver Inventario" : "Crear insumo"}
+        />
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
