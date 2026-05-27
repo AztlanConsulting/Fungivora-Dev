@@ -33,7 +33,7 @@ const FormCrearUsuario = ({
 
     const { nombre_usuario, correo_usuario, contrasena_usuario } = nuevoUsuario;
     if (!nombre_usuario?.trim() || !correo_usuario?.trim() || !contrasena_usuario?.trim()) {
-      if (setError) setError("Todos los campos son obligatorios. Por favor, llena todos los datos.");
+      if (setError) setError("Por favor, llena todos los datos.");
       return;
     }
 
@@ -49,7 +49,7 @@ const FormCrearUsuario = ({
 
     const regexCorreo = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?$/;
     if (!regexCorreo.test(correo_usuario)) {
-      if (setError) setError("El correo electrónico no tiene un formato válido (ejemplo@dominio.com).");
+      if (setError) setError("El correo electrónico no tiene un formato válido.");
       return;
     }
 
@@ -58,7 +58,6 @@ const FormCrearUsuario = ({
       if (setError) setError("La contraseña debe tener entre 8 y 16 caracteres.");
       return;
     }
-
 
     onGuardar();
   };
@@ -114,30 +113,25 @@ const FormCrearUsuario = ({
     <div className={inputContainerClasses}>
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Contraseña</Text>
         
-        {/* Este contenedor ahora actúa como el "frame" del input */}
-        <div className="relative w-full flex items-center">
+        <div className="relative w-full">
             <Input
-            type={showPassword ? "text" : "password"}
-            placeholder="Escribe una contraseña"
-            value={nuevoUsuario.contrasena_usuario || ""}
-            onChange={(e) => handleChangeInput("contrasena_usuario", e.target.value)}
-            required
-            // Eliminamos clases de ancho aquí si el Input ya es 'w-full' por defecto
-            className="w-full pr-12" 
+                type={showPassword ? "email" : "password"}
+                placeholder="Escribe una contraseña"
+                value={nuevoUsuario.contrasena_usuario || ""}
+                onChange={(e) => handleChangeInput("contrasena_usuario", e.target.value)}
+                required
+                className="w-full pr-10" 
             />
             
-            <button
-            type="button"
-            // Posicionamiento absoluto ajustado para centrarse verticalmente
-            className="absolute right-0 top-0 bottom-0 flex items-center justify-center pr-4"
-            onClick={() => setShowPassword(!showPassword)}
+            <div
+                className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer select-none z-20 text-gray-500 hover:text-gray-700 h-5 w-5"
+                onClick={() => setShowPassword(!showPassword)}
             >
-            <HugeiconsIcon
-                icon={showPassword ? ViewIcon : ViewOffIcon}
-                size={20}
-                className="text-gray-500 hover:text-gray-700 transition-colors"
-            />
-            </button>
+                <HugeiconsIcon
+                    icon={showPassword ? ViewIcon : ViewOffIcon}
+                    size={20}
+                />
+            </div>
         </div>
     </div>
       

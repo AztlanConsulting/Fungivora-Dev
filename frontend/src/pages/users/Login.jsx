@@ -78,6 +78,7 @@ const Login = () => {
                   <Text variante="label" style={{ color: colores.gris }}>Usuario</Text>
                 </div>
                 <Input
+                  type="email"
                   placeholder="Escribe tu usuario..."
                   value={usuario}
                   onChange={handleUsuarioChange}

@@ -31,6 +31,9 @@ const numeroRegex = {
 
 const caracteresBase = ["<", ">", "{", "}", "[", "]", "\\", "`", "^", "~", ","]; 
 
+const emailConfig = { type: "email" };
+const emailRegex = /^[a-zA-Z0-9._+-@]*$/;
+
 const Input = ({
     variante = "normal",
     numeroTipo = "entero",
@@ -49,7 +52,7 @@ const Input = ({
     const sizeClass = tieneAnchoCustom ? "" : (sizes[variante] || sizes.normal);
     const alignmentClass = alignments[variante] || alignments.normal;
 
-    if (variante === "normal" && !regex) {
+    if (variante === "normal" && !regex && type !== "email") {
         regex = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9][a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 ]*$/;
     }
 
@@ -77,6 +80,14 @@ const Input = ({
         if (regex && e.target.value !== "" && !regex.test(e.target.value)) return;
 
         onChange(e);
+
+        if (type === "email") {
+        return onChange(e);
+        }
+
+        if (regex && e.target.value !== "" && !regex.test(e.target.value)) return;
+
+        onChange(e);
     };
 
     const sharedProps = {
@@ -100,8 +111,7 @@ const Input = ({
 
     const numProps = variante === "numero"
         ? numeroConfig[numeroTipo] || numeroConfig.entero
-        : { type: type };
-
+        : (type === "email" ? emailConfig : { type: type });
 
     return (
         <div
