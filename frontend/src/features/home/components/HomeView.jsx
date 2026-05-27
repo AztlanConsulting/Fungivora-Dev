@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Clock01Icon, PackageIcon } from '@hugeicons/core-free-icons';
@@ -15,7 +15,7 @@ import BotonCrear from '../../../shared/components/ui/buttons/BotonFlotante';
 const parseJwt = (token) => {
     try {
         return JSON.parse(atob(token.split('.')[1]));
-    } catch (e) {
+    } catch {
         return null;
     }
 };
@@ -27,36 +27,28 @@ import accesoLote from '../../../assets/images/acceso-lote.png';
 
 const PantallaPrincipalView = () => {
     const navigate = useNavigate();
-    const [esAdmin, setEsAdmin] = useState(false);
-
     const { dashboard, loading, error, revisarLotes } = useHome();
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) return;
+    const cards = dashboard?.cards || {};
+    const listas = dashboard?.listas || {};
+    const lotes = dashboard?.lotes || {};
 
+    const [esAdmin] = useState(() => {
+        const token = localStorage.getItem('token');
+        if (!token) return false;
+        
         try {
             let tokenToParse = token;
             if (token.startsWith('{')) {
                 const parsedTokenObj = JSON.parse(token);
                 tokenToParse = parsedTokenObj.token || parsedTokenObj.data?.token;
             }
-
             const payload = parseJwt(tokenToParse);
-            console.log("Payload del token:", payload);
-
-            if (payload) {
-                const isAdminValue = Number(payload.is_user_admin);
-                setEsAdmin(isAdminValue === 1); 
-            }
-        } catch (err) {
-            console.error("Error validando sesión:", err);
+            return Number(payload?.is_user_admin) === 1;
+        } catch {
+            return false;
         }
-    }, []);
-
-    const cards = dashboard?.cards || {};
-    const listas = dashboard?.listas || {};
-    const lotes = dashboard?.lotes || {};
+    });
 
     const resumen = {
         lotesActivos: cards.lotesActivos || 0,

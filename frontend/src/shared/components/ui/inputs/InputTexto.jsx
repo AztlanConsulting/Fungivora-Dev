@@ -32,7 +32,6 @@ const numeroRegex = {
 const caracteresBase = ["<", ">", "{", "}", "[", "]", "\\", "`", "^", "~", ","]; 
 
 const emailConfig = { type: "email" };
-const emailRegex = /^[a-zA-Z0-9._+-@]*$/;
 
 const Input = ({
     variante = "normal",

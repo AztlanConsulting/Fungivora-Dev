@@ -16,7 +16,7 @@ const useUsuarios = () => {
             } else {
                 setError("Error al cargar la lista de usuarios");
             }
-        } catch (err) {
+        } catch {
             setError("Error de conexión con el servidor");
         } finally {
             setCargando(false);
@@ -34,7 +34,7 @@ const useUsuarios = () => {
                 await fetchUsuarios();
             }
             return res; 
-        } catch (err) {
+        } catch {
             return { success: false, message: "Error de conexión al crear usuario" };
         }
     };

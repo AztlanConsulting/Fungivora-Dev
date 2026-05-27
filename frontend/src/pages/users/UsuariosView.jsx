@@ -21,7 +21,7 @@ const estadoInicialUsuario = {
 };
 
 const UsuariosView = () => {
-    const { usuarios, cargando, error, addUsuario, refresh } = useUsuarios();
+    const { usuarios, cargando, addUsuario, refresh } = useUsuarios();
     const [filaSeleccionada, setFilaSeleccionada] = useState(null);
     
     const [vistaActual, setVistaActual] = useState("lista");
