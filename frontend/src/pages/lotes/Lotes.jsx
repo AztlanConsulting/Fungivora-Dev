@@ -140,19 +140,31 @@ function Lotes() {
 
   // Agregar el bloque y su validación
   const handleAgregarBloque = () => {
-    const { peso_gr, cantidad, id_inoculo, contenedor, tipo_sustrato } = bloqueForm;
+    const { peso_gr, cantidad, id_inoculo, contenedor, tipo_sustrato, produccion } = bloqueForm;
 
-    if (!id_inoculo || !contenedor || !peso_gr || !cantidad || !tipo_sustrato) {
+    if (!id_inoculo || !contenedor || !peso_gr || !cantidad || !tipo_sustrato || !produccion) {
       setErrorValidacion("Completa todos los campos");
       return;
     }
 
     const numPeso = Number(peso_gr);
-    const numCantidad = Number(cantidad);
+    const numCantidad = parseInt(cantidad, 10); 
 
     if (isNaN(numPeso) || numPeso <= 0 || isNaN(numCantidad) || numCantidad <= 0) {
       setErrorValidacion("Ingresa un número válido y mayor a cero");
       return;
+    }
+
+    const cantidadAcumulada = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad), 0);
+    const nuevoTotal = cantidadAcumulada + numCantidad;
+
+    if (nuevoTotal > 100) {
+      setErrorValidacion(`Capacidad máxima alcanzada - 100 bloques en total.`);
+      return;
+    }
+
+    if (nuevoTotal === 100) {
+      console.log("Has alcanzado el límite máximo de 100 bloques.");
     }
 
     const opcionesInoculo = getInoculosPorEspecie(nuevaFila.especie);
@@ -160,16 +172,16 @@ function Lotes() {
       opt => String(opt.value) === String(id_inoculo)
     );
 
-    const cantidadAcumulada = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad), 0);
-
-    if (cantidadAcumulada + numCantidad > 100) {
-      setErrorValidacion(`Límite excedido. Total acumulado: ${cantidadAcumulada}. No puedes superar 100 unidades.`);
-      return;
-    }
-
     agregarBloqueALista({ 
       ...bloqueForm, 
+      cantidad: String(numCantidad), 
       nombre_inoculo: inoculoSeleccionado ? inoculoSeleccionado.label : "N/A" 
+    });
+
+    setAlerta({
+      visible: true,
+      variante: "exito",
+      mensaje: "Bloque añadido a la lista correctamente"
     });
     
     setBloqueForm({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "", tipo_sustrato: "" });
@@ -372,6 +384,7 @@ function Lotes() {
                 codigo={codigoPrevisualizacion}
                 sustratos={sustratos}
                 contenedores={contenedores}
+                setAlerta={setAlerta}
                 bloqueForm={bloqueForm}
                 setBloqueForm={setBloqueForm}
                 handleBloqueForm={handleInputChange(setBloqueForm)}
@@ -386,9 +399,11 @@ function Lotes() {
 
           {/* Botones de registrar y cancelar*/}
           {paso === 2 && (
-            <div className={`flex flex-col md:flex-row gap-4 mt-8 items-center md:justify-end ${verFormulario ? "flex" : "hidden"} lg:flex`}>
-              <div className="order-1 md:order-2">
+            <div className={`flex flex-col md:flex-row gap-4 mt-8 items-center justify-center ${verFormulario ? "flex" : "hidden"} lg:flex`}>
+              
+              <div className="w-full md:w-auto flex justify-center">
                 <Button
+                  className="w-full md:w-auto"
                   variant="registrar"
                   onClick={previsualizarRegistro}
                   isOutline={true} 
@@ -397,13 +412,22 @@ function Lotes() {
                   {guardando ? "Cargando..." : "Finalizar"}
                 </Button>
               </div>
-              <Button variant="eliminar" isOutline={true} onClick={abrirModalCancelar}>
-                Cancelar
-              </Button>
+
+              <div className="w-full md:w-auto flex justify-center"> 
+                <Button 
+                  className="w-full md:w-[150px]" 
+                  variant="eliminar" 
+                  isOutline={true} 
+                  onClick={abrirModalCancelar}
+                >
+                  Cancelar
+                </Button>
+              </div>
             </div>
           )}
         </div>
       </div>
+
 
       <ModalAlerta
         visible={alerta.visible}
