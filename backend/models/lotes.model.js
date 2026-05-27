@@ -119,6 +119,7 @@ class Lotes {
             FROM Inoculos i
             LEFT JOIN Categorias c ON i.especie = c.nombre_opcion
             WHERE i.cantidad_disponible > 0
+            AND i.tipo = 'semilla' 
             ORDER BY i.fecha DESC
         `);
         return filas;

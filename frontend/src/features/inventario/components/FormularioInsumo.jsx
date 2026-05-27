@@ -34,6 +34,8 @@ const FormularioInsumo = ({ nuevaFila, handleNuevaFila, handleGuardarInsumo, uni
       <div className="flex flex-col gap-2">
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Stock Actual</Text>
         <Input
+          variante="numero"
+          numeroTipo="decimal"
           placeholder="0.00"
           value={nuevaFila.cantidad}
           onChange={(e) => handleCambioNumero("cantidad", e.target.value)}
@@ -44,6 +46,8 @@ const FormularioInsumo = ({ nuevaFila, handleNuevaFila, handleGuardarInsumo, uni
       <div className="flex flex-col gap-2">
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Stock Recomendado</Text>
         <Input
+          variante="numero"
+          numeroTipo="decimal"
           placeholder="0.00"
           value={nuevaFila.stock_recomendado}
           onChange={(e) => handleCambioNumero("stock_recomendado", e.target.value)}
