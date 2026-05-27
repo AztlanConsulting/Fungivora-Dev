@@ -19,8 +19,10 @@ const sizes = {
 };
 
 // Anchos por defecto cuando no se pide fullWidth
+// clamp(min, fluido, max): nunca menor a 10rem ni mayor a 14rem,
+// escala con el viewport entre esos límites.
 const widths = {
-  lg: "w-40 md:w-52",
+  lg: "w-[clamp(8rem,22vw,14rem)]"
 };
 
 // Redondeo de las esquinas
