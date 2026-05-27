@@ -47,8 +47,11 @@ const Input = ({
     const textAreaRef = useRef(null);
     const tieneAnchoCustom = /\bw-\d+|\bw-auto|\bw-full\b/.test(className);
     const sizeClass = tieneAnchoCustom ? "" : (sizes[variante] || sizes.normal);
-    
     const alignmentClass = alignments[variante] || alignments.normal;
+
+    if (variante === "normal" && !regex) {
+        regex = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9][a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 ]*$/;
+    }
 
     useEffect(() => {
         if (variante === "amplio" && textAreaRef.current) {
@@ -71,7 +74,6 @@ const Input = ({
             if (!numeroRgx.test(rawValue)) return;
             return onChange(e);
         }
-
         if (regex && e.target.value !== "" && !regex.test(e.target.value)) return;
 
         onChange(e);
