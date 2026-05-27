@@ -38,7 +38,7 @@ const Resumen = ({
   );
 
   return (
-    <div className="w-full lg:w-64 xl:w-72 bg-white rounded-[32px] shadow-sm border p-6 flex flex-col gap-4 shrink-0">
+    <div className="w-full lg:w-64 xl:w-72 bg-white rounded-[32px] shadow-sm border p-4 sm:p-6 flex flex-col gap-4 shrink-0 min-w-0">
       <Text variante="medium" style={{ color: colores.azul, fontWeight: 600 }}>
         Resumen
       </Text>
@@ -185,7 +185,7 @@ const Resumen = ({
       {children && (
         <>
           <div className="w-full h-px" style={{ backgroundColor: colores.grisClaro }} />
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-4">
             {children}
           </div>
         </>

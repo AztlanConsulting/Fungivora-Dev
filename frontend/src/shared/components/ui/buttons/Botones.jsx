@@ -13,9 +13,14 @@ const variants = {
   confirmar: "verdeAccent",
 };
 
-// Tamaño cambiante por el tamaño de pantalla
+// Tamaño cambiante por el tamaño de pantalla (solo alto y tipografía)
 const sizes = {
-  lg: "w-40 h-8 md:w-52 md:h-10 text-base md:text-lg",
+  lg: "h-8 md:h-10 text-base md:text-lg",
+};
+
+// Anchos por defecto cuando no se pide fullWidth
+const widths = {
+  lg: "w-40 md:w-52",
 };
 
 // Redondeo de las esquinas
@@ -46,6 +51,7 @@ const Button = ({
   isOutline = false,
   icon: Icon,
   disabled,
+  fullWidth = false,
   ...props
 }) => {
   const colorKey = variants[variant] || "azul";
@@ -71,9 +77,10 @@ const Button = ({
       {...props}
       className={`
         flex items-center justify-center gap-2
-        transition-all 
-        ${!disabled ? 'hover:opacity-90 active:scale-95' : 'cursor-not-allowed'} 
-        flex-shrink-0 
+        transition-all
+        ${!disabled ? 'hover:opacity-90 active:scale-95' : 'cursor-not-allowed'}
+        flex-shrink-0
+        ${fullWidth ? "w-full" : widths[size]}
         ${sizes[size]}
         ${roundings[rounded]}
       `}

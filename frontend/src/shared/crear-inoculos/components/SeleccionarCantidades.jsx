@@ -84,7 +84,7 @@ const EntradaCard = ({
 
 export const EntradaLista = ({ items = [] }) => {
   return (
-    <div className="w-full lg:flex-1 bg-white rounded-[32px] shadow-sm border pb-8 p-6 md:p-8 flex flex-col">
+    <div className="w-full lg:flex-1 bg-white rounded-[32px] shadow-sm border pb-8 p-4 sm:p-6 md:p-8 flex flex-col">
 
       <div className="mb-6">
         <Text variante="medium">Composición Unitaria</Text>
