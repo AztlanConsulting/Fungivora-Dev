@@ -91,11 +91,13 @@ const FormCrearBloque = ({
       <div className="flex flex-col gap-2">
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Peso</Text>
         <Input
-          type="text"
+          variante="numero"
+          numeroTipo="decimal"
           inputMode="decimal"
           style={{ fontStyle: 'italic' }}
           placeholder="Ingresa el peso (g)"
           value={bloqueForm.peso_gr}
+          className="w-full"
           onChange={handleChangePeso}
         />
       </div>
@@ -110,12 +112,13 @@ const FormCrearBloque = ({
       <div className="flex flex-col gap-2">
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Cantidad</Text>
         <Input
-          type="text"
-          inputMode="decimal"
+          variante="numero"
+          numeroTipo="decimal"
           style={{ fontStyle: 'italic' }}
           placeholder="Ingresa cantidad"
           value={bloqueForm.cantidad}
           onChange={handleChangeCantidad}
+          className="w-full"
         />
       </div>
 
