@@ -1,5 +1,18 @@
 const db = require('../util/db');
 
+const nombreValido = (texto) => {
+    // Permite letras, números, espacios, acentos y algunos símbolos comunes
+    // Bloquea emojis y caracteres unicode raros
+    const regex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s().,%-]+$/;
+    return regex.test(texto);
+};
+
+const unidadesPermitidas = [
+    'Gramo(s)',
+    'Mililitro(s)',
+    'Pieza(s)'
+];
+
 class Inventario {
     constructor(id_insumo, nombre, cantidad, unidad, stock_recomendado) {
         this.id_insumo = id_insumo;
@@ -46,6 +59,14 @@ class Inventario {
 
     // Crea un nuevo insumo
     static crear_insumo = async (id_insumo, nombre, cantidad, stock_recomendado, unidad) => {
+        if (!nombreValido(nombre)) {
+            throw new Error('El nombre contiene caracteres no permitidos');
+        }
+
+        if (!unidadesPermitidas.includes(unidad)) {
+            throw new Error('Unidad inválida');
+        }
+
         return db.execute(`
             INSERT INTO Insumos (
                 id_insumo,
