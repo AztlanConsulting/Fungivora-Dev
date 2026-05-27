@@ -92,7 +92,7 @@ const InputFecha = ({ value = {}, onChange }) => {
             </div>
 
             <div
-                className={`w-80 h-10 md:w-96 md:h-12 bg-[#FFFFFF] rounded-md overflow-hidden transition-all flex items-stretch ${isFocused ? "ring-4" : "ring-2"}`}
+                className={`w-full h-10 md:max-w-[24rem] md:h-12 bg-[#FFFFFF] rounded-md overflow-hidden transition-all flex items-stretch ${isFocused ? "ring-4" : "ring-2"}`}
                 style={{ outline: "none", boxShadow: `0 0 0 ${isFocused ? "4px" : "2px"} ${isFocused ? colores.azul : colores.grisClaro}` }}
             >
                 <div
