@@ -14,7 +14,6 @@ const FormCrearBloque = ({
   setBloqueForm, 
   handleBloqueForm, 
   onAgregar, 
-  setAlerta,
   error,
   especieSeleccionada, 
   getInoculosPorEspecie
