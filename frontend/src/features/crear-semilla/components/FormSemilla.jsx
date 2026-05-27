@@ -69,7 +69,7 @@ const FormSemillas = () => {
   const inoculoDisponible = inoculoSeleccionado?.raw?.cantidad_disponible ?? 0;
   const codigoInoculo = inoculoSeleccionado?.codigo ?? "";
   const cantidadFinal = BOLSAS[tamano] ?? cantidad;
-
+  
   const {
     items: itemsComposicion,
     valores: valoresComposicion,
@@ -120,27 +120,27 @@ const FormSemillas = () => {
     try {
       const datos = esComprado
         ? crearInoculoCompradoDTO({
-          codigo: codigos.base,
-          tipo: TIPO_CREACION,
-          especie,
-          fecha,
-          cantidadDisponible: cantidadComprada,
-          nota,
-          unidad: "g",
-        })
+            codigo: codigos.base,
+            tipo: TIPO_CREACION,
+            especie,
+            fecha,
+            cantidadDisponible: cantidadComprada,
+            nota,
+            unidad: "g",
+          })
         : crearInoculoDTO({
-          codigo: codigos.base,
-          tipo: TIPO_CREACION,
-          especie,
-          fecha,
-          cantidadFinal,
-          cantidad,
-          nota,
-          unidad: "g",
-          inoculoSeleccionado,
-          valoresComposicion,
-          itemsComposicion,
-        });
+            codigo: codigos.base,
+            tipo: TIPO_CREACION,
+            especie,
+            fecha,
+            cantidadFinal,
+            cantidad,
+            nota,
+            unidad: "g",
+            inoculoSeleccionado,
+            valoresComposicion,
+            itemsComposicion,
+          });
 
       await insumosService.postInoculo(datos);
       navigate("/inoculos", {
@@ -261,44 +261,44 @@ const FormSemillas = () => {
               </div>
 
               {!esComprado && <EntradaLista items={itemsComposicion} />}
-              <div className="bg-white rounded-[32px] shadow-sm border p-4 sm:p-6 md:p-8 flex flex-col gap-6">
-                <div className="flex flex-col md:flex-row gap-6 w-full">
+                <div className="bg-white rounded-[32px] shadow-sm border p-4 sm:p-6 md:p-8 flex flex-col gap-6">
+                  <div className="flex flex-col md:flex-row gap-6 w-full">
 
-                  {esComprado ? (
-                    <div className="flex flex-col gap-3 flex-1">
-                      <Text variante="medium">Cantidad disponible</Text>
-                      <div className="flex items-center gap-3">
-                        <Input
-                          variante="numero"
-                          numeroTipo="decimal"
-                          placeholder="0"
-                          value={cantidadComprada}
-                          onChange={(e) => setCantidadComprada(e.target.value)}
-                          roundedClass="rounded-xl"
-                        />
-                        <Text variante="label" style={{ color: colores.negro }}>g</Text>
+                    {esComprado ? (
+                      <div className="flex flex-col gap-3 flex-1">
+                        <Text variante="medium">Cantidad disponible</Text>
+                        <div className="flex items-center gap-3">
+                          <Input
+                            variante="numero"
+                            numeroTipo="decimal"
+                            placeholder="0"
+                            value={cantidadComprada}
+                            onChange={(e) => setCantidadComprada(e.target.value)}
+                            roundedClass="rounded-xl"
+                          />
+                          <Text variante="label" style={{ color: colores.negro }}>g</Text>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col gap-3 w-full md:w-[160px] shrink-0">
-                      <Text variante="medium">Cantidad</Text>
-                      <InputCantidad value={cantidad} onChange={setCantidad} />
-                    </div>
-                  )}
+                    ) : (
+                      <div className="flex flex-col gap-3 w-full md:w-[160px] shrink-0">
+                        <Text variante="medium">Cantidad</Text>
+                        <InputCantidad value={cantidad} onChange={setCantidad} />
+                      </div>
+                    )}
 
-                  <div className="flex flex-col gap-3 flex-1">
-                    <Text variante="medium">Fecha de creación</Text>
-                    <InputFecha value={fecha} onChange={setFecha} />
+                    <div className="flex flex-col gap-3 flex-1">
+                      <Text variante="medium">Fecha de creación</Text>
+                      <InputFecha value={fecha} onChange={setFecha} />
+                    </div>
+
                   </div>
 
+                  <div className="flex flex-col gap-3 w-full">
+                    <Text variante="medium">Notas</Text>
+                    <InputNota value={nota} onChange={setNota} />
+                  </div>
+                  
                 </div>
-
-                <div className="flex flex-col gap-3 w-full">
-                  <Text variante="medium">Notas</Text>
-                  <InputNota value={nota} onChange={setNota} />
-                </div>
-
-              </div>
             </div>
 
             <Resumen
@@ -332,7 +332,7 @@ const FormSemillas = () => {
           </div>
         </div>
       </Base>
-
+      
       <ModalAlerta
         visible={alerta.visible}
         variante={alerta.variante}
