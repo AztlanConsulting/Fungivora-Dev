@@ -63,7 +63,7 @@ const BibliotecaView = () => {
             <BotonCrear 
                 onClick={() => setModalVisible(true)} 
                 texto="Crear"
-                aria-label="Crear inóculo"
+                ariaLabel="Crear inóculo"
             />
 
             <Base margen_arriba="mt-24 md:mt-20">
