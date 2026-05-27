@@ -159,7 +159,7 @@ function Lotes() {
     const nuevoTotal = cantidadAcumulada + numCantidad;
 
     if (nuevoTotal > 100) {
-      setErrorValidacion(`Capacidad máxima alcanzada - 100 bloques en total. Tienes ${cantidadAcumulada} bloques.`);
+      setErrorValidacion(`Capacidad máxima alcanzada - 100 bloques en total.`);
       return;
     }
 
@@ -176,6 +176,12 @@ function Lotes() {
       ...bloqueForm, 
       cantidad: String(numCantidad), 
       nombre_inoculo: inoculoSeleccionado ? inoculoSeleccionado.label : "N/A" 
+    });
+
+    setAlerta({
+      visible: true,
+      variante: "exito",
+      mensaje: "Bloque añadido a la lista correctamente"
     });
     
     setBloqueForm({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "", tipo_sustrato: "" });
@@ -378,6 +384,7 @@ function Lotes() {
                 codigo={codigoPrevisualizacion}
                 sustratos={sustratos}
                 contenedores={contenedores}
+                setAlerta={setAlerta}
                 bloqueForm={bloqueForm}
                 setBloqueForm={setBloqueForm}
                 handleBloqueForm={handleInputChange(setBloqueForm)}
@@ -392,9 +399,11 @@ function Lotes() {
 
           {/* Botones de registrar y cancelar*/}
           {paso === 2 && (
-            <div className={`flex flex-col md:flex-row gap-4 mt-8 items-center md:justify-end ${verFormulario ? "flex" : "hidden"} lg:flex`}>
-              <div className="order-1 md:order-2">
+            <div className={`flex flex-col md:flex-row gap-4 mt-8 items-center justify-center ${verFormulario ? "flex" : "hidden"} lg:flex`}>
+              
+              <div className="w-full md:w-auto flex justify-center">
                 <Button
+                  className="w-full md:w-auto"
                   variant="registrar"
                   onClick={previsualizarRegistro}
                   isOutline={true} 
@@ -403,13 +412,22 @@ function Lotes() {
                   {guardando ? "Cargando..." : "Finalizar"}
                 </Button>
               </div>
-              <Button variant="eliminar" isOutline={true} onClick={abrirModalCancelar}>
-                Cancelar
-              </Button>
+
+              <div className="w-full md:w-auto flex justify-center"> 
+                <Button 
+                  className="w-full md:w-[150px]" 
+                  variant="eliminar" 
+                  isOutline={true} 
+                  onClick={abrirModalCancelar}
+                >
+                  Cancelar
+                </Button>
+              </div>
             </div>
           )}
         </div>
       </div>
+
 
       <ModalAlerta
         visible={alerta.visible}

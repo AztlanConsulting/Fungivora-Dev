@@ -14,25 +14,11 @@ const FormCrearBloque = ({
   setBloqueForm, 
   handleBloqueForm, 
   onAgregar, 
+  setAlerta,
   error,
   especieSeleccionada, 
   getInoculosPorEspecie
 }) => {
-
-  // Validar el número
-  const validarEntero = (valor, limite) => {
-    let limpio = valor.replace(/[^0-9]/g, "");
-
-    if (limpio.length > 1 && limpio.startsWith("0")) {
-      limpio = limpio.substring(1);
-    }
-
-    if (limpio.length > limite) {
-      limpio = limpio.slice(0, limite);
-    }
-
-    return limpio;
-  };
 
   const inoculosOpciones = useMemo(() => {
     if (!especieSeleccionada) return [];
