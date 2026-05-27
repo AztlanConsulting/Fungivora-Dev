@@ -1,81 +1,85 @@
 import { useState, useEffect } from 'react';
 import { LoteService } from '../services/lote.service';
+import { traducirError } from '../../../shared/utils/traducirError';
 
-const useDetalleLote = (id_lote, id_inoculo_usado, faseInicial) => {
+const FASES_CONFIG = [
+    { label: "Inoculación" }, { label: "Colonización" }, { label: "Fructificación" },
+    { label: "Cosecha 1" }, { label: "Cosecha 2" }, { label: "Finalización" },
+];
+
+const useDetalleLote = (id_lote, faseInicial) => {
     const [bloques, setBloques] = useState([]);
     const [bloquesIniciales, setBloquesIniciales] = useState([]);
     const [especie, setEspecie] = useState("");
-    const [codigoInoculo, setCodigoInoculo] = useState("");
-    const [codigoLoteBD, setCodigoLoteBD] = useState(null);
+    const [codigoInoculo, setCodigoInoculo] = useState(null); 
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
-    const fases = [
-        { label: "Inoculación" }, { label: "Colonización" }, { label: "Fructificación" },
-        { label: "Cosecha 1" }, { label: "Cosecha 2" }, { label: "Finalización" },
-    ];
-    const faseNum = fases.findIndex(f => f.label === faseInicial);
-    const [fase, setFase] = useState(faseNum !== -1 ? faseNum : 0);
-    const [faseInicialNum, setFaseInicialNum] = useState(faseNum !== -1 ? faseNum : 0);
+
+    const [fase, setFase] = useState(0);
+    const [faseInicialNum, setFaseInicialNum] = useState(0);
 
     useEffect(() => {
         const fetchData = async () => {
             if (!id_lote) return;
             setCargando(true);
             try {
-                const [resBloques, resCodigo, resEspecie] = await Promise.all([
+                const [resBloques, dataLote] = await Promise.all([
                     LoteService.getBloquesByLote(id_lote),
-                    id_inoculo_usado ? LoteService.getCodigoInoculo(id_inoculo_usado) : Promise.resolve("N/A"),
-                    id_inoculo_usado ? LoteService.getEspecieByLote(id_inoculo_usado) : Promise.resolve("S/N")
+                    LoteService.getDetalleLote(id_lote)
                 ]);
 
-                // Obtener todos los datos de los bloques y lote
                 const listaObtenida = resBloques.data || [];
+                const faseActualLote = dataLote?.fase || faseInicial; 
 
-                setBloques(listaObtenida);
-                setBloquesIniciales(resBloques.data || []);
-                setCodigoInoculo(resCodigo);
-                setEspecie(resEspecie);
                 if (listaObtenida.length > 0) {
-                    const codigoEncontrado = listaObtenida[0].codigo_lote || "LC-DESCONOCIDO-000000";
-                    setCodigoLoteBD(codigoEncontrado);
+                    setBloques(listaObtenida);
+                    setBloquesIniciales(listaObtenida.map(b => ({ ...b })));
+                    setCodigoInoculo(listaObtenida[0].codigo_lote);
+                    setEspecie(listaObtenida[0].especie_nombre || "S/N");
                 }
 
+                const indexFase = FASES_CONFIG.findIndex(f => f.label === faseActualLote);
+                const valorFase = indexFase !== -1 ? indexFase : 0;
+                
+                setFase(valorFase);
+                setFaseInicialNum(valorFase);
+
             } catch (err) {
-                setError(err.message);
-                setBloques([]);
-                setBloquesIniciales([]);
+                console.error("Error en fetchData:", err);
+                setError(traducirError(err).mensaje);
             } finally {
                 setCargando(false);
             }
         };
         fetchData();
-    }, [id_lote, id_inoculo_usado]);
+    }, [id_lote, faseInicial]); 
 
     const getFase = (id_fase) => {
-        return fases[id_fase] ? fases[id_fase].label : "Desconocida";
+        return FASES_CONFIG[id_fase] ? FASES_CONFIG[id_fase].label : "Desconocida";
     };
 
     const guardarCambios = async (bloquesActualizados, nuevaFaseIndex) => {
+        setCargando(true); 
         try {
-
-            const nombreFase = fases[nuevaFaseIndex] ? fases[nuevaFaseIndex].label : "Inoculación";
-
-            await LoteService.updateFaseLote(id_lote, nombreFase);
-
-            await LoteService.updateBloquesMasivo(id_lote, bloquesActualizados);
-
+            const nombreFase = FASES_CONFIG[nuevaFaseIndex]?.label || "Inoculación";
+            await Promise.all([
+                LoteService.updateFaseLote(id_lote, nombreFase),
+                LoteService.updateBloquesMasivo(id_lote, bloquesActualizados)
+            ]);
             return { success: true };
         } catch (err) {
             return { success: false, error: err.message };
+        } finally {
+            setCargando(false);
         }
     };
 
     return {
         bloques, setBloques, bloquesIniciales, setBloquesIniciales,
         fase, setFase, faseInicialNum, setFaseInicialNum,
-        especie, codigoInoculo, codigoLoteBD,
+        especie, codigoInoculo,         
         cargando, error, getFase, guardarCambios,
-        fases
+        fases: FASES_CONFIG 
     };
 };
 

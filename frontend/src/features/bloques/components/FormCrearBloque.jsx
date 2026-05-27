@@ -7,75 +7,101 @@ import Button from "../../../shared/components/ui/buttons/Botones";
 import Input from "../../../shared/components/ui/inputs/InputTexto";
 
 // Form para poder crear un bloque, con sus inserts
-const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, handleBloqueForm, onAgregar, error,
-  especieSeleccionada,
-  getInoculosPorEspecie,
-  idInoculoSeleccionado,
-  setIdInoculoLote
+const FormCrearBloque = ({ 
+  contenedores, 
+  sustratos,
+  bloqueForm, 
+  setBloqueForm, 
+  handleBloqueForm, 
+  onAgregar, 
+  error,
+  especieSeleccionada, 
+  getInoculosPorEspecie
 }) => {
-
-  // Validar el número
-  const validarNumero = (valor, limite) => {
-    let limpio = valor.replace(/[^0-9.]/g, "");
-
-    if (limpio.startsWith("0")) {
-      limpio = limpio.substring(1);
-    }
-
-    if (limpio.length > limite) {
-      limpio = limpio.slice(0, limite);
-    }
-    const partes = limpio.split(".");
-    if (partes.length > 2) {
-      limpio = partes[0] + "." + partes.slice(1).join("");
-    }
-
-    if (partes[1] && partes[1].length > 2) {
-      limpio = parseFloat(limpio).toFixed(2);
-    }
-
-    if (limpio === ".") return "";
-
-    return limpio;
-  };
 
   const inoculosOpciones = useMemo(() => {
     if (!especieSeleccionada) return [];
     return getInoculosPorEspecie(especieSeleccionada);
   }, [especieSeleccionada, getInoculosPorEspecie]);
 
-  // Número para peso
+
+  const validarPeso = (valor) => {
+    let limpio = valor.replace(/[^0-9.]/g, "");
+
+    const partes = limpio.split(".");
+    if (partes.length > 2) {
+      limpio = partes[0] + "." + partes.slice(1).join("");
+    }
+
+    if (partes[0].length > 5) {
+      partes[0] = partes[0].slice(0, 5);
+    }
+    if (partes[1] !== undefined && partes[1].length > 2) {
+      partes[1] = partes[1].slice(0, 2);
+    }
+    
+    limpio = partes[0] + (partes[1] !== undefined ? "." + partes[1] : "");
+
+    if (limpio.startsWith(".")) {
+      limpio = "0" + limpio;
+    }
+
+    return limpio;
+  };
+
   const handleChangePeso = (e) => {
-    const valorValidado = validarNumero(e.target.value, 6);
+    const valorValidado = validarPeso(e.target.value);
     setBloqueForm({ ...bloqueForm, peso_gr: valorValidado });
   };
 
-  // Número para centidad
+  // Cambiar cantidad
   const handleChangeCantidad = (e) => {
-    const valorValidado = validarNumero(e.target.value, 2);
-    setBloqueForm({ ...bloqueForm, cantidad: valorValidado });
+    let valor = e.target.value.replace(/[^0-9]/g, ""); 
+
+    if (valor === "") {
+      setBloqueForm({ ...bloqueForm, cantidad: "" });
+      return;
+    }
+
+    let numero = parseInt(valor, 10);
+
+    if (numero > 100) {
+      numero = 100;
+    }
+
+    setBloqueForm({ ...bloqueForm, cantidad: numero.toString() });
   };
+
   return (
     <div className="flex flex-col gap-5">
-      {/* Titulo */}
-      <Titulo>Bloques: {codigo}</Titulo>
-
+      <Titulo>Bloques</Titulo>
       <div className="mb-3 flex justify-between items-center">
         <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "22px" }}>Crear Bloques</Text>
       </div>
 
+      {/* Insert de Semilla */}
       <div className="rounded-xl flex flex-col gap-2">
-        <Text variante="label" style={{ color: colores.black, fontWeight: "700" }}>Semilla ({especieSeleccionada})</Text>
-        <SelectField
-          placeholder="Selecciona el inóculo para este bloque"
-          size="forms"
-          options={inoculosOpciones}
-          value={idInoculoSeleccionado}
-          onChange={(op) => setIdInoculoLote("id_inoculo", op)}
+        <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Semilla ({especieSeleccionada})</Text>
+        <SelectField 
+          placeholder="Selecciona el inóculo" 
+          size="forms" 
+          options={inoculosOpciones} 
+          value={bloqueForm.id_inoculo} 
+          onChange={(op) => handleBloqueForm("id_inoculo", op)} 
         />
       </div>
 
-      <hr className="border-gray-100" />
+      {/* Insert de tipo de sustrato */}
+      <div className="flex flex-col gap-2">
+        <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Sustrato</Text>
+        <SelectField 
+          options={sustratos} 
+          placeholder="Selecciona sustrato" 
+          size="forms" 
+          value={bloqueForm.tipo_sustrato} 
+          onChange={(op) => handleBloqueForm("tipo_sustrato", op)} 
+        />
+      </div>
 
       {/* Insert de tamaño - contenedores*/}
       <div className="flex flex-col gap-2">
@@ -87,11 +113,13 @@ const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, hand
       <div className="flex flex-col gap-2">
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Peso</Text>
         <Input
-          type="text"
+          variante="numero"
+          numeroTipo="decimal"
           inputMode="decimal"
           style={{ fontStyle: 'italic' }}
           placeholder="Ingresa el peso (g)"
           value={bloqueForm.peso_gr}
+          className="w-full"
           onChange={handleChangePeso}
         />
       </div>
@@ -106,12 +134,13 @@ const FormCrearBloque = ({ codigo, contenedores, bloqueForm, setBloqueForm, hand
       <div className="flex flex-col gap-2">
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Cantidad</Text>
         <Input
-          type="text"
-          inputMode="decimal"
+          variante="numero"
+          numeroTipo="decimal"
           style={{ fontStyle: 'italic' }}
           placeholder="Ingresa cantidad"
           value={bloqueForm.cantidad}
           onChange={handleChangeCantidad}
+          className="w-full"
         />
       </div>
 

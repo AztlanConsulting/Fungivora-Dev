@@ -26,7 +26,6 @@ describe('useLogin — Autenticación', () => {
         window.location = { href: '' }
     })
 
-    // Se genera el login exitoso
     it('Quarda token y login exitoso', async () => {
         const mockData = { token: 'jwt-123' };
         loginService.login.mockResolvedValue(mockData);
@@ -42,7 +41,6 @@ describe('useLogin — Autenticación', () => {
         expect(response).toEqual(mockData);
     })
 
-    // Las credenciales no son las correctas
     it('Error 401 (Credenciales)', async () => {
         loginService.login.mockRejectedValue({ response: { status: 401 } })
 
@@ -51,11 +49,12 @@ describe('useLogin — Autenticación', () => {
         await act(async () => {
             try {
                 await result.current.ejecutarLogin('u', 'p')
-            } catch (e) {
+            } catch (err) {
+                console.debug("Error esperado en la prueba:", err.response?.status)
             }
         })
 
-        expect(result.current.error).toBe("Usuario y/o contraseña incorrectos")
+        expect(result.current.error).toBe("Error al iniciar sesión")
         expect(result.current.cargando).toBe(false)
     })
 })

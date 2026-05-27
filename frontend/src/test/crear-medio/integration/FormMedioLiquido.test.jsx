@@ -15,16 +15,16 @@ vi.mock('../../../shared/crear-inoculos/hooks/useInoculo')
 vi.mock('../../../shared/crear-inoculos/hooks/useCategorias')
 vi.mock('../../../features/crear-medio/hooks/useIngredientesMedioLiquido')
 
-vi.mock('../../../features/crear-medio/services/inoculos.service', () => ({
+vi.mock('../../../shared/crear-inoculos/services/inoculos.service', () => ({
     default: { postInoculo: vi.fn() },
 }))
 
-vi.mock('../../../features/crear-medio/utils/generarCodigoInoculo', () => ({
+vi.mock('../../../shared/crear-inoculos/utils/generarCodigoInoculo', () => ({
     generarCodigos: vi.fn(() => ({ base: 'ML-SH-200526', lista: ['ML-SH-200526'] })),
     normalizarTipoInoculo: vi.fn(() => 'agar'),
 }))
 
-vi.mock('../../../features/crear-medio/dto/crearInoculoDto', () => ({
+vi.mock('../../../shared/crear-inoculos/dto/crearInoculoDto', () => ({
     crearInoculoDTO: vi.fn((args) => ({ ...args, isDto: true })),
 }))
 
@@ -35,12 +35,16 @@ vi.mock('../../../shared/utils/traducirError', () => ({
     })),
 }))
 
-vi.mock('../../../features/crear-medio/components/SeleccionarCantidades', () => ({
+vi.mock('../../../shared/crear-inoculos/components/SeleccionarCantidades', () => ({
     EntradaLista: () => <div data-testid="entrada-lista" />,
 }))
 
-vi.mock('../../../features/crear-medio/components/Resumen', () => ({
-    default: () => <div data-testid="resumen" />,
+vi.mock('../../../shared/crear-inoculos/components/Resumen', () => ({
+    default: ({ children }) => (
+        <div data-testid="resumen">
+            {children}
+        </div>
+    ),
 }))
 
 vi.mock('../../../shared/components/ui/popups/ModalAlerta', () => ({

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import Text from "../../../shared/components/ui/basics/texto";
-import Input from "../../../shared/components/ui/inputs/input_texto";
-import SelectField from "../../../shared/components/ui/inputs/seleccionar_texto";
+import Input from "../../../shared/components/ui/inputs/InputTexto";
+import SelectField from "../../../shared/components/ui/inputs/SeleccionarTexto";
 import Button from "../../../shared/components/ui/buttons/botones";
 import { colores } from "../../../shared/components/ui/basics/colores";
 
@@ -11,17 +11,6 @@ const ModalEditarInsumo = ({ insumo, unidades, onConfirm, onCancel }) => {
     const [stockRecomendado, setStockRecomendado] = useState("");
     const [error, setError] = useState("");
     const [confirmando, setConfirmando] = useState(false);
-
-    // Precarga los valores actuales del insumo
-    useEffect(() => {
-        if (insumo) {
-            setNombre(insumo.nombre || "");
-            setUnidad(insumo.unidad || "");
-            setStockRecomendado(String(insumo.stock_recomendado ?? ""));
-            setError("");
-            setConfirmando(false);
-        }
-    }, [insumo]);
 
     // Valida y avanza al paso de confirmación
     const handleConfirmar = () => {

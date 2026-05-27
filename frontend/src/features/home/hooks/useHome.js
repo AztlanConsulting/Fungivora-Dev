@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import homeService from '../services/home.service';
+import { traducirError } from '../../../shared/utils/traducirError';
 
 const useHome = () => {
     const [dashboard, setDashboard] = useState(null);
@@ -13,7 +14,7 @@ const useHome = () => {
             setDashboard(data);
         } catch (err) {
             console.error('Error obteniendo dashboard:', err);
-            setError(err);
+            setError(traducirError(err).mensaje);
         } finally {
             setLoading(false);
         }

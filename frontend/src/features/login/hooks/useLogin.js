@@ -2,26 +2,39 @@ import { useState, useCallback } from "react";
 import loginService from "../services/login.service";
 
 const useLogin = () => {
-    const [cargando, setCargando] = useState(false);
-    const [error, setError] = useState(null);
+  const [cargando, setCargando] = useState(false);
+  const [error, setError] = useState(null);
 
-    const login = useCallback(async (usuario, password) => {
-        setCargando(true);
-        setError(null);
-        try {
-            const data = await loginService.login(usuario, password);
-            localStorage.setItem("token", data.token); //guarda localmente el token
-            return data;
-        } catch (err) {
-            const mensaje = err.response?.data?.msg || "Usuario y/o contraseña incorrectos"; //Mensaje de error de usuario y/o contraseña
-            setError(mensaje);
-            throw err;
-        } finally {
-            setCargando(false);
-        }
-    }, []);
+  const login = useCallback(async (usuario, password) => {
+    setError(null);
 
-    return { ejecutarLogin: login, cargando, error };
-}
+    if (!usuario?.trim() || !password) {
+      setError("Completa los campos de usuario y contraseña");
+      return null;
+    }
+
+    setCargando(true);
+
+    try {
+      const data = await loginService.login(usuario, password);
+
+      if (data?.token) {
+        localStorage.setItem("token", data.token);
+        return data;
+      }
+      throw new Error("Respuesta inválida del servidor");
+    } catch (err) {
+      const mensaje = err.response?.data?.msg || err.message || "Error al iniciar sesión";
+      setError(mensaje);
+      return null;
+    } finally {
+      setCargando(false);
+    }
+  }, []);
+
+  const limpiarError = useCallback(() => setError(null), []);
+
+  return { ejecutarLogin: login, cargando, error, limpiarError };
+};
 
 export default useLogin;

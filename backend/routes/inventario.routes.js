@@ -19,5 +19,7 @@ router.post('/update-cantidad', controller.post_update_cantidad);
 
 // Editar datos de un insumo
 router.put('/editar-insumo/:id', controller.put_editar_insumo);
+// Actualizar cantidad de inóculo
+router.post('/update-inoculo', controller.post_update_cantidad_inoculo);
 
 module.exports = router;

@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken");
 
-const SECRET = "tu_secreto_super_seguro"; 
+const getSecret = () => process.env.APP_ACCESS_KEY || 'default_test_secret';
 
-// Token (expira en 24 horas)
-const generarToken = (payload) => {
-  return jwt.sign(payload, SECRET, { expiresIn: "24h" });
+const generarRefreshToken = (payload) => {
+  return jwt.sign(payload, getSecret(), { expiresIn: "24h" });
 };
 
 module.exports = {
-  generarToken
+  generarRefreshToken,
+  getSecret 
 };

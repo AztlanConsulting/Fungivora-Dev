@@ -1,99 +1,93 @@
 import React, { useState } from "react";
 import { colores } from "../../components/ui/basics/Colores";
 import Text from "../../components/ui/basics/Texto";
-import { HugeiconsIcon } from '@hugeicons/react';
-import { PlusSignIcon } from '@hugeicons/core-free-icons';
+import Input from "../../components/ui/inputs/InputTexto";
 
-const EntradaCard = ({ nombre, unidad, value, onChange, cantMax, repeticiones = 1 }) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const [cantError, setError] = useState(false);
+const EntradaCard = ({
+  nombre,
+  unidad,
+  value,
+  onChange,
+  cantMax = 0,
+  excede = false,
+  mensajeError = null,
+  deshabilitado = false,
+}) => {
 
-  const ringColor = isFocused ? colores.azul : colores.grisClaro;
-
-  const alturaStyle = {
-    height: "clamp(28px, 3vw, 40px)",
-    boxShadow: `0 0 0 ${isFocused ? "4px" : "2px"} ${ringColor}`,
-    transition: "all 0.2s ease",
-    border: cantError ? `1px solid ${colores.rojo}` : "none"
-  };
-
-  const maxPorUnidad = cantMax > 0 ? +(cantMax / repeticiones).toFixed(2) : 0;
+  const [errorLocal, setErrorLocal] = useState(false);
 
   const manejarCambio = (e) => {
-    let val = e.target.value;
-    const regex = /^\d*[.,]?\d{0,2}$/;
+    if (deshabilitado) return;
+    const val = e.target.value;
+    const rawValue = val.replace(/,/g, "");
 
-    if (val === "" || regex.test(val)) {
-      // Quitar ceros a la izquierda (preserva "0", "0.5" y "0,5")
-      val = val.replace(/^0+(?=\d)/, "");
-      e.target.value = val;
+    if (rawValue !== "" && !/^\d*[.]?\d{0,2}$/.test(rawValue)) return;
+    const numValor = parseFloat(rawValue);
+    const cap = Number(cantMax) || 0;
 
-      const numValor = parseFloat(val.replace(',', '.'));
-
-      if (!isNaN(numValor)) {
-        if (numValor > maxPorUnidad) {
-          setError(true);
-          e.target.value = maxPorUnidad.toString();
-          onChange(e);
-
-          setTimeout(() => setError(false), 5000)
-        }
-        else {
-          setError(false)
-          onChange(e);
-        }
-      }
-      else {
-        onChange(e);
-      }
+    if (!isNaN(numValor) && cap > 0 && numValor > cap) {
+      setErrorLocal(true);
+      onChange({ target: { value: cap.toFixed(2).replace(/\.00$/, "") } });
+      setTimeout(() => setErrorLocal(false), 5000);
+      return;
     }
 
-  }
+    const limpio = val.replace(/^0+(?=\d)/, "");
+    onChange({ target: { value: limpio } });
+  };
+
+  const mostrarError = excede || errorLocal;
+  const mensaje = errorLocal
+    ? `Máximo disponible: ${(Number(cantMax) || 0).toFixed(2).replace(/\.00$/, "")} ${unidad}`
+    : mensajeError;
 
   return (
-    <div className="relative flex flex-col items-center gap-3 p-5 w-full md:w-auto min-w-0">
+    <div className={`relative flex flex-col items-center gap-3 p-5 w-full md:w-auto min-w-0 ${deshabilitado ? "opacity-50" : ""}`}>
 
       <Text className="text-center p-2 break-all max-w-full" variante="label" style={{ color: colores.black, fontSize: "18px" }}>
         {nombre}
       </Text>
 
       <div className="flex flex-row items-center gap-4">
-        <div className="flex flex-row items-center  w-full mb-3 px-3 rounded-xl bg-white" style={alturaStyle}>
-          <input
-            type="text"
-            inputMode="decimal"
+        <div className="flex flex-row items-center w-full mb-3 px-3 rounded-xl bg-white">
+          <Input
+            variante="numero"
+            numeroTipo="decimal"
             placeholder="0"
             value={value}
             onChange={manejarCambio}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            className="outline-none w-16 text-center bg-transparent"
+            roundedClass="rounded-xl"
+            className="w-16 h-12"
+            disabled={deshabilitado}
           />
-
         </div>
 
-        <div className="">
+        <div>
           <Text variante="label" style={{ color: colores.black }}>
             {unidad}
           </Text>
         </div>
       </div>
-      <div className={`relative md:absolute -bottom-1 mb-2 left-2 transition-opacity duration-300 ${cantError ? "opacity-100" : "opacity-0"}`}>
-        <span style={{ color: "red", fontSize: "10px", fontWeight: "600" }}>
-          Máximo disponible: {maxPorUnidad}
+
+      <div
+        className={`relative md:absolute -bottom-1 mb-2 left-2 transition-opacity duration-300 ${
+          mostrarError ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        <span style={{ color: "red", fontSize: "10px", fontWeight: 600 }}>
+          {mensaje || ""}
         </span>
       </div>
     </div>
-
   );
 };
 
-export const EntradaLista = ({ items = [], repeticiones = 1 }) => {
+export const EntradaLista = ({ items = [] }) => {
   return (
     <div className="w-full lg:flex-1 bg-white rounded-[32px] shadow-sm border pb-8 p-6 md:p-8 flex flex-col">
 
       <div className="mb-6">
-        <Text variante="medium">Composición</Text>
+        <Text variante="medium">Composición Unitaria</Text>
       </div>
 
       <div className="flex flex-col md:flex-row justify-evenly items-center flex-1 bg-[#FEFEFB] rounded-[32px] shadow-sm border overflow-hidden">
@@ -105,20 +99,17 @@ export const EntradaLista = ({ items = [], repeticiones = 1 }) => {
               value={item.value}
               onChange={item.onChange}
               cantMax={item.cantidad}
-              repeticiones={repeticiones}
+              excede={item.excedeIndividual}
+              mensajeError={item.mensajeErrorIndividual}
+              deshabilitado={item.tipo === "inoculo" && !(Number(item.cantidad) > 0)}
             />
-
 
             {index < items.length - 1 && (
               <div className="relative flex items-center justify-center self-stretch w-full md:w-auto py-3 md:py-0 md:mx-4">
-
-                {/* Línea: horizontal en mobile, vertical en desktop */}
                 <div
                   className="w-full h-[1px] md:w-[1px] md:h-full"
                   style={{ backgroundColor: colores.grisClaro }}
                 />
-
-                {/* Icono + centrado sobre la línea, con bg que la "corta" */}
                 <div
                   className="absolute flex items-center justify-center px-3"
                   style={{ backgroundColor: "#FEFEFB" }}

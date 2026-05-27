@@ -1,9 +1,8 @@
 import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
-import Inventario from '../../../pages/inventario/inventario'
+import Inventario from '../../../pages/inventario/Inventario'
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -80,8 +79,6 @@ describe('Inventario — datos cargados', () => {
     it('renderiza todos los insumos recibidos', () => {
         useInsumos.mockReturnValue({ ...hookBase, insumos: insumosMock })
         renderInventario()
-
-        // Cada insumo aparece dos veces (móvil + desktop), se usa getAllByText
         expect(screen.getAllByText('Agua destilada').length).toBeGreaterThan(0)
         expect(screen.getAllByText('Peptona').length).toBeGreaterThan(0)
         expect(screen.getAllByText('Mijo rojo').length).toBeGreaterThan(0)

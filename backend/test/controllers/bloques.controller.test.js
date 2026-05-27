@@ -1,4 +1,4 @@
-const { get_bloques_por_lote, toggle_contaminado, post_bloques, get_contenedores } = require('../../controllers/bloque.controller');
+const { get_bloques_por_lote, post_bloques, get_contenedores } = require('../../controllers/bloque.controller');
 const Bloque = require('../../models/bloque.model');
 const Categoria = require('../../models/categoria.model');
 const crypto = require('crypto');
@@ -19,7 +19,7 @@ describe('Bloques Controller', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        jest.spyOn(console, 'error').mockImplementation(() => {});
+        jest.spyOn(console, 'error').mockImplementation(() => { });
     });
 
     describe('Get bloques', () => {
@@ -71,7 +71,7 @@ describe('Bloques Controller', () => {
         });
 
         it('400 - datos incompletos', async () => {
-            const req = { body: { id_lote: 'l1' } }; 
+            const req = { body: { id_lote: 'l1' } };
             const res = mockRes();
 
             await post_bloques(req, res);

@@ -27,24 +27,31 @@ const FormularioInsumo = ({ nuevaFila, handleNuevaFila, handleGuardarInsumo, uni
           placeholder="Ej. Harina de Trigo"
           value={nuevaFila.nombre}
           onChange={(e) => handleNuevaFila("nombre", e.target.value)}
+          className="w-full"
         />
       </div>
 
       <div className="flex flex-col gap-2">
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Stock Actual</Text>
         <Input
+          variante="numero"
+          numeroTipo="decimal"
           placeholder="0.00"
           value={nuevaFila.cantidad}
           onChange={(e) => handleCambioNumero("cantidad", e.target.value)}
+          className="w-full"
         />
       </div>
 
       <div className="flex flex-col gap-2">
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Stock Recomendado</Text>
         <Input
+          variante="numero"
+          numeroTipo="decimal"
           placeholder="0.00"
           value={nuevaFila.stock_recomendado}
           onChange={(e) => handleCambioNumero("stock_recomendado", e.target.value)}
+          className="w-full"
         />
       </div>
 
@@ -55,7 +62,8 @@ const FormularioInsumo = ({ nuevaFila, handleNuevaFila, handleGuardarInsumo, uni
           size="forms"
           value={nuevaFila.unidad}
           onChange={(e) => handleNuevaFila("unidad", e.target.value)}
-          options={unidades.map(u => ({ value: u.opcion, label: u.opcion }))}
+          options={unidades?.map(u => ({ value: u.opcion, label: u.opcion })) || []}
+          className="w-full"
         />
       </div>
 

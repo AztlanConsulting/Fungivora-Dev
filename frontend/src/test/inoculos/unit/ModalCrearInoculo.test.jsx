@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import ModalCrearInoculo from '../../../features/inoculos/components/ModalCrearInoculo'
 
 // Mock de componentes UI compartidos

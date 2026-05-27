@@ -17,16 +17,12 @@ const DetalleLote = () => {
     const {
         bloques, setBloques, bloquesIniciales, setBloquesIniciales,
         fase, setFase, faseInicialNum, setFaseInicialNum,
-        especie, codigoInoculo, codigoLoteBD,
+        especie, codigoInoculo,
         cargando, error, getFase, guardarCambios,
         fases
-    } = useDetalleLote(
-        id_lote,
-        state?.id_inoculo,
-        state?.fase
-    );
+    } = useDetalleLote(id_lote, state?.fase);
 
-    const [busqueda, setBusqueda] = useState("");
+    const [busqueda] = useState("");
     const [editado, setEditado] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
@@ -63,6 +59,16 @@ const DetalleLote = () => {
         handleLocalChanges(nuevosBloques, fase);
     };
 
+    const handleToggleTodosContaminados = (valor) => {
+        const nuevosBloques = bloques.map((bloque) => ({
+            ...bloque,
+            contaminado: valor ? 1 : 0
+        }));
+
+        setBloques(nuevosBloques);
+        handleLocalChanges(nuevosBloques, fase);
+    };
+
     // Cambio local de fase
     const handleLocalChangeFase = (nuevaFase) => {
         setFase(nuevaFase);
@@ -70,20 +76,19 @@ const DetalleLote = () => {
     }
 
     const onGuardar = async () => {
-        setIsModalOpen(false);
         const resultado = await guardarCambios(bloques, fase);
         if (resultado.success) {
-            setBloquesIniciales(
-                bloques.map(b => ({ ...b }))
-            );
+            setBloquesIniciales(bloques.map(b => ({ ...b })));
             setFaseInicialNum(fase);
             setEditado(false);
+            setIsModalOpen(false);
             setAlerta({
                 visible: true,
                 variante: "exito",
                 mensaje: "Cambios guardados exitosamente"
             });
         } else {
+            setIsModalOpen(false);
             setAlerta({
                 visible: true,
                 variante: "error",
@@ -99,7 +104,6 @@ const DetalleLote = () => {
                 day: '2-digit', month: 'long', year: 'numeric'
             }) : 'Sin fecha',
         especie: cargando ? 'Cargando...' : especie || 'S/N',
-        sustrato: state?.tipo_sustrato || 'No especificado',
         ubicacion: state?.ubicacion_lote || 'Sin ubicación',
         inoculo: cargando ? 'Cargando...' : codigoInoculo || 'S/N'
     };
@@ -109,49 +113,66 @@ const DetalleLote = () => {
         b.contenedor?.toLowerCase().includes(busqueda.toLowerCase())
     ) || [];
 
+    const todosContaminados =
+        bloquesFiltrados.length > 0 &&
+        bloquesFiltrados.every(
+            (bloque) =>
+                bloque.contaminado === 1 ||
+                bloque.contaminado === true
+        );
 
-    const codigoParaTabla = state?.codigo_fungivora || codigoLoteBD || "";
+    const codigoParaTabla = state?.codigo_fungivora || codigoInoculo || "";
     return (
         <>
             <Titulo>Lote: {state?.codigo_fungivora || 'Detalle'}</Titulo>
             {editado && (
                 <button
                     onClick={() => setIsModalOpen(true)}
+                    disabled={cargando}
                     className={`
-                                fixed bottom-20 right-10 md:bottom-10 md:right-16
-                                z-50 w-40 h-8 md:w-52 md:h-10 text-base md:text-lg
-                                rounded-full flex items-center justify-center shadow-lg
-                                transition-opacity hover:opacity-80 active:scale-95
-                            `}
+                        fixed bottom-20 right-10 md:bottom-10 md:right-16
+                        z-50 w-40 h-8 md:w-52 md:h-10 text-base md:text-lg
+                        rounded-full flex items-center justify-center shadow-lg
+                        transition-all hover:opacity-80 active:scale-95
+                        ${cargando ? "opacity-50 cursor-not-allowed" : "opacity-100"}
+                    `}
                     style={{
                         backgroundColor: "#FFFFFF",
                         border: `2px solid ${colores.azul}`
                     }}
                 >
                     <Text variante='button' style={{ color: colores.azul }}>
-                        <span className="md:hidden">Guardar</span>
-                        <span className="hidden md:inline">Guardar Cambios</span>
+                        {cargando ? (
+                            "Actualizando..."
+                        ) : (
+                            <>
+                                <span className="md:hidden">Actualizar</span>
+                                <span className="hidden md:inline">Actualizar</span>
+                            </>
+                        )}
                     </Text>
                 </button>
             )}
 
             <Base margen_arriba="mt-16 md:mt-8">
                 <div className="p-6 flex flex-col gap-8">
+                    {error && (
+                        <div className="text-red-500 px-2 font-medium">Error: {error}</div>
+                    )}
+
                     <BannerLote data={loteData} />
 
                     <SeccionFaseBuscar
                         fases={fases}
                         fase={fase}
                         setFase={handleLocalChangeFase}
+                        todosContaminados={todosContaminados}
+                        onToggleTodosContaminados={handleToggleTodosContaminados}
                     //busqueda={busqueda}
                     //setBusqueda={setBusqueda}
                     />
 
                     <div className="flex flex-col gap-4">
-                        {error && (
-                            <div className="text-red-500 px-2 font-medium">Error: {error}</div>
-                        )}
-
                         <TablaBloques
                             bloques={bloquesFiltrados}
                             loading={cargando}

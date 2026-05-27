@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import insumosService from "../../../shared/crear-inoculos/services/inoculos.service";
 import { BOLSAS, TAMANOS_COMPOSICION } from "../../../shared/crear-inoculos/types/inoculos.types";
+import { validarStockComposicion } from "../../../shared/crear-inoculos/utils/validarStockComposicion";
 
 const normalizarUnidad = (unidad = "") => {
   const u = unidad.toLowerCase();
@@ -20,6 +21,7 @@ const useIngredientesSemilla = ({
   codigoInoculo = "",
   tamano = "",
   tipoInoculo = null,
+  cantidad = 1,
 }) => {
   const [insumos, setInsumos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,6 +70,7 @@ const useIngredientesSemilla = ({
     : null;
 
   const aguaInsumo = insumos.find((i) => i.nombre.toLowerCase().includes("agua"));
+  const esSolido = codigoInoculo && codigoInoculo.split("-")[0].endsWith("G");
 
   const items = [
     {
@@ -92,17 +95,20 @@ const useIngredientesSemilla = ({
       id: null,
       tipo: "inoculo",
       nombre: codigoInoculo || "Inóculo",
-      unidad: "ml",
+      unidad: esSolido ? "g" : "ml",
       value: cantInoculo,
       onChange: (e) => setCantInoculo(e.target.value),
       cantidad: inoculoDisponible,
     },
   ];
 
+  const { items: itemsValidados, tieneErrores } = validarStockComposicion(items, cantidad);
+
   return {
-    items,
+    items: itemsValidados,
     valores: { cantMijo, cantAgua, cantInoculo },
     opcionesMijo,
+    tieneErrores,
     loading,
     error,
   };

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from "react"; 
+import { useNavigate, useLocation } from 'react-router-dom';
 import Base from "../../shared/components/layout/Base";
 import Titulo from "../../shared/components/ui/basics/Titulo";
 import Text from "../../shared/components/ui/basics/Texto";
@@ -9,6 +9,7 @@ import useBloques from "../../features/bloques/hooks/useBloques";
 import Button from "../../shared/components/ui/buttons/Botones";
 import ModalConfirmacion from "../../shared/components/ui/popups/ModalConfirmacion";
 import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
+import BotonCrear from "../../shared/components/ui/buttons/BotonFlotante";
 
 // Iconos
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -24,10 +25,10 @@ function Lotes() {
 
   const columnas = [
     { label: "Código de Lote", key: "codigo_fungivora" },
-    { label: "Sustrato", key: "tipo_sustrato" },
     { label: "Ubicación", key: "ubicacion_lote" },
     { label: "Estado", key: "fase" },
-    { label: "Fecha", key: "fecha_lote" }
+    { label: "Fecha", key: "fecha_lote" },
+    { label: "Eliminar", key: "eliminar"}
   ];
 
   // Tener la fecha de hoy en el input
@@ -40,20 +41,58 @@ function Lotes() {
   });
 
   const {
-    datos, sustratos, ubicaciones, especies, especiesDisponibles,
+    datos, ubicaciones, especiesDisponibles,
     getInoculosPorEspecie, cargando, error, addLote, deleteLote
   } = useLotes();
   const [verFormulario, setVerFormulario] = useState(false);
-  const [nuevaFila, setNuevaFila] = useState({ especie: "", tipo_sustrato: "", ubicacion_lote: "", id_inoculo: "" });
+  const [nuevaFila, setNuevaFila] = useState({ especie: "", ubicacion_lote: ""});
   const [errorValidacion, setErrorValidacion] = useState("");
   const [codigoPrevisualizacion, setCodigoPrevisualizacion] = useState("");
   const [paso, setPaso] = useState(1);
-  const { bloquesTemporales, contenedores, agregarBloqueALista, eliminarBloqueDeLista } = useBloques();
+  const { bloquesTemporales, sustratos, contenedores, agregarBloqueALista, eliminarBloqueDeLista } = useBloques();
   const [mostrarModal, setMostrarModal] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
   const [loteAEliminar, setLoteAEliminar] = useState(null);
   const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
+  const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
+
+  const location = useLocation();
+    
+  const abrirModalCancelar = useCallback(() => {
+    if (bloquesTemporales.length > 0) {
+      setMostrarModalCancelar(true);
+    } else {
+      setPaso(1);
+      setErrorValidacion("");
+    }
+  }, [bloquesTemporales.length]);
+
+  useEffect(() => {
+    if (location.state?.resetPaso) {
+      if (paso === 2) {
+        if (bloquesTemporales.length > 0) {
+          setMostrarModalCancelar(true);
+        } else {
+          setPaso(1);
+          setErrorValidacion("");
+        }
+      }
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, paso, bloquesTemporales.length, navigate, location.pathname]);
+
+  const irAPasoBloques = () => {
+    if (!nuevaFila.especie || !nuevaFila.ubicacion_lote) {
+      setErrorValidacion("Por favor, completa los datos del lote");
+      return;
+    }
+    
+    setErrorValidacion("");
+    setPaso(2); 
+
+    setVerFormulario(true); 
+  };
 
   useEffect(() => {
     if (nuevaFila.id_inoculo && nuevaFila.especie) {
@@ -73,7 +112,8 @@ function Lotes() {
     } else {
       setCodigoPrevisualizacion("");
     }
-  }, [nuevaFila.id_inoculo, nuevaFila.especie, fecha]);
+  }, [nuevaFila.id_inoculo, nuevaFila.especie, fecha, getInoculosPorEspecie]);
+
 
   // Colores para podruccion y experimental
   const colores_tipo = {
@@ -81,7 +121,7 @@ function Lotes() {
     experimental: { bg: "#E9EAFF", text: "#272CBA" }
   };
 
-  const [bloqueForm, setBloqueForm] = useState({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+  const [bloqueForm, setBloqueForm] = useState({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "", tipo_sustrato: "" });
 
   // Que cambie el valor de los inputs de select
   const handleInputChange = (setter) => (campo, valor) => {
@@ -100,60 +140,69 @@ function Lotes() {
     });
   };
 
-  // Cambiar de lotes a bloques en el registro
-  const irAPasoBloques = () => {
-    if (!nuevaFila.especie || !nuevaFila.ubicacion_lote || !nuevaFila.tipo_sustrato) {
-      setErrorValidacion("Por favor, completa los datos del lote");
-      return;
-    }
-    setErrorValidacion("");
-    setPaso(2);
-  };
-
   // Agregar el bloque y su validación
   const handleAgregarBloque = () => {
-    if (!bloqueForm.contenedor || !bloqueForm.peso_gr || !bloqueForm.cantidad) {
-      setErrorValidacion("Completa los campos del bloque");
+    const { peso_gr, cantidad, id_inoculo, contenedor, tipo_sustrato, produccion } = bloqueForm;
+
+    if (!id_inoculo || !contenedor || !peso_gr || !cantidad || !tipo_sustrato || !produccion) {
+      setErrorValidacion("Completa todos los campos");
       return;
     }
 
-    const peso = parseFloat(bloqueForm.peso_gr);
-    const cantidad = parseFloat(bloqueForm.cantidad);
+    const numPeso = Number(peso_gr);
+    const numCantidad = parseInt(cantidad, 10); 
 
-    if (isNaN(peso) || peso <= 0 || isNaN(cantidad) || cantidad <= 0) {
+    if (isNaN(numPeso) || numPeso <= 0 || isNaN(numCantidad) || numCantidad <= 0) {
       setErrorValidacion("Ingresa un número válido y mayor a cero");
       return;
     }
 
     const cantidadAcumulada = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad), 0);
+    const nuevoTotal = cantidadAcumulada + numCantidad;
 
-    if (cantidadAcumulada + cantidad > 100) {
-      setErrorValidacion(`Límite excedido. Total acumulado: ${cantidadAcumulada}. No puedes superar 100 unidades.`);
+    if (nuevoTotal > 100) {
+      setErrorValidacion(`Capacidad máxima alcanzada - 100 bloques en total.`);
       return;
     }
 
-    agregarBloqueALista({ ...bloqueForm });
+    if (nuevoTotal === 100) {
+      console.log("Has alcanzado el límite máximo de 100 bloques.");
+    }
 
-    setBloqueForm({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+    const opcionesInoculo = getInoculosPorEspecie(nuevaFila.especie);
+    const inoculoSeleccionado = opcionesInoculo.find(
+      opt => String(opt.value) === String(id_inoculo)
+    );
+
+    agregarBloqueALista({ 
+      ...bloqueForm, 
+      cantidad: String(numCantidad), 
+      nombre_inoculo: inoculoSeleccionado ? inoculoSeleccionado.label : "N/A" 
+    });
+
+    setAlerta({
+      visible: true,
+      variante: "exito",
+      mensaje: "Bloque añadido a la lista correctamente"
+    });
+    
+    setBloqueForm({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "", tipo_sustrato: "" });
     setErrorValidacion("");
   };
 
-  const manejarCancelar = () => {
+  const confirmarCancelacion = () => {
     setPaso(1);
     bloquesTemporales.forEach(bloque => {
       eliminarBloqueDeLista(bloque.id_temp);
     });
-
-    setBloqueForm({ contenedor: "", peso_gr: "", cantidad: "", produccion: "" });
+    setBloqueForm({ id_inoculo: "", contenedor: "", peso_gr: "", cantidad: "", produccion: "", tipo_sustrato: "" });
+    setNuevaFila({ especie: "", ubicacion_lote: "" }); 
     setErrorValidacion("");
+    setMostrarModalCancelar(false);
   };
 
   // Obligar a añadir al menos 1 bloque
   const previsualizarRegistro = () => {
-    if (!nuevaFila.id_inoculo) {
-      setErrorValidacion("Debes seleccionar una semilla (inóculo) para el lote");
-      return;
-    }
     if (bloquesTemporales.length === 0) {
       setErrorValidacion("Añade al menos un bloque");
       return;
@@ -201,7 +250,7 @@ function Lotes() {
           mensaje: "Error al guardar: " + (respuesta?.message || "Error desconocido")
         });
       }
-    } catch (err) {
+    } catch {
       setGuardando(false);
       setAlerta({
         visible: true,
@@ -248,7 +297,7 @@ function Lotes() {
           mensaje: res.message || "No se pudo eliminar"
         });
       }
-    } catch (err) {
+    } catch {
       setAlerta({ visible: true, variante: "error", mensaje: "Error de red" });
     } finally {
       setGuardando(false);
@@ -263,31 +312,19 @@ function Lotes() {
     <Base margen_arriba="mt-20 md:mt-20">
       {/* Botón para cambiar del forms a la vista de tabla*/}
       <div className="lg:hidden flex justify-start mb-6">
-        <Button
+        <BotonCrear
           onClick={() => setVerFormulario(!verFormulario)}
-          className={`px-5 py-2 rounded-[12px] border-2`}
-          isOutline={true}
-        >
-          <Text
-            variante="label"
-            style={{
-              color: colores.azul,
-              fontWeight: "600",
-              fontSize: "13px"
-            }}
-          >
-            {verFormulario
+          texto={verFormulario
               ? (paso === 1 ? "Ver Lotes" : "Ver Bloques")
               : (paso === 1 ? "Crear lote" : "Crear bloque")
-            }
-          </Text>
-        </Button>
+          }
+      />
 
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8 items-stretch relative">
         {/* Componente de las tablas*/}
-        <div className={`w-full bg-white rounded-[32px] shadow-sm border p-4 md:p-8 md:pl-16 min-h-[500px] ${verFormulario ? "hidden" : "block"} lg:block`}>
+        <div className={`w-full bg-white rounded-[32px] shadow-sm border p-4 md:p-8 md:pl-8 min-h-[500px] ${verFormulario ? "hidden" : "block"} lg:block`}>
           {paso === 1 ? (
             <>
               <Titulo>Lotes</Titulo>
@@ -298,13 +335,14 @@ function Lotes() {
                   columnas={columnas}
                   onVerDetalle={(lote) => navigate(`/lotes/detalle/${lote.id_lote}`, { state: lote })}
                   obtenerEstiloFase={obtenerEstiloFase}
-                  gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1fr_1.1fr_1.2fr_1fr_0.5fr]"
+                  gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1.1fr_1.2fr_1fr_0.5fr]"
                   colorBordeHeader="#F2F2FC"
                 />
               )}
             </>
           ) : (
             <div className="animate-in fade-in duration-500">
+              <Titulo>Bloques</Titulo>
               <TablaBloques
                 codigo={codigoPrevisualizacion}
                 bloques={bloquesTemporales}
@@ -323,7 +361,6 @@ function Lotes() {
             {paso === 1 ? (
               <FormCrearLote
                 especiesDisponibles={especiesDisponibles}
-                sustratos={sustratos}
                 ubicaciones={ubicaciones}
                 nuevaFila={nuevaFila}
                 fecha={fecha}
@@ -335,7 +372,9 @@ function Lotes() {
             ) : (
               <FormCrearBloque
                 codigo={codigoPrevisualizacion}
+                sustratos={sustratos}
                 contenedores={contenedores}
+                setAlerta={setAlerta}
                 bloqueForm={bloqueForm}
                 setBloqueForm={setBloqueForm}
                 handleBloqueForm={handleInputChange(setBloqueForm)}
@@ -344,30 +383,41 @@ function Lotes() {
                 especieSeleccionada={nuevaFila.especie}
                 getInoculosPorEspecie={getInoculosPorEspecie}
                 idInoculoSeleccionado={nuevaFila.id_inoculo}
-                setIdInoculoLote={handleInputChange(setNuevaFila)}
               />
             )}
           </div>
 
           {/* Botones de registrar y cancelar*/}
           {paso === 2 && (
-            <div className={`flex flex-col md:flex-row gap-4 mt-8 items-center md:justify-end ${verFormulario ? "flex" : "hidden"} lg:flex`}>
-              <div className="order-1 md:order-2">
+            <div className={`flex flex-col md:flex-row gap-4 mt-8 items-center justify-center ${verFormulario ? "flex" : "hidden"} lg:flex`}>
+              
+              <div className="w-full md:w-auto flex justify-center">
                 <Button
+                  className="w-full md:w-auto"
                   variant="registrar"
                   onClick={previsualizarRegistro}
+                  isOutline={true} 
                   disabled={guardando}
                 >
                   {guardando ? "Cargando..." : "Finalizar"}
                 </Button>
               </div>
-              <div className="order-2 md:order-1">
-                <Button variant="eliminar" isOutline={true} onClick={manejarCancelar}>Cancelar</Button>
+
+              <div className="w-full md:w-auto flex justify-center"> 
+                <Button 
+                  className="w-full md:w-[150px]" 
+                  variant="eliminar" 
+                  isOutline={true} 
+                  onClick={abrirModalCancelar}
+                >
+                  Cancelar
+                </Button>
               </div>
             </div>
           )}
         </div>
       </div>
+
 
       <ModalAlerta
         visible={alerta.visible}
@@ -398,6 +448,17 @@ function Lotes() {
         onConfirm={confirmarEliminarLote}
         onCancel={() => setMostrarModalEliminar(false)}
         deshabilitarConfirmar={guardando}
+      />
+      <ModalConfirmacion
+        visible={mostrarModalCancelar}
+        titulo="¿Estás seguro de cancelar?"
+        descripcion="Se perderán todos los bloques que has añadido actualmente."
+        textoConfirmar="Sí, cancelar"
+        textoCancelar="Continuar editando"
+        icon={CancelCircleIcon} 
+        colorConfirmar={colores.rojo}
+        onConfirm={confirmarCancelacion}
+        onCancel={() => setMostrarModalCancelar(false)}
       />
     </Base>
   );

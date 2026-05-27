@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { colores } from "../basics/Colores";
+import React, { useEffect, useRef, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
     CheckmarkCircle02Icon,
@@ -11,37 +10,30 @@ import {
 const VARIANTES = {
     exito: {
         icon: CheckmarkCircle02Icon,
-        color: "#22c55e",         // verde
+        color: "#22c55e",
         bg: "#f0fdf4",
         border: "#bbf7d0",
         label: "Éxito",
     },
     error: {
         icon: MultiplicationSignCircleIcon,
-        color: "#ef4444",         // rojo
+        color: "#ef4444",
         bg: "#fef2f2",
         border: "#fecaca",
         label: "Error",
     },
     advertencia: {
         icon: Alert02Icon,
-        color: "#f59e0b",         // amarillo
+        color: "#f59e0b",
         bg: "#fffbeb",
         border: "#fde68a",
         label: "Advertencia",
     },
 };
 
-const AUTO_DISMISS_MS = 6000; // 6 segundos
+const AUTO_DISMISS_MS = 6000;
+const ANIMACION_SALIDA_MS = 300;
 
-/**
- * ModalAlerta
- *
- * @param {boolean} visible - Controla la visibilidad del modal.
- * @param {"exito" | "error" | "advertencia"} variante - Tipo de alerta para estilos e ícono.
- * @param {string} mensaje - Texto a mostrar en la alerta.
- * @param {function} onClose - Función callback al cerrar la alerta.
- */
 const ModalAlerta = ({
     visible,
     variante = "exito",
@@ -49,22 +41,31 @@ const ModalAlerta = ({
     onClose,
 }) => {
     const [saliendo, setSaliendo] = useState(false);
-
     const config = VARIANTES[variante] ?? VARIANTES.exito;
 
-    // Auto-dismiss
+    const onCloseRef = useRef(onClose);
     useEffect(() => {
-        if (!visible) {
-            setSaliendo(false);
-            return;
-        }
+        onCloseRef.current = onClose;
+    }, [onClose]);
 
-        const timerSalida = setTimeout(() => setSaliendo(true), AUTO_DISMISS_MS);
-        const timerClose = setTimeout(() => {
-            onClose?.();
-        }, AUTO_DISMISS_MS + 300); // espera que termine la animación de salida
+    useEffect(() => {
+        if (!visible) return undefined;
+
+        const reset = requestAnimationFrame(() => {
+            setSaliendo(false);
+        });
+
+        const timerSalida = setTimeout(
+            () => setSaliendo(true),
+            AUTO_DISMISS_MS
+        );
+        const timerClose = setTimeout(
+            () => onCloseRef.current?.(),
+            AUTO_DISMISS_MS + ANIMACION_SALIDA_MS
+        );
 
         return () => {
+            cancelAnimationFrame(reset);
             clearTimeout(timerSalida);
             clearTimeout(timerClose);
         };
@@ -72,7 +73,7 @@ const ModalAlerta = ({
 
     const handleClose = () => {
         setSaliendo(true);
-        setTimeout(() => onClose?.(), 300);
+        setTimeout(() => onCloseRef.current?.(), ANIMACION_SALIDA_MS);
     };
 
     if (!visible) return null;
@@ -88,15 +89,15 @@ const ModalAlerta = ({
             }}
         >
             <style>{`
-        @keyframes alertaEntrada {
-          from { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.95); }
-          to   { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);    }
-        }
-        @keyframes alertaSalida {
-          from { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);    }
-          to   { opacity: 0; transform: translateX(-50%) translateY(10px) scale(0.97); }
-        }
-      `}</style>
+                @keyframes alertaEntrada {
+                  from { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.95); }
+                  to   { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);    }
+                }
+                @keyframes alertaSalida {
+                  from { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);    }
+                  to   { opacity: 0; transform: translateX(-50%) translateY(10px) scale(0.97); }
+                }
+            `}</style>
 
             <div
                 className="flex items-center gap-3 px-5 py-3 rounded-full shadow-lg"
@@ -107,10 +108,8 @@ const ModalAlerta = ({
                     maxWidth: "420px",
                 }}
             >
-                {/* Ícono de variante */}
                 <HugeiconsIcon icon={config.icon} size={22} color={config.color} />
 
-                {/* Mensaje */}
                 <span
                     className="flex-1 text-sm font-medium leading-snug"
                     style={{ color: "#1e293b" }}
@@ -118,7 +117,6 @@ const ModalAlerta = ({
                     {mensaje}
                 </span>
 
-                {/* Botón X */}
                 <button
                     onClick={handleClose}
                     className="flex items-center justify-center w-6 h-6 rounded-full transition-transform hover:scale-110 active:scale-95 flex-shrink-0"

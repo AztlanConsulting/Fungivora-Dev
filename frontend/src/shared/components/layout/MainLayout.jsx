@@ -4,15 +4,14 @@ import { Outlet } from "react-router-dom";
 
 export default function MainLayout() {
     return (
-        <div className="flex flex-col-reverse min-h-dvh md:flex-row">
+        // Añadimos overscroll-none aquí
+        <div className="flex flex-col-reverse md:flex-row w-screen h-screen overflow-hidden bg-gray-50 overscroll-none">
             <Barra_navegacion />
 
-            {/* //! Outlet se encarga de renderizar la vista sin desaparecer la barra de navegacion */}
-            <main className="flex-1">
+            {/* También blindamos el contenedor que tiene el scroll real */}
+            <main className="flex-1 h-full overflow-y-auto overscroll-none">
                 <Outlet />
             </main>
-
-
         </div>
-    )
+    );
 }

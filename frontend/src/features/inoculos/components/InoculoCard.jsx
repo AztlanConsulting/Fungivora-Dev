@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react'; 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons';
 
@@ -49,6 +49,47 @@ const InoculoCard = ({ especie }) => {
         toggleCollapse,
     } = useInoculoCard(especie.value);
 
+    const datosOrdenados = useMemo(() => {
+        if (!datos) return [];
+        
+        return [...datos]
+            .filter((fila) => Number(fila.cantidad_disponible) > 0)
+            .sort((a, b) => {
+                const fechaA = a.fecha ? new Date(a.fecha).getTime() : 0;
+                const fechaB = b.fecha ? new Date(b.fecha).getTime() : 0;
+
+                if (fechaB !== fechaA) {
+                    return fechaB - fechaA; 
+                }
+
+                const obtenerPrefijo = (codigo) => {
+                    if (!codigo) return '';
+                    const partes = codigo.split('-');
+                    return partes.slice(0, -1).join('-'); 
+                };
+
+                const prefijoA = obtenerPrefijo(a.codigo_fungivora);
+                const prefijoB = obtenerPrefijo(b.codigo_fungivora);
+
+                if (prefijoA !== prefijoB) {
+                    return prefijoA.localeCompare(prefijoB); 
+                }
+
+                const extraerNumero = (codigo) => {
+                    if (!codigo) return 0;
+                    const partes = codigo.split('-');
+                    const ultimoSegmento = partes[partes.length - 1];
+                    const numero = parseInt(ultimoSegmento, 10);
+                    return isNaN(numero) ? 0 : numero;
+                };
+
+                const numA = extraerNumero(a.codigo_fungivora);
+                const numB = extraerNumero(b.codigo_fungivora);
+
+                return numA - numB; 
+            });
+    }, [datos]);
+
     const opcionesAbreviadas = TIPOS_INOCULO.map((tipo) => ({
         value: tipo.value,
         label: ABREVIACIONES[tipo.label] || tipo.label
@@ -61,7 +102,6 @@ const InoculoCard = ({ especie }) => {
         >
             {/* ── Cabecera de la card ── */}
             <div className="flex items-center justify-between px-4 py-4 md:px-6">
-                {/* Nombre + ícono toggle */}
                 <button
                     onClick={toggleCollapse}
                     aria-label={collapsed ? 'Expandir' : 'Colapsar'}
@@ -75,7 +115,6 @@ const InoculoCard = ({ especie }) => {
                     />
                 </button>
 
-                {/* Select visible solo cuando está expandido */}
                 {!collapsed && (
                     <SelectField
                         value={tipoSeleccionado}
@@ -104,7 +143,7 @@ const InoculoCard = ({ especie }) => {
 
                     {!loading && !error && (
                         <>
-                            {/* Encabezado de tabla — fondo azul claro */}
+                            {/* Encabezado de tabla  */}
                             <div
                                 className="hidden md:grid md:grid-cols-4"
                                 style={{ backgroundColor: colorHeaderTabla }}
@@ -117,7 +156,7 @@ const InoculoCard = ({ especie }) => {
                             </div>
 
                             {/* Sin resultados */}
-                            {datos.length === 0 && (
+                            {datosOrdenados.length === 0 && (
                                 <div className="px-4 py-8 text-center bg-white">
                                     <Text variante="body" style={{ color: colores.gris }}>
                                         Sin registros para este tipo.
@@ -125,14 +164,14 @@ const InoculoCard = ({ especie }) => {
                                 </div>
                             )}
 
-                            {/* Filas */}
-                            {datos.map((fila, index) => (
+                            {/* Filas basadas en datosOrdenados */}
+                            {datosOrdenados.map((fila, index) => (
                                 <div
                                     key={fila.id_inoculo}
                                     className="bg-white"
                                     style={{
                                         borderBottom:
-                                            index === datos.length - 1
+                                            index === datosOrdenados.length - 1
                                                 ? 'none'
                                                 : `1px solid ${colorHeaderTabla}`,
                                     }}

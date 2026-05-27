@@ -1,7 +1,14 @@
 const request = require('supertest');
+const jwt = require('jsonwebtoken');
 
-// Mockea db y metrics ANTES de importar app
 jest.mock('../../../util/db');
+jest.mock('../../../middleware/auth', () => (req, res, next) => {
+    req.user = { id: 1, usuario: 'test_user', isAdmin: true };
+    next();
+});
+
+jest.mock('../../../models/inoculo.model');
+const Inoculo = require('../../../models/inoculo.model');
 
 jest.mock('../../../config/metrics', () => ({
     register: {
@@ -10,14 +17,19 @@ jest.mock('../../../config/metrics', () => ({
     },
 }));
 
-// Mockea el modelo para no tocar la DB real
-jest.mock('../../../models/inoculo.model');
-const Inoculo = require('../../../models/inoculo.model');
+process.env.APP_ACCESS_KEY = 'test_secret_key';
 
 const app = require('../../../app');
 
-describe('GET /api/inoculos/especies', () => {
 
+describe('GET /api/inoculos/especies', () => {
+    let tokenTest; 
+
+    beforeAll(() => {
+        const SECRET = process.env.APP_ACCESS_KEY || 'test_secret_key';
+        tokenTest = jwt.sign({ id: 1, usuario: 'test_user', isAdmin: true }, SECRET, { expiresIn: '1h' });
+    });
+    
     beforeEach(() => {
         jest.clearAllMocks();
         jest.spyOn(console, 'error').mockImplementation(() => { });
@@ -37,7 +49,9 @@ describe('GET /api/inoculos/especies', () => {
         ];
         Inoculo.fetchEspecies.mockResolvedValue([especiesMock]);
 
-        const res = await request(app).get('/api/inoculos/especies');
+        const res = await request(app)
+            .get('/api/inoculos/especies')
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toMatchObject({
@@ -47,10 +61,11 @@ describe('GET /api/inoculos/especies', () => {
     });
 
     it('responde 200 con data vacío si no hay especies', async () => {
-        // Caso límite: la query funciona pero no hay registros en la tabla.
         Inoculo.fetchEspecies.mockResolvedValue([[]]);
 
-        const res = await request(app).get('/api/inoculos/especies');
+        const res = await request(app)
+            .get('/api/inoculos/especies')
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toMatchObject({
@@ -62,10 +77,11 @@ describe('GET /api/inoculos/especies', () => {
     // ─── Casos de error ───────────────────────────────────────────────────────
 
     it('responde 500 cuando la DB falla', async () => {
-        // Simula un fallo de conexión o query inválida.
         Inoculo.fetchEspecies.mockRejectedValue(new Error('Timeout'));
 
-        const res = await request(app).get('/api/inoculos/especies');
+        const res = await request(app)
+            .get('/api/inoculos/especies')
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(res.statusCode).toBe(500);
         expect(res.body).toMatchObject({
@@ -77,16 +93,23 @@ describe('GET /api/inoculos/especies', () => {
     // ─── Formato de respuesta ─────────────────────────────────────────────────
 
     it('responde con Content-Type application/json', async () => {
-        // Verifica que el endpoint siempre responda en JSON.
         Inoculo.fetchEspecies.mockResolvedValue([[{ especie: 'Shiitake' }]]);
 
-        const res = await request(app).get('/api/inoculos/especies');
+        const res = await request(app)
+            .get('/api/inoculos/especies')
+            .set('Authorization', `Bearer ${tokenTest}`); 
 
         expect(res.headers['content-type']).toMatch(/application\/json/);
     });
 });
 
 describe('GET /api/inoculos/filtrado', () => {
+    let tokenTest;
+
+    beforeAll(() => {
+        const SECRET = process.env.APP_ACCESS_KEY || 'test_secret_key';
+        tokenTest = jwt.sign({ id: 1, usuario: 'test_user', isAdmin: true }, SECRET, { expiresIn: '1h' });
+    });
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -108,7 +131,9 @@ describe('GET /api/inoculos/filtrado', () => {
         ];
         Inoculo.fetchInoculosFiltrados.mockResolvedValue([inoculosMock]);
 
-        const res = await request(app).get(`/api/inoculos/filtrado?especie=${especie}&tipo=${tipo}`);
+        const res = await request(app)
+            .get(`/api/inoculos/filtrado?especie=${especie}&tipo=${tipo}`)
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toMatchObject({
@@ -124,7 +149,9 @@ describe('GET /api/inoculos/filtrado', () => {
         ];
         Inoculo.fetchInoculosFiltrados.mockResolvedValue([inoculosMock]);
 
-        const res = await request(app).get('/api/inoculos/filtrado'); // Sin query params, usa los valores por defecto
+        const res = await request(app)
+            .get('/api/inoculos/filtrado')
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toMatchObject({
@@ -136,7 +163,9 @@ describe('GET /api/inoculos/filtrado', () => {
     it('responde 200 con data vacío si no hay inóculos filtrados', async () => {
         Inoculo.fetchInoculosFiltrados.mockResolvedValue([[]]);
 
-        const res = await request(app).get('/api/inoculos/filtrado?especie=Shiitake&tipo=Agar');
+        const res = await request(app)
+            .get('/api/inoculos/filtrado?especie=Shiitake&tipo=Agar')
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toMatchObject({
@@ -150,7 +179,9 @@ describe('GET /api/inoculos/filtrado', () => {
     it('responde 500 cuando la DB lanza un error', async () => {
         Inoculo.fetchInoculosFiltrados.mockRejectedValue(new Error('Connection lost'));
 
-        const res = await request(app).get('/api/inoculos/filtrado?especie=Shiitake&tipo=Agar');
+        const res = await request(app)
+            .get('/api/inoculos/filtrado?especie=Shiitake&tipo=Agar')
+            .set('Authorization', `Bearer ${tokenTest}`); 
 
         expect(res.statusCode).toBe(500);
         expect(res.body).toMatchObject({
@@ -164,7 +195,9 @@ describe('GET /api/inoculos/filtrado', () => {
     it('responde con Content-Type application/json', async () => {
         Inoculo.fetchInoculosFiltrados.mockResolvedValue([[{ inóculo: 'Inóculo1' }]]);
 
-        const res = await request(app).get('/api/inoculos/filtrado?especie=Shiitake&tipo=Agar');
+        const res = await request(app)
+            .get('/api/inoculos/filtrado?especie=Shiitake&tipo=Agar')
+            .set('Authorization', `Bearer ${tokenTest}`);
 
         expect(res.headers['content-type']).toMatch(/application\/json/);
     });
