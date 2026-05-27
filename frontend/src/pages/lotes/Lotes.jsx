@@ -9,6 +9,7 @@ import useBloques from "../../features/bloques/hooks/useBloques";
 import Button from "../../shared/components/ui/buttons/Botones";
 import ModalConfirmacion from "../../shared/components/ui/popups/ModalConfirmacion";
 import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
+import BotonCrear from "../../shared/components/ui/buttons/BotonFlotante";
 
 // Iconos
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -298,25 +299,13 @@ function Lotes() {
     <Base margen_arriba="mt-20 md:mt-20">
       {/* Botón para cambiar del forms a la vista de tabla*/}
       <div className="lg:hidden flex justify-start mb-6">
-        <Button
+        <BotonCrear
           onClick={() => setVerFormulario(!verFormulario)}
-          className={`px-5 py-2 rounded-[12px] border-2`}
-          isOutline={true}
-        >
-          <Text
-            variante="label"
-            style={{
-              color: colores.azul,
-              fontWeight: "600",
-              fontSize: "13px"
-            }}
-          >
-            {verFormulario
+          texto={verFormulario
               ? (paso === 1 ? "Ver Lotes" : "Ver Bloques")
               : (paso === 1 ? "Crear lote" : "Crear bloque")
-            }
-          </Text>
-        </Button>
+          }
+      />
 
       </div>
 
