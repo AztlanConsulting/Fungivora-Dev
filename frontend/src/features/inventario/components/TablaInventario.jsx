@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import Text from "../../../shared/components/ui/basics/Texto";
 import { colores } from "../../../shared/components/ui/basics/Colores";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { PlusMinus02Icon } from "@hugeicons/core-free-icons";
+import { PlusMinus02Icon, InformationCircleIcon } from "@hugeicons/core-free-icons";
+import ModalInfo from "../../../shared/components/ui/popups/ModalInfo";
+
+const MENSAJE_INFO_NO_EDITABLE = "No puedes editar la cantidad de este insumo manualmente";
 
 const colorBordeHeader = "#F2F2FC";
 const columnasHeader = [
@@ -13,6 +16,7 @@ const columnasHeader = [
 ];
 
 const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSeleccionada, abrirModalEdicion, gridLayout }) => {
+  const [mostrarInfoNoEditable, setMostrarInfoNoEditable] = useState(false);
 
   // Número de forma visual mejor
   const formatearNumero = (valor) => {
@@ -107,14 +111,21 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                 {/* Acciones Desktop Condicionado */}
                 <div className="flex justify-center p-2">
                   {esInsumo ? (
-                    <div 
-                      className="hover:scale-110 transition-transform" 
+                    <div
+                      className="hover:scale-110 transition-transform cursor-pointer"
                       onClick={(e) => { e.stopPropagation(); abrirModalEdicion(item); }}
                     >
                       <HugeiconsIcon icon={PlusMinus02Icon} size={20} color={colores.azul} />
                     </div>
                   ) : (
-                    <span className=""></span>
+                    <button
+                      type="button"
+                      className="hover:scale-110 transition-transform cursor-pointer"
+                      onClick={(e) => { e.stopPropagation(); setMostrarInfoNoEditable(true); }}
+                      aria-label="Información"
+                    >
+                      <HugeiconsIcon icon={InformationCircleIcon} size={20} color={colores.azul} />
+                    </button>
                   )}
                 </div>
               </div>
@@ -127,9 +138,17 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                     <Text variante="option" style={{ color: "black", fontWeight: "600", fontSize: "16px" }}>{item.nombre}</Text>
                     
                     {/* Icono Móvil Condicionado */}
-                    {esInsumo && (
+                    {esInsumo ? (
                       <button onClick={(e) => { e.stopPropagation(); abrirModalEdicion(item); }}>
                         <HugeiconsIcon icon={PlusMinus02Icon} size={22} color={colores.azul} />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); setMostrarInfoNoEditable(true); }}
+                        aria-label="Información"
+                      >
+                        <HugeiconsIcon icon={InformationCircleIcon} size={22} color={colores.azul} />
                       </button>
                     )}
                   </div>
@@ -147,6 +166,12 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
           );
         })}
       </div>
+
+      <ModalInfo
+        visible={mostrarInfoNoEditable}
+        mensaje={MENSAJE_INFO_NO_EDITABLE}
+        onClose={() => setMostrarInfoNoEditable(false)}
+      />
     </div>
   );
 };
