@@ -6,9 +6,9 @@ import Button from "../../../shared/components/ui/buttons/botones";
 import { colores } from "../../../shared/components/ui/basics/colores";
 
 const ModalEditarInsumo = ({ insumo, unidades, onConfirm, onCancel }) => {
-    const [nombre, setNombre] = useState("");
-    const [unidad, setUnidad] = useState("");
-    const [stockRecomendado, setStockRecomendado] = useState("");
+    const [nombre, setNombre] = useState(insumo?.nombre || "");
+    const [unidad, setUnidad] = useState(insumo?.unidad || "");
+    const [stockRecomendado, setStockRecomendado] = useState(String(insumo?.stock_recomendado ?? ""));
     const [error, setError] = useState("");
     const [confirmando, setConfirmando] = useState(false);
 
