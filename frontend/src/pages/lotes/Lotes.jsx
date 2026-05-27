@@ -26,7 +26,8 @@ function Lotes() {
     { label: "Código de Lote", key: "codigo_fungivora" },
     { label: "Ubicación", key: "ubicacion_lote" },
     { label: "Estado", key: "fase" },
-    { label: "Fecha", key: "fecha_lote" }
+    { label: "Fecha", key: "fecha_lote" },
+    { label: "Eliminar", key: "eliminar"}
   ];
 
   // Tener la fecha de hoy en el input
