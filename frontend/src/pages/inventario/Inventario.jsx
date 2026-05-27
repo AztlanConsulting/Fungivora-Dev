@@ -288,6 +288,7 @@ const Inventario = () => {
 
         {modalEditar.visible && (
             <ModalEditarInsumo
+                key={modalEditar.insumo?.id_insumo} 
                 insumo={modalEditar.insumo}
                 unidades={unidades}
                 onConfirm={handleConfirmarEdicion}
