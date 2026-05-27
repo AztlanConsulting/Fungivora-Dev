@@ -1,0 +1,133 @@
+import React, { useEffect, useRef, useState } from "react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+    CheckmarkCircle02Icon,
+    Alert02Icon,
+    Cancel01Icon,
+    MultiplicationSignCircleIcon,
+} from "@hugeicons/core-free-icons";
+
+const VARIANTES = {
+    exito: {
+        icon: CheckmarkCircle02Icon,
+        color: "#22c55e",
+        bg: "#f0fdf4",
+        border: "#bbf7d0",
+        label: "Éxito",
+    },
+    error: {
+        icon: MultiplicationSignCircleIcon,
+        color: "#ef4444",
+        bg: "#fef2f2",
+        border: "#fecaca",
+        label: "Error",
+    },
+    advertencia: {
+        icon: Alert02Icon,
+        color: "#f59e0b",
+        bg: "#fffbeb",
+        border: "#fde68a",
+        label: "Advertencia",
+    },
+};
+
+const AUTO_DISMISS_MS = 6000;
+const ANIMACION_SALIDA_MS = 300;
+
+const ModalAlerta = ({
+    visible,
+    variante = "exito",
+    mensaje = "",
+    onClose,
+}) => {
+    const [saliendo, setSaliendo] = useState(false);
+    const config = VARIANTES[variante] ?? VARIANTES.exito;
+
+    const onCloseRef = useRef(onClose);
+    useEffect(() => {
+        onCloseRef.current = onClose;
+    }, [onClose]);
+
+    useEffect(() => {
+        if (!visible) return undefined;
+
+        const reset = requestAnimationFrame(() => {
+            setSaliendo(false);
+        });
+
+        const timerSalida = setTimeout(
+            () => setSaliendo(true),
+            AUTO_DISMISS_MS
+        );
+        const timerClose = setTimeout(
+            () => onCloseRef.current?.(),
+            AUTO_DISMISS_MS + ANIMACION_SALIDA_MS
+        );
+
+        return () => {
+            cancelAnimationFrame(reset);
+            clearTimeout(timerSalida);
+            clearTimeout(timerClose);
+        };
+    }, [visible]);
+
+    const handleClose = () => {
+        setSaliendo(true);
+        setTimeout(() => onCloseRef.current?.(), ANIMACION_SALIDA_MS);
+    };
+
+    if (!visible) return null;
+
+    return (
+        <div
+            className="fixed bottom-8 left-1/2 z-[200]"
+            style={{
+                transform: "translateX(-50%)",
+                animation: saliendo
+                    ? "alertaSalida 0.3s ease-in forwards"
+                    : "alertaEntrada 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+            }}
+        >
+            <style>{`
+                @keyframes alertaEntrada {
+                  from { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.95); }
+                  to   { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);    }
+                }
+                @keyframes alertaSalida {
+                  from { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);    }
+                  to   { opacity: 0; transform: translateX(-50%) translateY(10px) scale(0.97); }
+                }
+            `}</style>
+
+            <div
+                className="flex items-center gap-3 px-5 py-3 rounded-full shadow-lg"
+                style={{
+                    backgroundColor: config.bg,
+                    border: `1.5px solid ${config.border}`,
+                    minWidth: "260px",
+                    maxWidth: "420px",
+                }}
+            >
+                <HugeiconsIcon icon={config.icon} size={22} color={config.color} />
+
+                <span
+                    className="flex-1 text-sm font-medium leading-snug"
+                    style={{ color: "#1e293b" }}
+                >
+                    {mensaje}
+                </span>
+
+                <button
+                    onClick={handleClose}
+                    className="flex items-center justify-center w-6 h-6 rounded-full transition-transform hover:scale-110 active:scale-95 flex-shrink-0"
+                    style={{ backgroundColor: `${config.color}18` }}
+                    aria-label="Cerrar"
+                >
+                    <HugeiconsIcon icon={Cancel01Icon} size={13} color={config.color} />
+                </button>
+            </div>
+        </div>
+    );
+};
+
+export default ModalAlerta;

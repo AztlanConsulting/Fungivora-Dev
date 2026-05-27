@@ -1,10 +1,9 @@
-const express = require('express');
-const app = express();
-const PORT = 5000;
+const dotenv = require('dotenv');
+dotenv.config({ quiet: true, path: require('path').join(__dirname, '../.env') });
 
-app.get('/api', (req, res) => {
-    res.json({ mensaje: "Respuesta del backend" });
-});
+const app = require('./app');
+
+const PORT = process.env.BACKEND_PORT;
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);

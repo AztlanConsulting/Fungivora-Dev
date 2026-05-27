@@ -1,0 +1,117 @@
+import { useState, useEffect, useMemo } from "react";
+import insumosService from "../../../shared/crear-inoculos/services/inoculos.service";
+import { BOLSAS, TAMANOS_COMPOSICION } from "../../../shared/crear-inoculos/types/inoculos.types";
+import { validarStockComposicion } from "../../../shared/crear-inoculos/utils/validarStockComposicion";
+
+const normalizarUnidad = (unidad = "") => {
+  const u = unidad.toLowerCase();
+  if (u.includes("mililitro")) return "ml";
+  if (u.includes("gramo")) return "g";
+  if (u.includes("kilogramo")) return "kg";
+  if (u.includes("litro")) return "L";
+  return unidad;
+};
+
+/**
+ * Gestiona los ingredientes de una semilla: Mijo · Agua · Inóculo.
+ */
+const useIngredientesSemilla = ({
+  inoculoDisponible = 0,
+  tipoMijo = "",
+  codigoInoculo = "",
+  tamano = "",
+  tipoInoculo = null,
+  cantidad = 1,
+}) => {
+  const [insumos, setInsumos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const sugeridos = useMemo(() => {
+    const ml = BOLSAS[tamano];
+    if (!ml) return { mijo: "", agua: "", inoculo: "" };
+
+    return {
+      mijo: String(TAMANOS_COMPOSICION.cantIngredientes[ml].mijo),
+      agua: String(TAMANOS_COMPOSICION.cantIngredientes[ml].agua),
+      inoculo: String(TAMANOS_COMPOSICION.cantInoculo[ml][tipoInoculo] ?? ""),
+    };
+  }, [tamano, tipoInoculo]);
+
+  const [cantMijo, setCantMijo] = useState(sugeridos.mijo);
+  const [cantAgua, setCantAgua] = useState(sugeridos.agua);
+  const [cantInoculo, setCantInoculo] = useState(sugeridos.inoculo);
+
+  // Sincronizar cuando el usuario cambia tamaño o tipo de inóculo
+  useEffect(() => {
+    setCantMijo(sugeridos.mijo);
+    setCantAgua(sugeridos.agua);
+    setCantInoculo(sugeridos.inoculo);
+  }, [sugeridos]);
+
+  useEffect(() => {
+    insumosService.getMaterialesInsumos()
+      .then((json) => {
+        if (json.success) setInsumos(json.data);
+        else setError("No se pudieron cargar los insumos");
+      })
+      .catch(() => setError("Error de conexión"))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // Ambas variantes de mijo disponibles en inventario → selector del form
+  const opcionesMijo = insumos
+    .filter((i) => i.nombre.toLowerCase().includes("mijo"))
+    .map((i) => ({ value: i.nombre, label: i.nombre }));
+
+  // Insumo del mijo seleccionado (búsqueda exacta por nombre)
+  const mijoInsumo = tipoMijo
+    ? insumos.find((i) => i.nombre.toLowerCase() === tipoMijo.toLowerCase())
+    : null;
+
+  const aguaInsumo = insumos.find((i) => i.nombre.toLowerCase().includes("agua"));
+  const esSolido = codigoInoculo && codigoInoculo.split("-")[0].endsWith("G");
+
+  const items = [
+    {
+      id: mijoInsumo?.id_insumo ?? null,
+      tipo: "ingrediente",
+      nombre: tipoMijo || "Mijo",
+      unidad: normalizarUnidad(mijoInsumo?.unidad) || "ml",
+      value: cantMijo,
+      onChange: (e) => setCantMijo(e.target.value),
+      cantidad: parseFloat(mijoInsumo?.cantidad) || 0,
+    },
+    {
+      id: aguaInsumo?.id_insumo ?? null,
+      tipo: "ingrediente",
+      nombre: "Agua",
+      unidad: normalizarUnidad(aguaInsumo?.unidad) || "ml",
+      value: cantAgua,
+      onChange: (e) => setCantAgua(e.target.value),
+      cantidad: parseFloat(aguaInsumo?.cantidad) || 0,
+    },
+    {
+      id: null,
+      tipo: "inoculo",
+      nombre: codigoInoculo || "Inóculo",
+      unidad: esSolido ? "g" : "ml",
+      value: cantInoculo,
+      onChange: (e) => setCantInoculo(e.target.value),
+      cantidad: inoculoDisponible,
+    },
+  ];
+
+  const { items: itemsValidados, tieneErrores } = validarStockComposicion(items, cantidad);
+
+  return {
+    items: itemsValidados,
+    valores: { cantMijo, cantAgua, cantInoculo },
+    opcionesMijo,
+    tieneErrores,
+    loading,
+    error,
+  };
+};
+
+export default useIngredientesSemilla;
