@@ -6,6 +6,10 @@ import ModalEditarInsumo from '../../../features/inventario/components/ModalEdit
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
+// Rutas exactas como las importa el componente
+vi.mock('../../../shared/components/ui/basics/texto', () => ({
+    default: ({ children, ...props }) => <p {...props}>{children}</p>
+}))
 vi.mock('../../../shared/components/ui/inputs/InputTexto', () => ({
     default: ({ placeholder, value, onChange }) => (
         <input placeholder={placeholder} value={value} onChange={onChange} />
@@ -19,11 +23,11 @@ vi.mock('../../../shared/components/ui/inputs/SeleccionarTexto', () => ({
         </select>
     )
 }))
-vi.mock('../../../shared/components/ui/basics/Texto', () => ({   // también mayúscula
-    default: ({ children, ...props }) => <p {...props}>{children}</p>
-}))
-vi.mock('../../../shared/components/ui/buttons/Botones', () => ({  // también mayúscula
+vi.mock('../../../shared/components/ui/buttons/botones', () => ({
     default: ({ children, onClick }) => <button onClick={onClick}>{children}</button>
+}))
+vi.mock('../../../shared/components/ui/basics/colores', () => ({
+    colores: { azul: '#3B3FB6', black: '#000' }
 }))
 
 // ─── Datos de prueba ──────────────────────────────────────────────────────────
