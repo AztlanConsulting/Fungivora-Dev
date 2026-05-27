@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { colores } from "../basics/Colores";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Calendar03Icon } from '@hugeicons/core-free-icons';
 
@@ -28,6 +30,7 @@ const esFechaValida = ({ day, month, year }) => {
 
 const InputFecha = ({ value = {}, onChange }) => {
     const [isFocused, setIsFocused] = useState(false);
+    const datePickerRef = useRef(null);
 
     const handleChange = (field, val) => {
         if (!/^\d*$/.test(val)) return;
@@ -56,6 +59,10 @@ const InputFecha = ({ value = {}, onChange }) => {
         }
     };
 
+    const fechaSeleccionada = esFechaValida(value) 
+        ? new Date(Number(value.year), Number(value.month) - 1, Number(value.day))
+        : new Date();
+
     const inputStyle = `
         w-full h-full bg-transparent 
         text-center outline-none 
@@ -67,65 +74,80 @@ const InputFecha = ({ value = {}, onChange }) => {
     `;
 
     return (
-        <div
-            className={`
-                w-80 h-10 md:w-96 md:h-12
-                bg-[#FFFFFF] rounded-md overflow-hidden transition-all flex items-stretch
-                ${isFocused ? "ring-4" : "ring-2"}
-            `}
-            style={{ outline: "none", boxShadow: `0 0 0 ${isFocused ? "4px" : "2px"} ${isFocused ? colores.azul : colores.grisClaro}` }}
-        >
-            {/* Icono lateral */}
-            <div
-                className="flex items-center justify-center px-3 border-r-2"
-                style={{ borderColor: colores.grisClaro, color: isFocused ? colores.azul : colores.grisMedio }}
-            >
-                <HugeiconsIcon icon={Calendar03Icon} size={26} />
+        <div className="relative">
+            <div className="absolute top-0 left-0 w-0 h-0 overflow-hidden">
+                <DatePicker
+                    ref={datePickerRef}
+                    selected={fechaSeleccionada}
+                    onChange={(date) => {
+                        onChange({
+                            day: String(date.getDate()).padStart(2, "0"),
+                            month: String(date.getMonth() + 1).padStart(2, "0"),
+                            year: String(date.getFullYear()),
+                        });
+                    }}
+                    withPortal 
+                    popperPlacement="bottom-start"
+                />
             </div>
 
-            {/* Inputs */}
-            <div className="flex flex-1 items-center">
-
-                <div className="flex-1 h-full">
-                    <input
-                        className={inputStyle}
-                        placeholder="DD"
-                        value={value.day || ""}
-                        onChange={(e) => handleChange("day", e.target.value)}
-                        onFocus={() => setIsFocused(true)}
-                        onBlur={handleBlur}
-                        inputMode="numeric"
-                    />
+            <div
+                className={`w-80 h-10 md:w-96 md:h-12 bg-[#FFFFFF] rounded-md overflow-hidden transition-all flex items-stretch ${isFocused ? "ring-4" : "ring-2"}`}
+                style={{ outline: "none", boxShadow: `0 0 0 ${isFocused ? "4px" : "2px"} ${isFocused ? colores.azul : colores.grisClaro}` }}
+            >
+                <div
+                    className="flex items-center justify-center px-3 border-r-2 cursor-pointer hover:bg-gray-100"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        console.log("Clic detectado en icono");
+                        console.log("Ref actual:", datePickerRef.current);
+                        if (datePickerRef.current) {
+                            datePickerRef.current.setOpen(true);
+                        }
+                    }}
+                    style={{ borderColor: colores.grisClaro, color: isFocused ? colores.azul : colores.grisMedio }}
+                >
+                    <HugeiconsIcon icon={Calendar03Icon} size={26} />
                 </div>
 
-                <div className="w-[2px] h-full" style={{ backgroundColor: colores.grisClaro }} />
-
-                <div className="flex-1 h-full">
-                    <input
-                        className={inputStyle}
-                        placeholder="MM"
-                        value={value.month || ""}
-                        onChange={(e) => handleChange("month", e.target.value)}
-                        onFocus={() => setIsFocused(true)}
-                        onBlur={handleBlur}
-                        inputMode="numeric"
-                    />
+                {/* Inputs */}
+                <div className="flex flex-1 items-center">
+                    <div className="flex-1 h-full">
+                        <input
+                            className={inputStyle}
+                            placeholder="DD"
+                            value={value.day || ""}
+                            onChange={(e) => handleChange("day", e.target.value)}
+                            onFocus={() => setIsFocused(true)}
+                            onBlur={handleBlur}
+                            inputMode="numeric"
+                        />
+                    </div>
+                    <div className="w-[2px] h-full" style={{ backgroundColor: colores.grisClaro }} />
+                    <div className="flex-1 h-full">
+                        <input
+                            className={inputStyle}
+                            placeholder="MM"
+                            value={value.month || ""}
+                            onChange={(e) => handleChange("month", e.target.value)}
+                            onFocus={() => setIsFocused(true)}
+                            onBlur={handleBlur}
+                            inputMode="numeric"
+                        />
+                    </div>
+                    <div className="w-[2px] h-full" style={{ backgroundColor: colores.grisClaro }} />
+                    <div className="flex-[1.5] h-full">
+                        <input
+                            className={inputStyle}
+                            placeholder="YYYY"
+                            value={value.year || ""}
+                            onChange={(e) => handleChange("year", e.target.value)}
+                            onFocus={() => setIsFocused(true)}
+                            onBlur={handleBlur}
+                            inputMode="numeric"
+                        />
+                    </div>
                 </div>
-
-                <div className="w-[2px] h-full" style={{ backgroundColor: colores.grisClaro }} />
-
-                <div className="flex-[1.5] h-full">
-                    <input
-                        className={inputStyle}
-                        placeholder="YYYY"
-                        value={value.year || ""}
-                        onChange={(e) => handleChange("year", e.target.value)}
-                        onFocus={() => setIsFocused(true)}
-                        onBlur={handleBlur}
-                        inputMode="numeric"
-                    />
-                </div>
-
             </div>
         </div>
     );

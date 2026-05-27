@@ -19,35 +19,57 @@ const FormCrearBloque = ({
   getInoculosPorEspecie
 }) => {
 
-  // Validar el número
-  const validarEntero = (valor, limite) => {
-    let limpio = valor.replace(/[^0-9]/g, "");
-
-    if (limpio.length > 1 && limpio.startsWith("0")) {
-      limpio = limpio.substring(1);
-    }
-    if (limpio.length > limite) {
-      limpio = limpio.slice(0, limite);
-    }
-
-    return limpio;
-  };
-
   const inoculosOpciones = useMemo(() => {
     if (!especieSeleccionada) return [];
     return getInoculosPorEspecie(especieSeleccionada);
   }, [especieSeleccionada, getInoculosPorEspecie]);
 
-  // Máximo 5 dígitos
+
+  const validarPeso = (valor) => {
+    let limpio = valor.replace(/[^0-9.]/g, "");
+
+    const partes = limpio.split(".");
+    if (partes.length > 2) {
+      limpio = partes[0] + "." + partes.slice(1).join("");
+    }
+
+    if (partes[0].length > 5) {
+      partes[0] = partes[0].slice(0, 5);
+    }
+    if (partes[1] !== undefined && partes[1].length > 2) {
+      partes[1] = partes[1].slice(0, 2);
+    }
+    
+    limpio = partes[0] + (partes[1] !== undefined ? "." + partes[1] : "");
+
+    if (limpio.startsWith(".")) {
+      limpio = "0" + limpio;
+    }
+
+    return limpio;
+  };
+
   const handleChangePeso = (e) => {
-    const valorValidado = validarEntero(e.target.value, 5);
+    const valorValidado = validarPeso(e.target.value);
     setBloqueForm({ ...bloqueForm, peso_gr: valorValidado });
   };
 
   // Cambiar cantidad
   const handleChangeCantidad = (e) => {
-    const valorValidado = validarEntero(e.target.value, 2);
-    setBloqueForm({ ...bloqueForm, cantidad: valorValidado });
+    let valor = e.target.value.replace(/[^0-9]/g, ""); 
+
+    if (valor === "") {
+      setBloqueForm({ ...bloqueForm, cantidad: "" });
+      return;
+    }
+
+    let numero = parseInt(valor, 10);
+
+    if (numero > 100) {
+      numero = 100;
+    }
+
+    setBloqueForm({ ...bloqueForm, cantidad: numero.toString() });
   };
 
   return (

@@ -14,15 +14,14 @@ const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayo
   };
 
   return (
-    <div className="flex flex-col md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
+    <div className="flex flex-col md:justify-center md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
       <div className={`hidden md:grid ${gridLayout}`} style={{ backgroundColor: colorBordeHeader }}>
         {columnas.map((col, i) => (
           // Header
-          <div key={i} className="px-6 py-4">
+          <div key={i} className="px-6 py-4 flex items-center justify-center text-center">
             <Text variante="medium" style={{ color: colores.azul, fontSize: "16px", fontWeight: '600' }}>{col.label}</Text>
           </div>
         ))}
-        <div className="px-6 py-4"></div>
       </div>
 
       <div className="max-h-[605px] md:max-h-[550px] overflow-y-auto flex flex-col gap-3 md:gap-0">
@@ -39,11 +38,18 @@ const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayo
                 style={{ borderColor: colorBordeHeader, backgroundColor: 'white' }}
               >
                 {columnas.map((col, i) => (
-                  <div key={i} className="px-6 py-5 flex items-center">
+                  <div key={i} className="px-6 py-4 flex items-center justify-center text-center">
                     {col.key === 'fase' ? (
                       <div className="px-4 py-1 rounded-lg text-sm font-semibold" style={{ backgroundColor: estiloFase.bg, color: estiloFase.text }}>
                         {lote[col.key]}
                       </div>
+                    ) : col.key === 'eliminar' ? (
+                      <button
+                        onClick={(e) => handleEliminarClick(e, lote)}
+                        className="hover:scale-110 transition-transform p-2 flex items-center justify-center w-full"
+                      >
+                        <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
+                      </button>
                     ) : (
                       <Text variante="option" style={{ color: "black", fontSize: "15px", fontWeight: col.key === 'codigo_fungivora' ? '600' : '400' }}>
                         {col.key === 'fecha_lote' ? fechaFormateada : lote[col.key]}
@@ -51,14 +57,6 @@ const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayo
                     )}
                   </div>
                 ))}
-                <div className="py-4 flex justify-center items-center">
-                  <button
-                    onClick={(e) => handleEliminarClick(e, lote)}
-                    className="hover:scale-110 transition-transform p-2"
-                  >
-                    <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
-                  </button>
-                </div>
               </div>
 
               {/* Vista de movil */}
