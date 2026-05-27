@@ -42,11 +42,11 @@ const PantallaPrincipalView = () => {
             }
 
             const payload = parseJwt(tokenToParse);
+            console.log("Payload del token:", payload);
+
             if (payload) {
-                const esAdministrador = payload.isAdmin === true || 
-                                       payload.isAdmin === 1 || 
-                                       payload.user?.isAdmin === true;
-                setEsAdmin(!!esAdministrador);
+                const isAdminValue = Number(payload.is_user_admin);
+                setEsAdmin(isAdminValue === 1); 
             }
         } catch (err) {
             console.error("Error validando sesión:", err);
