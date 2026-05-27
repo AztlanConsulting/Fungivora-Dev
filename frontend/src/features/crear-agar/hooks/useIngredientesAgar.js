@@ -72,7 +72,7 @@ const useIngredientesAgar = ({
 
   const buscar = (nombre) => {
     if (!Array.isArray(insumos)) return null;
-    return insumos.find((i) => 
+    return insumos.find((i) =>
       i && i.nombre && i.nombre.toLowerCase().includes(nombre.toLowerCase())
     );
   };
@@ -93,7 +93,7 @@ const useIngredientesAgar = ({
       unidad: normalizarUnidad(aguaInsumo?.unidad) || "ml",
       value: agua,
       onChange: (e) => setAgua(e.target.value),
-      cantidad: parseFloat(aguaInsumo?.cantidad) || 5000,
+      cantidad: parseFloat(aguaInsumo?.cantidad) || 0,
     },
     {
       id: agaragarInsumo?.id_insumo ?? null,
@@ -102,7 +102,7 @@ const useIngredientesAgar = ({
       unidad: normalizarUnidad(agaragarInsumo?.unidad) || "g",
       value: agaragar,
       onChange: (e) => setAgaragar(e.target.value),
-      cantidad: parseFloat(agaragarInsumo?.cantidad) || 500,
+      cantidad: parseFloat(agaragarInsumo?.cantidad) || 0,
     },
     {
       id: peptonaInsumo?.id_insumo ?? null,
@@ -111,7 +111,7 @@ const useIngredientesAgar = ({
       unidad: normalizarUnidad(peptonaInsumo?.unidad) || "g",
       value: peptona,
       onChange: (e) => setPeptona(e.target.value),
-      cantidad: parseFloat(peptonaInsumo?.cantidad) || 500,
+      cantidad: parseFloat(peptonaInsumo?.cantidad) || 0,
     },
     {
       id: extractoInsumo?.id_insumo ?? null,
@@ -120,16 +120,16 @@ const useIngredientesAgar = ({
       unidad: normalizarUnidad(extractoInsumo?.unidad) || "g",
       value: extracto,
       onChange: (e) => setExtracto(e.target.value),
-      cantidad: parseFloat(extractoInsumo?.cantidad) || 500,
+      cantidad: parseFloat(extractoInsumo?.cantidad) || 0,
     },
     {
-        id: null,
-        nombre: codigoInoculo || "Inóculo",
-        tipo: "inoculo",
-        unidad: esSolido ? "g" : "ml",
-        value: cantInoculo,
-        onChange: (e) => setInoculoCant(e.target.value),
-        cantidad: inoculoDisponible,
+      id: null,
+      nombre: codigoInoculo || "Inóculo",
+      tipo: "inoculo",
+      unidad: esSolido ? "g" : "ml",
+      value: cantInoculo,
+      onChange: (e) => setInoculoCant(e.target.value),
+      cantidad: inoculoDisponible,
     },
   ];
 
