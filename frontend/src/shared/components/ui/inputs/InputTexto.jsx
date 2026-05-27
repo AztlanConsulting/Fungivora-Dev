@@ -50,7 +50,7 @@ const Input = ({
     const alignmentClass = alignments[variante] || alignments.normal;
 
     if (variante === "normal" && !regex) {
-        regex = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9]+( [a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9]+)*$/;
+        regex = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9][a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 ]*$/;
     }
 
     useEffect(() => {
