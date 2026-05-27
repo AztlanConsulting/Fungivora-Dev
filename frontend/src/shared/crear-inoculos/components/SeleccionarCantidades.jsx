@@ -11,11 +11,13 @@ const EntradaCard = ({
   cantMax = 0,
   excede = false,
   mensajeError = null,
+  deshabilitado = false,
 }) => {
-  // Error efímero (se enciende cuando el usuario tipea > cantMax y se autocompleta al cap).
+
   const [errorLocal, setErrorLocal] = useState(false);
 
   const manejarCambio = (e) => {
+    if (deshabilitado) return;
     const val = e.target.value;
     const rawValue = val.replace(/,/g, "");
 
@@ -40,7 +42,7 @@ const EntradaCard = ({
     : mensajeError;
 
   return (
-    <div className="relative flex flex-col items-center gap-3 p-5 w-full md:w-auto min-w-0">
+    <div className={`relative flex flex-col items-center gap-3 p-5 w-full md:w-auto min-w-0 ${deshabilitado ? "opacity-50" : ""}`}>
 
       <Text className="text-center p-2 break-all max-w-full" variante="label" style={{ color: colores.black, fontSize: "18px" }}>
         {nombre}
@@ -56,6 +58,7 @@ const EntradaCard = ({
             onChange={manejarCambio}
             roundedClass="rounded-xl"
             className="w-16 h-12"
+            disabled={deshabilitado}
           />
         </div>
 
@@ -98,6 +101,7 @@ export const EntradaLista = ({ items = [] }) => {
               cantMax={item.cantidad}
               excede={item.excedeIndividual}
               mensajeError={item.mensajeErrorIndividual}
+              deshabilitado={item.tipo === "inoculo" && !(Number(item.cantidad) > 0)}
             />
 
             {index < items.length - 1 && (

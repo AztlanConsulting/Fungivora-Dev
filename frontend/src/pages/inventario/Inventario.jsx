@@ -8,6 +8,7 @@ import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
 import ModalConfirmacion from "../../shared/components/ui/popups/ModalConfirmacion";
 import Button from "../../shared/components/ui/buttons/Botones";
 import Input from "../../shared/components/ui/inputs/InputTexto";
+import BotonCrear from "../../shared/components/ui/buttons/BotonFlotante";
 
 import TablaInventario from "../../features/inventario/components/TablaInventario";
 import FormularioInsumo from "../../features/inventario/components/FormularioInsumo";
@@ -26,8 +27,8 @@ const Inventario = () => {
   const [guardando, setGuardando] = useState(false);
   const [modalConfirmacion, setModalConfirmacion] = useState({ visible: false, datos: null });
 
-  // Grid de la tabla
-  const gridLayout = "grid-cols-1 md:grid-cols-[1.5fr_2.2fr_1fr_1fr]";
+  // Grid de la tabla — proporciones balanceadas para que Estado quede centrado entre Cantidad y Acciones.
+  const gridLayout = "grid-cols-1 md:grid-cols-[1.5fr_1.5fr_1fr_1fr]";
 
   const lanzarAlerta = (mensaje, variante = "exito") => setAlerta({ visible: true, mensaje, variante });
 
@@ -128,23 +129,17 @@ const Inventario = () => {
       <Titulo>Inventario</Titulo>
       <Base margen_arriba="mt-20 md:mt-20">
 
-        {/* Botón Móvil */}
-        <div className="lg:hidden flex justify-start mb-6">
-          <Button
+        {/* Botón Móvil/Tablet/Laptop (oculto cuando el form pasa a estar al lado, a partir de 1308px) */}
+        <div className="min-[1308px]:hidden flex justify-start mb-6">
+          <BotonCrear
             onClick={() => setVerFormulario(!verFormulario)}
-            className="px-5 py-2 rounded-[12px] border-2"
-            isOutline={true}>
-            <Text
-              variante="label"
-              style={{ color: colores.azul, fontWeight: "600", fontSize: "13px" }}>
-              {verFormulario ? "Ver Inventario" : "Crear insumo"}
-            </Text>
-          </Button>
+            texto={verFormulario ? "Ver Inventario" : "Crear insumo"}
+        />
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
+        <div className="flex flex-col min-[1308px]:flex-row gap-8 items-start">
           {/* Columnas*/}
-          <div className={`w-full lg:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} lg:block`}>
+          <div className={`w-full min-[1308px]:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} min-[1308px]:block`}>
             <TablaInventario
               insumos={insumos}
               loading={loading}
@@ -156,7 +151,7 @@ const Inventario = () => {
           </div>
 
           {/* Formulario */}
-          <div className={`w-full lg:w-[440px] bg-white rounded-[32px] shadow-sm border p-8 ${verFormulario ? "block" : "hidden"} lg:block lg:mt-0`}>
+          <div className={`w-full min-[1308px]:w-[440px] bg-white rounded-[32px] shadow-sm border p-8 ${verFormulario ? "block" : "hidden"} min-[1308px]:block min-[1308px]:mt-0`}>
             <FormularioInsumo
               nuevaFila={nuevaFila}
               handleNuevaFila={handleNuevaFila}
