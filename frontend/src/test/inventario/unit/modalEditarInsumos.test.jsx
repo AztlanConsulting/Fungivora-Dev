@@ -6,15 +6,12 @@ import ModalEditarInsumo from '../../../features/inventario/components/ModalEdit
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
-vi.mock('../../../shared/components/ui/basics/texto', () => ({
-    default: ({ children, ...props }) => <p {...props}>{children}</p>
-}))
-vi.mock('../../../shared/components/ui/inputs/input_texto', () => ({
+vi.mock('../../../shared/components/ui/inputs/InputTexto', () => ({
     default: ({ placeholder, value, onChange }) => (
         <input placeholder={placeholder} value={value} onChange={onChange} />
     )
 }))
-vi.mock('../../../shared/components/ui/inputs/seleccionar_texto', () => ({
+vi.mock('../../../shared/components/ui/inputs/SeleccionarTexto', () => ({
     default: ({ placeholder, value, onChange, options }) => (
         <select value={value} onChange={onChange}>
             <option value="">{placeholder}</option>
@@ -22,7 +19,10 @@ vi.mock('../../../shared/components/ui/inputs/seleccionar_texto', () => ({
         </select>
     )
 }))
-vi.mock('../../../shared/components/ui/buttons/botones', () => ({
+vi.mock('../../../shared/components/ui/basics/Texto', () => ({   // también mayúscula
+    default: ({ children, ...props }) => <p {...props}>{children}</p>
+}))
+vi.mock('../../../shared/components/ui/buttons/Botones', () => ({  // también mayúscula
     default: ({ children, onClick }) => <button onClick={onClick}>{children}</button>
 }))
 
