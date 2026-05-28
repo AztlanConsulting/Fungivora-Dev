@@ -73,19 +73,21 @@ const Input = ({
         if (variante === "numero") {
             const rawValue = e.target.value;
             const numeroRgx = numeroRegex[numeroTipo] || numeroRegex.entero;
-        
             if (!numeroRgx.test(rawValue)) return;
             return onChange(e);
         }
-        if (regex && e.target.value !== "" && !regex.test(e.target.value)) return;
 
-        onChange(e);
-
-        if (type === "email") {
-        return onChange(e);
+        let regexFinal = regex;
+        
+        if (!regexFinal) {
+            if (type === "email") {
+                regexFinal = /^[a-zA-Z0-9@.\-_]*$/; 
+            } else if (variante === "normal") {
+                regexFinal = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 ]*$/;
+            }
         }
 
-        if (regex && e.target.value !== "" && !regex.test(e.target.value)) return;
+        if (regexFinal && e.target.value !== "" && !regexFinal.test(e.target.value)) return;
 
         onChange(e);
     };
