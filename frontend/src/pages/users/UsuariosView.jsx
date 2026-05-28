@@ -105,7 +105,7 @@ const UsuariosView = () => {
     });
 
     return (
-        <Base margen_arriba="mt-22 md:mt-20">
+        <Base margen_arriba="mt-24 md:mt-20">
             <Titulo>Usuarios</Titulo>
                 <BotonCrear
                     onClick={() => setVistaActual(vistaActual === "lista" ? "crear" : "lista")}
