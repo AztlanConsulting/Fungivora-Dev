@@ -105,7 +105,7 @@ const UsuariosView = () => {
     });
 
     return (
-        <Base margen_arriba="mt-24 md:mt-20">
+        <Base margen_arriba="mt-22 md:mt-20">
             <Titulo>Usuarios</Titulo>
                 <BotonCrear
                     onClick={() => setVistaActual(vistaActual === "lista" ? "crear" : "lista")}
@@ -127,33 +127,24 @@ const UsuariosView = () => {
                     </div>
                 </div>
             ) : (
-                <div className="flex flex-col md:border md:rounded-2xl overflow-hidden h-[700px" style={{ borderColor: colorBordeHeader }}>
-                    <div className="p-4 flex-shrink-0">
-                            <BarraBusqueda 
-                                value={busqueda}
-                                onChange={(e) => setBusqueda(e.target.value)}
-                                placeholder="Buscar por nombre o correo..."
-                            />
-                        </div>
-                            {/* Header Desktop */}
-                            <div className={`sticky top-0 z-20 hidden md:grid ${gridLayoutUsuarios} items-center min-h-[60px]`} style={{ borderColor: colorBordeHeader }}>
-                                <div className="px-6 flex items-center">
-                                    <Text variante="medium" style={{ color: colores.azul, fontWeight: "600", fontSize: "16px" }}>Usuario</Text>
-                                </div>
-                                <div className="px-6 flex items-center">
-                                    <Text variante="medium" style={{ color: colores.azul, fontWeight: "600", fontSize: "16px" }}>Correo Electrónico</Text>
-                                </div>
-                                <div className="px-6 flex items-center">
-                                    <Text variante="medium" style={{ color: colores.azul, fontWeight: "600", fontSize: "16px" }}>Rol</Text>
-                                </div>
-                                <div className="px-14 py-4 items-center">
-                                    <Text variante="medium" style={{ color: colores.azul, fontWeight: "600", fontSize: "16px" }}>Eliminar</Text>
-                                </div>
-                            </div>
+                <div className="flex flex-col md:border md:rounded-2xl overflow-hidden h-[60vh]" style={{ borderColor: colorBordeHeader }}>
 
-                            {/* Cuerpo de Datos */}
-                            <div className="flex-1 overflow-y-auto">
-                            <div className="max-h-[605px] md:max-h-[550px] overflow-y-auto flex flex-col gap-3 md:gap-0">
+                    <div className="p-2 flex-shrink-0 border-b z-20" style={{ borderColor: colorBordeHeader }}>
+                        <BarraBusqueda 
+                            value={busqueda}
+                            onChange={(e) => setBusqueda(e.target.value)}
+                            placeholder="Buscar..."
+                        />
+                    </div>
+
+                    <div className={`hidden md:grid ${gridLayoutUsuarios} items-center min-h-[60px] z-10`} style={{ borderColor: colorBordeHeader }}>
+                        <div className="px-4"><Text variante="label" style={{ fontSize: "16px", color: colores.azul, fontWeight: "600" }}>Usuario</Text></div>
+                        <div className="px-4"><Text variante="label" style={{ fontSize: "16px", color: colores.azul, fontWeight: "600" }}>Correo</Text></div>
+                        <div className="px-4"><Text variante="label" style={{ fontSize: "16px", color: colores.azul, fontWeight: "600" }}>Rol</Text></div>
+                        <div className="px-4 text-center"><Text variante="label" style={{ fontSize: "16px", color: colores.azul, fontWeight: "600" }}>Eliminar</Text></div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto w-full min-h-0">
                                 {cargando ? (
                                     <div className="flex justify-center items-center h-[200px] w-full">
                                         <div className="flex flex-col items-center gap-2 justify-center">
@@ -252,7 +243,6 @@ const UsuariosView = () => {
                                 )}
                             </div>
                         </div>
-                    </div>
                 )}
         </Base>
     );
