@@ -22,7 +22,7 @@ const estadoInicialUsuario = {
 };
 
 const UsuariosView = () => {
-    const { usuarios, cargando, addUsuario, refresh } = useUsuarios();
+    const { usuarios, cargando, error: errorConexion, addUsuario, refresh } = useUsuarios();
     const [filaSeleccionada, setFilaSeleccionada] = useState(null);
     
     const [vistaActual, setVistaActual] = useState("lista");
@@ -149,8 +149,14 @@ const UsuariosView = () => {
                                     <div className="flex justify-center items-center h-[200px] w-full">
                                         <div className="flex flex-col items-center gap-2 justify-center">
                                             <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-                                            <Text variante="medium">Cargando personal de la base de datos...</Text>
+                                            <Text variante="medium">Cargando datos de usuario...</Text>
                                         </div>
+                                    </div>
+                                ) : errorConexion ? (
+                                    <div className="text-center py-10 w-full">
+                                        <Text variante="medium" style={{ color: "#E53E3E", fontWeight: "400" }}>
+                                            Error de conexión.
+                                        </Text>
                                     </div>
                                 ) : usuariosFiltrados.length === 0 ? ( 
                                     <div className="text-center py-10 w-full">
