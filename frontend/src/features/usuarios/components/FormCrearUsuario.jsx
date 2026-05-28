@@ -93,6 +93,7 @@ const FormCrearUsuario = ({
         value={nuevoUsuario.nombre_usuario || ""}
         onChange={(e) => handleChangeInput("nombre_usuario", e.target.value)}
         required
+        maxLength={25}
       />
     </div>
 
@@ -106,6 +107,7 @@ const FormCrearUsuario = ({
         value={nuevoUsuario.correo_usuario || ""}
         onChange={(e) => handleChangeInput("correo_usuario", e.target.value)}
         required
+        maxLength={25}
       />
     </div>
 
@@ -115,7 +117,7 @@ const FormCrearUsuario = ({
         
         <div className="relative w-full">
             <Input
-                type={showPassword ? "email" : "password"}
+                type={showPassword ? "text2" : "password"} 
                 placeholder="Escribe una contraseña"
                 value={nuevoUsuario.contrasena_usuario || ""}
                 onChange={(e) => handleChangeInput("contrasena_usuario", e.target.value)}

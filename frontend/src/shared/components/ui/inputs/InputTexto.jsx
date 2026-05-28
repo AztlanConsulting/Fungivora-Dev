@@ -54,7 +54,7 @@ const Input = ({
     const alignmentClass = alignments[variante] || alignments.normal;
 
     if (variante === "normal" && !regex && type !== "email") {
-        regex = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9][a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 ]*$/;
+        regex = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 ]*$/;
     }
 
     useEffect(() => {
@@ -65,7 +65,12 @@ const Input = ({
     }, [value, variante]);
 
     const handleKeyDown = (e) => {
-        if (caracteresBase.includes(e.key)) e.preventDefault();
+        if (type === "password" || type === "text2") {
+            return; 
+        }
+        if (caracteresBase.includes(e.key)) {
+            e.preventDefault();
+        }
     };
 
     const handleChange = (e) => {
@@ -78,8 +83,13 @@ const Input = ({
             return onChange(e);
         }
 
+        if (type === "password" || type === "text2") {
+            onChange(e);
+            return;
+        }
+
         let regexFinal = regex;
-        
+    
         if (!regexFinal) {
             if (type === "email") {
                 regexFinal = /^[a-zA-Z0-9@.\-_]*$/; 
@@ -87,12 +97,10 @@ const Input = ({
                 regexFinal = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 ]*$/;
             }
         }
-
-        if (regexFinal && e.target.value !== "" && !regexFinal.test(e.target.value)) return;
+        if (regexFinal && !regexFinal.test(e.target.value)) return;
 
         onChange(e);
     };
-
     const sharedProps = {
         value,
         onChange: handleChange,
