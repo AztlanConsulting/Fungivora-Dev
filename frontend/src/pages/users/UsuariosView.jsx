@@ -128,15 +128,15 @@ const UsuariosView = () => {
                 </div>
             ) : (
                 <div className="flex flex-col md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
-                    <div className="p-4">
-                        <BarraBusqueda 
-                            value={busqueda}
-                            onChange={(e) => setBusqueda(e.target.value)}
-                            placeholder="Buscar por nombre o correo..."
-                        />
-                    </div>
+                    <div className="p-4 ">
+                            <BarraBusqueda 
+                                value={busqueda}
+                                onChange={(e) => setBusqueda(e.target.value)}
+                                placeholder="Buscar por nombre o correo..."
+                            />
+                        </div>
                             {/* Header Desktop */}
-                            <div className={`hidden md:grid ${gridLayoutUsuarios} items-center min-h-[60px]`} style={{ backgroundColor: colorBordeHeader }}>
+                            <div className={`sticky top-0 z-20 hidden md:grid ${gridLayoutUsuarios} items-center min-h-[60px]`} style={{ borderColor: colorBordeHeader }}>
                                 <div className="px-6 flex items-center">
                                     <Text variante="medium" style={{ color: colores.azul, fontWeight: "600", fontSize: "16px" }}>Usuario</Text>
                                 </div>

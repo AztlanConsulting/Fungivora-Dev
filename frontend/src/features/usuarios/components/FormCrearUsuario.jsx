@@ -4,7 +4,6 @@ import { colores } from "../../../shared/components/ui/basics/Colores";
 import Button from "../../../shared/components/ui/buttons/Botones";
 import Input from "../../../shared/components/ui/inputs/InputTexto";
 
-// Importamos los iconos necesarios para el ojito
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ViewOffIcon, ViewIcon } from '@hugeicons/core-free-icons';
 
@@ -145,10 +144,10 @@ const FormCrearUsuario = ({
       )}
 
       {/* Botones */}
-      <div className="flex flex-col justify-center sm:flex-row gap-3 pt-4">
+      <div className="flex justify-center pt-4 w-full">
         <Button 
           variant="primario" 
-          className="w-full order-1 sm:order-2" 
+          className="w-full sm:max-w-[200px]" 
           type="submit"
           disabled={cargando}
         >
