@@ -5,8 +5,10 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 // Mocks de los modelos
-jest.mock('../../models/usuario.model');
-
+jest.mock('../../models/usuario.model', () => ({
+    fetch_one: jest.fn(),
+    fetch_by_id: jest.fn(),
+}));
 
 // Mock de métricas 
 jest.mock('../../config/metrics', () => ({

@@ -133,7 +133,9 @@ const UsuariosView = () => {
                                 <div className="px-6 flex items-center">
                                     <Text variante="medium" style={{ color: colores.azul, fontWeight: "600", fontSize: "16px" }}>Rol</Text>
                                 </div>
-                                <div className="px-6 py-4"></div>
+                                <div className="px-14 py-4 items-center">
+                                    <Text variante="medium" style={{ color: colores.azul, fontWeight: "600", fontSize: "16px" }}>Eliminar</Text>
+                                </div>
                             </div>
 
                             {/* Cuerpo de Datos */}

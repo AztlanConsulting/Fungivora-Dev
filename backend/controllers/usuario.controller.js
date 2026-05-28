@@ -1,7 +1,7 @@
 const Usuario = require('../models/usuario.model');
 const bcrypt = require('bcrypt');
 
-exports.post_crear_usuario = async (req, res, next) => {
+exports.post_crear_usuario = async (req, res) => {
     const { nombre_usuario, correo_usuario, contrasena_usuario, estatus_usuario } = req.body;
 
     try {
@@ -39,7 +39,7 @@ exports.post_crear_usuario = async (req, res, next) => {
     }
 };
 
-exports.get_usuarios = async (req, res, next) => {
+exports.get_usuarios = async (req, res) => {
     try {
         const usuarios = await Usuario.fetch_all();
         
