@@ -149,7 +149,7 @@ const FormCrearUsuario = ({
           variant="primario" 
           className="w-full sm:max-w-[200px]" 
           type="submit"
-          disabled={cargando}
+          disabled={cargando || error}
         >
           {cargando ? "Creando..." : "Crear Usuario"}
         </Button>
