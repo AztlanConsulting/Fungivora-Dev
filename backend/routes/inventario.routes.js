@@ -20,4 +20,7 @@ router.post('/update-cantidad', controller.post_update_cantidad);
 // Actualizar cantidad de inóculo
 router.post('/update-inoculo', controller.post_update_cantidad_inoculo);
 
+// Eliminar insumo
+router.delete('/eliminar-insumo/:id', controller.delete_insumo);
+
 module.exports = router;

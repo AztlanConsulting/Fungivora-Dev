@@ -166,6 +166,21 @@ class Inventario {
             connection.release();
         }
     };
+
+    // Eliminar insumo
+    static eliminar_insumo = async (id_insumo) => {
+        const [rows] = await db.execute(
+            'SELECT id_insumo FROM Insumos WHERE id_insumo = ?',
+            [id_insumo]
+        );
+        if (rows.length === 0) throw new Error('Insumo no encontrado');
+
+        await db.execute(
+            'DELETE FROM Insumos WHERE id_insumo = ?',
+            [id_insumo]
+        );
+        return true;
+    };
 }
 
 module.exports = Inventario;

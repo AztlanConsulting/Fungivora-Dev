@@ -149,3 +149,23 @@ exports.post_update_cantidad_inoculo = async (req, res) => {
         res.status(500).json({ success: false, error: 'Error interno del servidor' });
     }
 };
+
+/*
+* delete_insumo
+* Elimina un insumo por su id
+*/
+exports.delete_insumo = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) return res.status(400).json({ success: false, error: 'Falta el id del insumo' });
+
+        await Inventario.eliminar_insumo(id);
+
+        res.status(200).json({ success: true, message: 'Insumo eliminado correctamente' });
+    } catch (error) {
+        if (error.message === 'Insumo no encontrado') {
+            return res.status(404).json({ success: false, error: error.message });
+        }
+        res.status(500).json({ success: false, error: 'Error interno del servidor' });
+    }
+};
