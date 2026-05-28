@@ -25,7 +25,7 @@ const useLogin = () => {
       
       throw new Error("Credenciales inválidas");
       
-    } catch (err) {
+    } catch {
       setError("Usuario y/o contraseña incorrectos");
       return null;
     } finally {

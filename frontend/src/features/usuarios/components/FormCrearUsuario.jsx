@@ -88,7 +88,7 @@ const FormCrearUsuario = ({
       <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Nombre de usuario</Text>
       <Input
         type="text"
-        className="w-full" // Aseguramos ancho total
+        className="w-full"
         placeholder="Escribe un usuario"
         value={nuevoUsuario.nombre_usuario || ""}
         onChange={(e) => handleChangeInput("nombre_usuario", e.target.value)}
@@ -120,6 +120,7 @@ const FormCrearUsuario = ({
                 value={nuevoUsuario.contrasena_usuario || ""}
                 onChange={(e) => handleChangeInput("contrasena_usuario", e.target.value)}
                 required
+                maxLength={16}
                 className="w-full pr-10" 
             />
             

@@ -40,6 +40,7 @@ const Input = ({
     placeholderLeft = "left-4",
     value,
     onChange,
+    maxLength,
     className = "",
     type = "text", 
     roundedClass = "rounded-md",
@@ -144,7 +145,7 @@ const Input = ({
                     {...numProps}
                     placeholder={placeholder}
                     className={`${sharedProps.className} placeholder-transparent`} 
-                    maxLength={variante === "normal" ? 50 : variante === "numero" ? 8 : undefined}
+                    maxLength={maxLength || (variante === "normal" ? 50 : variante === "numero" ? 8 : undefined)}
                 />
             )}
         </div>
