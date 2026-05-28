@@ -106,36 +106,35 @@ const UsuariosView = () => {
 
     return (
         <Base margen_arriba="mt-24 md:mt-20">
-                
-                <Titulo>Usuarios</Titulo>
-                <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <BarraBusqueda 
-                    value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)}
-                    placeholder="Buscar por nombre o correo..."
-                />
+            <Titulo>Usuarios</Titulo>
                 <BotonCrear
                     onClick={() => setVistaActual(vistaActual === "lista" ? "crear" : "lista")}
                     texto={vistaActual === "lista" ? "Crear Usuario" : "Ver Usuarios"}
                 />
-                </div>
-                {vistaActual === "crear" ? (
+
+            {vistaActual === "crear" ? (
                 <div className="w-full max-w-lg mx-auto bg-white rounded-[32px] shadow-sm border p-8">    
                     <div className="flex flex-col gap-4">
-                            <FormCrearUsuario 
-                                nuevoUsuario={nuevoUsuario}
-                                setNuevoUsuario={setNuevoUsuario}
-                                onGuardar={handleRegistrarUsuario}
-                                onCancelar={handleCancelarRegistro}
-                                cargando={guardando}
-                                error={errorFormulario} 
-                                setError={setErrorFormulario}
-                            />
-                        </div>
+                        <FormCrearUsuario 
+                            nuevoUsuario={nuevoUsuario}
+                            setNuevoUsuario={setNuevoUsuario}
+                            onGuardar={handleRegistrarUsuario}
+                            onCancelar={handleCancelarRegistro}
+                            cargando={guardando}
+                            error={errorFormulario} 
+                            setError={setErrorFormulario}
+                        />
+                    </div>
                 </div>
-                ) : (
-                        <div className="flex flex-col md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
-                            
+            ) : (
+                <div className="flex flex-col md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
+                    <div className="p-4">
+                        <BarraBusqueda 
+                            value={busqueda}
+                            onChange={(e) => setBusqueda(e.target.value)}
+                            placeholder="Buscar por nombre o correo..."
+                        />
+                    </div>
                             {/* Header Desktop */}
                             <div className={`hidden md:grid ${gridLayoutUsuarios} items-center min-h-[60px]`} style={{ backgroundColor: colorBordeHeader }}>
                                 <div className="px-6 flex items-center">
