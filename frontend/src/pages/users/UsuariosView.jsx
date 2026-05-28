@@ -8,6 +8,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { CancelCircleIcon } from '@hugeicons/core-free-icons';
 import FormCrearUsuario from '../../features/usuarios/components/FormCrearUsuario';
 import BotonCrear from "../../shared/components/ui/buttons/BotonFlotante";
+import BarraBusqueda from '../../shared/components/ui/others/BarraBusqueda'; 
 
 const colorBordeHeader = "#F2F2FC";
 const gridLayoutUsuarios = "grid grid-cols-[2fr_2.5fr_1.5fr_1fr]"; 
@@ -28,6 +29,7 @@ const UsuariosView = () => {
     const [nuevoUsuario, setNuevoUsuario] = useState(estadoInicialUsuario);
     const [errorFormulario, setErrorFormulario] = useState(null);
     const [guardando, setGuardando] = useState(false);
+    const [busqueda, setBusqueda] = useState("");
 
     const handleEliminar = async (e, id) => {
         e.stopPropagation(); 
@@ -95,11 +97,23 @@ const UsuariosView = () => {
         setVistaActual("lista");
     };
 
+    const usuariosFiltrados = usuarios.filter((user) => {
+        const nombre = user.nombre_usuario?.toLowerCase() || "";
+        const correo = (user.correo_usuario || user.email || "").toLowerCase();
+        const termino = busqueda.toLowerCase();
+        return nombre.includes(termino) || correo.includes(termino);
+    });
+
     return (
         <Base margen_arriba="mt-24 md:mt-20">
                 
                 <Titulo>Usuarios</Titulo>
-                <div className="flex justify-start mb-6">
+                <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <BarraBusqueda 
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                    placeholder="Buscar por nombre o correo..."
+                />
                 <BotonCrear
                     onClick={() => setVistaActual(vistaActual === "lista" ? "crear" : "lista")}
                     texto={vistaActual === "lista" ? "Crear Usuario" : "Ver Usuarios"}
@@ -147,12 +161,12 @@ const UsuariosView = () => {
                                             <Text variante="medium">Cargando personal de la base de datos...</Text>
                                         </div>
                                     </div>
-                                ) : usuarios.length === 0 ? (
+                                ) : usuariosFiltrados.length === 0 ? ( 
                                     <div className="text-center py-10 w-full">
-                                        <Text variante="medium" style={{ color: colores.gris }}>No se encontraron usuarios en el sistema.</Text>
+                                        <Text variante="medium" style={{ color: colores.gris }}>No se encontraron usuarios que coincidan.</Text>
                                     </div>
                                 ) : (
-                                    [...usuarios]
+                                    [...usuariosFiltrados] 
                                         .sort((a, b) => b.is_user_admin - a.is_user_admin)
                                         .map((user) => {
                                             const esSeleccionado = filaSeleccionada === user.id_usuario;

@@ -37,6 +37,7 @@ const Input = ({
     variante = "normal",
     numeroTipo = "entero",
     placeholder = "",
+    placeholderLeft = "left-4",
     value,
     onChange,
     className = "",
@@ -122,7 +123,7 @@ const Input = ({
             style={{ "--input-ring": isFocused ? colores.azul : colores.grisClaro }}
         >
             {!value && (
-                <div className={`absolute left-4 inset-y-0 pointer-events-none z-0 ${alignmentClass}`}>
+                <div className={`absolute ${placeholderLeft || 'left-4'} inset-y-0 pointer-events-none z-0 ${alignmentClass}`}>
                     <Text variante="input">{placeholder}</Text>
                 </div>
             )}
