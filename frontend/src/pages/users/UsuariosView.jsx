@@ -127,8 +127,8 @@ const UsuariosView = () => {
                     </div>
                 </div>
             ) : (
-                <div className="flex flex-col md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
-                    <div className="p-4 ">
+                <div className="flex flex-col md:border md:rounded-2xl overflow-hidden h-[700px" style={{ borderColor: colorBordeHeader }}>
+                    <div className="p-4 flex-shrink-0">
                             <BarraBusqueda 
                                 value={busqueda}
                                 onChange={(e) => setBusqueda(e.target.value)}
@@ -152,6 +152,7 @@ const UsuariosView = () => {
                             </div>
 
                             {/* Cuerpo de Datos */}
+                            <div className="flex-1 overflow-y-auto">
                             <div className="max-h-[605px] md:max-h-[550px] overflow-y-auto flex flex-col gap-3 md:gap-0">
                                 {cargando ? (
                                     <div className="flex justify-center items-center h-[200px] w-full">
@@ -251,6 +252,7 @@ const UsuariosView = () => {
                                 )}
                             </div>
                         </div>
+                    </div>
                 )}
         </Base>
     );
