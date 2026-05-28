@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Text from "../../../shared/components/ui/basics/Texto";
 import { colores } from "../../../shared/components/ui/basics/Colores";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Add01Icon, Remove01Icon, InformationCircleIcon } from "@hugeicons/core-free-icons";
+import { Add01Icon, Remove01Icon, InformationCircleIcon, CancelCircleIcon } from "@hugeicons/core-free-icons";
 import ModalInfo from "../../../shared/components/ui/popups/ModalInfo";
 
 const MENSAJE_INFO_NO_EDITABLE = "No puedes editar la cantidad de este insumo manualmente";
@@ -15,7 +15,7 @@ const columnasHeader = [
   { label: "Acciones", key: "accion", align: "center" },
 ];
 
-const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSeleccionada, abrirModalEdicion, gridLayout }) => {
+const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSeleccionada, abrirModalEdicion, onEliminar, gridLayout }) => {
   const [mostrarInfoNoEditable, setMostrarInfoNoEditable] = useState(false);
 
   // Número de forma visual mejor
@@ -84,85 +84,96 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
 
       {/* Tabla */}
       <div className="h-auto max-h-[65vh] md:max-h-[550px] overflow-y-auto flex flex-col gap-4 md:gap-0">
-        {insumos.map((item) => {
-          const itemId = item.id ?? item.id_insumo;
-          const esSeleccionado = filaSeleccionada === itemId;
-          const estado = obtenerEstado(item.cantidad, item.stock_recommended || item.stock_recomendado);
-          const esInsumo = item.tipo === 'insumo';
+        {insumos.length === 0 ? (
+          <div className="flex justify-center items-center h-[200px]">
+            <Text variante="medium" style={{ color: "#6B7280" }}>
+              No se encontraron insumos.
+            </Text>
+          </div>
+        ) : (
+          insumos.map((item) => {
+            const itemId = item.id ?? item.id_insumo;
+            const esSeleccionado = filaSeleccionada === itemId;
+            const estado = obtenerEstado(item.cantidad, item.stock_recommended || item.stock_recomendado);
+            const esInsumo = item.tipo === 'insumo';
 
-          return (
-            <div key={itemId} onClick={() => setFilaSeleccionada(itemId)} className="group cursor-pointer">
-              {/* Filas Desktop */}
-              <div className={`hidden md:grid ${gridLayout} items-center border-b border-gray-50 hover:bg-gray-50 transition-colors`}>
-                <div className="px-3 lg:px-6 py-4 min-w-0 flex items-center">
-                  <Text variante="option" style={{ color: "black", fontWeight: 600, fontSize: "15px" }}>{item.nombre}</Text>
-                </div>
-                <div className="px-3 lg:px-6 py-4 min-w-0 flex items-center">
-                  <Text variante="option" style={{ color: colores.black, fontWeight: 400, fontSize: "15px" }}>
-                    {renderizarCantidad(item.cantidad, item.unidad)}
-                  </Text>
-                </div>
-                <div className="px-3 lg:px-6 py-4 flex justify-center">
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold inline-block whitespace-nowrap" style={{ backgroundColor: estado.bg, color: estado.color }}>
-                    {estado.label}
-                  </span>
-                </div>
+            return (
+              <div key={itemId} onClick={() => setFilaSeleccionada(itemId)} className="group cursor-pointer">
+                {/* Filas Desktop */}
+                <div className={`hidden md:grid ${gridLayout} items-center border-b border-gray-50 hover:bg-gray-50 transition-colors`}>
+                  <div className="px-3 lg:px-6 py-4 min-w-0 flex items-center">
+                    <Text variante="option" style={{ color: "black", fontWeight: 600, fontSize: "15px" }}>{item.nombre}</Text>
+                  </div>
+                  <div className="px-3 lg:px-6 py-4 min-w-0 flex items-center">
+                    <Text variante="option" style={{ color: colores.black, fontWeight: 400, fontSize: "15px" }}>
+                      {renderizarCantidad(item.cantidad, item.unidad)}
+                    </Text>
+                  </div>
+                  <div className="px-3 lg:px-6 py-4 flex justify-center">
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold inline-block whitespace-nowrap" style={{ backgroundColor: estado.bg, color: estado.color }}>
+                      {estado.label}
+                    </span>
+                  </div>
 
-                {/* Acciones Desktop Condicionado */}
-                <div className="flex justify-center p-2">
-                  {esInsumo ? (
-                    <div className="flex items-center gap-3">
-                      {/* IN */}
+                  {/* Acciones Desktop Condicionado */}
+                  <div className="flex justify-center p-2">
+                    {esInsumo ? (
+                      <div className="flex items-center gap-3">
+                        {/* IN */}
+                        <button
+                          type="button"
+                          className="hover:scale-110 transition-transform cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            abrirModalEdicion(item, "incremento");
+                          }}
+                        >
+                          <HugeiconsIcon icon={Add01Icon} size={20} color={colores.azul} />
+                        </button>
+
+                        {/* OUT */}
+                        <button
+                          type="button"
+                          className="hover:scale-110 transition-transform cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            abrirModalEdicion(item, "reduccion");
+                          }}
+                        >
+                          <HugeiconsIcon icon={Remove01Icon} size={20} color={colores.azul} />
+                        </button>
+
+                        {/* ELIMINAR */}
+                        <button
+                          type="button"
+                          className="hover:scale-110 transition-transform cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEliminar(item);
+                          }}
+                        >
+                          <HugeiconsIcon icon={CancelCircleIcon} size={20} color={colores.azul} />
+                        </button>
+                      </div>
+                    ) : (
                       <button
                         type="button"
                         className="hover:scale-110 transition-transform cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          abrirModalEdicion(item, "incremento");
-                        }}
+                        onClick={(e) => { e.stopPropagation(); setMostrarInfoNoEditable(true); }}
+                        aria-label="Información"
                       >
-                        <HugeiconsIcon
-                          icon={Add01Icon}
-                          size={20}
-                          color={colores.azul}
-                        />
+                        <HugeiconsIcon icon={InformationCircleIcon} size={20} color={colores.azul} />
                       </button>
-
-                      {/* OUT */}
-                      <button
-                        type="button"
-                        className="hover:scale-110 transition-transform cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          abrirModalEdicion(item, "reduccion");
-                        }}
-                      >
-                        <HugeiconsIcon
-                          icon={Remove01Icon}
-                          size={20}
-                          color={colores.azul}
-                        />
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      type="button"
-                      className="hover:scale-110 transition-transform cursor-pointer"
-                      onClick={(e) => { e.stopPropagation(); setMostrarInfoNoEditable(true); }}
-                      aria-label="Información"
-                    >
-                      <HugeiconsIcon icon={InformationCircleIcon} size={20} color={colores.azul} />
-                    </button>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Cartas Móvil */}
-              <div className="md:hidden mb-1">
-                <div className={`bg-white rounded-2xl border p-4 shadow-sm transition-all ${esSeleccionado ? 'ring-2' : ''}`}
-                  style={{ borderColor: colorBordeHeader }}>
-                  <div className="flex justify-between items-start mb-3">
-                    <Text variante="option" style={{ color: "black", fontWeight: "600", fontSize: "16px" }}>{item.nombre}</Text>
+                {/* Cartas Móvil */}
+                <div className="md:hidden mb-1">
+                  <div className={`bg-white rounded-2xl border p-4 shadow-sm transition-all ${esSeleccionado ? 'ring-2' : ''}`}
+                    style={{ borderColor: colorBordeHeader }}>
+                    <div className="flex justify-between items-start mb-3">
+                      <Text variante="option" style={{ color: "black", fontWeight: "600", fontSize: "16px" }}>{item.nombre}</Text>
 
                     {/* Icono Móvil Condicionado */}
                     {esInsumo ? (
@@ -182,44 +193,58 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                           />
                         </button>
 
-                        {/* OUT */}
+                          {/* OUT */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              abrirModalEdicion(item, "reduccion");
+                            }}
+                          >
+                            <HugeiconsIcon 
+                            icon={Remove01Icon} 
+                            size={22} 
+                            color={colores.azul} />
+                          </button>
+
+                          {/* ELIMINAR */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onEliminar(item);
+                            }}
+                          >
+                            <HugeiconsIcon 
+                            icon={CancelCircleIcon} 
+                            size={22} 
+                            color={colores.azul} />
+                          </button>
+                        </div>
+                      ) : (
                         <button
                           type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            abrirModalEdicion(item, "reduccion");
-                          }}
+                          onClick={(e) => { e.stopPropagation(); setMostrarInfoNoEditable(true); }}
+                          aria-label="Información"
                         >
-                          <HugeiconsIcon
-                            icon={Remove01Icon}
-                            size={22}
-                            color={colores.azul}
-                          />
+                          <HugeiconsIcon icon={InformationCircleIcon} size={22} color={colores.azul} />
                         </button>
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={(e) => { e.stopPropagation(); setMostrarInfoNoEditable(true); }}
-                        aria-label="Información"
-                      >
-                        <HugeiconsIcon icon={InformationCircleIcon} size={22} color={colores.azul} />
-                      </button>
-                    )}
-                  </div>
-                  <div className="flex justify-between items-center border-t pt-3 mt-1" style={{ borderColor: colorBordeHeader }}>
-                    <span className="px-3 py-1 rounded-full text-[10px] font-semibold uppercase" style={{ backgroundColor: estado.bg, color: estado.color }}>
-                      {estado.label}
-                    </span>
-                    <span className="text-[14px]" style={{ color: "black" }}>
-                      {renderizarCantidad(item.cantidad, item.unidad)}
-                    </span>
+                      )}
+                    </div>
+                    <div className="flex justify-between items-center border-t pt-3 mt-1" style={{ borderColor: colorBordeHeader }}>
+                      <span className="px-3 py-1 rounded-full text-[10px] font-semibold uppercase" style={{ backgroundColor: estado.bg, color: estado.color }}>
+                        {estado.label}
+                      </span>
+                      <span className="text-[14px]" style={{ color: "black" }}>
+                        {renderizarCantidad(item.cantidad, item.unidad)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
 
       <ModalInfo

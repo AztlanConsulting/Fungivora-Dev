@@ -42,6 +42,15 @@ const inventarioService = {
             throw error;
         }
     },
+
+    eliminarInsumo: async (id_insumo) => {
+        try {
+            return await api.delete(`/inventario/eliminar-insumo/${id_insumo}`);
+        } catch (error) {
+            console.error("Error al eliminar insumo:", error);
+            throw error;
+        }
+    },
 };
 
 export default inventarioService;

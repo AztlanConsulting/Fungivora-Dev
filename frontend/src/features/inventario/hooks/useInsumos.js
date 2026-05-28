@@ -87,7 +87,22 @@ const useInsumos = () => {
         }
     };
 
-    return { insumos, unidades, loading, error, addInsumo, updateInsumo, refresh: fetchInsumos };
+    const deleteInsumo = async (id) => {
+    try {
+        const res = await inventarioService.eliminarInsumo(id);
+        if (res.success) {
+            setInsumos((prev) => prev.filter((item) => (item.id ?? item.id_insumo) !== id));
+            return { success: true };
+        }
+        return { success: false, error: res.error || 'Error al eliminar' };
+    } catch (err) {
+        console.error("Error al eliminar:", err);
+        return { success: false, error: 'Error de conexión' };
+    }
+};
+
+    return { insumos, unidades, loading, error, addInsumo, updateInsumo, deleteInsumo, refresh: fetchInsumos };
+
 };
 
 export default useInsumos;

@@ -9,12 +9,13 @@ import ModalConfirmacion from "../../shared/components/ui/popups/ModalConfirmaci
 import Button from "../../shared/components/ui/buttons/Botones";
 import Input from "../../shared/components/ui/inputs/InputTexto";
 import BotonCrear from "../../shared/components/ui/buttons/BotonFlotante";
+import { CancelCircleIcon } from '@hugeicons/core-free-icons';
 
 import TablaInventario from "../../features/inventario/components/TablaInventario";
 import FormularioInsumo from "../../features/inventario/components/FormularioInsumo";
 
 const Inventario = () => {
-  const { insumos, unidades, loading, error, addInsumo, updateInsumo } = useInsumos();
+  const { insumos, unidades, loading, error, addInsumo, updateInsumo, deleteInsumo } = useInsumos();
   const [filaSeleccionada, setFilaSeleccionada] = useState(null);
   const [nuevaFila, setNuevaFila] = useState({ nombre: "", cantidad: "", stock_recomendado: "", unidad: "" });
   const [errorValidacion, setErrorValidacion] = useState("");
@@ -26,6 +27,8 @@ const Inventario = () => {
   const [alerta, setAlerta] = useState({ visible: false, mensaje: "", variante: "exito" });
   const [guardando, setGuardando] = useState(false);
   const [modalConfirmacion, setModalConfirmacion] = useState({ visible: false, datos: null });
+  const [insumoAEliminar, setInsumoAEliminar] = useState(null);
+  const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
 
   // Grid de la tabla — proporciones balanceadas para que Estado quede centrado entre Cantidad y Acciones.
   const gridLayout = "grid-cols-1 md:grid-cols-[1.5fr_1.5fr_1fr_1fr]";
@@ -124,6 +127,26 @@ const Inventario = () => {
     }
   };
 
+  // Modal para confirmar eliminar
+  const prepararEliminacion = (item) => {
+    setInsumoAEliminar(item);
+    setMostrarModalEliminar(true);
+  };
+
+  // Confirmar eliminar el insumo
+  const confirmarEliminarInsumo = async () => {
+    if (!insumoAEliminar) return;
+    const id = insumoAEliminar.id ?? insumoAEliminar.id_insumo;
+    const res = await deleteInsumo(id);
+    if (res.success) {
+      lanzarAlerta("Insumo eliminado correctamente");
+    } else {
+      lanzarAlerta(res.error || "No se pudo eliminar", "error");
+    }
+    setMostrarModalEliminar(false);
+    setInsumoAEliminar(null);
+  };
+
   return (
     <>
       <Titulo>Inventario</Titulo>
@@ -138,7 +161,7 @@ const Inventario = () => {
         </div>
 
         <div className="flex flex-col min-[1308px]:flex-row gap-8 items-start">
-          {/* Columnas*/}
+          {/* Columnas */}
           <div className={`w-full min-[1308px]:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} min-[1308px]:block`}>
             <TablaInventario
               insumos={insumos}
@@ -146,6 +169,7 @@ const Inventario = () => {
               filaSeleccionada={filaSeleccionada}
               setFilaSeleccionada={setFilaSeleccionada}
               abrirModalEdicion={abrirModalEdicion}
+              onEliminar={prepararEliminacion}
               gridLayout={gridLayout}
             />
           </div>
@@ -174,24 +198,14 @@ const Inventario = () => {
               {/* Nombre del insumo */}
               <Text
                 variante="medium"
-                style={{
-                  color: colores.azul,
-                  fontWeight: "700",
-                  textAlign: "center"
-                }}
+                style={{ color: colores.azul, fontWeight: "700", textAlign: "center" }}
               >
                 {modalEdicion.insumo?.nombre}
               </Text>
 
               {/* Cantidad actual + unidad */}
               <div className="flex flex-col items-center gap-1">
-                <Text
-                  variante="label"
-                  style={{
-                    color: "#6B7280",
-                    textAlign: "center"
-                  }}
-                >
+                <Text variante="label" style={{ color: "#6B7280", textAlign: "center" }}>
                   Actual:{" "}
                   <span className="font-semibold text-black">
                     {modalEdicion.insumo?.cantidad}{" "}
@@ -204,20 +218,13 @@ const Inventario = () => {
               <div className="flex bg-gray-100 p-1 rounded-xl">
                 <button
                   onClick={() => setTipoOperacion("incremento")}
-                  className={`flex-1 py-2 rounded-lg text-sm font-semibold ${tipoOperacion === "incremento"
-                    ? "bg-green-100 shadow-sm text-green-600"
-                    : "text-gray-500"
-                    }`}
+                  className={`flex-1 py-2 rounded-lg text-sm font-semibold ${tipoOperacion === "incremento" ? "bg-green-100 shadow-sm text-green-600" : "text-gray-500"}`}
                 >
                   Entrada
                 </button>
-
                 <button
                   onClick={() => setTipoOperacion("reduccion")}
-                  className={`flex-1 py-2 rounded-lg text-sm font-semibold ${tipoOperacion === "reduccion"
-                    ? "bg-red-100 shadow-sm text-red-600"
-                    : "text-gray-500"
-                    }`}
+                  className={`flex-1 py-2 rounded-lg text-sm font-semibold ${tipoOperacion === "reduccion" ? "bg-red-100 shadow-sm text-red-600" : "text-gray-500"}`}
                 >
                   Salida
                 </button>
@@ -234,36 +241,17 @@ const Inventario = () => {
 
               {/* Error */}
               {errorModal && (
-                <Text
-                  variante="label"
-                  style={{
-                    color: "#E53E3E",
-                    fontSize: "13px"
-                  }}
-                >
+                <Text variante="label" style={{ color: "#E53E3E", fontSize: "13px" }}>
                   {errorModal}
                 </Text>
               )}
 
               {/* Botones */}
               <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full">
-                <Button
-                  variant="confirmar"
-                  isOutline
-                  onClick={handleConfirmarAjuste}
-                  className="w-full md:w-auto max-w-[220px]"
-                >
+                <Button variant="confirmar" isOutline onClick={handleConfirmarAjuste} className="w-full md:w-auto max-w-[220px]">
                   Confirmar
                 </Button>
-
-                <Button
-                  variant="cancelar"
-                  isOutline
-                  onClick={() =>
-                    setModalEdicion({ visible: false, insumo: null })
-                  }
-                  className="w-full md:w-auto max-w-[220px]"
-                >
+                <Button variant="cancelar" isOutline onClick={() => setModalEdicion({ visible: false, insumo: null })} className="w-full md:w-auto max-w-[220px]">
                   Cancelar
                 </Button>
               </div>
@@ -271,6 +259,7 @@ const Inventario = () => {
           </div>
         )}
 
+        {/* Modal de confirmación crear insumo */}
         <ModalConfirmacion
           visible={modalConfirmacion.visible}
           titulo="¿Crear este insumo?"
@@ -283,6 +272,18 @@ const Inventario = () => {
           textoCancelar="Cancelar"
           onConfirm={handleConfirmarCreacion}
           onCancel={() => setModalConfirmacion({ visible: false, datos: null })}
+        />
+
+        {/* Modal para confirmar eliminar insumo */}
+        <ModalConfirmacion
+          visible={mostrarModalEliminar}
+          titulo="¿Eliminar este insumo?"
+          descripcion={`Se eliminará "${insumoAEliminar?.nombre}" permanentemente.`}
+          textoConfirmar="Eliminar"
+          textoCancelar="Cancelar"
+          icon={CancelCircleIcon}
+          onConfirm={confirmarEliminarInsumo}
+          onCancel={() => { setMostrarModalEliminar(false); setInsumoAEliminar(null); }}
         />
       </Base>
 
