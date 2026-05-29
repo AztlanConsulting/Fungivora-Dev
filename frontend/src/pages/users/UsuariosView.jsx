@@ -5,11 +5,12 @@ import { Base } from '../../shared/components/layout';
 import Button from '../../shared/components/ui/buttons/Botones';
 import useUsuarios from '../../features/usuarios/hooks/useUsuarios';
 import { HugeiconsIcon } from "@hugeicons/react";
-import { CancelCircleIcon } from '@hugeicons/core-free-icons';
+import { CancelCircleIcon, InformationCircleIcon } from '@hugeicons/core-free-icons';
 import ModalConfirmacion from '../../shared/components/ui/popups/ModalConfirmacion';
 import FormCrearUsuario from '../../features/usuarios/components/FormCrearUsuario';
 import BotonCrear from "../../shared/components/ui/buttons/BotonFlotante";
 import BarraBusqueda from '../../shared/components/ui/others/BarraBusqueda'; 
+import ModalInfo from '../../shared/components/ui/popups/ModalInfo';
 
 const colorBordeHeader = "#F2F2FC";
 const gridLayoutUsuarios = "grid grid-cols-[2fr_2.5fr_1.5fr_1fr]"; 
@@ -25,6 +26,7 @@ const estadoInicialUsuario = {
 const UsuariosView = () => {
     const { usuarios, cargando, error: errorConexion, addUsuario, deleteUsuario, refresh } = useUsuarios();
     const [filaSeleccionada, setFilaSeleccionada] = useState(null);
+    const [mostrarInfoAdmin, setMostrarInfoAdmin] = useState(false);
     
     const [vistaActual, setVistaActual] = useState("lista");
     const [nuevoUsuario, setNuevoUsuario] = useState(estadoInicialUsuario);
@@ -204,15 +206,29 @@ const UsuariosView = () => {
                                                                 </div>
                                                             )}
                                                         </div>
-                                                        <div className="py-4 flex justify-center items-center">
-                                                            <button 
-                                                                onClick={(e) => handleEliminar(e, user.id_usuario)}
-                                                                className="hover:scale-110 transition-transform p-2"
-                                                                title="Eliminar del sistema"
-                                                            >
-                                                                <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
-                                                            </button>
-                                                        </div>
+                                                            <div className="py-4 flex justify-center items-center">
+                                                            {user.is_user_admin === 1 ? (
+                                                                <button 
+                                                                    type="button"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setMostrarInfoAdmin(true);
+                                                                    }}
+                                                                    className="p-2 opacity-50 hover:opacity-100 transition-opacity cursor-pointer"
+                                                                    title="Ver información"
+                                                                >
+                                                                    <HugeiconsIcon icon={InformationCircleIcon} size={24} color={colores.azul} />
+                                                                </button>
+                                                            ) : (
+                                                                <button 
+                                                                    onClick={(e) => handleEliminar(e, user.id_usuario)}
+                                                                    className="hover:scale-110 transition-transform p-2"
+                                                                    title="Eliminar del sistema"
+                                                                >
+                                                                    <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
+                                                                </button>
+                                                            )}
+                                                            </div>
                                                     </div>
 
                                                     {/* Vista de Móvil */}
@@ -231,10 +247,30 @@ const UsuariosView = () => {
                                                                 </Text>
                                                                 <span className="text-sm text-gray-400 block mt-0.5">{emailFallback}</span>
                                                             </div>
-                                                            <button onClick={(e) => handleEliminar(e, user.id_usuario)}>
-                                                                <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
-                                                            </button>
-                                                        </div>
+                                                            
+                                                            {user.is_user_admin === 1 ? (
+                                                                <button 
+                                                                    type="button"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setMostrarInfoAdmin(true);
+                                                                    }}
+                                                                    className="p-2 opacity-50 hover:opacity-100 transition-opacity cursor-pointer"
+                                                                    title="Ver información"
+                                                                >
+                                                                    <HugeiconsIcon icon={InformationCircleIcon} size={24} color={colores.azul} />
+                                                                </button>
+                                                            ) : (
+                                                           
+                                                                <button 
+                                                                    onClick={(e) => handleEliminar(e, user.id_usuario)}
+                                                                    className="hover:scale-110 transition-transform p-2"
+                                                                    title="Eliminar del sistema"
+                                                                >
+                                                                    <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
+                                                                </button>
+                                                            )}                                                 
+                                                            </div>
                                                         
                                                         <div className="flex border-t pt-4" style={{ borderColor: colorBordeHeader }}>
                                                             {user.is_user_admin === 1 ? (
@@ -253,6 +289,12 @@ const UsuariosView = () => {
                                         })
                                 )}
                             </div>
+                            <ModalInfo
+                                visible={mostrarInfoAdmin}
+                                titulo="Información de Usuario"
+                                mensaje="No es posible eliminar administradores del sistema."
+                                onClose={() => setMostrarInfoAdmin(false)}
+                            />
                             <ModalConfirmacion 
                                 visible={!!usuarioAEliminar}
                                 titulo="¿Eliminar usuario?"
