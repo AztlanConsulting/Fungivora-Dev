@@ -12,11 +12,21 @@ class Usuario {
 
   static fetch_one = async (identificador) => {
     const [filas] = await db.execute(
-      `SELECT id_usuario, nombre_usuario, correo_usuario, contrasena_usuario, estatus_usuario, is_user_admin 
-      FROM Usuarios 
-      WHERE LOWER(TRIM(nombre_usuario)) = LOWER(TRIM(?)) 
+      `SELECT id_usuario, nombre_usuario, correo_usuario, contrasena_usuario, estatus_usuario, is_user_admin
+      FROM Usuarios
+      WHERE LOWER(TRIM(nombre_usuario)) = LOWER(TRIM(?))
           OR LOWER(TRIM(correo_usuario)) = LOWER(TRIM(?))`,
-      [identificador, identificador] 
+      [identificador, identificador]
+    );
+    return filas[0];
+  };
+
+  static fetch_by_id = async (id_usuario) => {
+    const [filas] = await db.execute(
+      `SELECT id_usuario, nombre_usuario, correo_usuario, estatus_usuario, is_user_admin
+       FROM Usuarios
+       WHERE id_usuario = ?`,
+      [id_usuario]
     );
     return filas[0];
   };
