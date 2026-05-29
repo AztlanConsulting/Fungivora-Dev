@@ -1,4 +1,4 @@
-const { post_login } = require('../../controllers/inicio_sesion.controller');
+const { post_login } = require('../../controllers/inicio-sesion.controller');
 const Usuario = require('../../models/usuario.model');
 const { generarRefreshToken } = require('../../util/jwtUtils');
 
