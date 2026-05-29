@@ -11,6 +11,7 @@ import FormCrearUsuario from '../../features/usuarios/components/FormCrearUsuari
 import BotonCrear from "../../shared/components/ui/buttons/BotonFlotante";
 import BarraBusqueda from '../../shared/components/ui/others/BarraBusqueda'; 
 import ModalInfo from '../../shared/components/ui/popups/ModalInfo';
+import ModalAlerta from '../../shared/components/ui/popups/ModalAlerta';
 
 const colorBordeHeader = "#F2F2FC";
 const gridLayoutUsuarios = "grid grid-cols-[2fr_2.5fr_1.5fr_1fr]"; 
@@ -27,6 +28,7 @@ const UsuariosView = () => {
     const { usuarios, cargando, error: errorConexion, addUsuario, deleteUsuario, refresh } = useUsuarios();
     const [filaSeleccionada, setFilaSeleccionada] = useState(null);
     const [mostrarInfoAdmin, setMostrarInfoAdmin] = useState(false);
+    const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
     
     const [vistaActual, setVistaActual] = useState("lista");
     const [nuevoUsuario, setNuevoUsuario] = useState(estadoInicialUsuario);
@@ -60,16 +62,29 @@ const UsuariosView = () => {
         }
         
         const resultado = await addUsuario(nuevoUsuario);
-        
+    
         if (resultado?.success) {
             setNuevoUsuario(estadoInicialUsuario);
             setErrorFormulario(null);
             setVistaActual("lista");
+            
+            setAlerta({ 
+                visible: true, 
+                variante: "exito", 
+                mensaje: "Usuario creado exitosamente." 
+            });
+
             if (refresh) refresh(); 
         } else {
             const msgError = typeof resultado?.message === 'string' 
                 ? resultado.message 
                 : (resultado?.message?.error || "No se pudo registrar al usuario.");
+            
+            setAlerta({
+                visible: true,
+                variante: "error",
+                mensaje: msgError
+            });
 
             if (msgError.includes("Duplicate") || resultado?.code === "ER_DUP_ENTRY") {
                 if (msgError.toLowerCase().includes("correo") || msgError.toLowerCase().includes("email")) {
@@ -98,9 +113,19 @@ const UsuariosView = () => {
     const confirmarEliminacion = async () => {
         const res = await deleteUsuario(usuarioAEliminar);
         if (res.success) {
+            setAlerta({ 
+                visible: true, 
+                variante: "exito", 
+                mensaje: "Usuario eliminado correctamente." 
+            });
             setUsuarioAEliminar(null); 
         } else {
-            alert(res.message);
+            setAlerta({ 
+                visible: true, 
+                variante: "error", 
+                mensaje: res.message || "Error al intentar eliminar el usuario." 
+            });
+            setUsuarioAEliminar(null);
         }
     };
 
@@ -289,6 +314,12 @@ const UsuariosView = () => {
                                         })
                                 )}
                             </div>
+                            <ModalAlerta 
+                                visible={alerta.visible}
+                                variante={alerta.variante}
+                                mensaje={alerta.mensaje}
+                                onClose={() => setAlerta({ ...alerta, visible: false })}
+                            />
                             <ModalInfo
                                 visible={mostrarInfoAdmin}
                                 titulo="Información de Usuario"
