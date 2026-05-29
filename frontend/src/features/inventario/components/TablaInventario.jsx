@@ -4,6 +4,7 @@ import { colores } from "../../../shared/components/ui/basics/Colores";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Add01Icon, Remove01Icon, InformationCircleIcon } from "@hugeicons/core-free-icons";
 import ModalInfo from "../../../shared/components/ui/popups/ModalInfo";
+import BarraBusqueda from "../../../shared/components/ui/others/BarraBusqueda";
 
 const MENSAJE_INFO_NO_EDITABLE = "No puedes editar la cantidad de este insumo manualmente";
 
@@ -17,6 +18,13 @@ const columnasHeader = [
 
 const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSeleccionada, abrirModalEdicion, gridLayout }) => {
   const [mostrarInfoNoEditable, setMostrarInfoNoEditable] = useState(false);
+  const [busqueda, setBusqueda] = useState("");
+
+  const insumosFiltrados = insumos.filter((item) => {
+    const nombre = item.nombre?.toLowerCase() || "";
+    const termino = busqueda.toLowerCase();
+    return nombre.includes(termino);
+  });
 
   // Número de forma visual mejor
   const formatearNumero = (valor) => {
@@ -59,16 +67,16 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
     return { label: "Óptimo", color: "#10B981", bg: "#D1FAE5" };
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-[400px]">
-        <Text variante="medium">Cargando...</Text>
-      </div>
-    );
-  }
-
   return (
+    
     <div className="flex flex-col md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
+      <div className="p-4 bg-white border-b" style={{ borderColor: colorBordeHeader }}>
+        <BarraBusqueda 
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            placeholder="Buscar insumo..."
+        />
+      </div>
       {/* Header Desktop */}
       <div className={`hidden md:grid ${gridLayout} items-center min-h-[60px]`} style={{ backgroundColor: colorBordeHeader }}>
         {columnasHeader.map((col, i) => (
@@ -83,8 +91,22 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
       </div>
 
       {/* Tabla */}
-      <div className="h-auto max-h-[65vh] md:max-h-[550px] overflow-y-auto flex flex-col gap-4 md:gap-0">
-        {insumos.map((item) => {
+      <div className="h-auto max-h-[500px] md:max-h-[400px] overflow-y-auto flex flex-col gap-1 md:gap-0">
+        {loading ? (
+          <div className="flex justify-center items-center h-[200px] w-full">
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+              <Text variante="medium">Cargando datos de insumos...</Text>
+            </div>
+          </div>
+        ) : insumosFiltrados.length === 0 ? (
+          <div className="text-center py-10 w-full">
+            <Text variante="medium" style={{ color: colores.gris }}>
+              {busqueda ? "No se encontraron insumos que coincidan." : "Error de conexión."}
+            </Text>
+          </div>
+        ) : (
+        insumosFiltrados.map((item) => {
           const itemId = item.id ?? item.id_insumo;
           const esSeleccionado = filaSeleccionada === itemId;
           const estado = obtenerEstado(item.cantidad, item.stock_recommended || item.stock_recomendado);
@@ -219,7 +241,7 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
               </div>
             </div>
           );
-        })}
+        }))}
       </div>
 
       <ModalInfo
