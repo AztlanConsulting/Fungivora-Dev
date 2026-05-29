@@ -26,6 +26,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
         const comparacionInoculo = inoculoA.localeCompare(inoculoB);
 
         if (comparacionInoculo !== 0) return comparacionInoculo;
+        
         const comparacionProduccion = b.produccion - a.produccion;
         if (comparacionProduccion !== 0) return comparacionProduccion;
 
@@ -34,20 +35,24 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
         return sustratoA.localeCompare(sustratoB);
     });
 
-    const generarCodigoBloque = (codigoInoculo, indiceGlobal) => {
-        if (!codigoInoculo) return `BC-B${indiceGlobal + 1}`;
-        let base = codigoInoculo.trim();
+    const generarCodigoBloque = (codigoInoculo, identificador) => {
+        if (!codigoInoculo) return `BC-B-${identificador}`;
+        
+        let base = codigoInoculo.trim().toUpperCase();
         const partes = base.split('-');
-        if (partes.length > 3) {
-            partes.pop();
-            base = partes.join('-');
+        
+        let identificadorBase = "";
+        let fecha = "";
+
+        if (partes.length >= 3) {
+            identificadorBase = partes[1];
+            fecha = partes[2];             
+        } else {
+            identificadorBase = partes[0];
+            fecha = partes[1] || "000000";
         }
-        if (base.toUpperCase().startsWith('LC')) {
-            base = 'BC' + base.substring(2);
-        } else if (!base.toUpperCase().startsWith('BC')) {
-            base = 'BC-' + base;
-        }
-        return `${base}-${indiceGlobal + 1}`;
+
+        return `BC-${identificadorBase}-${fecha}-${identificador}`;
     };
 
     const renderEtiqueta = (esProduccion) => {
@@ -103,7 +108,12 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
 
                 <div className="flex flex-col">
                     {loading ? (
-                        <div className="p-10 text-center"><Text variante="body">Cargando bloques...</Text></div>
+                        <div className="flex justify-center items-center h-[200px] w-full">
+                            <div className="flex flex-col items-center gap-2">
+                            <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                            <Text variante="medium">Cargando datos de bloques...</Text>
+                            </div>
+                        </div>
                     ) : bloquesOrdenados.length === 0 ? (
                         <div className="p-10 text-center bg-white">
                             <Text variante="body" style={{ color: colores.gris }}>Sin bloques registrados.</Text>
@@ -111,7 +121,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                     ) : (
                         bloquesOrdenados.map((bloque, index) => {
                             const codigoInoculo = bloque.codigo_inoculo_bloque; 
-                            const codigoVisual = generarCodigoBloque(codigoInoculo, index);
+                            const codigoVisual = bloque.codigo_visual;
 
                             return (
                                 <div key={bloque.id_bloque || index} className="relative">
