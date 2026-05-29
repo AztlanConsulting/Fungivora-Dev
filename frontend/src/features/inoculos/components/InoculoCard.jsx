@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'; 
+import React, { useMemo, useEffect, useState } from 'react'; 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons';
 
@@ -37,7 +37,7 @@ const formatFecha = (isoString) => {
  * Card de especie con select de tipo de inóculo y tabla colapsable de datos.
  * @param {{ especie: import('../types/inoculo.types').Especie }} props
  */
-const InoculoCard = ({ especie }) => {
+const InoculoCard = ({ especie, tipoForzado }) => {
     const {
         tipoSeleccionado,
         datos,
@@ -48,6 +48,22 @@ const InoculoCard = ({ especie }) => {
         handleTipoChange,
         toggleCollapse,
     } = useInoculoCard(especie.value);
+
+    const prevTipoForzado = React.useRef(tipoForzado);
+
+    useEffect(() => {
+        if (tipoForzado !== prevTipoForzado.current) {
+            handleTipoChange(tipoForzado);
+            prevTipoForzado.current = tipoForzado;
+        }
+    }, [tipoForzado, handleTipoChange]);
+
+    const handleManualChange = (nuevoTipo) => {
+        setManualOverride(true);
+        handleTipoChange(nuevoTipo);
+    };
+
+    const tipoActivo = tipoSeleccionado;
 
     const datosOrdenados = useMemo(() => {
         if (!datos) return [];
