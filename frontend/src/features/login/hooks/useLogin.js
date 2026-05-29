@@ -22,10 +22,11 @@ const useLogin = () => {
         localStorage.setItem("token", data.token);
         return data;
       }
-      throw new Error("Respuesta inválida del servidor");
-    } catch (err) {
-      const mensaje = err.response?.data?.msg || err.message || "Error al iniciar sesión";
-      setError(mensaje);
+      
+      throw new Error("Credenciales inválidas");
+      
+    } catch {
+      setError("Usuario y/o contraseña incorrectos");
       return null;
     } finally {
       setCargando(false);

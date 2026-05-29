@@ -8,6 +8,8 @@ const categoriaRoutes = require('./categoria.routes');
 const lotesRoutes = require('./lotes.routes');
 const bloqueRoutes = require('./bloque.routes');
 const dashboardRoutes = require('./dashboard.routes');
+const usuarioRoutes = require('./usuario.routes'); 
+
 const micelioRoutes = require('./micelio.routes'); 
 
 // Pasar por autenticación
@@ -26,6 +28,7 @@ router.use('/categorias', categoriaRoutes);
 router.use('/lotes', lotesRoutes);
 router.use('/bloques', bloqueRoutes);
 router.use('/dashboard', dashboardRoutes);
+router.use('/usuarios', usuarioRoutes); 
 router.use('/micelio', micelioRoutes); 
 
 module.exports = router;

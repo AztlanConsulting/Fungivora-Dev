@@ -1,4 +1,3 @@
-// FormCrearLote.jsx
 import React from "react"; 
 import Titulo from "../../../shared/components/ui/basics/Titulo";
 import Text from "../../../shared/components/ui/basics/Texto";

@@ -78,12 +78,14 @@ const Login = () => {
                   <Text variante="label" style={{ color: colores.gris }}>Usuario</Text>
                 </div>
                 <Input
-                  placeholder="Escribe tu usuario..."
+                  type="text" 
+                  placeholder="Escribe tu usuario o correo..."
                   value={usuario}
                   onChange={handleUsuarioChange}
                   disabled={cargando}
                   maxLength={30}
                   className={`w-full ${autofillClasses}`}
+                  regex={/^[a-zA-Z0-9@.\-_]*$/} 
                 />
               </div>
 
