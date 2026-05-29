@@ -5,10 +5,13 @@ import { Base } from '../../shared/components/layout';
 import Button from '../../shared/components/ui/buttons/Botones';
 import useUsuarios from '../../features/usuarios/hooks/useUsuarios';
 import { HugeiconsIcon } from "@hugeicons/react";
-import { CancelCircleIcon } from '@hugeicons/core-free-icons';
+import { CancelCircleIcon, InformationCircleIcon } from '@hugeicons/core-free-icons';
+import ModalConfirmacion from '../../shared/components/ui/popups/ModalConfirmacion';
 import FormCrearUsuario from '../../features/usuarios/components/FormCrearUsuario';
 import BotonCrear from "../../shared/components/ui/buttons/BotonFlotante";
 import BarraBusqueda from '../../shared/components/ui/others/BarraBusqueda'; 
+import ModalInfo from '../../shared/components/ui/popups/ModalInfo';
+import ModalAlerta from '../../shared/components/ui/popups/ModalAlerta';
 
 const colorBordeHeader = "#F2F2FC";
 const gridLayoutUsuarios = "grid grid-cols-[2fr_2.5fr_1.5fr_1fr]"; 
@@ -22,25 +25,17 @@ const estadoInicialUsuario = {
 };
 
 const UsuariosView = () => {
-    const { usuarios, cargando, error: errorConexion, addUsuario, refresh } = useUsuarios();
+    const { usuarios, cargando, error: errorConexion, addUsuario, deleteUsuario, refresh } = useUsuarios();
     const [filaSeleccionada, setFilaSeleccionada] = useState(null);
+    const [mostrarInfoAdmin, setMostrarInfoAdmin] = useState(false);
+    const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
     
     const [vistaActual, setVistaActual] = useState("lista");
     const [nuevoUsuario, setNuevoUsuario] = useState(estadoInicialUsuario);
     const [errorFormulario, setErrorFormulario] = useState(null);
     const [guardando, setGuardando] = useState(false);
     const [busqueda, setBusqueda] = useState("");
-
-    const handleEliminar = async (e, id) => {
-        e.stopPropagation(); 
-        if (confirm("¿Seguro que deseas eliminar este usuario del sistema?")) {
-            try {
-                alert(`Solicitud para eliminar usuario ID: ${id} (Implementar endpoint en backend)`);
-            } catch (err) {
-                console.error("Error al eliminar usuario:", err);
-            }
-        }
-    };
+    const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);
 
     const handleRegistrarUsuario = async () => {
         setGuardando(true);
@@ -67,16 +62,29 @@ const UsuariosView = () => {
         }
         
         const resultado = await addUsuario(nuevoUsuario);
-        
+    
         if (resultado?.success) {
             setNuevoUsuario(estadoInicialUsuario);
             setErrorFormulario(null);
             setVistaActual("lista");
+            
+            setAlerta({ 
+                visible: true, 
+                variante: "exito", 
+                mensaje: "Usuario creado exitosamente." 
+            });
+
             if (refresh) refresh(); 
         } else {
             const msgError = typeof resultado?.message === 'string' 
                 ? resultado.message 
                 : (resultado?.message?.error || "No se pudo registrar al usuario.");
+            
+            setAlerta({
+                visible: true,
+                variante: "error",
+                mensaje: msgError
+            });
 
             if (msgError.includes("Duplicate") || resultado?.code === "ER_DUP_ENTRY") {
                 if (msgError.toLowerCase().includes("correo") || msgError.toLowerCase().includes("email")) {
@@ -95,6 +103,30 @@ const UsuariosView = () => {
         setNuevoUsuario(estadoInicialUsuario);
         setErrorFormulario(null);
         setVistaActual("lista");
+    };
+
+    const handleEliminar = (e, id) => {
+        e.stopPropagation();
+        setUsuarioAEliminar(id); 
+    };
+
+    const confirmarEliminacion = async () => {
+        const res = await deleteUsuario(usuarioAEliminar);
+        if (res.success) {
+            setAlerta({ 
+                visible: true, 
+                variante: "exito", 
+                mensaje: "Usuario eliminado correctamente." 
+            });
+            setUsuarioAEliminar(null); 
+        } else {
+            setAlerta({ 
+                visible: true, 
+                variante: "error", 
+                mensaje: res.message || "Error al intentar eliminar el usuario." 
+            });
+            setUsuarioAEliminar(null);
+        }
     };
 
     const usuariosFiltrados = usuarios.filter((user) => {
@@ -199,15 +231,29 @@ const UsuariosView = () => {
                                                                 </div>
                                                             )}
                                                         </div>
-                                                        <div className="py-4 flex justify-center items-center">
-                                                            <button 
-                                                                onClick={(e) => handleEliminar(e, user.id_usuario)}
-                                                                className="hover:scale-110 transition-transform p-2"
-                                                                title="Eliminar del sistema"
-                                                            >
-                                                                <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
-                                                            </button>
-                                                        </div>
+                                                            <div className="py-4 flex justify-center items-center">
+                                                            {user.is_user_admin === 1 ? (
+                                                                <button 
+                                                                    type="button"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setMostrarInfoAdmin(true);
+                                                                    }}
+                                                                    className="p-2 opacity-50 hover:opacity-100 transition-opacity cursor-pointer"
+                                                                    title="Ver información"
+                                                                >
+                                                                    <HugeiconsIcon icon={InformationCircleIcon} size={24} color={colores.azul} />
+                                                                </button>
+                                                            ) : (
+                                                                <button 
+                                                                    onClick={(e) => handleEliminar(e, user.id_usuario)}
+                                                                    className="hover:scale-110 transition-transform p-2"
+                                                                    title="Eliminar del sistema"
+                                                                >
+                                                                    <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
+                                                                </button>
+                                                            )}
+                                                            </div>
                                                     </div>
 
                                                     {/* Vista de Móvil */}
@@ -226,10 +272,30 @@ const UsuariosView = () => {
                                                                 </Text>
                                                                 <span className="text-sm text-gray-400 block mt-0.5">{emailFallback}</span>
                                                             </div>
-                                                            <button onClick={(e) => handleEliminar(e, user.id_usuario)}>
-                                                                <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
-                                                            </button>
-                                                        </div>
+                                                            
+                                                            {user.is_user_admin === 1 ? (
+                                                                <button 
+                                                                    type="button"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setMostrarInfoAdmin(true);
+                                                                    }}
+                                                                    className="p-2 opacity-50 hover:opacity-100 transition-opacity cursor-pointer"
+                                                                    title="Ver información"
+                                                                >
+                                                                    <HugeiconsIcon icon={InformationCircleIcon} size={24} color={colores.azul} />
+                                                                </button>
+                                                            ) : (
+                                                           
+                                                                <button 
+                                                                    onClick={(e) => handleEliminar(e, user.id_usuario)}
+                                                                    className="hover:scale-110 transition-transform p-2"
+                                                                    title="Eliminar del sistema"
+                                                                >
+                                                                    <HugeiconsIcon icon={CancelCircleIcon} size={24} color={colores.azul} />
+                                                                </button>
+                                                            )}                                                 
+                                                            </div>
                                                         
                                                         <div className="flex border-t pt-4" style={{ borderColor: colorBordeHeader }}>
                                                             {user.is_user_admin === 1 ? (
@@ -248,7 +314,30 @@ const UsuariosView = () => {
                                         })
                                 )}
                             </div>
+                            <ModalAlerta 
+                                visible={alerta.visible}
+                                variante={alerta.variante}
+                                mensaje={alerta.mensaje}
+                                onClose={() => setAlerta({ ...alerta, visible: false })}
+                            />
+                            <ModalInfo
+                                visible={mostrarInfoAdmin}
+                                titulo="Información de Usuario"
+                                mensaje="No es posible eliminar administradores del sistema."
+                                onClose={() => setMostrarInfoAdmin(false)}
+                            />
+                            <ModalConfirmacion 
+                                visible={!!usuarioAEliminar}
+                                titulo="¿Eliminar usuario?"
+                                descripcion="Esta acción eliminará al usuario permanentemente."
+                                onConfirm={confirmarEliminacion}
+                                onCancel={() => setUsuarioAEliminar(null)}
+                                icon={CancelCircleIcon}
+                                textoConfirmar="Eliminar"
+                                textoCancelar="Cancelar"
+                            />
                         </div>
+                        
                 )}
         </Base>
     );

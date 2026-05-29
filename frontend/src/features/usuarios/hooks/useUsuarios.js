@@ -51,11 +51,27 @@ const useUsuarios = () => {
         }
     };
 
+    const deleteUsuario = async (id_usuario) => {
+        try {
+            const res = await usuarioService.deleteUsuario(id_usuario);
+            if (res.success) {
+                await fetchUsuarios();
+            }
+            return res;
+        } catch (err) {
+            if (err?.status === 403) {
+                return { success: false, message: "No tienes permisos para eliminar usuarios" };
+            }
+            return { success: false, message: "Error al intentar eliminar el usuario" };
+        }
+    };
+
     return {
         usuarios,
         cargando,
         error,
         addUsuario,
+        deleteUsuario,
         refresh: fetchUsuarios 
     };
 };

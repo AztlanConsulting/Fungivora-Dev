@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const loginRoutes = require('./inicio_sesion.routes');
+const loginRoutes = require('./inicio-sesion.routes');
 const inventarioRoutes = require('./inventario.routes');
 const inoculoRoutes = require('./inoculo.routes');
 const categoriaRoutes = require('./categoria.routes');

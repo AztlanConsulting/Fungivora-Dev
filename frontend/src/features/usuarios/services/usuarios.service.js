@@ -16,6 +16,15 @@ const usuarioService = {
       console.error("Error en addUsuario:", error);
       throw error;
     }
+  },
+
+  deleteUsuario: async (id_usuario) => {
+      try {
+          return await api.post("/usuarios/eliminar", { id_usuario }); 
+      } catch (error) {
+          console.error("Error en deleteUsuario:", error);
+          throw error;
+      }
   }
 };
 
