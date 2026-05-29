@@ -1,12 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import Text from "../../../shared/components/ui/basics/Texto";
 import { colores } from "../../../shared/components/ui/basics/Colores";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { CancelCircleIcon } from '@hugeicons/core-free-icons';
+import BarraBusqueda from "../../../shared/components/ui/others/BarraBusqueda";
 
 // Tabla para poder vizualizar los lotes
-const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayout, colorBordeHeader, onEliminar }) => {
+const TablaLotes = ({ datos, columnas, loading, onVerDetalle, obtenerEstiloFase, gridLayout, colorBordeHeader, onEliminar }) => {
 
+  const [busqueda, setBusqueda] = useState("");
+
+  const lotesFiltrados = datos.filter((item) => {
+    const limpiar = (str) => (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/-/g, "");
+    
+    const codigo = limpiar(item.codigo_fungivora);
+    const ubicacion = limpiar(item.ubicacion_lote);
+    const estado = limpiar(item.fase);
+    const termino = limpiar(busqueda);
+    
+    return codigo.includes(termino) || ubicacion.includes(termino)|| estado.includes(termino);
+  });
   // Eliminar el lote
   const handleEliminarClick = (e, lote) => {
     e.stopPropagation();
@@ -15,6 +28,13 @@ const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayo
 
   return (
     <div className="flex flex-col md:justify-center md:border md:rounded-2xl overflow-hidden" style={{ borderColor: colorBordeHeader }}>
+      <div className="p-4 bg-white border-b" style={{ borderColor: colorBordeHeader }}>
+        <BarraBusqueda 
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          placeholder="Buscar lote..."
+        />
+      </div>
       <div className={`hidden md:grid ${gridLayout}`} style={{ backgroundColor: colorBordeHeader }}>
         {columnas.map((col, i) => (
           // Header
@@ -25,7 +45,21 @@ const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayo
       </div>
 
       <div className="max-h-[605px] md:max-h-[550px] overflow-y-auto flex flex-col gap-3 md:gap-0">
-        {datos.map((lote) => {
+        {loading ? (
+          <div className="flex justify-center items-center h-[200px] w-full">
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+              <Text variante="medium">Cargando datos de lotes...</Text>
+            </div>
+          </div>
+        ) : lotesFiltrados.length === 0 ? (
+          <div className="text-center py-10 w-full">
+            <Text variante="medium" style={{ color: colores.gris }}>
+              {busqueda ? "No se encontraron lotes que coincidan." : "Error de conexión."}
+            </Text>
+          </div>
+        ) : (
+        lotesFiltrados.map((lote) => {
           const estiloFase = obtenerEstiloFase(lote.fase);
           const fechaFormateada = new Date(lote.fecha_lote).toLocaleDateString();
 
@@ -83,7 +117,7 @@ const TablaLotes = ({ datos, columnas, onVerDetalle, obtenerEstiloFase, gridLayo
               </div>
             </div>
           );
-        })}
+        }))}
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Text from "../../../shared/components/ui/basics/Texto";
 import { colores } from "../../../shared/components/ui/basics/Colores";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Add01Icon, Remove01Icon, InformationCircleIcon } from "@hugeicons/core-free-icons";
+import { Add01Icon, Remove01Icon, InformationCircleIcon, LabelImportantIcon } from "@hugeicons/core-free-icons";
 import ModalInfo from "../../../shared/components/ui/popups/ModalInfo";
 import BarraBusqueda from "../../../shared/components/ui/others/BarraBusqueda";
 
@@ -20,10 +20,24 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
   const [mostrarInfoNoEditable, setMostrarInfoNoEditable] = useState(false);
   const [busqueda, setBusqueda] = useState("");
 
+  // Estado por cantidad
+  const obtenerEstado = (cantidad, recomendado) => {
+    const cant = parseFloat(cantidad) || 0;
+    const rec = parseFloat(recomendado) || 0;
+    if (cant <= 0) return { label: "Agotado", color: "#EF4444", bg: "#FEE2E2" };
+    if (cant <= rec * 0.5) return { label: "Bajo", color: "#F59E0B", bg: "#FEF3C7" };
+    return { label: "Óptimo", color: "#10B981", bg: "#D1FAE5" };
+  };
+
   const insumosFiltrados = insumos.filter((item) => {
-    const nombre = item.nombre?.toLowerCase() || "";
-    const termino = busqueda.toLowerCase();
-    return nombre.includes(termino);
+    const estadoCalculado = obtenerEstado(item.cantidad, item.stock_recommended || item.stock_recomendado);
+    const limpiar = (str) => (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    
+    const nombre = limpiar(item.nombre);
+    const estadoLabel = limpiar(estadoCalculado.label);
+    const termino = limpiar(busqueda);
+
+    return nombre.includes(termino) || estadoLabel.includes(termino);
   });
 
   // Número de forma visual mejor
@@ -56,15 +70,6 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
     }
 
     return `${formatearNumero(num)} ${unidad}`;
-  };
-
-  // Estado por cantidad
-  const obtenerEstado = (cantidad, recomendado) => {
-    const cant = parseFloat(cantidad) || 0;
-    const rec = parseFloat(recomendado) || 0;
-    if (cant <= 0) return { label: "Agotado", color: "#EF4444", bg: "#FEE2E2" };
-    if (cant <= rec * 0.5) return { label: "Bajo", color: "#F59E0B", bg: "#FEF3C7" };
-    return { label: "Óptimo", color: "#10B981", bg: "#D1FAE5" };
   };
 
   return (
