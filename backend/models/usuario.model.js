@@ -52,6 +52,13 @@ class Usuario {
     );
     return filas;
   };
+
+  static eliminar = async (id_usuario) => {
+      return db.execute(
+          `DELETE FROM Usuarios WHERE id_usuario = ?`,
+          [id_usuario]
+      );
+  };
 }
 
 module.exports = Usuario;
