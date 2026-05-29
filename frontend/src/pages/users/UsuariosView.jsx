@@ -6,6 +6,7 @@ import Button from '../../shared/components/ui/buttons/Botones';
 import useUsuarios from '../../features/usuarios/hooks/useUsuarios';
 import { HugeiconsIcon } from "@hugeicons/react";
 import { CancelCircleIcon } from '@hugeicons/core-free-icons';
+import ModalConfirmacion from '../../shared/components/ui/popups/ModalConfirmacion';
 import FormCrearUsuario from '../../features/usuarios/components/FormCrearUsuario';
 import BotonCrear from "../../shared/components/ui/buttons/BotonFlotante";
 import BarraBusqueda from '../../shared/components/ui/others/BarraBusqueda'; 
@@ -22,7 +23,7 @@ const estadoInicialUsuario = {
 };
 
 const UsuariosView = () => {
-    const { usuarios, cargando, error: errorConexion, addUsuario, refresh } = useUsuarios();
+    const { usuarios, cargando, error: errorConexion, addUsuario, deleteUsuario, refresh } = useUsuarios();
     const [filaSeleccionada, setFilaSeleccionada] = useState(null);
     
     const [vistaActual, setVistaActual] = useState("lista");
@@ -30,17 +31,7 @@ const UsuariosView = () => {
     const [errorFormulario, setErrorFormulario] = useState(null);
     const [guardando, setGuardando] = useState(false);
     const [busqueda, setBusqueda] = useState("");
-
-    const handleEliminar = async (e, id) => {
-        e.stopPropagation(); 
-        if (confirm("¿Seguro que deseas eliminar este usuario del sistema?")) {
-            try {
-                alert(`Solicitud para eliminar usuario ID: ${id} (Implementar endpoint en backend)`);
-            } catch (err) {
-                console.error("Error al eliminar usuario:", err);
-            }
-        }
-    };
+    const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);
 
     const handleRegistrarUsuario = async () => {
         setGuardando(true);
@@ -95,6 +86,20 @@ const UsuariosView = () => {
         setNuevoUsuario(estadoInicialUsuario);
         setErrorFormulario(null);
         setVistaActual("lista");
+    };
+
+    const handleEliminar = (e, id) => {
+        e.stopPropagation();
+        setUsuarioAEliminar(id); 
+    };
+
+    const confirmarEliminacion = async () => {
+        const res = await deleteUsuario(usuarioAEliminar);
+        if (res.success) {
+            setUsuarioAEliminar(null); 
+        } else {
+            alert(res.message);
+        }
     };
 
     const usuariosFiltrados = usuarios.filter((user) => {
@@ -248,7 +253,18 @@ const UsuariosView = () => {
                                         })
                                 )}
                             </div>
+                            <ModalConfirmacion 
+                                visible={!!usuarioAEliminar}
+                                titulo="¿Eliminar usuario?"
+                                descripcion="Esta acción eliminará al usuario permanentemente."
+                                onConfirm={confirmarEliminacion}
+                                onCancel={() => setUsuarioAEliminar(null)}
+                                icon={CancelCircleIcon}
+                                textoConfirmar="Eliminar"
+                                textoCancelar="Cancelar"
+                            />
                         </div>
+                        
                 )}
         </Base>
     );
