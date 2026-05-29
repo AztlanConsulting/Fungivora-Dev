@@ -42,7 +42,7 @@ function Lotes() {
 
   const {
     datos, ubicaciones, especiesDisponibles,
-    getInoculosPorEspecie, cargando, error, addLote, deleteLote
+    getInoculosPorEspecie, cargando, addLote, deleteLote
   } = useLotes();
   const [verFormulario, setVerFormulario] = useState(false);
   const [nuevaFila, setNuevaFila] = useState({ especie: "", ubicacion_lote: ""});

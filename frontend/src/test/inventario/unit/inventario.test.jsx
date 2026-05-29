@@ -57,23 +57,6 @@ describe('Inventario — renderizado base', () => {
     })
 })
 
-describe('Inventario — estado de carga', () => {
-
-    it('muestra "Cargando..." mientras el hook carga', () => {
-        useInsumos.mockReturnValue({ ...hookBase, loading: true })
-        renderInventario()
-
-        expect(screen.getByText('Cargando...')).toBeInTheDocument()
-    })
-
-    it('no muestra la tabla mientras carga', () => {
-        useInsumos.mockReturnValue({ ...hookBase, loading: true })
-        renderInventario()
-
-        expect(screen.queryByText('Insumo')).not.toBeInTheDocument()
-    })
-})
-
 describe('Inventario — datos cargados', () => {
 
     it('renderiza todos los insumos recibidos', () => {

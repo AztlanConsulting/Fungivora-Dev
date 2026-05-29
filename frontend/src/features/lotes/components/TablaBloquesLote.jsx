@@ -35,26 +35,6 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
         return sustratoA.localeCompare(sustratoB);
     });
 
-    const generarCodigoBloque = (codigoInoculo, identificador) => {
-        if (!codigoInoculo) return `BC-B-${identificador}`;
-        
-        let base = codigoInoculo.trim().toUpperCase();
-        const partes = base.split('-');
-        
-        let identificadorBase = "";
-        let fecha = "";
-
-        if (partes.length >= 3) {
-            identificadorBase = partes[1];
-            fecha = partes[2];             
-        } else {
-            identificadorBase = partes[0];
-            fecha = partes[1] || "000000";
-        }
-
-        return `BC-${identificadorBase}-${fecha}-${identificador}`;
-    };
-
     const renderEtiqueta = (esProduccion) => {
         const esProd = esProduccion === 1 || esProduccion === true;
         const bg = esProd ? '#E6F6F1' : '#EBEBFF';
