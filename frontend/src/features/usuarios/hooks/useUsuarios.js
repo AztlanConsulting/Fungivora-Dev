@@ -16,8 +16,14 @@ const useUsuarios = () => {
             } else {
                 setError("Error al cargar la lista de usuarios");
             }
-        } catch {
-            setError("Error de conexión con el servidor");
+        } catch (err) {
+            if (err?.status === 403) {
+                setError("No tienes permisos para ver esta sección");
+            } else if (err?.status === 401) {
+                setError("Tu sesión ha expirado");
+            } else {
+                setError("Error de conexión con el servidor");
+            }
         } finally {
             setCargando(false);
         }
@@ -33,8 +39,14 @@ const useUsuarios = () => {
             if (res.success) {
                 await fetchUsuarios();
             }
-            return res; 
-        } catch {
+            return res;
+        } catch (err) {
+            if (err?.status === 403) {
+                return { success: false, message: "No tienes permisos para crear usuarios" };
+            }
+            if (err?.status === 401) {
+                return { success: false, message: "Tu sesión ha expirado" };
+            }
             return { success: false, message: "Error de conexión al crear usuario" };
         }
     };
