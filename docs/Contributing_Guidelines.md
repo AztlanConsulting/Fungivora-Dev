@@ -91,6 +91,26 @@ We follow a hybrid language rule: **Spanish** for business logic and **English**
 * **Review:** Every PR must be reviewed by at least one other team member.
 
 ---
+# 6. Versioning Standards / Estándares de Versionado
+
+## Versioning Convention
+
+The project will follow the versioning format:
+
+`MAJOR.MINOR.PATCH`
+
+### Examples
+
+* `v1.0.0`
+* `v1.1.0`
+* `v1.1.1`
+
+### Meaning
+
+* **MAJOR**: Major or structural changes.
+* **MINOR**: New improvements or sections added without breaking the overall structure.
+* **PATCH**: Small fixes, formatting adjustments, or minor bug corrections.
+
 ---
 
 # Estándar de Desarrollo: Fungivora-Dev (Español)
@@ -167,3 +187,24 @@ Seguimos la regla de idioma híbrido: **Español** para lógica de negocio e **I
 * **Variables de Entorno:** NUNCA subas el contenido de tu `.env`.
 * **Credenciales:** Passwords de MariaDB personales y locales.
 * **Revisión:** Todo PR debe ser revisado por un compañero.
+
+---
+
+## 6. Convención de Versionado
+
+Para los proyectos, la convención de versionado será:
+
+`MAJOR.MINOR.PATCH`
+
+### Ejemplos
+
+* `v1.0.0`
+* `v1.1.0`
+* `v1.1.1`
+
+### Significado
+
+* **MAJOR**: Cambios mayores o estructurales.
+* **MINOR**: Incorporación de mejoras o secciones nuevas sin romper la estructura general.
+* **PATCH**: Correcciones pequeñas, ajustes de forma o errores menores.
+

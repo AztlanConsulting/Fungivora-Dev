@@ -31,12 +31,16 @@ const numeroRegex = {
 
 const caracteresBase = ["<", ">", "{", "}", "[", "]", "\\", "`", "^", "~", ","]; 
 
+const emailConfig = { type: "email" };
+
 const Input = ({
     variante = "normal",
     numeroTipo = "entero",
     placeholder = "",
+    placeholderLeft = "left-4",
     value,
     onChange,
+    maxLength,
     className = "",
     type = "text", 
     roundedClass = "rounded-md",
@@ -49,8 +53,8 @@ const Input = ({
     const sizeClass = tieneAnchoCustom ? "" : (sizes[variante] || sizes.normal);
     const alignmentClass = alignments[variante] || alignments.normal;
 
-    if (variante === "normal" && !regex) {
-        regex = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9][a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 ]*$/;
+    if (variante === "normal" && !regex && type !== "email") {
+        regex = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 ]*$/;
     }
 
     useEffect(() => {
@@ -61,7 +65,12 @@ const Input = ({
     }, [value, variante]);
 
     const handleKeyDown = (e) => {
-        if (caracteresBase.includes(e.key)) e.preventDefault();
+        if (type === "password" || type === "text2") {
+            return; 
+        }
+        if (caracteresBase.includes(e.key)) {
+            e.preventDefault();
+        }
     };
 
     const handleChange = (e) => {
@@ -70,15 +79,28 @@ const Input = ({
         if (variante === "numero") {
             const rawValue = e.target.value;
             const numeroRgx = numeroRegex[numeroTipo] || numeroRegex.entero;
-        
             if (!numeroRgx.test(rawValue)) return;
             return onChange(e);
         }
-        if (regex && e.target.value !== "" && !regex.test(e.target.value)) return;
+
+        if (type === "password" || type === "text2") {
+            onChange(e);
+            return;
+        }
+
+        let regexFinal = regex;
+    
+        if (!regexFinal) {
+            if (type === "email") {
+                regexFinal = /^[a-zA-Z0-9@.\-_]*$/; 
+            } else if (variante === "normal") {
+                regexFinal = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 ]*$/;
+            }
+        }
+        if (regexFinal && !regexFinal.test(e.target.value)) return;
 
         onChange(e);
     };
-
     const sharedProps = {
         value,
         onChange: handleChange,
@@ -100,8 +122,7 @@ const Input = ({
 
     const numProps = variante === "numero"
         ? numeroConfig[numeroTipo] || numeroConfig.entero
-        : { type: type };
-
+        : (type === "email" ? emailConfig : { type: type });
 
     return (
         <div
@@ -113,7 +134,7 @@ const Input = ({
             style={{ "--input-ring": isFocused ? colores.azul : colores.grisClaro }}
         >
             {!value && (
-                <div className={`absolute left-4 inset-y-0 pointer-events-none z-0 ${alignmentClass}`}>
+                <div className={`absolute ${placeholderLeft || 'left-4'} inset-y-0 pointer-events-none z-0 ${alignmentClass}`}>
                     <Text variante="input">{placeholder}</Text>
                 </div>
             )}
@@ -132,7 +153,7 @@ const Input = ({
                     {...numProps}
                     placeholder={placeholder}
                     className={`${sharedProps.className} placeholder-transparent`} 
-                    maxLength={variante === "normal" ? 50 : variante === "numero" ? 8 : undefined}
+                    maxLength={maxLength || (variante === "normal" ? 50 : variante === "numero" ? 8 : undefined)}
                 />
             )}
         </div>

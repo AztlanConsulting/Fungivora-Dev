@@ -54,7 +54,7 @@ describe('useLogin — Autenticación', () => {
             }
         })
 
-        expect(result.current.error).toBe("Error al iniciar sesión")
+        expect(result.current.error).toBe("Usuario y/o contraseña incorrectos")
         expect(result.current.cargando).toBe(false)
     })
 })
