@@ -82,11 +82,9 @@ describe('Vista Lotes', () => {
     it('Muestra error de validación si faltan campos', async () => {
         const user = userEvent.setup();
         renderWithRouter(<Lotes />);
+        const botonSiguiente = await screen.findByRole('button', { name: /Siguiente/i });
 
-        const botonesCrear = screen.getAllByRole('button', { name: /Siguiente/i });
-        const botonFormulario = botonesCrear[botonesCrear.length - 1];
-
-        await user.click(botonFormulario);
+        await user.click(botonSiguiente);
 
         expect(screen.getByText(/Por favor, completa los datos del lote/i)).toBeInTheDocument();
         expect(addLoteMock).not.toHaveBeenCalled();

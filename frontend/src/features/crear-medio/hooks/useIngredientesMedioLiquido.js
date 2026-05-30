@@ -94,7 +94,7 @@ const useIngredientesMedioLiquido = ({
       unidad: normalizarUnidad(aguaInsumo?.unidad) || "ml",
       value: agua,
       onChange: (e) => setAgua(e.target.value),
-      cantidad: parseFloat(aguaInsumo?.cantidad) || 5000,
+      cantidad: parseFloat(aguaInsumo?.cantidad) || 0,
     },
     {
       id: peptonaInsumo?.id_insumo ?? null,
@@ -103,7 +103,7 @@ const useIngredientesMedioLiquido = ({
       unidad: normalizarUnidad(peptonaInsumo?.unidad) || "ml",
       value: peptona,
       onChange: (e) => setPeptona(e.target.value),
-      cantidad: parseFloat(peptonaInsumo?.cantidad) || 500,
+      cantidad: parseFloat(peptonaInsumo?.cantidad) || 0,
     },
     {
       id: extractoInsumo?.id_insumo ?? null,
@@ -112,7 +112,7 @@ const useIngredientesMedioLiquido = ({
       unidad: normalizarUnidad(extractoInsumo?.unidad) || "ml",
       value: extracto,
       onChange: (e) => setExtracto(e.target.value),
-      cantidad: parseFloat(extractoInsumo?.cantidad) || 500,
+      cantidad: parseFloat(extractoInsumo?.cantidad) || 0,
     },
     {
       id: carbohidratoInsumo?.id_insumo ?? null,
@@ -121,7 +121,7 @@ const useIngredientesMedioLiquido = ({
       unidad: normalizarUnidad(carbohidratoInsumo?.unidad) || "ml",
       value: carbohidratoCant,
       onChange: (e) => setCarbohidratoCant(e.target.value),
-      cantidad: parseFloat(carbohidratoInsumo?.cantidad) || 100,
+      cantidad: parseFloat(carbohidratoInsumo?.cantidad) || 0,
     },
     {
       id: null,

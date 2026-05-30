@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import Base from "../../shared/components/layout/Base";
 import Titulo from "../../shared/components/ui/basics/Titulo";
 import Text from "../../shared/components/ui/basics/Texto";
@@ -8,12 +8,13 @@ import ModalAlerta from "../../shared/components/ui/popups/ModalAlerta";
 import ModalConfirmacion from "../../shared/components/ui/popups/ModalConfirmacion";
 import Button from "../../shared/components/ui/buttons/Botones";
 import Input from "../../shared/components/ui/inputs/InputTexto";
+import BotonCrear from "../../shared/components/ui/buttons/BotonFlotante";
 
 import TablaInventario from "../../features/inventario/components/TablaInventario";
 import FormularioInsumo from "../../features/inventario/components/FormularioInsumo";
 
 const Inventario = () => {
-  const { insumos, unidades, loading, addInsumo, updateInsumo } = useInsumos();
+  const { insumos, unidades, loading, error, addInsumo, updateInsumo } = useInsumos();
   const [filaSeleccionada, setFilaSeleccionada] = useState(null);
   const [nuevaFila, setNuevaFila] = useState({ nombre: "", cantidad: "", stock_recomendado: "", unidad: "" });
   const [errorValidacion, setErrorValidacion] = useState("");
@@ -26,13 +27,13 @@ const Inventario = () => {
   const [guardando, setGuardando] = useState(false);
   const [modalConfirmacion, setModalConfirmacion] = useState({ visible: false, datos: null });
 
-  // Grid de la tabla
-  const gridLayout = "grid-cols-1 md:grid-cols-[1.5fr_2.2fr_1fr_1fr]";
+  // Grid de la tabla — proporciones balanceadas para que Estado quede centrado entre Cantidad y Acciones.
+  const gridLayout = "grid-cols-1 md:grid-cols-[1.5fr_1.5fr_1fr_1fr]";
 
   const lanzarAlerta = (mensaje, variante = "exito") => setAlerta({ visible: true, mensaje, variante });
 
   // Modal de editar cantidad
-  const abrirModalEdicion = (item) => {
+  const abrirModalEdicion = (item, tipo) => {
     if (item.tipo !== 'insumo') {
       lanzarAlerta("Los inóculos no se pueden editar desde el inventario", "alerta");
       return;
@@ -40,7 +41,7 @@ const Inventario = () => {
 
     setModalEdicion({ visible: true, insumo: item });
     setAjusteCantidad("");
-    setTipoOperacion("incremento");
+    setTipoOperacion(tipo);
     setErrorModal("");
   };
 
@@ -128,23 +129,17 @@ const Inventario = () => {
       <Titulo>Inventario</Titulo>
       <Base margen_arriba="mt-20 md:mt-20">
 
-        {/* Botón Móvil */}
-        <div className="lg:hidden flex justify-start mb-6">
-          <Button
+        {/* Botón Móvil/Tablet/Laptop (oculto cuando el form pasa a estar al lado, a partir de 1308px) */}
+        <div className="min-[1308px]:hidden flex justify-start mb-6">
+          <BotonCrear
             onClick={() => setVerFormulario(!verFormulario)}
-            className="px-5 py-2 rounded-[12px] border-2"
-            isOutline={true}>
-            <Text
-              variante="label"
-              style={{ color: colores.azul, fontWeight: "600", fontSize: "13px" }}>
-              {verFormulario ? "Ver Inventario" : "Crear insumo"}
-            </Text>
-          </Button>
+            texto={verFormulario ? "Ver Inventario" : "Crear insumo"}
+          />
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
+        <div className="flex flex-col min-[1308px]:flex-row gap-8 items-start">
           {/* Columnas*/}
-          <div className={`w-full lg:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} lg:block`}>
+          <div className={`w-full min-[1308px]:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} min-[1308px]:block`}>
             <TablaInventario
               insumos={insumos}
               loading={loading}
@@ -156,13 +151,13 @@ const Inventario = () => {
           </div>
 
           {/* Formulario */}
-          <div className={`w-full lg:w-[440px] bg-white rounded-[32px] shadow-sm border p-8 ${verFormulario ? "block" : "hidden"} lg:block lg:mt-0`}>
+          <div className={`w-full min-[1308px]:w-[440px] bg-white rounded-[32px] shadow-sm border p-8 ${verFormulario ? "block" : "hidden"} min-[1308px]:block min-[1308px]:mt-0`}>
             <FormularioInsumo
               nuevaFila={nuevaFila}
               handleNuevaFila={handleNuevaFila}
               handleGuardarInsumo={handleGuardarInsumo}
               unidades={unidades}
-              errorValidacion={errorValidacion}
+              errorValidacion={error || errorValidacion}
               guardando={guardando}
             />
           </div>
@@ -171,16 +166,64 @@ const Inventario = () => {
         {/* Modal de editar cantidad*/}
         {modalEdicion.visible && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-hidden">
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setModalEdicion({ visible: false, insumo: null })} />
-              <div className="relative bg-white rounded-[30px] p-9 w-full max-w-lg shadow-2xl flex flex-col gap-6 border animate-in zoom-in duration-200">
-              <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", textAlign: "center" }}>
+            <div
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              onClick={() => setModalEdicion({ visible: false, insumo: null })}
+            />
+            <div className="relative bg-white rounded-[30px] p-9 w-full max-w-lg shadow-2xl flex flex-col gap-6 border animate-in zoom-in duration-200">
+              {/* Nombre del insumo */}
+              <Text
+                variante="medium"
+                style={{
+                  color: colores.azul,
+                  fontWeight: "700",
+                  textAlign: "center"
+                }}
+              >
                 {modalEdicion.insumo?.nombre}
               </Text>
-              <div className="flex bg-gray-100 p-1 rounded-xl">
-                <button onClick={() => setTipoOperacion("incremento")} className={`flex-1 py-2 rounded-lg text-sm font-semibold ${tipoOperacion === "incremento" ? "bg-green-100 shadow-sm text-green-600" : "text-gray-500"}`}>Entrada</button>
-                <button onClick={() => setTipoOperacion("reduccion")} className={`flex-1 py-2 rounded-lg text-sm font-semibold ${tipoOperacion === "reduccion" ? "bg-red-100 shadow-sm text-red-600" : "text-gray-500"}`}>Salida</button>
+
+              {/* Cantidad actual + unidad */}
+              <div className="flex flex-col items-center gap-1">
+                <Text
+                  variante="label"
+                  style={{
+                    color: "#6B7280",
+                    textAlign: "center"
+                  }}
+                >
+                  Actual:{" "}
+                  <span className="font-semibold text-black">
+                    {modalEdicion.insumo?.cantidad}{" "}
+                    {modalEdicion.insumo?.unidad}
+                  </span>
+                </Text>
               </div>
 
+              {/* Tipo de operación */}
+              <div className="flex bg-gray-100 p-1 rounded-xl">
+                <button
+                  onClick={() => setTipoOperacion("incremento")}
+                  className={`flex-1 py-2 rounded-lg text-sm font-semibold ${tipoOperacion === "incremento"
+                    ? "bg-green-100 shadow-sm text-green-600"
+                    : "text-gray-500"
+                    }`}
+                >
+                  Entrada
+                </button>
+
+                <button
+                  onClick={() => setTipoOperacion("reduccion")}
+                  className={`flex-1 py-2 rounded-lg text-sm font-semibold ${tipoOperacion === "reduccion"
+                    ? "bg-red-100 shadow-sm text-red-600"
+                    : "text-gray-500"
+                    }`}
+                >
+                  Salida
+                </button>
+              </div>
+
+              {/* Input */}
               <Input
                 variante="decimal"
                 placeholder="0.00"
@@ -188,13 +231,44 @@ const Inventario = () => {
                 onChange={(e) => handleCambioAjuste(e.target.value)}
                 className="w-full"
               />
-              {errorModal && <Text variante="label" style={{ color: "#E53E3E", fontSize: "13px" }}>{errorModal}</Text>}
-                <div className="flex flex-row gap-3 w-full justify-center">
-                  <Button variant="cancelar" isOutline onClick={() => setModalEdicion({ visible: false, insumo: null })}>Cancelar</Button>
-                  <Button variant="confirmar" isOutline onClick={handleConfirmarAjuste}>Confirmar</Button>
-                </div>
+
+              {/* Error */}
+              {errorModal && (
+                <Text
+                  variante="label"
+                  style={{
+                    color: "#E53E3E",
+                    fontSize: "13px"
+                  }}
+                >
+                  {errorModal}
+                </Text>
+              )}
+
+              {/* Botones */}
+              <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full">
+                <Button
+                  variant="confirmar"
+                  isOutline
+                  onClick={handleConfirmarAjuste}
+                  className="w-full md:w-auto max-w-[220px]"
+                >
+                  Confirmar
+                </Button>
+
+                <Button
+                  variant="cancelar"
+                  isOutline
+                  onClick={() =>
+                    setModalEdicion({ visible: false, insumo: null })
+                  }
+                  className="w-full md:w-auto max-w-[220px]"
+                >
+                  Cancelar
+                </Button>
               </div>
             </div>
+          </div>
         )}
 
         <ModalConfirmacion

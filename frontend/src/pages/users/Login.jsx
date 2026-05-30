@@ -16,29 +16,29 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   
-  const { ejecutarLogin, cargando, error } = useLogin();
+  const { ejecutarLogin, cargando, error, limpiarError } = useLogin();
 
   const handleUsuarioChange = (e) => {
     const valor = e.target.value;
-    if (valor.length <= 30) setUsuario(valor);
+    if (valor.length <= 30) {
+      setUsuario(valor);
+      if (error) limpiarError();
+    }
   };
 
   const handlePasswordChange = (e) => {
     const valor = e.target.value;
-    if (valor.length <= 30) setPassword(valor);
+    if (valor.length <= 30) {
+      setPassword(valor);
+      if (error) limpiarError();
+    }
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!usuario || !password) return;
-
-    try {
-      const resultado = await ejecutarLogin(usuario, password);
-      if (resultado) {
-        window.location.href = "/home";
-      }
-    } catch (err) {
-      console.error("Error en el proceso de autenticación:", err);
+    const resultado = await ejecutarLogin(usuario, password);
+    if (resultado) {
+      window.location.href = "/home";
     }
   };
   const autofillClasses = "autofill:shadow-[0_0_0_1000px_#eff6ff_inset] transition-colors duration-5000";
@@ -56,12 +56,12 @@ const Login = () => {
       />
 
       {/* Formulario */}
-      <div className="relative z-10 w-full md:w-1/2 flex justify-center items-center p-6">
-        <div className="w-full max-w-lg rounded-[3rem] bg-white p-8 sm:p-12 shadow-2xl overflow-y-auto max-h-[90vh] flex flex-col items-center">
+      <div className="relative z-10 w-full md:w-1/2 flex justify-center items-center p-4 sm:p-6">
+        <div className="w-full max-w-lg rounded-[2rem] sm:rounded-[3rem] bg-white p-6 sm:p-8 md:p-12 shadow-2xl overflow-y-auto max-h-[95vh] sm:max-h-[90vh] flex flex-col items-center">
           <form onSubmit={handleLogin} className="flex flex-col items-center w-full">
 
             {/* Títulos */}
-            <div className="w-full text-center mb-10">
+            <div className="w-full text-center mb-8 sm:mb-10">
               <Text variante="title" style={{ color: colores.azul }}>Devora</Text>
               <div className="mt-2">
                 <Text variante="medium" style={{ color: colores.azul }}>¡Es un gusto verte de nuevo!</Text>
@@ -69,31 +69,33 @@ const Login = () => {
             </div>
 
             {/* Campos del Formulario */}
-            <div className="flex flex-col gap-8 items-center w-full">
+            <div className="flex flex-col gap-6 sm:gap-8 items-center w-full">
 
               {/* Usuario */}
-              <div className="flex flex-col gap-3 items-start w-auto">
+              <div className="flex flex-col gap-3 w-full max-w-sm">
                 <div className="flex items-center gap-2">
                   <HugeiconsIcon icon={User03Icon} size={20} className="text-gray-500" />
                   <Text variante="label" style={{ color: colores.gris }}>Usuario</Text>
                 </div>
                 <Input
-                  placeholder="Escribe tu usuario..."
+                  type="text" 
+                  placeholder="Escribe tu usuario o correo..."
                   value={usuario}
                   onChange={handleUsuarioChange}
                   disabled={cargando}
-                  maxLength={30} 
-                  className={autofillClasses}
+                  maxLength={30}
+                  className={`w-full ${autofillClasses}`}
+                  regex={/^[a-zA-Z0-9@.\-_]*$/} 
                 />
               </div>
 
               {/* Contraseña */}
-              <div className="flex flex-col gap-3 items-start w-auto">
+              <div className="flex flex-col gap-3 w-full max-w-sm">
                 <div className="flex items-center gap-2">
                   <HugeiconsIcon icon={Key01Icon} size={20} className="text-gray-500" />
                   <Text variante="label" style={{ color: colores.gris }}>Contraseña</Text>
                 </div>
-                <div className="relative flex items-center">
+                <div className="relative w-full">
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Escribe tu contraseña..."
@@ -101,7 +103,7 @@ const Login = () => {
                     onChange={handlePasswordChange}
                     disabled={cargando}
                     maxLength={30}
-                    className={`pr-10 ${autofillClasses}`}
+                    className={`w-full pr-10 ${autofillClasses}`}
                   />
                   <div
                     className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer select-none z-20 text-gray-500 hover:text-gray-700 h-5 w-5"
@@ -118,14 +120,14 @@ const Login = () => {
 
             {/* Mensaje de Error */}
             {error && (
-              <div className="mt-6 w-full text-center">
+              <div className="mt-6 w-full text-center px-2">
                 <Text variante="label" style={{ color: "#E53E3E" }}>{error}</Text>
               </div>
             )}
 
             {/* Botón para acceder */}
-            <div className="w-full flex justify-center mt-10">
-              <Button variant="entrar" type="submit" disabled={cargando}>
+            <div className="w-full flex justify-center mt-8 sm:mt-10">
+              <Button variant="entrar" type="submit" disabled={cargando || !!error}>
                 {cargando ? "Entrando..." : "Entrar"}
               </Button>
             </div>

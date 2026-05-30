@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const controller = require('../controllers/inicio_sesion.controller');
+const controller = require('../controllers/inicio-sesion.controller');
 const auth = require('../middleware/auth');
 const verificarRol = require('../middleware/rbac');
 

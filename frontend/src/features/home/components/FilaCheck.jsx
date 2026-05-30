@@ -4,6 +4,64 @@ import { Text } from '../../../shared/components/ui';
 import { colores } from '../../../shared/components/ui/basics/Colores';
 
 const FilaCheck = ({ item, lote, checked, onToggle, mostrarCheck }) => {
+    // Formatear número
+    const formatearNumero = (valor) => {
+        const numero = parseFloat(valor);
+
+        if (isNaN(numero)) return "0.00";
+
+        return new Intl.NumberFormat("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }).format(numero);
+    };
+
+    const renderizarDetalle = (detalle) => {
+        if (!detalle || typeof detalle !== "string") {
+            return detalle;
+        }
+
+        // Separar número y unidad
+        const match = detalle.match(/^([\d.,]+)\s*(.*)$/);
+
+        if (!match) return detalle;
+
+        const cantidad = parseFloat(match[1].replace(/,/g, ""));
+        const unidad = match[2]
+            ?.trim()
+            .toLowerCase()
+            .replace(/\.$/, "");
+
+        if (isNaN(cantidad)) return detalle;
+
+        // Gramos → Kg
+        if (
+            unidad.includes("gramo") ||
+            unidad === "g" ||
+            unidad === "gr"
+        ) {
+            if (cantidad >= 1000) {
+                return `${formatearNumero(cantidad / 1000)} Kilogramo(s)`;
+            }
+
+            return `${formatearNumero(cantidad)} Gramo(s)`;
+        }
+
+        // Mililitros → Litros
+        if (
+            unidad.includes("mililitro") ||
+            unidad === "ml"
+        ) {
+            if (cantidad >= 1000) {
+                return `${formatearNumero(cantidad / 1000)} Litro(s)`;
+            }
+
+            return `${formatearNumero(cantidad)} Mililitro(s)`;
+        }
+
+        return detalle;
+    };
+
     return (
         <div className="flex items-center justify-between py-2 border-b last:border-b-0 border-gray-100">
             {item.ruta ? (
@@ -23,7 +81,7 @@ const FilaCheck = ({ item, lote, checked, onToggle, mostrarCheck }) => {
             )}
             <div className="flex items-center gap-5">
                 <Text variante="small" style={{ color: colores.gris }}>
-                    {item.detalle}
+                    {renderizarDetalle(item.detalle)}
                 </Text>
                 {mostrarCheck && (
                     <button
