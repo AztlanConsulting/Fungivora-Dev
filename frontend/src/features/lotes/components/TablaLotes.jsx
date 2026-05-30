@@ -11,7 +11,7 @@ const TablaLotes = ({ datos, columnas, loading, onVerDetalle, obtenerEstiloFase,
   const [busqueda, setBusqueda] = useState("");
 
   const lotesFiltrados = datos.filter((item) => {
-    const limpiar = (str) => (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/-/g, "");
+    const limpiar = (str) => (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[-\s]/g, "");
     
     const codigo = limpiar(item.codigo_fungivora);
     const ubicacion = limpiar(item.ubicacion_lote);

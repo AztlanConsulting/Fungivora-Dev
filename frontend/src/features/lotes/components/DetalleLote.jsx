@@ -137,9 +137,9 @@ const DetalleLote = () => {
     });
 
     const bloquesFiltrados = bloquesConCodigo.filter(b => {
-        const termino = busqueda.toLowerCase().replace(/[\u0300-\u036f]/g, "").replace(/-/g, "");
+        const termino = busqueda.toLowerCase().replace(/[\u0300-\u036f]/g, "").replace(/[-\s]/g, "");
         
-        const match = (valor) => String(valor || "").toLowerCase().replace(/[\u0300-\u036f]/g, "").replace(/-/g, "").includes(termino);
+        const match = (valor) => String(valor || "").toLowerCase().replace(/[\u0300-\u036f]/g, "").replace(/[-\s]/g, "").includes(termino);
 
         return (
             b.codigo_visual.includes(termino) ||

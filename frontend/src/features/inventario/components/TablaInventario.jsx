@@ -31,7 +31,7 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
 
   const insumosFiltrados = insumos.filter((item) => {
     const estadoCalculado = obtenerEstado(item.cantidad, item.stock_recommended || item.stock_recomendado);
-    const limpiar = (str) => (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const limpiar = (str) => (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[-\s]/g, "");
     
     const nombre = limpiar(item.nombre);
     const estadoLabel = limpiar(estadoCalculado.label);
