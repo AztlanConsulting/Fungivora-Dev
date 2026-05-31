@@ -169,3 +169,17 @@ exports.delete_insumo = async (req, res) => {
         res.status(500).json({ success: false, error: 'Error interno del servidor' });
     }
 };
+
+/*
+* get_insumo_en_uso
+* Verifica si un insumo está siendo usado en algún inóculo
+*/
+exports.get_insumo_en_uso = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const tipo = await Inventario.insumo_en_uso(id);
+        res.status(200).json({ success: true, enUso: !!tipo, tipo });
+    } catch{
+        res.status(500).json({ success: false, error: 'Error interno del servidor' });
+    }
+};

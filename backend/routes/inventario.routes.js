@@ -23,4 +23,7 @@ router.post('/update-inoculo', controller.post_update_cantidad_inoculo);
 // Eliminar insumo
 router.delete('/eliminar-insumo/:id', controller.delete_insumo);
 
+// Verificar si un insumo está en uso
+router.get('/en-uso/:id', controller.get_insumo_en_uso);
+
 module.exports = router;

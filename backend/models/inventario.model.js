@@ -181,6 +181,18 @@ class Inventario {
         );
         return true;
     };
+
+    // Verifica si un insumo está siendo usado en algún inóculo
+    static insumo_en_uso = async (id_insumo) => {
+        const [rows] = await db.execute(`
+            SELECT i.tipo
+            FROM Ingredientes ing
+            JOIN Inoculos i ON ing.id_inoculo_creado = i.id_inoculo
+            WHERE ing.id_insumo = ?
+            LIMIT 1
+        `, [id_insumo]);
+        return rows.length > 0 ? rows[0].tipo : null;
+    };
 }
 
 module.exports = Inventario;
