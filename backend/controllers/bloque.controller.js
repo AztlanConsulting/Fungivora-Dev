@@ -128,3 +128,14 @@ exports.get_contenedores = async (req, res) => {
         res.status(500).json({ success: false, error: 'Error al obtener contenedores' });
     }
 };
+
+exports.get_notas_by_id = async (req, res) => {
+    try {
+        const { id_bloque } = req.params;
+        const notas = await Bloque.fetch_notas_by_id(id_bloque);
+        res.status(200).json(notas);
+    } catch (err) {
+        console.error ("Error en get_notas_by_id controller: ", err);
+        res.status(500).json({ success: false, error: err.message})
+    }
+}

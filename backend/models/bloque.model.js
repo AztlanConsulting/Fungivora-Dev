@@ -74,6 +74,21 @@ class Bloque {
             throw err;
         }
     }
+
+    static async fetch_notas_by_id(id_bloque) {
+        try {
+            const query = `
+                SELECT *
+                FROM Bitacora_bloques
+                WHERE id_bloque = ?
+            `;
+            const [filas] = await db.execute(query, [id_bloque]);
+            return filas;
+        } catch (err) {
+            console.error("Error en fetch_notas_by_id");
+            throw err;
+        }
+    }
 }
 
 module.exports = Bloque;

@@ -18,4 +18,7 @@ router.get('/sustratos', controller.get_sustratos);
 // Actualización masiva de bloques de un lote
 router.put('/masivo', controller.actualizar_bloques_masivo);
 
+// Conseguir las notas de un bloque
+router.get('/notas/:id_bloque');
+
 module.exports = router;
