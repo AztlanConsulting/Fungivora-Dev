@@ -15,8 +15,16 @@ const columnasHeader = [
   { label: "Acciones", key: "accion", align: "center" },
 ];
 
-const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSeleccionada, abrirModalEdicion, onEliminar, gridLayout }) => {
+// Mapeo de tipo de inóculo a nombre legible
+const tipoANombre = {
+  'Agar': 'crear Agar',
+  'Medio Líquido': 'crear Medio Líquido',
+  'Semilla': 'crear Semilla',
+};
+
+const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSeleccionada, abrirModalEdicion, onEliminar, verificarEnUso, gridLayout }) => {
   const [mostrarInfoNoEditable, setMostrarInfoNoEditable] = useState(false);
+  const [mensajeInfo, setMensajeInfo] = useState("");
 
   // Número de forma visual mejor
   const formatearNumero = (valor) => {
@@ -57,6 +65,20 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
     if (cant <= 0) return { label: "Agotado", color: "#EF4444", bg: "#FEE2E2" };
     if (cant <= rec * 0.5) return { label: "Bajo", color: "#F59E0B", bg: "#FEF3C7" };
     return { label: "Óptimo", color: "#10B981", bg: "#D1FAE5" };
+  };
+
+  // Verifica si el insumo está en uso antes de eliminar
+  const handleEliminarClick = async (e, item) => {
+    e.stopPropagation();
+    const itemId = item.id ?? item.id_insumo;
+    const res = await verificarEnUso(itemId);
+    if (res.enUso) {
+      const nombreTipo = tipoANombre[res.tipo] || res.tipo || 'crear inóculos';
+      setMensajeInfo(`Este insumo no puede eliminarse, es necesario para ${nombreTipo}.`);
+      setMostrarInfoNoEditable(true);
+    } else {
+      onEliminar(item);
+    }
   };
 
   if (loading) {
@@ -126,8 +148,7 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                           onClick={(e) => {
                             e.stopPropagation();
                             abrirModalEdicion(item, "incremento");
-                          }}
-                        >
+                          }}>
                           <HugeiconsIcon icon={Add01Icon} size={20} color={colores.azul} />
                         </button>
 
@@ -138,8 +159,7 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                           onClick={(e) => {
                             e.stopPropagation();
                             abrirModalEdicion(item, "reduccion");
-                          }}
-                        >
+                          }}>
                           <HugeiconsIcon icon={Remove01Icon} size={20} color={colores.azul} />
                         </button>
 
@@ -147,11 +167,7 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                         <button
                           type="button"
                           className="hover:scale-110 transition-transform cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onEliminar(item);
-                          }}
-                        >
+                          onClick={(e) => handleEliminarClick(e, item)}>
                           <HugeiconsIcon icon={CancelCircleIcon} size={20} color={colores.azul} />
                         </button>
                       </div>
@@ -159,9 +175,8 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                       <button
                         type="button"
                         className="hover:scale-110 transition-transform cursor-pointer"
-                        onClick={(e) => { e.stopPropagation(); setMostrarInfoNoEditable(true); }}
-                        aria-label="Información"
-                      >
+                        onClick={(e) => { e.stopPropagation(); setMostrarInfoNoEditable(true); setMensajeInfo(MENSAJE_INFO_NO_EDITABLE); }}
+                        aria-label="Información">
                         <HugeiconsIcon icon={InformationCircleIcon} size={20} color={colores.azul} />
                       </button>
                     )}
@@ -175,23 +190,18 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                     <div className="flex justify-between items-start mb-3">
                       <Text variante="option" style={{ color: "black", fontWeight: "600", fontSize: "16px" }}>{item.nombre}</Text>
 
-                    {/* Icono Móvil Condicionado */}
-                    {esInsumo ? (
-                      <div className="flex items-center gap-3">
-                        {/* IN */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            abrirModalEdicion(item, "incremento");
-                          }}
-                        >
-                          <HugeiconsIcon
-                            icon={Add01Icon}
-                            size={22}
-                            color={colores.azul}
-                          />
-                        </button>
+                      {/* Icono Móvil Condicionado */}
+                      {esInsumo ? (
+                        <div className="flex items-center gap-3">
+                          {/* IN */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              abrirModalEdicion(item, "incremento");
+                            }}>
+                            <HugeiconsIcon icon={Add01Icon} size={22} color={colores.azul} />
+                          </button>
 
                           {/* OUT */}
                           <button
@@ -199,34 +209,22 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                             onClick={(e) => {
                               e.stopPropagation();
                               abrirModalEdicion(item, "reduccion");
-                            }}
-                          >
-                            <HugeiconsIcon 
-                            icon={Remove01Icon} 
-                            size={22} 
-                            color={colores.azul} />
+                            }}>
+                            <HugeiconsIcon icon={Remove01Icon} size={22} color={colores.azul} />
                           </button>
 
                           {/* ELIMINAR */}
                           <button
                             type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onEliminar(item);
-                            }}
-                          >
-                            <HugeiconsIcon 
-                            icon={CancelCircleIcon} 
-                            size={22} 
-                            color={colores.azul} />
+                            onClick={(e) => handleEliminarClick(e, item)}>
+                            <HugeiconsIcon icon={CancelCircleIcon} size={22} color={colores.azul} />
                           </button>
                         </div>
                       ) : (
                         <button
                           type="button"
-                          onClick={(e) => { e.stopPropagation(); setMostrarInfoNoEditable(true); }}
-                          aria-label="Información"
-                        >
+                          onClick={(e) => { e.stopPropagation(); setMostrarInfoNoEditable(true); setMensajeInfo(MENSAJE_INFO_NO_EDITABLE); }}
+                          aria-label="Información">
                           <HugeiconsIcon icon={InformationCircleIcon} size={22} color={colores.azul} />
                         </button>
                       )}
@@ -249,8 +247,8 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
 
       <ModalInfo
         visible={mostrarInfoNoEditable}
-        mensaje={MENSAJE_INFO_NO_EDITABLE}
-        onClose={() => setMostrarInfoNoEditable(false)}
+        mensaje={mensajeInfo}
+        onClose={() => { setMostrarInfoNoEditable(false); setMensajeInfo(""); }}
       />
     </div>
   );

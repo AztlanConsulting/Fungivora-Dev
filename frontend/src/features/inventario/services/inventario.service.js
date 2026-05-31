@@ -51,6 +51,15 @@ const inventarioService = {
             throw error;
         }
     },
+
+    verificarInsumoEnUso: async (id_insumo) => {
+        try {
+            return await api.get(`/inventario/en-uso/${id_insumo}`);
+        } catch (error) {
+            console.error("Error al verificar insumo en uso:", error);
+            throw error;
+        }
+    },
 };
 
 export default inventarioService;
