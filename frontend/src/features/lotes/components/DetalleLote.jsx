@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import useDetalleLote from '../hooks/useDetalleLote';
 import BannerLote from '../components/BannerLote';
 import TablaBloques from '../components/TablaBloquesLote';
@@ -13,6 +13,7 @@ import { CheckmarkCircle02Icon } from '@hugeicons/core-free-icons';
 const DetalleLote = () => {
     const { id_lote } = useParams();
     const { state } = useLocation();
+    const navigate = useNavigate();
 
     const {
         bloques, setBloques, bloquesIniciales, setBloquesIniciales,
@@ -178,6 +179,7 @@ const DetalleLote = () => {
                             loading={cargando}
                             onToggleContaminado={handleLocalToggleContaminado}
                             codigo_lote={codigoParaTabla}
+                            onClickBloque={(bloque) => navigate(`/bloque/notas/${bloque.id_bloque}`)}
                         />
                     </div>
                 </div>

@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Tick02Icon } from '@hugeicons/core-free-icons';
 import Text from '../../../shared/components/ui/basics/Texto';
@@ -8,16 +7,8 @@ import { colores } from '../../../shared/components/ui/basics/Colores';
 const colorHeaderTabla = '#F2F2FC';
 const colorBordeDestacado = '#7F7FD5';
 
-const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) => {
-    const navigate = useNavigate();
-
+const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, onClickBloque }) => {
     const gridLayoutBloques = "md:grid-cols-[1.2fr_1fr_1fr_1fr_1fr_1fr_0.5fr]";
-
-    const handleClickBloque = (bloque) => {
-        navigate(`/bloque/notas/${bloque.id_bloque}`, {
-            state: { ...bloque}
-        });
-    };
 
     const formatearPeso = (gramos) => {
         const pesoNum = parseFloat(gramos || 0);
@@ -126,7 +117,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                                 <div key={bloque.id_bloque || index} className="relative">
                                     {/* Vista móvil */}
                                     <div className="md:hidden p-5 flex flex-col gap-4 bg-white border-b border-gray-100 cursor-pointer"
-                                    onClick={() => handleClickBloque(bloque)}>
+                                    onClick={() => onClickBloque?.(bloque)}>
                                         <div className="flex justify-between items-start">
                                             <div className="flex flex-col gap-1">
                                                 <Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text>
@@ -152,7 +143,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                                     {/* Vista desktop */}
                                     <div className={`hidden md:grid ${gridLayoutBloques} px-8 py-4 gap-4 items-center transition-colors hover:bg-slate-50 bg-white cursor-pointer`}
                                         style={{ borderBottom: index === bloquesOrdenados.length - 1 ? 'none' : '1px solid #F0F0F0' }}
-                                        onClick={() => handleClickBloque(bloque)}>
+                                        onClick={() => onClickBloque?.(bloque)}>
                                         <Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text>
                                         <Text variante="body" style={{ fontWeight: '400', color: '#666', fontSize: '15px' }}>
                                             {codigoInoculo || 'S/N'} 
