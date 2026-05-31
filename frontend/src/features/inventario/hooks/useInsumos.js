@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import inventarioService from "../services/inventario.service";
 import api from "../../../shared/utils/api";
 
+
 const useInsumos = () => {
     const [insumos, setInsumos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [unidades, setUnidades] = useState([]);
+    const [insumosEnUso, setInsumosEnUso] = useState(new Set());
 
     useEffect(() => {
         const cargarUnidades = async () => {
@@ -26,8 +28,23 @@ const useInsumos = () => {
         setLoading(true);
         try {
             const json = await inventarioService.getInsumos();
-            if (json.success) setInsumos(json.data);
-            else setError("No se pudieron cargar los insumos");
+            if (json.success) {
+                setInsumos(json.data);
+                // Verifica cuáles están en uso
+                const enUsoSet = new Set();
+                await Promise.all(
+                    json.data
+                        .filter(item => item.tipo === 'insumo')
+                        .map(async (item) => {
+                            const id = item.id ?? item.id_insumo;
+                            const res = await inventarioService.verificarInsumoEnUso(id);
+                            if (res?.data?.enUso || res?.enUso) enUsoSet.add(id);
+                        })
+                );
+                setInsumosEnUso(enUsoSet);
+            } else {
+                setError("No se pudieron cargar los insumos");
+            }
         } catch {
             setError("Error de conexión");
         } finally {
@@ -110,7 +127,7 @@ const useInsumos = () => {
         }
     };
 
-    return { insumos, unidades, loading, error, addInsumo, updateInsumo, deleteInsumo, verificarEnUso, refresh: fetchInsumos };
+    return { insumos, insumosEnUso, unidades, loading, error, addInsumo, updateInsumo, deleteInsumo, verificarEnUso, refresh: fetchInsumos };
 
 };
 

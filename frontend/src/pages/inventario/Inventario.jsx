@@ -15,7 +15,7 @@ import TablaInventario from "../../features/inventario/components/TablaInventari
 import FormularioInsumo from "../../features/inventario/components/FormularioInsumo";
 
 const Inventario = () => {
-  const { insumos, unidades, loading, error, addInsumo, updateInsumo, deleteInsumo, verificarEnUso } = useInsumos();
+  const { insumos, insumosEnUso, unidades, loading, error, addInsumo, updateInsumo, deleteInsumo, verificarEnUso } = useInsumos();
   const [filaSeleccionada, setFilaSeleccionada] = useState(null);
   const [nuevaFila, setNuevaFila] = useState({ nombre: "", cantidad: "", stock_recomendado: "", unidad: "" });
   const [errorValidacion, setErrorValidacion] = useState("");
@@ -165,6 +165,7 @@ const Inventario = () => {
           <div className={`w-full min-[1308px]:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} min-[1308px]:block`}>
             <TablaInventario
               insumos={insumos}
+              insumosEnUso={insumosEnUso}
               loading={loading}
               filaSeleccionada={filaSeleccionada}
               setFilaSeleccionada={setFilaSeleccionada}
