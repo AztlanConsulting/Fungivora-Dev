@@ -137,16 +137,19 @@ const DetalleLote = () => {
     });
 
     const bloquesFiltrados = bloquesConCodigo.filter(b => {
-        const termino = busqueda.toLowerCase().replace(/[\u0300-\u036f]/g, "").replace(/[-\s]/g, "");
-        
-        const match = (valor) => String(valor || "").toLowerCase().replace(/[\u0300-\u036f]/g, "").replace(/[-\s]/g, "").includes(termino);
+        const termino = busqueda.toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+            .replace(/[-\s]/g, "");
+        const limpiar = (valor) => String(valor || "").toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+            .replace(/[-\s]/g, "");
 
         return (
-            b.codigo_visual.includes(termino) ||
-            match(b.codigo_inoculo_bloque) ||
-            match(b.tipo_sustrato) ||
-            match(b.contenedor) ||
-            (b.produccion === 1 ? "producción" : "experimental").includes(termino)
+            limpiar(b.codigo_visual).includes(termino) ||
+            limpiar(b.codigo_inoculo_bloque).includes(termino) ||
+            limpiar(b.tipo_sustrato).includes(termino) ||
+            limpiar(b.contenedor).includes(termino) ||
+            limpiar(b.produccion === 1 ? "producción" : "experimental").includes(termino)
         );
     }) || [];
 
