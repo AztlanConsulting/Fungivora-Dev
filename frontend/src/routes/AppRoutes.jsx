@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import {
     HomePage, Login, Usuario, Inventario,
-    Lotes, Lote, BibliotecaGenetica
+    Lotes, Lote, BibliotecaGenetica, NotasBloque
 } from "../pages";
 import { MainLayout, RutaProtegida } from "../shared/components/layout";
 import CrearAgar from "../pages/inoculos/agar/CrearAgar";
@@ -38,6 +38,9 @@ export default function AppRoutes() {
                 {/* Ruta lotes */}
                 <Route path="/lotes" element={<Lotes />} />
                 <Route path="/lotes/detalle/:id_lote" element={<Lote />} />
+
+                {/* Notas de bloque */}
+                <Route path="/bloque/notas/:id_bloque" element={<NotasBloque />} />
 
                 {/* Rutas inventario */}
                 <Route path="/inventario" element={<Inventario />} />
