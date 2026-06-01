@@ -34,7 +34,7 @@ const BarraBusqueda = ({
       onBlur={() => setIsFocused(false)}
     >
     <Input
-      variante="normal"
+      variante="search"
       placeholder={placeholder}
       value={value}
       onChange={onChange}

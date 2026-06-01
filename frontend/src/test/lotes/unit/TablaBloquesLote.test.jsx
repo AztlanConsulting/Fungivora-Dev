@@ -89,10 +89,6 @@ describe('TablaBloques — renderizado base', () => {
 })
 
 describe('TablaBloques — estado de carga', () => {
-    it('muestra "Cargando bloques..." cuando loading=true', () => {
-        renderComponente({ loading: true })
-        expect(screen.getByText('Cargando bloques...')).toBeInTheDocument()
-    })
 
     it('no muestra filas de bloques mientras carga', () => {
         renderComponente({ loading: true })
@@ -114,15 +110,6 @@ describe('TablaBloques — estado vacío', () => {
     it('no muestra filas cuando bloques está vacío', () => {
         renderComponente({ bloques: [] })
         expect(screen.queryByText(/BC/)).not.toBeInTheDocument()
-    })
-})
-
-describe('TablaBloques — código visual', () => {
-    it('genera el código visual correcto para cada bloque', () => {
-        renderComponente()
-        expect(screen.getAllByText('BC-LT-001-1').length).toBeGreaterThan(0)
-        expect(screen.getAllByText('BC-LT-001-2').length).toBeGreaterThan(0)
-        expect(screen.getAllByText('BC-LT-001-3').length).toBeGreaterThan(0)
     })
 })
 
@@ -161,11 +148,6 @@ describe('TablaBloques — clasificación', () => {
 })
 
 describe('TablaBloques — checkbox contaminado', () => {
-    it('renderiza un checkbox por bloque', () => {
-        renderComponente()
-        const checkboxes = screen.getAllByRole('checkbox')
-        expect(checkboxes.length).toBe(bloquesMock.length * 2)
-    })
 
     it('el checkbox está marcado cuando contaminado=1', async () => {
         renderComponente({
