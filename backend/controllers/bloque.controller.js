@@ -146,6 +146,7 @@ exports.post_nota = async (req, res) => {
         await Bloque.post_nota(id_bloque, fecha, porc_colonizacion, notas_bitacora);
         res.status(200).json({ message: "Nota creada correctamente" });
     } catch (err) {
+        console.error("Error en post_nota:", err);
         res.status(500).json({ message: "Error en POST de Nota" });
-    };
+    }
 };
