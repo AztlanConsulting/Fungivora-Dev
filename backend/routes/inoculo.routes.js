@@ -35,6 +35,6 @@ router.get('/cantidad-ingredientes', inoculoController.get_cantidad_ingredientes
 router.post('/crear', inoculoController.post_crear_inoculo);
 
 // Ruta para encontrar los bloques por id de lote
-router.get('/detalle', controller.get_inoculum_by_id);
+router.get('/detalle', inoculoController.get_inoculum_by_id);
 
 module.exports = router;

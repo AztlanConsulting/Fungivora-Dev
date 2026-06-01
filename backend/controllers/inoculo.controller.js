@@ -182,12 +182,19 @@ exports.get_codigo_fungivora = async (req, res) => {
 exports.get_inoculum_by_id = async (req, res) => {
     const { id_inoculo } = req.query;
     try {
-        if (!id_inoculo) return res.status(400).json({ message: "ID de inoculo requerido" });
+        if (!id_inoculo) {
+            return res.status(400).json({ success: false, message: "ID de inóculo requerido" });
+        }
+
         const inoculo = await Inoculo.fetch_by_id(id_inoculo);
-        if (!inoculo) return res.status(404).json({ message: "Inoculo no encontrado" });
-        res.json(inoculo);
+        
+        if (!inoculo) {
+            return res.status(404).json({ success: false, message: "Inóculo no encontrado" });
+        }
+
+        res.status(200).json({ success: true, data: inoculo });
     } catch (error) {
         console.error("Error en get_inoculum_by_id:", error);
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, message: "Error al obtener el inóculo", error: error.message });
     }
 };

@@ -174,10 +174,19 @@ module.exports = class Inoculo {
 
     static async fetch_by_id(id_inoculo) {
         const [rows] = await db.execute(`
-            SELECT * FROM Inoculos 
-            WHERE id_inoculo = ? 
-            LIMIT 1
+            SELECT * FROM Inoculos WHERE id_inoculo = ? LIMIT 1
         `, [id_inoculo]);
-        return rows[0];
+
+        if (rows.length === 0) return null;
+
+        const inoculo = rows[0];
+        const [ingredientes] = await db.execute(`
+            SELECT i.id_insumo, ins.nombre, i.cantidad, ins.unidad
+            FROM Ingredientes i
+            JOIN Insumos ins ON i.id_insumo = ins.id_insumo
+            WHERE i.id_inoculo_creado = ?
+        `, [id_inoculo]);
+
+        return { ...inoculo, ingredientes };
     }
 };
