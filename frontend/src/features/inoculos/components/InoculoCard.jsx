@@ -1,6 +1,7 @@
 import React, { useMemo, useEffect } from 'react'; 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons';
+import { useNavigate } from 'react-router-dom';
 
 import Text from '../../../shared/components/ui/basics/Texto';
 import SelectField from '../../../shared/components/ui/inputs/SeleccionarTexto';
@@ -48,6 +49,14 @@ const InoculoCard = ({ especie, tipoForzado }) => {
         handleTipoChange,
         toggleCollapse,
     } = useInoculoCard(especie.value);
+
+    const navigate = useNavigate(); 
+
+    const handleNavigateToDetalle = (inoculo) => {
+        navigate(`/inoculos/detalle/${inoculo.id_inoculo}`, { 
+            state: inoculo 
+        });
+    };
 
     const prevTipoForzado = React.useRef(tipoForzado);
 
@@ -176,8 +185,12 @@ const InoculoCard = ({ especie, tipoForzado }) => {
                             {/* Filas basadas en datosOrdenados */}
                             {datosOrdenados.map((fila, index) => (
                                 <div
-                                    key={fila.id_inoculo}
-                                    className="bg-white"
+                                    key={fila.id_inoculo || index}
+                                    onClick={() => {
+        console.log("¡Click detectado!");
+        handleNavigateToDetalle(fila);
+    }}
+                                    className="bg-white cursor-pointer hover:bg-gray-50 transition-colors" // Agregado cursor-pointer
                                     style={{
                                         borderBottom:
                                             index === datosOrdenados.length - 1

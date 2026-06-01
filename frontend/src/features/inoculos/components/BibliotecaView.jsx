@@ -105,8 +105,12 @@ const BibliotecaView = () => {
                         </Text>
                     )}
 
-                    {!loading && !error && especies.map((especie) => (
-                        <InoculoCard key={especie.value} especie={especie} tipoForzado={tipoGlobal}/>
+                    {!loading && !error && especies.map((especie, index) => (
+                        <InoculoCard 
+                            key={especie.id_especie ? especie.id_especie : `${especie.value}-${index}`} 
+                            especie={especie} 
+                            tipoForzado={tipoGlobal}
+                        />
                     ))}
                 </div>
             </Base>
