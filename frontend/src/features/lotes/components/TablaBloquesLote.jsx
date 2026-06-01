@@ -9,7 +9,7 @@ const colorBordeDestacado = '#7F7FD5';
 
 const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) => {
 
- const gridLayoutBloques = "md:grid-cols-[1.2fr_1fr_1fr_1fr_1fr_1fr_0.5fr]";
+    const gridLayoutBloques = "md:grid-cols-[1.3fr_1fr_1fr_1fr_1fr_1.1fr_100px]";
 
     const formatearPeso = (gramos) => {
         const pesoNum = parseFloat(gramos || 0);
@@ -76,14 +76,15 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
             <div className="rounded-2xl border overflow-hidden" style={{ borderColor: '#F0F0F0' }}>
 
                 {/* Header */}
-                <div className={`hidden md:grid ${gridLayoutBloques} py-5 px-8 gap-4 items-center`} style={{ backgroundColor: colorHeaderTabla }}>
-                    <div><Text variante="option" style={{ fontWeight: '600' }}>Código Bloque</Text></div>
-                    <div><Text variante="option" style={{ fontWeight: '600' }}>Inóculo</Text></div>
-                    <div><Text variante="option" style={{ fontWeight: '600' }}>Sustrato</Text></div>
-                    <div><Text variante="option" style={{ fontWeight: '600' }}>Tamaño</Text></div>
-                    <div><Text variante="option" style={{ fontWeight: '600' }}>Peso</Text></div>
-                    <div><Text variante="option" style={{ fontWeight: '600' }}>Clasificación</Text></div>
-                    <div className="text-center"><Text variante="option" style={{ fontWeight: '600' }}>Contaminado</Text></div>
+                <div className={`hidden md:grid ${gridLayoutBloques} py-5 px-8 gap-4`} style={{ backgroundColor: colorHeaderTabla }}>
+                    {["Código Bloque", "Inóculo", "Sustrato", "Tamaño", "Peso", "Clasificación"].map((label) => (
+                        <div key={label} className="flex items-center justify-start h-full">
+                            <Text variante="option" style={{ fontWeight: '600' }}>{label}</Text>
+                        </div>
+                    ))}
+                    <div className="flex items-center justify-center h-full">
+                        <Text variante="option" style={{ fontWeight: '600' }}>Contaminado</Text>
+                    </div>
                 </div>
 
                 <div className="flex flex-col">
@@ -132,22 +133,14 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                                     {/* Vista desktop */}
                                     <div className={`hidden md:grid ${gridLayoutBloques} px-8 py-4 gap-4 items-center transition-colors hover:bg-slate-50 bg-white`}
                                         style={{ borderBottom: index === bloquesOrdenados.length - 1 ? 'none' : '1px solid #F0F0F0' }}>
-                                        <Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text>
-                                        <Text variante="body" style={{ fontWeight: '400', color: '#666', fontSize: '15px' }}>
-                                            {codigoInoculo || 'S/N'} 
-                                        </Text>
-                                        <Text variante="body" style={{ color: '#444', fontSize: '15px' }}>
-                                            {bloque.tipo_sustrato}
-                                        </Text>
-
-                                        <Text variante="body" style={{ color: '#444' }}>{bloque.contenedor}</Text>
-                                        <Text variante="body" style={{ color: '#444' }}>
-                                            {formatearPeso(bloque.peso_gr)}
-                                        </Text>
-                                        <div>{renderEtiqueta(bloque.produccion)}</div>
-                                        <div className="flex justify-center">
-                                            {renderCheckbox(bloque.contaminado, bloque.id_bloque)}
-                                        </div>
+                                        
+                                        <div className="flex items-center justify-start truncate min-w-0"><Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text></div>
+                                        <div className="flex items-center justify-start truncate min-w-0"><Text variante="body" style={{ fontWeight: '400', color: '#666', fontSize: '15px' }}>{codigoInoculo || 'S/N'}</Text></div>
+                                        <div className="flex items-center justify-start truncate min-w-0"><Text variante="body" style={{ color: '#444', fontSize: '15px' }}>{bloque.tipo_sustrato}</Text></div>
+                                        <div className="flex items-center justify-start truncate min-w-0"><Text variante="body" style={{ color: '#444' }}>{bloque.contenedor}</Text></div>
+                                        <div className="flex items-center justify-start truncate min-w-0"><Text variante="body" style={{ color: '#444' }}>{formatearPeso(bloque.peso_gr)}</Text></div>
+                                        <div className="flex items-center justify-start"><div className="truncate">{renderEtiqueta(bloque.produccion)}</div></div>
+                                        <div className="flex items-center justify-center">{renderCheckbox(bloque.contaminado, bloque.id_bloque)}</div>
                                     </div>
                                 </div>
                             );

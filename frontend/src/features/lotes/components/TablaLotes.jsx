@@ -34,16 +34,19 @@ const TablaLotes = ({ datos, columnas, loading, onVerDetalle, obtenerEstiloFase,
           placeholder="Buscar lote..."
         />
       </div>
+
+      {/* Header */}
       <div className={`hidden md:grid ${gridLayout}`} style={{ backgroundColor: colorBordeHeader }}>
         {columnas.map((col, i) => (
-          // Header
-          <div key={i} className="px-6 py-4 flex items-center justify-center text-center">
-            <Text variante="medium" style={{ color: colores.azul, fontSize: "16px", fontWeight: '600' }}>{col.label}</Text>
+          <div key={i} className="px-6 py-4 flex items-center justify-start">
+            <Text variante="medium" style={{ color: colores.azul, fontSize: "16px", fontWeight: '600' }}>
+              {col.label}
+            </Text>
           </div>
         ))}
       </div>
 
-      <div className="max-h-[605px] md:max-h-[550px] overflow-y-auto flex flex-col gap-3 md:gap-0">
+      <div className="max-h-[605px] md:max-h-[450px] overflow-y-auto flex flex-col gap-3 md:gap-0">
         {loading ? (
           <div className="flex justify-center items-center h-[200px] w-full">
             <div className="flex flex-col items-center gap-2">
@@ -71,9 +74,8 @@ const TablaLotes = ({ datos, columnas, loading, onVerDetalle, obtenerEstiloFase,
                 style={{ borderColor: colorBordeHeader, backgroundColor: 'white' }}
               >
                 {columnas.map((col, i) => (
-                  <div key={i} className="px-6 py-4 flex items-center justify-center text-center">
-                    {col.key === 'fase' ? (
-                      <div className="px-4 py-1 rounded-lg text-sm font-semibold" style={{ backgroundColor: estiloFase.bg, color: estiloFase.text }}>
+                  <div key={i} className="px-6 py-4 flex items-center justify-start">{col.key === 'fase' ? (
+                    <div className="px-4 py-1 rounded-lg text-sm font-semibold" style={{ backgroundColor: estiloFase.bg, color: estiloFase.text }}>
                         {lote[col.key]}
                       </div>
                     ) : col.key === 'eliminar' ? (
