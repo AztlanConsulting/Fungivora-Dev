@@ -21,4 +21,7 @@ router.put('/masivo', controller.actualizar_bloques_masivo);
 // Conseguir las notas de un bloque
 router.get('/notas/:id_bloque', controller.get_notas_by_id);
 
+// Crear una nota de un bloque
+router.post('/notas/crear', controller.post_nota);
+
 module.exports = router;

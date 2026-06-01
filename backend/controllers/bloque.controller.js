@@ -138,4 +138,14 @@ exports.get_notas_by_id = async (req, res) => {
         console.error ("Error en get_notas_by_id controller: ", err);
         res.status(500).json({ success: false, error: err.message})
     }
-}
+};
+
+exports.post_nota = async (req, res) => {
+    try {
+        const { id_bloque, fecha, porc_colonizacion, notas_bitacora } = req.body;
+        await Bloque.post_nota(id_bloque, fecha, porc_colonizacion, notas_bitacora);
+        res.status(200).json({ message: "Nota creada correctamente" });
+    } catch (err) {
+        res.status(500).json({ message: "Error en POST de Nota" });
+    };
+};

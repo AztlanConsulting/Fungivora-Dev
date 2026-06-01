@@ -89,6 +89,20 @@ class Bloque {
             throw err;
         }
     }
+
+    static async post_nota(id_bloque, fecha, porc_colonizacion, notas_bitacora) {
+        try {
+            const query = `
+                INSERT INTO Bitacora_bloques (id_bloque, fecha_bitacora, porc_colonizacion, notas_bitacora)
+                VALUES (?, ?, ?, ?)
+            `;
+            const [resultado] = await db.execute(query, [id_bloque, fecha, porc_colonizacion, notas_bitacora]);
+            return resultado;
+        } catch (err) {
+            console.error("Error en post_nota");
+            throw err;
+        }
+    }
 }
 
 module.exports = Bloque;
