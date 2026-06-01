@@ -171,4 +171,13 @@ module.exports = class Inoculo {
             VALUES (?, ?, ?, ?)
         `, [ingredienteId, cantidad, fecha, tipo]);
     }
+
+    static async fetch_by_id(id_inoculo) {
+        const [rows] = await db.execute(`
+            SELECT * FROM Inoculos 
+            WHERE id_inoculo = ? 
+            LIMIT 1
+        `, [id_inoculo]);
+        return rows[0];
+    }
 };

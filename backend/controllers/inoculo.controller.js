@@ -175,3 +175,19 @@ exports.get_codigo_fungivora = async (req, res) => {
         });
     }
 }
+
+/*
+* get_inoculum_by_id
+*/
+exports.get_inoculum_by_id = async (req, res) => {
+    const { id_inoculo } = req.query;
+    try {
+        if (!id_inoculo) return res.status(400).json({ message: "ID de inoculo requerido" });
+        const inoculo = await Inoculo.fetch_by_id(id_inoculo);
+        if (!inoculo) return res.status(404).json({ message: "Inoculo no encontrado" });
+        res.json(inoculo);
+    } catch (error) {
+        console.error("Error en get_inoculum_by_id:", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
