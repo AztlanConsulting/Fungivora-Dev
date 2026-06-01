@@ -113,7 +113,6 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
           const itemId = item.id ?? item.id_insumo;
           const esSeleccionado = filaSeleccionada === itemId;
           const estado = obtenerEstado(item.cantidad, item.stock_recommended || item.stock_recomendado);
-          const esInsumo = item.tipo === 'insumo';
 
           return (
             <div key={itemId} onClick={() => setFilaSeleccionada(itemId)} className="group cursor-pointer">
@@ -142,7 +141,6 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
 
               {/* Acciones  */}
               <div className="flex items-center justify-center p-3">
-                  {esInsumo ? (
                     <div className="flex items-center gap-3">
                       {/* IN */}
                       <button
@@ -176,16 +174,6 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                         />
                       </button>
                     </div>
-                  ) : (
-                    <button
-                      type="button"
-                      className="hover:scale-110 transition-transform cursor-pointer"
-                      onClick={(e) => { e.stopPropagation(); setMostrarInfoNoEditable(true); }}
-                      aria-label="Información"
-                    >
-                      <HugeiconsIcon icon={InformationCircleIcon} size={20} color={colores.azul} />
-                    </button>
-                  )}
                 </div>
               </div>
 
@@ -197,7 +185,6 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                     <Text variante="option" style={{ color: "black", fontWeight: "600", fontSize: "16px" }}>{item.nombre}</Text>
 
                     {/* Icono Móvil Condicionado */}
-                    {esInsumo ? (
                       <div className="flex items-center gap-3">
                         {/* IN */}
                         <button
@@ -229,15 +216,6 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
                           />
                         </button>
                       </div>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={(e) => { e.stopPropagation(); setMostrarInfoNoEditable(true); }}
-                        aria-label="Información"
-                      >
-                        <HugeiconsIcon icon={InformationCircleIcon} size={22} color={colores.azul} />
-                      </button>
-                    )}
                   </div>
                   <div className="flex justify-between items-center border-t pt-3 mt-1" style={{ borderColor: colorBordeHeader }}>
                     <span className="px-3 py-1 rounded-full text-[10px] font-semibold uppercase" style={{ backgroundColor: estado.bg, color: estado.color }}>
