@@ -20,6 +20,7 @@ function ConjuntoPrueba({ onSubmit }) {
             <Input
                 variante="normal"
                 placeholder="Nombre del lote"
+                aria-label="Nombre del lote"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
             />
@@ -28,6 +29,7 @@ function ConjuntoPrueba({ onSubmit }) {
             <Input
                 variante="amplio"
                 placeholder="Descripción detallada"
+                aria-label="Descripción detallada"
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
             />
@@ -37,6 +39,7 @@ function ConjuntoPrueba({ onSubmit }) {
                 variante="numero"
                 numeroTipo="entero"
                 placeholder="0"
+                aria-label="cantidad"
                 value={cantidad}
                 onChange={(e) => setCantidad(e.target.value)}
             />
@@ -46,6 +49,7 @@ function ConjuntoPrueba({ onSubmit }) {
                 variante="numero"
                 numeroTipo="decimal"
                 placeholder="0.00"
+                aria-label="peso"
                 value={peso}
                 onChange={(e) => setPeso(e.target.value)}
             />
@@ -61,10 +65,10 @@ describe('Integración — formulario con todos los tipos de Input', () => {
         const onSubmit = vi.fn()
         render(<ConjuntoPrueba onSubmit={onSubmit} />)
 
-        const inputNombre = screen.getByPlaceholderText('Nombre del lote')
-        const inputDescripcion = screen.getByPlaceholderText('Descripción detallada')
-        const inputCantidad = screen.getByPlaceholderText('0')
-        const inputPeso = screen.getByPlaceholderText('0.00')
+        const inputNombre      = screen.getByRole('textbox', { name: 'Nombre del lote' })
+        const inputDescripcion = screen.getByRole('textbox', { name: 'Descripción detallada' })
+        const inputCantidad    = screen.getByRole('textbox', { name: 'cantidad' })
+        const inputPeso        = screen.getByRole('textbox', { name: 'peso' })
 
         await user.type(inputNombre, 'Lote Shiitake')
         await user.type(inputDescripcion, 'Primera inoculación del año')
@@ -86,7 +90,7 @@ describe('Integración — formulario con todos los tipos de Input', () => {
         const onSubmit = vi.fn()
         render(<ConjuntoPrueba onSubmit={onSubmit} />)
 
-        const inputNombre = screen.getByPlaceholderText('Nombre del lote')
+        const inputNombre = screen.getByRole('textbox', { name: 'Nombre del lote' })
 
         await user.type(inputNombre, 'Nombre equivocado')
         await user.clear(inputNombre)
@@ -103,10 +107,10 @@ describe('Integración — formulario con todos los tipos de Input', () => {
         const user = userEvent.setup()
         render(<ConjuntoPrueba onSubmit={vi.fn()} />)
 
-        const inputNombre = screen.getByPlaceholderText('Nombre del lote')
-        const inputDescripcion = screen.getByPlaceholderText('Descripción detallada')
-        const inputCantidad = screen.getByPlaceholderText('0')
-        const inputPeso = screen.getByPlaceholderText('0.00')
+        const inputNombre      = screen.getByRole('textbox', { name: 'Nombre del lote' })
+        const inputDescripcion = screen.getByRole('textbox', { name: 'Descripción detallada' })
+        const inputCantidad    = screen.getByRole('textbox', { name: 'cantidad' })
+        const inputPeso        = screen.getByRole('textbox', { name: 'peso' })
 
         await user.tab()
         expect(inputNombre).toHaveFocus()
