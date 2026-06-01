@@ -6,7 +6,7 @@ import useNotasBloques from "../../features/bloques/hooks/useNotasBloques";
 const BloqueNota = () => {
     const { id_bloque } = useParams();
     const { state } = useLocation();
-    const { notas, cargando, error } = useNotasBloques(id_bloque);
+    const { notas, cargando, error, postNota } = useNotasBloques(id_bloque);
 
     return (
         <Notas
@@ -15,6 +15,7 @@ const BloqueNota = () => {
             error={error}
             id_bloque={id_bloque}
             codigoBloque={state?.codigoVisual || "Bloque"}
+            onAgregar={postNota}
         />
     );
 };

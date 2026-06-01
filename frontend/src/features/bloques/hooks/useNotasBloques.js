@@ -20,13 +20,22 @@ const useNotasBloques = (id_bloque) => {
         }
     };
 
-    
+    const postNota = async (datos) => {
+        try {
+            await bloqueService.postNota(datos);
+            await getNotas();
+        } catch (error) {
+            console.error("Error en postNota", error);
+            throw error;
+        }
+    };
+
     useEffect(() => {
         if (!id_bloque) return;
         getNotas();
     }, [id_bloque]);
 
-    return { notas, cargando, error };
+    return { notas, cargando, error, postNota };
 };
 
 export default useNotasBloques;

@@ -8,16 +8,36 @@ import InputFecha from "../inputs/InputFecha";
 import TarjetaNota from "../cards/AreaNotas"
 import { colores } from "../basics/Colores";
 
-function Notas({ notas = [], cargando, error, codigoBloque = "Bloque" }) {
+function Notas({ notas = [], cargando, error, codigoBloque = "Bloque", onAgregar, id_bloque }) {
   const [contenido, setContenido] = useState("");
   const [fecha, setFecha] = useState({ day: "", month: "", year: "" });
   const [verHistorial, setVerHistorial] = useState(false);
+  const [guardando, setGuardando] = useState(false);
 
   const formatearFecha = (fechaISO) => {
     if (!fechaISO) return "Sin fecha";
     const d = new Date(fechaISO);
     return d.toLocaleDateString("es-MX", { day: "2-digit", month: "long", year: "numeric" });
-};
+  };
+
+  const handleAgregar = async () => {
+    if (!contenido || !fecha.day || !fecha.month || !fecha.year) return;
+    try {
+        setGuardando(true);
+        await onAgregar({
+            id_bloque,
+            fecha: `${fecha.year}-${fecha.month}-${fecha.day}`,
+            notas_bitacora: contenido,
+            porc_colonizacion: 0
+        });
+        setContenido("");
+        setFecha({ day: "", month: "", year: "" });
+    } catch (e) {
+        console.error("Error al agregar nota", e);
+    } finally {
+        setGuardando(false);
+    }
+  };
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white">
@@ -126,8 +146,8 @@ function Notas({ notas = [], cargando, error, codigoBloque = "Bloque" }) {
           <div className="flex-1 min-h-[10px]" />
 
           <div className="mt-auto w-full flex justify-center pt-10 pb-24 md:pb-12 shrink-0">
-            <Button variant="agregar">
-              Agregar
+            <Button variant="agregar" onClick={handleAgregar} disabled={guardando}>
+              {guardando ? "Guardando..." : "Agregar"}
             </Button>
           </div>
 

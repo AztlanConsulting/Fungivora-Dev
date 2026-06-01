@@ -40,6 +40,11 @@ const bloqueService = {
   // Conseguir las notas de un bloque
   fetchNotas: async (id) => {
     return await api.get(`/bloques/notas/${id}`);
+  },
+
+  // Subir una nuta nueva
+  postNota: async (datos) => {
+    return await api.post("/bloques/notas/crear", datos);
   }
 };
 
