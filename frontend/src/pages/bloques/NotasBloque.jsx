@@ -13,8 +13,8 @@ const BloqueNota = () => {
             notas={notas}
             cargando={cargando}
             error={error}
-            id_bloque={id_bloque}
-            codigoBloque={state?.codigoVisual || "Bloque"}
+            id={id_bloque}
+            codigo={state?.codigoVisual || "Bloque"}
             onAgregar={postNota}
         />
     );

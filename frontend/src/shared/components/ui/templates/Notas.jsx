@@ -7,12 +7,14 @@ import Text from "../basics/Texto";
 import InputFecha from "../inputs/InputFecha";
 import TarjetaNota from "../cards/AreaNotas"
 import { colores } from "../basics/Colores";
+import Slider from "../inputs/Slider";
 
-function Notas({ notas = [], cargando, error, codigoBloque = "Bloque", onAgregar, id_bloque }) {
+function Notas({ notas = [], cargando, error, codigo = "Sin código", onAgregar, id }) {
   const [contenido, setContenido] = useState("");
   const [fecha, setFecha] = useState({ day: "", month: "", year: "" });
   const [verHistorial, setVerHistorial] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [porcColonizacion, setPorcColonizacion] = useState(0);
 
   const formatearFecha = (fechaISO) => {
     if (!fechaISO) return "Sin fecha";
@@ -25,10 +27,10 @@ function Notas({ notas = [], cargando, error, codigoBloque = "Bloque", onAgregar
     try {
         setGuardando(true);
         await onAgregar({
-            id_bloque,
+            id_bloque: id,
             fecha: `${fecha.year}-${fecha.month}-${fecha.day}`,
             notas_bitacora: contenido,
-            porc_colonizacion: 0
+            porc_colonizacion: porcColonizacion
         });
         setContenido("");
         setFecha({ day: "", month: "", year: "" });
@@ -47,7 +49,7 @@ function Notas({ notas = [], cargando, error, codigoBloque = "Bloque", onAgregar
         className={`flex-col w-full md:w-1/2 h-full border-r-2 border-gray-200 
         ${verHistorial ? "flex" : "hidden"} md:flex relative`}
       >
-        <Titulo>Notas de {codigoBloque}</Titulo>
+        <Titulo>Notas de {codigo}</Titulo>
 
         <div className="flex-1 overflow-y-auto scrollbar-thin px-4 md:px-12 py-6">
           <Base margen_arriba="mt-16 md:mt-20">
@@ -139,6 +141,10 @@ function Notas({ notas = [], cargando, error, codigoBloque = "Bloque", onAgregar
                 placeholder="Escribe tu entrada larga..."
                 value={contenido}
                 onChange={(e) => setContenido(e.target.value)}
+              />
+              <Slider 
+                value={porcColonizacion} 
+                onChange={setPorcColonizacion}
               />
             </div>
           </div>
