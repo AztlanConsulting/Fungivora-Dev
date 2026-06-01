@@ -45,7 +45,12 @@ function Notas({ notas = [], cargando, error, codigo = "Sin código", onAgregar,
             porc_colonizacion: porcColonizacion
         });
         setContenido("");
-        setFecha({ day: "", month: "", year: "" });
+        const hoyReset = new Date();
+        setFecha({
+          day: String(hoyReset.getDate()).padStart(2, "0"),
+          month: String(hoyReset.getMonth() + 1).padStart(2, "0"),
+          year: String(hoyReset.getFullYear())
+        });
         setModalAlerta({ visible: true, variante: "exito", mensaje: "Nota creada con éxito." });
     } catch (e) {
         console.error("Error al agregar nota", e);

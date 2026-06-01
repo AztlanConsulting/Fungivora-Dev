@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import bloqueService from "../services/bloques.service";
 
 const useNotasBloques = (id_bloque) => {
@@ -6,7 +6,7 @@ const useNotasBloques = (id_bloque) => {
     const [cargando, setCargando] = useState(false);
     const [error, setError] = useState(null);
 
-    const getNotas = async () => {
+    const getNotas = useCallback(async () => {
         try {
             setCargando(true);
             const datos = await bloqueService.fetchNotas(id_bloque);
@@ -18,7 +18,7 @@ const useNotasBloques = (id_bloque) => {
         } finally {
             setCargando(false);
         }
-    };
+    }, [id_bloque]); 
 
     const postNota = async (datos) => {
         try {
@@ -33,7 +33,7 @@ const useNotasBloques = (id_bloque) => {
     useEffect(() => {
         if (!id_bloque) return;
         getNotas();
-    }, [id_bloque]);
+    }, [id_bloque, getNotas]);
 
     return { notas, cargando, error, postNota };
 };
