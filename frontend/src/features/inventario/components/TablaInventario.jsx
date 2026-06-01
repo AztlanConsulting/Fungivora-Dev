@@ -83,7 +83,7 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
         />
       </div>
       {/* Header Desktop */}
-      <div className={`hidden md:grid ${gridLayout} items-center min-h-[60px]`} style={{ backgroundColor: colorBordeHeader }}>
+      <div className={`hidden min-[1200px]:grid ${gridLayout} items-center min-h-[60px]`} style={{ backgroundColor: colorBordeHeader }}>
         {columnasHeader.map((col, i) => (
           <div key={i} className={`px-3 lg:px-6 flex items-center ${col.align === "center" ? "justify-center" : "justify-start"}`}>
             <Text variante="medium" style={{ color: colores.azul, fontWeight: 600, fontSize: "16px" }}>
@@ -118,7 +118,7 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
           return (
             <div key={itemId} onClick={() => setFilaSeleccionada(itemId)} className="group cursor-pointer">
               {/* Filas Desktop */}
-              <div className={`hidden md:grid ${gridLayout} items-center border-b border-gray-50 hover:bg-gray-50 transition-colors`}>
+              <div className={`hidden min-[1200px]:grid ${gridLayout} items-center border-b border-gray-50 hover:bg-gray-50 transition-colors`}>
   
               {/* Insumo */}
               <div className="px-3 lg:px-6 py-4 min-w-0 flex items-center justify-start truncate">
@@ -190,7 +190,7 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
               </div>
 
               {/* Cartas Móvil */}
-              <div className="md:hidden mb-1">
+              <div className="block min-[1200px]:hidden mb-1">
                 <div className={`bg-white rounded-2xl border p-4 shadow-sm transition-all ${esSeleccionado ? 'ring-2' : ''}`}
                   style={{ borderColor: colorBordeHeader }}>
                   <div className="flex justify-between items-start mb-3">

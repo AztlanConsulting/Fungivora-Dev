@@ -36,7 +36,7 @@ const TablaLotes = ({ datos, columnas, loading, onVerDetalle, obtenerEstiloFase,
       </div>
 
       {/* Header */}
-      <div className={`hidden md:grid ${gridLayout}`} style={{ backgroundColor: colorBordeHeader }}>
+      <div className={`hidden min-[1200px]:grid ${gridLayout}`} style={{ backgroundColor: colorBordeHeader }}>
         {columnas.map((col, i) => (
           <div key={i} className="px-6 py-4 flex items-center justify-start">
             <Text variante="medium" style={{ color: colores.azul, fontSize: "16px", fontWeight: '600' }}>
@@ -70,7 +70,7 @@ const TablaLotes = ({ datos, columnas, loading, onVerDetalle, obtenerEstiloFase,
               {/* Vista de desktop */}
               <div
                 onClick={() => onVerDetalle(lote)}
-                className={`hidden md:grid ${gridLayout} cursor-pointer transition-all border-b hover:bg-slate-50`}
+                className={`hidden min-[1200px]:grid ${gridLayout} cursor-pointer transition-all border-b hover:bg-slate-50`}
                 style={{ borderColor: colorBordeHeader, backgroundColor: 'white' }}
               >
                 {columnas.map((col, i) => (
@@ -97,7 +97,7 @@ const TablaLotes = ({ datos, columnas, loading, onVerDetalle, obtenerEstiloFase,
               {/* Vista de movil */}
               <div
                 onClick={() => onVerDetalle(lote)}
-                className="md:hidden p-5 rounded-2xl border bg-white shadow-sm flex flex-col gap-4 cursor-pointer mb-4 mx-2"
+                className="block min-[1200px]:hidden p-5 rounded-2xl border bg-white shadow-sm flex-col gap-4 cursor-pointer mb-4 mx-2"
                 style={{ borderColor: colorBordeHeader }}
               >
                 <div className="flex justify-between items-start">

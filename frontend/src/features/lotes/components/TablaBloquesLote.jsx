@@ -76,7 +76,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
             <div className="rounded-2xl border overflow-hidden" style={{ borderColor: '#F0F0F0' }}>
 
                 {/* Header */}
-                <div className={`hidden md:grid ${gridLayoutBloques} py-5 px-8 gap-4`} style={{ backgroundColor: colorHeaderTabla }}>
+                <div className={`hidden min-[1200px]:grid ${gridLayoutBloques} py-5 px-8 gap-4`} style={{ backgroundColor: colorHeaderTabla }}>
                     {["Código Bloque", "Inóculo", "Sustrato", "Tamaño", "Peso", "Clasificación"].map((label) => (
                         <div key={label} className="flex items-center justify-start h-full">
                             <Text variante="option" style={{ fontWeight: '600' }}>{label}</Text>
@@ -107,7 +107,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                             return (
                                 <div key={bloque.id_bloque || index} className="relative">
                                     {/* Vista móvil */}
-                                    <div className="md:hidden p-5 flex flex-col gap-4 bg-white border-b border-gray-100">
+                                    <div className="block min-[1200px]:hidden p-5 flex-col gap-4 bg-white border-b border-gray-100">
                                         <div className="flex justify-between items-start">
                                             <div className="flex flex-col gap-1">
                                                 <Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text>
@@ -131,7 +131,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                                     </div>
 
                                     {/* Vista desktop */}
-                                    <div className={`hidden md:grid ${gridLayoutBloques} px-8 py-4 gap-4 items-center transition-colors hover:bg-slate-50 bg-white`}
+                                    <div className={`hidden min-[1200px]:grid ${gridLayoutBloques} px-8 py-4 gap-4 items-center transition-colors hover:bg-slate-50 bg-white`}
                                         style={{ borderBottom: index === bloquesOrdenados.length - 1 ? 'none' : '1px solid #F0F0F0' }}>
                                         
                                         <div className="flex items-center justify-start truncate min-w-0"><Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text></div>
