@@ -5,6 +5,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Add01Icon, Remove01Icon, InformationCircleIcon, LabelImportantIcon } from "@hugeicons/core-free-icons";
 import ModalInfo from "../../../shared/components/ui/popups/ModalInfo";
 import BarraBusqueda from "../../../shared/components/ui/others/BarraBusqueda";
+import normalizarBusqueda from "../../../shared/utils/normalizarBusqueda";
 
 const MENSAJE_INFO_NO_EDITABLE = "No puedes editar la cantidad de este insumo manualmente";
 
@@ -31,11 +32,10 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
 
   const insumosFiltrados = insumos.filter((item) => {
     const estadoCalculado = obtenerEstado(item.cantidad, item.stock_recommended || item.stock_recomendado);
-    const limpiar = (str) => (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[-\s]/g, "");
-    
-    const nombre = limpiar(item.nombre);
-    const estadoLabel = limpiar(estadoCalculado.label);
-    const termino = limpiar(busqueda);
+
+    const nombre = normalizarBusqueda(item.nombre);
+    const estadoLabel = normalizarBusqueda(estadoCalculado.label);
+    const termino = normalizarBusqueda(busqueda);
 
     return nombre.includes(termino) || estadoLabel.includes(termino);
   });
@@ -107,7 +107,7 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
         ) : insumosFiltrados.length === 0 ? (
           <div className="text-center py-10 w-full">
             <Text variante="medium" style={{ color: colores.gris }}>
-              {busqueda ? "No se encontraron insumos que coincidan." : "Error de conexión."}
+              {busqueda ? "No se encontraron insumos que coincidan." : "No hay insumos registrados."}
             </Text>
           </div>
         ) : (

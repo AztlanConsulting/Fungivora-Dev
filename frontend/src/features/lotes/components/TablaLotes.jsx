@@ -4,6 +4,7 @@ import { colores } from "../../../shared/components/ui/basics/Colores";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { CancelCircleIcon } from '@hugeicons/core-free-icons';
 import BarraBusqueda from "../../../shared/components/ui/others/BarraBusqueda";
+import normalizarBusqueda from "../../../shared/utils/normalizarBusqueda";
 
 // Tabla para poder vizualizar los lotes
 const TablaLotes = ({ datos, columnas, loading, onVerDetalle, obtenerEstiloFase, gridLayout, colorBordeHeader, onEliminar }) => {
@@ -11,14 +12,12 @@ const TablaLotes = ({ datos, columnas, loading, onVerDetalle, obtenerEstiloFase,
   const [busqueda, setBusqueda] = useState("");
 
   const lotesFiltrados = datos.filter((item) => {
-    const limpiar = (str) => (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[-\s]/g, "");
-    
-    const codigo = limpiar(item.codigo_fungivora);
-    const ubicacion = limpiar(item.ubicacion_lote);
-    const estado = limpiar(item.fase);
-    const termino = limpiar(busqueda);
-    
-    return codigo.includes(termino) || ubicacion.includes(termino)|| estado.includes(termino);
+    const codigo = normalizarBusqueda(item.codigo_fungivora);
+    const ubicacion = normalizarBusqueda(item.ubicacion_lote);
+    const estado = normalizarBusqueda(item.fase);
+    const termino = normalizarBusqueda(busqueda);
+
+    return codigo.includes(termino) || ubicacion.includes(termino) || estado.includes(termino);
   });
   // Eliminar el lote
   const handleEliminarClick = (e, lote) => {
@@ -55,7 +54,7 @@ const TablaLotes = ({ datos, columnas, loading, onVerDetalle, obtenerEstiloFase,
         ) : lotesFiltrados.length === 0 ? (
           <div className="text-center py-10 w-full">
             <Text variante="medium" style={{ color: colores.gris }}>
-              {busqueda ? "No se encontraron lotes que coincidan." : "Error de conexión."}
+              {busqueda ? "No se encontraron lotes que coincidan." : "No hay lotes registrados."}
             </Text>
           </div>
         ) : (

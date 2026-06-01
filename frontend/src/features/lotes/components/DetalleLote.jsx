@@ -9,6 +9,7 @@ import { colores } from '../../../shared/components/ui/basics/Colores';
 import { Base } from '../../../shared/components/layout';
 import { CheckmarkCircle02Icon } from '@hugeicons/core-free-icons';
 import BarraBusqueda from '../../../shared/components/ui/others/BarraBusqueda';
+import normalizarBusqueda from '../../../shared/utils/normalizarBusqueda';
 
 // Detalle de cada lote con toda su información
 const DetalleLote = () => {
@@ -114,7 +115,7 @@ const DetalleLote = () => {
         const inoculoB = (b.codigo_inoculo_bloque || '').toString();
         const comparacionInoculo = inoculoA.localeCompare(inoculoB);
         if (comparacionInoculo !== 0) return comparacionInoculo;
-        
+
         const comparacionProduccion = b.produccion - a.produccion;
         if (comparacionProduccion !== 0) return comparacionProduccion;
 
@@ -126,30 +127,25 @@ const DetalleLote = () => {
     const bloquesConCodigo = bloquesOrdenados.map((b, index) => {
         const codigoInoculo = b.codigo_inoculo_bloque || "";
         const partes = codigoInoculo.trim().toUpperCase().split('-');
-        
+
         const idBase = partes.length >= 3 ? partes[1] : (partes[0] || "B");
         const fecha = partes.length >= 3 ? partes[2] : (partes[1] || "000000");
-        
+
         return {
             ...b,
-            codigo_visual: `BC-${idBase}-${fecha}-${index + 1}` 
+            codigo_visual: `BC-${idBase}-${fecha}-${index + 1}`
         };
     });
 
     const bloquesFiltrados = bloquesConCodigo.filter(b => {
-        const termino = busqueda.toLowerCase()
-            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-            .replace(/[-\s]/g, "");
-        const limpiar = (valor) => String(valor || "").toLowerCase()
-            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-            .replace(/[-\s]/g, "");
+        const termino = normalizarBusqueda(busqueda);
 
         return (
-            limpiar(b.codigo_visual).includes(termino) ||
-            limpiar(b.codigo_inoculo_bloque).includes(termino) ||
-            limpiar(b.tipo_sustrato).includes(termino) ||
-            limpiar(b.contenedor).includes(termino) ||
-            limpiar(b.produccion === 1 ? "producción" : "experimental").includes(termino)
+            normalizarBusqueda(b.codigo_visual).includes(termino) ||
+            normalizarBusqueda(b.codigo_inoculo_bloque).includes(termino) ||
+            normalizarBusqueda(b.tipo_sustrato).includes(termino) ||
+            normalizarBusqueda(b.contenedor).includes(termino) ||
+            normalizarBusqueda(b.produccion === 1 ? "producción" : "experimental").includes(termino)
         );
     }) || [];
 
@@ -211,7 +207,7 @@ const DetalleLote = () => {
                     />
 
                     <div className="w-full">
-                        <BarraBusqueda 
+                        <BarraBusqueda
                             value={busqueda}
                             onChange={(e) => setBusqueda(e.target.value)}
                             placeholder="Buscar bloque..."
