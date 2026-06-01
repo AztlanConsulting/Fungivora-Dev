@@ -13,7 +13,7 @@ const colorBordeHeader = "#F2F2FC";
 const columnasHeader = [
   { label: "Insumo", key: "nombre", align: "start" },
   { label: "Cantidad Actual", key: "cantidad", align: "start" },
-  { label: "Estado", key: "estado", align: "center" },
+  { label: "Estado", key: "estado", align: "start" },
   { label: "Acciones", key: "accion", align: "center" },
 ];
 
@@ -86,9 +86,7 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
       <div className={`hidden md:grid ${gridLayout} items-center min-h-[60px]`} style={{ backgroundColor: colorBordeHeader }}>
         {columnasHeader.map((col, i) => (
           <div key={i} className={`px-3 lg:px-6 flex items-center ${col.align === "center" ? "justify-center" : "justify-start"}`}>
-            <Text
-              variante="medium"
-              style={{ color: colores.azul, fontWeight: 600, fontSize: "16px", whiteSpace: "nowrap" }}>
+            <Text variante="medium" style={{ color: colores.azul, fontWeight: 600, fontSize: "16px" }}>
               {col.label}
             </Text>
           </div>
@@ -121,22 +119,29 @@ const TablaInventario = ({ insumos, loading, filaSeleccionada, setFilaSelecciona
             <div key={itemId} onClick={() => setFilaSeleccionada(itemId)} className="group cursor-pointer">
               {/* Filas Desktop */}
               <div className={`hidden md:grid ${gridLayout} items-center border-b border-gray-50 hover:bg-gray-50 transition-colors`}>
-                <div className="px-3 lg:px-6 py-4 min-w-0 flex items-center">
-                  <Text variante="option" style={{ color: "black", fontWeight: 600, fontSize: "15px" }}>{item.nombre}</Text>
-                </div>
-                <div className="px-3 lg:px-6 py-4 min-w-0 flex items-center">
-                  <Text variante="option" style={{ color: colores.black, fontWeight: 400, fontSize: "15px" }}>
-                    {renderizarCantidad(item.cantidad, item.unidad)}
-                  </Text>
-                </div>
-                <div className="px-3 lg:px-6 py-4 flex justify-center">
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold inline-block whitespace-nowrap" style={{ backgroundColor: estado.bg, color: estado.color }}>
-                    {estado.label}
-                  </span>
-                </div>
+  
+              {/* Insumo */}
+              <div className="px-3 lg:px-6 py-4 min-w-0 flex items-center justify-start truncate">
+                <Text variante="option" style={{ color: "black", fontWeight: 600, fontSize: "15px" }}>{item.nombre}</Text>
+              </div>
+              
+              {/* Cantidad */}
+              <div className="px-3 lg:px-7 py-4 min-w-0 flex items-center justify-start truncate">
+                <Text variante="option" style={{ color: colores.black, fontWeight: 400, fontSize: "15px" }}>
+                  {renderizarCantidad(item.cantidad, item.unidad)}
+                </Text>
+              </div>
+              
+              {/* Estado  */}
+              <div className="px-3 lg:px-7 py-4 flex items-center justify-start">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold inline-block whitespace-nowrap" 
+                      style={{ backgroundColor: estado.bg, color: estado.color }}>
+                  {estado.label}
+                </span>
+              </div>
 
-                {/* Acciones Desktop Condicionado */}
-                <div className="flex justify-center p-2">
+              {/* Acciones  */}
+              <div className="flex items-center justify-center p-3">
                   {esInsumo ? (
                     <div className="flex items-center gap-3">
                       {/* IN */}
