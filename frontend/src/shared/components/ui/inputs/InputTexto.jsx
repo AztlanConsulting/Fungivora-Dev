@@ -95,6 +95,8 @@ const Input = ({
                 regexFinal = /^[a-zA-Z0-9@.\-_]*$/; 
             } else if (variante === "normal") {
                 regexFinal = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 ]*$/;
+            } else if (variante === "search") {
+                regexFinal = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 -]*$/;
             }
         }
         if (regexFinal && !regexFinal.test(e.target.value)) return;

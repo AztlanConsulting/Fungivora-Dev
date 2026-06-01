@@ -42,7 +42,7 @@ function Lotes() {
 
   const {
     datos, ubicaciones, especiesDisponibles,
-    getInoculosPorEspecie, cargando, error, addLote, deleteLote
+    getInoculosPorEspecie, cargando, addLote, deleteLote
   } = useLotes();
   const [verFormulario, setVerFormulario] = useState(false);
   const [nuevaFila, setNuevaFila] = useState({ especie: "", ubicacion_lote: ""});
@@ -328,9 +328,9 @@ function Lotes() {
           {paso === 1 ? (
             <>
               <Titulo>Lotes</Titulo>
-              {cargando ? <Text>Cargando...</Text> : error ? <Text>Error al cargar los datos</Text> : (
                 <TablaLotes
                   datos={datos}
+                  loading={cargando}
                   onEliminar={prepararEliminacion}
                   columnas={columnas}
                   onVerDetalle={(lote) => navigate(`/lotes/detalle/${lote.id_lote}`, { state: lote })}
@@ -338,7 +338,6 @@ function Lotes() {
                   gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1.1fr_1.2fr_1fr_0.5fr]"
                   colorBordeHeader="#F2F2FC"
                 />
-              )}
             </>
           ) : (
             <div className="animate-in fade-in duration-500">

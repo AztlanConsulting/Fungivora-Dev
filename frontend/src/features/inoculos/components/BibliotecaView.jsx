@@ -11,6 +11,8 @@ import InoculoCard from './InoculoCard';
 import ModalCrearInoculo from './ModalCrearInoculo';
 import ModalAlerta from '../../../shared/components/ui/popups/ModalAlerta';
 import BotonCrear from '../../../shared/components/ui/buttons/BotonFlotante';
+import SelectField from '../../../shared/components/ui/inputs/SeleccionarTexto';
+import { TIPOS_INOCULO } from '../types/inoculo.types';
 
 /**
  * Vista principal del módulo de inóculos.
@@ -18,6 +20,7 @@ import BotonCrear from '../../../shared/components/ui/buttons/BotonFlotante';
  */
 const BibliotecaView = () => {
     const location = useLocation();
+    const [tipoGlobal, setTipoGlobal] = useState('Agar');
     const navigate = useNavigate();
     const [alerta, setAlerta] = useState(() => {
         if (location.state?.alerta) {
@@ -38,7 +41,6 @@ const BibliotecaView = () => {
     useEffect(() => {
         if (!location.state?.alerta) return;
 
-        // Limpiar el state del history para que back/forward no reabra la alerta.
         navigate(location.pathname + location.search, {
             replace: true,
             state: null,
@@ -66,12 +68,29 @@ const BibliotecaView = () => {
                 ariaLabel="Crear inóculo"
             />
 
+            
+
             <Base margen_arriba="mt-24 md:mt-20">
+               <div className="flex justify-end items-center gap-4 mb-6">
+                    <Text variante="label" style={{ color: colores.gris }}>
+                        Selecciona un tipo para todos:
+                    </Text>
+                    <div className="w-32 md:w-44"> 
+                        <SelectField
+                            value={tipoGlobal}
+                            onChange={(e) => setTipoGlobal(e.target.value)}
+                            options={TIPOS_INOCULO}
+                        />
+                    </div>
+                </div>
                 <div className="flex flex-col gap-4">
                     {loading && (
-                        <Text variante="body" style={{ color: colores.gris, fontStyle: 'italic' }}>
-                            Cargando especies...
-                        </Text>
+                        <div className="flex justify-center items-center h-[200px] w-full">
+                            <div className="flex flex-col items-center gap-2">
+                                <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                                <Text variante="medium">Cargando datos de inóculos...</Text>
+                            </div>
+                        </div>
                     )}
 
                     {error && (
@@ -87,7 +106,7 @@ const BibliotecaView = () => {
                     )}
 
                     {!loading && !error && especies.map((especie) => (
-                        <InoculoCard key={especie.value} especie={especie} />
+                        <InoculoCard key={especie.value} especie={especie} tipoForzado={tipoGlobal}/>
                     ))}
                 </div>
             </Base>
