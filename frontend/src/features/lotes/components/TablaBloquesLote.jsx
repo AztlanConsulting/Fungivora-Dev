@@ -117,7 +117,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, onCl
                                 <div key={bloque.id_bloque || index} className="relative">
                                     {/* Vista móvil */}
                                     <div className="md:hidden p-5 flex flex-col gap-4 bg-white border-b border-gray-100 cursor-pointer"
-                                    onClick={() => onClickBloque?.(bloque)}>
+                                    onClick={() => onClickBloque?.(bloque, codigoVisual)}>
                                         <div className="flex justify-between items-start">
                                             <div className="flex flex-col gap-1">
                                                 <Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text>
@@ -143,7 +143,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, onCl
                                     {/* Vista desktop */}
                                     <div className={`hidden md:grid ${gridLayoutBloques} px-8 py-4 gap-4 items-center transition-colors hover:bg-slate-50 bg-white cursor-pointer`}
                                         style={{ borderBottom: index === bloquesOrdenados.length - 1 ? 'none' : '1px solid #F0F0F0' }}
-                                        onClick={() => onClickBloque?.(bloque)}>
+                                        onClick={() => onClickBloque?.(bloque, codigoVisual)}>
                                         <Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text>
                                         <Text variante="body" style={{ fontWeight: '400', color: '#666', fontSize: '15px' }}>
                                             {codigoInoculo || 'S/N'} 

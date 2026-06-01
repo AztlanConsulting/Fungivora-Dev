@@ -8,10 +8,16 @@ import InputFecha from "../inputs/InputFecha";
 import TarjetaNota from "../cards/AreaNotas"
 import { colores } from "../basics/Colores";
 
-function Notas() {
-  const [val6, setVal6] = useState("");
+function Notas({ notas = [], cargando, error, codigoBloque = "Bloque" }) {
+  const [contenido, setContenido] = useState("");
   const [fecha, setFecha] = useState({ day: "", month: "", year: "" });
   const [verHistorial, setVerHistorial] = useState(false);
+
+  const formatearFecha = (fechaISO) => {
+    if (!fechaISO) return "Sin fecha";
+    const d = new Date(fechaISO);
+    return d.toLocaleDateString("es-MX", { day: "2-digit", month: "long", year: "numeric" });
+};
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white">
@@ -21,7 +27,7 @@ function Notas() {
         className={`flex-col w-full md:w-1/2 h-full border-r-2 border-gray-200 
         ${verHistorial ? "flex" : "hidden"} md:flex relative`}
       >
-        <Titulo>Notas...</Titulo>
+        <Titulo>Notas de {codigoBloque}</Titulo>
 
         <div className="flex-1 overflow-y-auto scrollbar-thin px-4 md:px-12 py-6">
           <Base margen_arriba="mt-16 md:mt-20">
@@ -50,31 +56,22 @@ function Notas() {
                 </div>
               </div>
 
-              {/* Ejemplo de como son las notas vizualmente 
-                 (se elimina a futuro para añadirlas dinamicamente) */}
               <div className="flex flex-col gap-8 items-center w-full">
-                <TarjetaNota
-                  fecha="08 - 04 - 2026"
-                  preview="Esta es mi primera nota... 
-                        안녕, 내 이름은 freak (whoa, whoa)
-                        네 꿈에 나타나 break your head
-                        마지막인 듯 let's cry (whoa, whoa)
-                        One look, I'm hooked (괜찮아요?)"
-                />
-                <TarjetaNota
-                  fecha="09 - 04 - 2026"
-                  preview="And my heart goes beep, beep, beep, beep, beep, beep
-                        And my heart goes beep, beep, beep, beep, beep, beep
-                        And my heart goes beep, beep, beep, beep, beep, beep
-                        And my heart goes beep, beep, beep, beep, beep, beep
-                        And my heart goes."
-                />
-                <TarjetaNota
-                  fecha="07 - 04 - 2026"
-                  preview="안녕, 내 이름은 freak (and my heart goes beep)
-                        안녕, 내 이름은 freak (and my heart goes beep)
-                        안녕, 내 이름은 freak"
-                />
+                {cargando ? (
+                    <Text variante="body">Cargando notas...</Text>
+                ) : error ? (
+                    <Text variante="body" style={{ color: "red" }}>{error}</Text>
+                ) : notas.length === 0 ? (
+                    <Text variante="body" style={{ color: colores.gris }}>Sin notas registradas.</Text>
+                ) : (
+                    notas.map((nota) => (
+                        <TarjetaNota
+                            key={nota.id_bitacora}
+                            fecha={formatearFecha(nota.fecha_bitacora)}
+                            preview={nota.notas_bitacora}
+                        />
+                    ))
+                )}
               </div>
             </div>
           </Base>
@@ -120,8 +117,8 @@ function Notas() {
               <Input
                 variante="amplio"
                 placeholder="Escribe tu entrada larga..."
-                value={val6}
-                onChange={(e) => setVal6(e.target.value)}
+                value={contenido}
+                onChange={(e) => setContenido(e.target.value)}
               />
             </div>
           </div>

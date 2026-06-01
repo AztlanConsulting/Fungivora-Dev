@@ -35,6 +35,11 @@ const bloqueService = {
       console.error("Error en registrarTodo:", error);
       throw error;
     }
+  },
+
+  // Conseguir las notas de un bloque
+  fetchNotas: async (id) => {
+    return await api.get(`/bloques/notas/${id}`);
   }
 };
 

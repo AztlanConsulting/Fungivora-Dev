@@ -179,7 +179,7 @@ const DetalleLote = () => {
                             loading={cargando}
                             onToggleContaminado={handleLocalToggleContaminado}
                             codigo_lote={codigoParaTabla}
-                            onClickBloque={(bloque) => navigate(`/bloque/notas/${bloque.id_bloque}`)}
+                            onClickBloque={(bloque, codigoVisual) => navigate(`/bloque/notas/${bloque.id_bloque}`, {state: { codigoVisual }})}
                         />
                     </div>
                 </div>
