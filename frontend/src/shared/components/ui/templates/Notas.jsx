@@ -8,10 +8,18 @@ import InputFecha from "../inputs/InputFecha";
 import TarjetaNota from "../cards/AreaNotas"
 import { colores } from "../basics/Colores";
 import Slider from "../inputs/Slider";
+import ModalAlerta from "../popups/ModalAlerta";
 
 function Notas({ notas = [], cargando, error, codigo = "Sin código", onAgregar, id }) {
   const [contenido, setContenido] = useState("");
-  const [fecha, setFecha] = useState({ day: "", month: "", year: "" });
+  const hoy = new Date();
+  const [fecha, setFecha] = useState({
+    day: String(hoy.getDate()).padStart(2, "0"),
+    month: String(hoy.getMonth() + 1).padStart(2, "0"),
+    year: String(hoy.getFullYear())
+  });
+  const [modalAlerta, setModalAlerta] = useState({visible: false, variante: "exito", mensaje:""});
+  const [errorForm, setErrorForm] = useState(false);
   const [verHistorial, setVerHistorial] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [porcColonizacion, setPorcColonizacion] = useState(0);
@@ -23,7 +31,11 @@ function Notas({ notas = [], cargando, error, codigo = "Sin código", onAgregar,
   };
 
   const handleAgregar = async () => {
-    if (!contenido || !fecha.day || !fecha.month || !fecha.year) return;
+    if (!contenido.trim() || !fecha.day || !fecha.month || !fecha.year) {
+      setErrorForm(true);
+      return;
+    };
+    setErrorForm(false);
     try {
         setGuardando(true);
         await onAgregar({
@@ -34,8 +46,10 @@ function Notas({ notas = [], cargando, error, codigo = "Sin código", onAgregar,
         });
         setContenido("");
         setFecha({ day: "", month: "", year: "" });
+        setModalAlerta({ visible: true, variante: "exito", mensaje: "Nota creada con éxito." });
     } catch (e) {
         console.error("Error al agregar nota", e);
+        setModalAlerta({ visible: true, variante: "error", mensaje: "Hubo un error al crear la nota." });
     } finally {
         setGuardando(false);
     }
@@ -72,7 +86,7 @@ function Notas({ notas = [], cargando, error, codigo = "Sin código", onAgregar,
                     }}
                   >
                     <Text variante="label">
-                      Notas
+                      {verHistorial ? "Historial" : "Notas"}
                     </Text>
                   </div>
                 </div>
@@ -91,6 +105,7 @@ function Notas({ notas = [], cargando, error, codigo = "Sin código", onAgregar,
                             key={nota.id_bitacora}
                             fecha={formatearFecha(nota.fecha_bitacora)}
                             preview={nota.notas_bitacora}
+                            porcentaje={nota.porc_colonizacion}
                         />
                     ))
                 )}
@@ -107,7 +122,7 @@ function Notas({ notas = [], cargando, error, codigo = "Sin código", onAgregar,
       >
         {/* Título fijo en la parte superior */}
         <div className="sticky top-0 left-0 w-full z-10 shrink-0">
-          <Titulo color="white">Notas...</Titulo>
+        <Titulo color="white">Notas de {codigo}</Titulo>
         </div>
 
         <div className="flex-1 overflow-y-auto scrollbar-thin px-6 md:px-12 flex flex-col">
@@ -125,7 +140,9 @@ function Notas({ notas = [], cargando, error, codigo = "Sin código", onAgregar,
                     backgroundColor: "#F9FDFF"
                   }}
                 >
-                  <Text variante="label">Notas</Text>
+                  <Text variante="label">
+                    {verHistorial ? "Historial" : "Notas"}
+                  </Text>
                 </div>
               </div>
             </div>
@@ -142,6 +159,8 @@ function Notas({ notas = [], cargando, error, codigo = "Sin código", onAgregar,
                 value={contenido}
                 onChange={(e) => setContenido(e.target.value)}
               />
+
+              <Text> Porcentaje de colonización: {porcColonizacion}%</Text>
               <Slider 
                 value={porcColonizacion} 
                 onChange={setPorcColonizacion}
@@ -150,6 +169,12 @@ function Notas({ notas = [], cargando, error, codigo = "Sin código", onAgregar,
           </div>
 
           <div className="flex-1 min-h-[10px]" />
+
+          {errorForm && (
+            <Text variante="body" style={{ color: "red", fontSize: "16px", fontWeight: "600", textAlign: "center" }}>
+              Por favor completa los campos correctamente.
+            </Text>
+          )}
 
           <div className="mt-auto w-full flex justify-center pt-10 pb-24 md:pb-12 shrink-0">
             <Button variant="agregar" onClick={handleAgregar} disabled={guardando}>
@@ -161,6 +186,12 @@ function Notas({ notas = [], cargando, error, codigo = "Sin código", onAgregar,
 
       </div>
 
+      <ModalAlerta
+        visible={modalAlerta.visible}
+        variante={modalAlerta.variante}
+        mensaje={modalAlerta.mensaje}
+        onClose={() => setModalAlerta(prev => ({ ...prev, visible: false }))}
+      />
     </div>
   );
 }

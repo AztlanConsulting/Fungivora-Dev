@@ -143,7 +143,6 @@ const Input = ({
                 <textarea 
                     ref={textAreaRef} 
                     rows={1} 
-                    placeholder={placeholder}
                     {...sharedProps} 
                     className={`${sharedProps.className} placeholder-transparent`} 
                 />
@@ -151,7 +150,6 @@ const Input = ({
                 <input 
                     {...sharedProps} 
                     {...numProps}
-                    placeholder={placeholder}
                     className={`${sharedProps.className} placeholder-transparent`} 
                     maxLength={maxLength || (variante === "normal" ? 50 : variante === "numero" ? 8 : undefined)}
                 />

@@ -14,7 +14,7 @@ const useNotasBloques = (id_bloque) => {
             setNotas(lista);
         } catch (e) {
             console.error("Error cargando las notas del bloque", e);
-            setError("No se pudieron conseguit las notas");
+            setError("No se pudieron conseguir las notas");
         } finally {
             setCargando(false);
         }

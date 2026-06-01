@@ -9,7 +9,7 @@ import Text from "../basics/Texto";
  * @param preview Texto corto o pedazo de este de la nota para visualización rápida
  * @param onClick Callback opcional para manejar la selección de la tarjeta
  */
-const TarjetaNota = ({ fecha, preview }) => {
+const TarjetaNota = ({ fecha, preview, porcentaje }) => {
   return (
     <div className="w-full max-w-full md:max-w-2xl bg-white rounded-[30px] shadow-lg p-8 border border-gray-100 flex flex-col gap-4 transition-transform hover:scale-[1.01]">
       {/* Para poder vizualizar la fecha*/}
@@ -30,12 +30,20 @@ const TarjetaNota = ({ fecha, preview }) => {
           as="p"
           style={{
             color: "#666",
-            lineHeight: "1.7"
+            lineHeight: "1.7",
+            wordBreak: "break-all",
+            whiteSpace: "pre-wrap"
           }}
         >
           {preview}
         </Text>
       </div>
+
+      {porcentaje !== undefined && porcentaje !== null && (
+        <Text variante="body" as="p" style={{ color: "#444", fontWeight: 600 }}>
+          Porcentaje de colonización: {Math.round(porcentaje)}%
+        </Text>
+      )}
 
       {/* Área para el icono de imagen si es necesario */}
       <div className="h-4"></div>

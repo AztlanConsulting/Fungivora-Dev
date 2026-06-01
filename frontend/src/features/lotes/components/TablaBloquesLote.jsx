@@ -117,7 +117,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, onCl
                                 <div key={bloque.id_bloque || index} className="relative">
                                     {/* Vista móvil */}
                                     <div className="md:hidden p-5 flex flex-col gap-4 bg-white border-b border-gray-100 cursor-pointer"
-                                    onDoubleClick={() => onClickBloque?.(bloque, codigoVisual)}>
+                                    onClick={() => onClickBloque?.(bloque, codigoVisual)}>
                                         <div className="flex justify-between items-start">
                                             <div className="flex flex-col gap-1">
                                                 <Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text>
