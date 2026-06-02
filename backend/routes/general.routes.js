@@ -8,10 +8,11 @@ const categoriaRoutes = require('./categoria.routes');
 const lotesRoutes = require('./lotes.routes');
 const bloqueRoutes = require('./bloque.routes');
 const dashboardRoutes = require('./dashboard.routes');
-const micelioRoutes = require('./micelio.routes'); 
+const micelioRoutes = require('./micelio.routes');
+const pushRoutes = require('./push.routes');
 
 // Pasar por autenticación
-const auth = require('../middleware/auth'); 
+const auth = require('../middleware/auth');
 
 // Rutas sin token
 router.use('/login', loginRoutes);
@@ -26,6 +27,7 @@ router.use('/categorias', categoriaRoutes);
 router.use('/lotes', lotesRoutes);
 router.use('/bloques', bloqueRoutes);
 router.use('/dashboard', dashboardRoutes);
-router.use('/micelio', micelioRoutes); 
+router.use('/micelio', micelioRoutes);
+router.use('/push', pushRoutes);
 
 module.exports = router;
