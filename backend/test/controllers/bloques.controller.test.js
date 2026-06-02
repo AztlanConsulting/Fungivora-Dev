@@ -1,4 +1,4 @@
-const { get_bloques_por_lote, post_bloques, get_contenedores } = require('../../controllers/bloque.controller');
+const { get_bloques_por_lote, post_bloques, get_contenedores, get_notas_by_id, post_nota } = require('../../controllers/bloque.controller');
 const Bloque = require('../../models/bloque.model');
 const Categoria = require('../../models/categoria.model');
 const crypto = require('crypto');
@@ -92,6 +92,78 @@ describe('Bloques Controller', () => {
 
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith(mockContenedores);
+        });
+    }); 
+
+    describe('Get notas by id', () => {
+        it('200 - notas de un bloque específico', async () => {
+            const mockNotas = [
+                { id_bitacora: 1, id_bloque: 'b1', fecha_bitacora: '2024-01-01', porc_colonizacion: 50, notas_bitacora: 'Nota 1' },
+                { id_bitacora: 2, id_bloque: 'b1', fecha_bitacora: '2024-01-02', porc_colonizacion: 75, notas_bitacora: 'Nota 2' },
+            ];
+            Bloque.fetch_notas_by_id.mockResolvedValue(mockNotas);
+
+            const req = { params: { id_bloque: 'b1' } };
+            const res = mockRes();
+
+            await get_notas_by_id(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(mockNotas);
+            expect(Bloque.fetch_notas_by_id).toHaveBeenCalledWith('b1');
+        });
+
+        it('500 - error al obtener notas', async () => {
+            Bloque.fetch_notas_by_id.mockRejectedValue(new Error('DB error'));
+
+            const req = { params: { id_bloque: 'b1' } };
+            const res = mockRes();
+
+            await get_notas_by_id(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
+        });
+    });
+
+    describe('Post nota', () => {
+        it('200 - crear una nota correctamente', async () => {
+            Bloque.post_nota.mockResolvedValue({ insertId: 10 });
+
+            const req = {
+                body: {
+                    id_bloque: 'b1',
+                    fecha: '2024-01-01',
+                    porc_colonizacion: 60,
+                    notas_bitacora: 'Primera nota'
+                }
+            };
+            const res = mockRes();
+
+            await post_nota(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Nota creada correctamente' });
+            expect(Bloque.post_nota).toHaveBeenCalledWith('b1', '2024-01-01', 60, 'Primera nota');
+        });
+
+        it('500 - error al crear nota', async () => {
+            Bloque.post_nota.mockRejectedValue(new Error('DB error'));
+
+            const req = {
+                body: {
+                    id_bloque: 'b1',
+                    fecha: '2024-01-01',
+                    porc_colonizacion: 60,
+                    notas_bitacora: 'Segunda Nota'
+                }
+            };
+            const res = mockRes();
+
+            await post_nota(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Error en POST de Nota' });
         });
     });
 });

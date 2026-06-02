@@ -97,4 +97,75 @@ describe('Bloques Routes', () => {
             expect(res.body[0].nombre).toBe('Bolsa 2kg');
         });
     });
+
+    describe('GET /notas/:id_bloque', () => {
+        it('200 - lista de notas de un bloque', async () => {
+            const mockNotas = [
+                { id_bitacora: 1, id_bloque: 'u-1', fecha_bitacora: '2024-01-01', porc_colonizacion: 50, notas_bitacora: 'Nota 1' },
+                { id_bitacora: 2, id_bloque: 'u-1', fecha_bitacora: '2024-01-02', porc_colonizacion: 75, notas_bitacora: 'Nota 2' },
+            ];
+            Bloque.fetch_notas_by_id.mockResolvedValue(mockNotas);
+
+            const res = await request(app)
+                .get('/api/bloques/notas/u-1')
+                .set('authorization', `Bearer ${tokenValido}`);
+
+            expect(res.statusCode).toBe(200);
+            expect(Array.isArray(res.body)).toBe(true);
+            expect(res.body).toHaveLength(2);
+            expect(Bloque.fetch_notas_by_id).toHaveBeenCalledWith('u-1');
+        });
+
+        it('500 - error interno al obtener notas', async () => {
+            Bloque.fetch_notas_by_id.mockRejectedValue(new Error('DB error'));
+
+            const res = await request(app)
+                .get('/api/bloques/notas/u-1')
+                .set('authorization', `Bearer ${tokenValido}`);
+
+            expect(res.statusCode).toBe(500);
+            expect(res.body.success).toBe(false);
+        });
+    });
+
+    describe('POST /notas/crear', () => {
+        it('200 - crear una nota correctamente', async () => {
+            Bloque.post_nota.mockResolvedValue({ insertId: 10 });
+
+            const nuevaNota = {
+                id_bloque: 'u-1',
+                fecha: '2024-01-01',
+                porc_colonizacion: 60,
+                notas_bitacora: 'Primera nota del bloque'
+            };
+
+            const res = await request(app)
+                .post('/api/bloques/notas/crear')
+                .set('authorization', `Bearer ${tokenValido}`)
+                .send(nuevaNota);
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.message).toBe('Nota creada correctamente');
+            expect(Bloque.post_nota).toHaveBeenCalledWith(
+                'u-1', '2024-01-01', 60, 'Primera nota del bloque'
+            );
+        });
+
+        it('500 - error interno al crear nota', async () => {
+            Bloque.post_nota.mockRejectedValue(new Error('DB error'));
+
+            const res = await request(app)
+                .post('/api/bloques/notas/crear')
+                .set('authorization', `Bearer ${tokenValido}`)
+                .send({
+                    id_bloque: 'u-1',
+                    fecha: '2024-01-01',
+                    porc_colonizacion: 60,
+                    notas_bitacora: 'Nota con error'
+                });
+
+            expect(res.statusCode).toBe(500);
+            expect(res.body.message).toBe('Error en POST de Nota');
+        });
+    });
 });
