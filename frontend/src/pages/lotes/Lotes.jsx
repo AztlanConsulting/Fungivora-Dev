@@ -42,8 +42,11 @@ function Lotes() {
 
   const {
     datos, ubicaciones, especiesDisponibles,
-    getInoculosPorEspecie, cargando, addLote, deleteLote
+    getInoculosPorEspecie, cargando, addLote, deleteLote,
+    fetchLotesTodos, refresh
   } = useLotes();
+const [todosLosLotesMarcados, setTodosLosLotesMarcados] = useState(false);
+
   const [verFormulario, setVerFormulario] = useState(false);
   const [nuevaFila, setNuevaFila] = useState({ especie: "", ubicacion_lote: ""});
   const [errorValidacion, setErrorValidacion] = useState("");
@@ -58,6 +61,15 @@ function Lotes() {
   const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
 
   const location = useLocation();
+
+  const handleToggleTodosLotes = async (checked) => {
+    setTodosLosLotesMarcados(checked);
+    if (checked) {
+      await fetchLotesTodos(); // Si activa el checkbox, trae todos los lotes
+    } else {
+      await refresh(); // Si lo desactiva, vuelve a traer los lotes normales
+    }
+  };
     
   const abrirModalCancelar = useCallback(() => {
     if (bloquesTemporales.length > 0) {
@@ -337,6 +349,8 @@ function Lotes() {
                   obtenerEstiloFase={obtenerEstiloFase}
                   gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1.1fr_1.2fr_1fr_0.5fr]"
                   colorBordeHeader="#F2F2FC"
+                  obtenerTodosLotes={todosLosLotesMarcados}
+                  onToggleTodosLotes={handleToggleTodosLotes}
                 />
             </>
           ) : (

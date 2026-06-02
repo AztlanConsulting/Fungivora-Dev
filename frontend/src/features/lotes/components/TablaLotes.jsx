@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Text from "../../../shared/components/ui/basics/Texto";
 import { colores } from "../../../shared/components/ui/basics/Colores";
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -18,7 +18,6 @@ const TablaLotes = ({
   gridLayout, 
   colorBordeHeader, 
   onEliminar,
-  // 1. Añadimos las props que controlarán el CustomCheckbox desde el padre/hook
   obtenerTodosLotes,
   onToggleTodosLotes
 }) => {
@@ -26,10 +25,6 @@ const TablaLotes = ({
   const [busqueda, setBusqueda] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
 
-  // Resetear a la página 1 cuando el usuario busque algo
-  useEffect(() => {
-    setPaginaActual(1);
-  }, [busqueda]);
 
   // Filtrado de lotes original
   const lotesFiltrados = datos.filter((item) => {
@@ -63,7 +58,10 @@ const TablaLotes = ({
         <div className="flex-1 max-w-md">
           <BarraBusqueda 
             value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
+            onChange={(e) => {
+              setBusqueda(e.target.value);
+            setPaginaActual(1)
+          }}
             placeholder="Buscar lote..."
           />
         </div>
@@ -73,7 +71,7 @@ const TablaLotes = ({
           <CustomCheckbox
             checked={obtenerTodosLotes}
             onChange={onToggleTodosLotes}
-            label="Marcar todos los Lotes"
+            label="Mostrar todos los Lotes"
           />
         </div>
       </div>

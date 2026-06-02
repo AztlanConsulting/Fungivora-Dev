@@ -10,6 +10,15 @@ const loteService = {
     }
   },
 
+  getTodosLotes: async () => {
+    try {
+      return await api.get("/lotes/todos");
+    } catch (error) {
+      console.error("Error en lote-service:", error);
+      throw error;
+    }
+  },
+
   getUbicaciones: async () => {
     try {
       return await api.get("/lotes/ubicaciones");

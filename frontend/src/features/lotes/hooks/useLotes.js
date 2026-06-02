@@ -28,6 +28,24 @@ const useLotes = () => {
         }
     }, []);
 
+    const fetchLotesTodos = useCallback(async () => {
+        setCargando(true);
+        try {
+            const json = await loteService.getTodosLotes();
+            if (json && json.success) {
+                setDatos(json.data || []);
+                setError(null);
+            } else {
+                setError(json?.message || "Error al cargar lotes");
+            }
+        } catch (err) {
+            console.error("Error en fetchLotes:", err);
+            setError("Error de conexión con el servidor");
+        } finally {
+            setCargando(false);
+        }
+    }, []);
+
     const cargarCatalogos = useCallback(async () => {
         try {
             const [dataUbi, jsonEsp] = await Promise.all([
@@ -121,7 +139,8 @@ const useLotes = () => {
         error,
         addLote,
         deleteLote,
-        refresh: fetchLotes
+        refresh: fetchLotes,
+        fetchLotesTodos
     };
 };
 
