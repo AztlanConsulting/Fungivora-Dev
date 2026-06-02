@@ -61,7 +61,7 @@ function Notas({ notas = [], cargando, error, codigo = "Sin código", onAgregar,
   };
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-white">
+    <div className="flex h-screen w-full overflow-hidden">
 
       {/*Notas a la izquierda*/}
       <div
