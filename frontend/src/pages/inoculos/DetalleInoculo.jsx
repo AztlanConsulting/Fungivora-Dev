@@ -5,6 +5,7 @@ import BannerIngredientes from '../../features/inoculos/components/BannerIngredi
 import BannerInoculoInfo from '../../features/inoculos/components/BannerInoculoInfo';
 import { Titulo } from '../../shared/components/ui';
 import { Base } from '../../shared/components/layout';
+import { Text } from '../../shared/components/ui';
 
 const DetalleInoculo = () => {
     const { id_inoculo } = useParams();
