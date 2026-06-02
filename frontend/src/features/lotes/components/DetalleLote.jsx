@@ -8,11 +8,14 @@ import { Titulo, Text, ModalConfirmacion, ModalAlerta } from '../../../shared/co
 import { colores } from '../../../shared/components/ui/basics/Colores';
 import { Base } from '../../../shared/components/layout';
 import { CheckmarkCircle02Icon } from '@hugeicons/core-free-icons';
+import BarraBusqueda from '../../../shared/components/ui/others/BarraBusqueda';
+import normalizarBusqueda from '../../../shared/utils/normalizarBusqueda';
 
 // Detalle de cada lote con toda su información
 const DetalleLote = () => {
     const { id_lote } = useParams();
     const { state } = useLocation();
+    const [busqueda, setBusqueda] = useState("");
 
     const {
         bloques, setBloques, bloquesIniciales, setBloquesIniciales,
@@ -22,7 +25,6 @@ const DetalleLote = () => {
         fases
     } = useDetalleLote(id_lote, state?.fase);
 
-    const [busqueda] = useState("");
     const [editado, setEditado] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [alerta, setAlerta] = useState({ visible: false, variante: "exito", mensaje: "" });
@@ -108,10 +110,44 @@ const DetalleLote = () => {
         inoculo: cargando ? 'Cargando...' : codigoInoculo || 'S/N'
     };
 
-    const bloquesFiltrados = bloques?.filter(b =>
-        String(b.id_bloque).includes(busqueda) ||
-        b.contenedor?.toLowerCase().includes(busqueda.toLowerCase())
-    ) || [];
+    const bloquesOrdenados = [...bloques].sort((a, b) => {
+        const inoculoA = (a.codigo_inoculo_bloque || '').toString();
+        const inoculoB = (b.codigo_inoculo_bloque || '').toString();
+        const comparacionInoculo = inoculoA.localeCompare(inoculoB);
+        if (comparacionInoculo !== 0) return comparacionInoculo;
+
+        const comparacionProduccion = b.produccion - a.produccion;
+        if (comparacionProduccion !== 0) return comparacionProduccion;
+
+        const sustratoA = (a.tipo_sustrato || '').toString();
+        const sustratoB = (b.tipo_sustrato || '').toString();
+        return sustratoA.localeCompare(sustratoB);
+    });
+
+    const bloquesConCodigo = bloquesOrdenados.map((b, index) => {
+        const codigoInoculo = b.codigo_inoculo_bloque || "";
+        const partes = codigoInoculo.trim().toUpperCase().split('-');
+
+        const idBase = partes.length >= 3 ? partes[1] : (partes[0] || "B");
+        const fecha = partes.length >= 3 ? partes[2] : (partes[1] || "000000");
+
+        return {
+            ...b,
+            codigo_visual: `BC-${idBase}-${fecha}-${index + 1}`
+        };
+    });
+
+    const bloquesFiltrados = bloquesConCodigo.filter(b => {
+        const termino = normalizarBusqueda(busqueda);
+
+        return (
+            normalizarBusqueda(b.codigo_visual).includes(termino) ||
+            normalizarBusqueda(b.codigo_inoculo_bloque).includes(termino) ||
+            normalizarBusqueda(b.tipo_sustrato).includes(termino) ||
+            normalizarBusqueda(b.contenedor).includes(termino) ||
+            normalizarBusqueda(b.produccion === 1 ? "producción" : "experimental").includes(termino)
+        );
+    }) || [];
 
     const todosContaminados =
         bloquesFiltrados.length > 0 &&
@@ -168,9 +204,15 @@ const DetalleLote = () => {
                         setFase={handleLocalChangeFase}
                         todosContaminados={todosContaminados}
                         onToggleTodosContaminados={handleToggleTodosContaminados}
-                    //busqueda={busqueda}
-                    //setBusqueda={setBusqueda}
                     />
+
+                    <div className="w-full">
+                        <BarraBusqueda
+                            value={busqueda}
+                            onChange={(e) => setBusqueda(e.target.value)}
+                            placeholder="Buscar bloque..."
+                        />
+                    </div>
 
                     <div className="flex flex-col gap-4">
                         <TablaBloques
@@ -178,6 +220,7 @@ const DetalleLote = () => {
                             loading={cargando}
                             onToggleContaminado={handleLocalToggleContaminado}
                             codigo_lote={codigoParaTabla}
+                            usarCodigoPrecalculado={true}
                         />
                     </div>
                 </div>

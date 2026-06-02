@@ -96,7 +96,7 @@ module.exports = class Inoculo {
                 'Peptona', 'Extracto de Malta',
                 'Agua Destilada', 'Miel',
                 'Jarabe de Maíz', 'Mijo Rojo',
-                'Mijo Blanco', 'Agua')
+                'Mijo Blanco', 'Agua', 'Agar agar')
         `);
     }
 

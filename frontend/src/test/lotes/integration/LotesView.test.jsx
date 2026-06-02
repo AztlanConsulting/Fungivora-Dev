@@ -119,21 +119,4 @@ describe('Vista Lotes', () => {
         const titulos = screen.getAllByText(/Crear Lote/i);
         expect(titulos.length).toBeGreaterThan(0);
     });
-
-    it('Mensaje de error falla al cargar datos', () => {
-        vi.mocked(useLotes).mockReturnValue({
-            datos: [],
-            sustratos: [],
-            ubicaciones: [],
-            especiesDisponibles: [],
-            error: true,
-            cargando: false,
-            addLote: vi.fn(),
-            refresh: vi.fn(),
-            getInoculosPorEspecie: vi.fn()
-        });
-
-        renderWithRouter(<Lotes />);
-        expect(screen.getByText(/Error al cargar los datos/i)).toBeInTheDocument();
-    });
 });

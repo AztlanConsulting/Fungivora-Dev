@@ -145,16 +145,9 @@ class Inventario {
                 return true;
             }
 
-            const tipo = diferencia > 0 ? 'In' : 'Out';
-
             await connection.execute(
                 'UPDATE Inoculos SET cantidad_disponible = ? WHERE id_inoculo = ?',
                 [nueva_cantidad, id_inoculo]
-            );
-
-            await connection.execute(
-                'INSERT INTO Logs_ins_outs (id_insumo, cantidad, tipo) VALUES (?, ?, ?)',
-                [id_inoculo, Math.abs(diferencia), tipo]
             );
 
             await connection.commit();

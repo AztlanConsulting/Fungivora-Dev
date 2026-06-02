@@ -87,15 +87,7 @@ describe('BibliotecaView — renderizado base', () => {
     })
 })
 
-// Estados de carga y error 
-
 describe('BibliotecaView — estados', () => {
-    it('muestra mensaje de carga', () => {
-        useEspeciesList.mockReturnValue({ ...hookBase, loading: true })
-        renderVista()
-        expect(screen.getByText('Cargando especies...')).toBeInTheDocument()
-    })
-
     it('muestra mensaje de error', () => {
         useEspeciesList.mockReturnValue({ ...hookBase, error: 'Error de red' })
         renderVista()

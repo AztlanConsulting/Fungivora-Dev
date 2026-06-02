@@ -37,11 +37,6 @@ const Inventario = () => {
 
   // Modal de editar cantidad
   const abrirModalEdicion = (item, tipo) => {
-    if (item.tipo !== 'insumo') {
-      lanzarAlerta("Los inóculos no se pueden editar desde el inventario", "alerta");
-      return;
-    }
-
     setModalEdicion({ visible: true, insumo: item });
     setAjusteCantidad("");
     setTipoOperacion(tipo);
@@ -161,8 +156,13 @@ const Inventario = () => {
         </div>
 
         <div className="flex flex-col min-[1308px]:flex-row gap-8 items-start">
-          {/* Columnas */}
-          <div className={`w-full min-[1308px]:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} min-[1308px]:block`}>
+          {/* Columnas*/}
+          <div 
+          className={`w-full min-[1308px]:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} min-[1308px]:block 
+              min-h-[600px] 
+              md:min-h-0 md:max-h-[600px] 
+              overflow-hidden`}
+          >
             <TablaInventario
               insumos={insumos}
               insumosEnUso={insumosEnUso}
