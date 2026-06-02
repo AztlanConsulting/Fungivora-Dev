@@ -3,11 +3,9 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { Tick02Icon } from '@hugeicons/core-free-icons';
 
 import Text from '../../../shared/components/ui/basics/Texto';
-import { colores } from '../../../shared/components/ui/basics/Colores';
 import { Stepper } from '../../../shared/components/ui';
 import { CustomCheckbox } from '../../../shared/components/ui/others/SeleccionarTodos';
 
-const colorBordeDestacado = '#7F7FD5';
 
 //const SeccionFaseBuscar = ({ fases, fase, setFase, busqueda, setBusqueda }) => {
 const SeccionFaseBuscar = ({
