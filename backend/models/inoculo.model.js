@@ -1,4 +1,3 @@
-// backend/models/inoculo.model.js
 const db = require('../util/db');
 
 module.exports = class Inoculo {
@@ -174,7 +173,13 @@ module.exports = class Inoculo {
 
     static async fetch_by_id(id_inoculo) {
         const [rows] = await db.execute(`
-            SELECT * FROM Inoculos WHERE id_inoculo = ? LIMIT 1
+            SELECT i.*, 
+                madre.codigo_fungivora AS nombre_inoculo_usado,
+                i.id_inoculo_usado
+            FROM Inoculos i
+            LEFT JOIN Inoculos madre ON i.id_inoculo_usado = madre.id_inoculo
+            WHERE i.id_inoculo = ? 
+            LIMIT 1
         `, [id_inoculo]);
 
         if (rows.length === 0) return null;

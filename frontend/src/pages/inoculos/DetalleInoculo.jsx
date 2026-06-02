@@ -10,10 +10,12 @@ const DetalleInoculo = () => {
     const { id_inoculo } = useParams();
     const { inoculo, ingredientes, cargando, error } = useDetalleInoculo(id_inoculo);
 
-    // Reemplazo del Spinner por un mensaje simple
     if (cargando) return (
-        <div className="p-6 text-center">
-            <p className="text-gray-500">Cargando detalles del inóculo...</p>
+        <div className="flex justify-center items-center h-[200px] w-full">
+            <div className="flex flex-col items-center gap-2">
+                <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                <Text variante="medium">Cargando datos de inóculo...</Text>
+            </div>
         </div>
     );
     
@@ -23,14 +25,14 @@ const DetalleInoculo = () => {
     return (
         <Base margen_arriba="mt-16 md:mt-8">
             <div className="p-6 flex flex-col gap-8">
-                {/* Título Principal */}
+                {/* Título*/}
                 <Titulo>Inóculo: {inoculo.codigo_fungivora}</Titulo>
 
                 {/* Banner 1: Información Técnica */}
                 <BannerInoculoInfo data={inoculo} />
 
                 {/* Banner 2: Ingredientes */}
-                <BannerIngredientes ingredientes={ingredientes} />
+                <BannerIngredientes ingredientes={ingredientes} inoculo={inoculo} />
             </div>
         </Base>
     );

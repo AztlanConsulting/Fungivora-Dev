@@ -16,12 +16,9 @@ const useDetalleInoculo = (id_inoculo) => {
             setError(null);
             
             try {
-                // Suponiendo que el endpoint /detalle devuelve tanto la info 
-                // del inóculo como sus ingredientes asociados
                 const data = await InoculoService.getDetalleInoculo(id_inoculo);
                 
                 setInoculo(data);
-                // Si la respuesta trae los ingredientes en un campo separado
                 setIngredientes(data.ingredientes || []); 
                 
             } catch (err) {

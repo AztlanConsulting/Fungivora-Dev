@@ -187,10 +187,9 @@ const InoculoCard = ({ especie, tipoForzado }) => {
                                 <div
                                     key={fila.id_inoculo || index}
                                     onClick={() => {
-        console.log("¡Click detectado!");
-        handleNavigateToDetalle(fila);
-    }}
-                                    className="bg-white cursor-pointer hover:bg-gray-50 transition-colors" // Agregado cursor-pointer
+                                        handleNavigateToDetalle(fila);
+                                    }}
+                                    className="bg-white cursor-pointer hover:bg-gray-50 transition-colors" 
                                     style={{
                                         borderBottom:
                                             index === datosOrdenados.length - 1

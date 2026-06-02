@@ -10,7 +10,6 @@ export const InoculoService = {
         return response.data;
     },
 
-    // Aquí podrías agregar otros métodos relacionados a inóculos
     getAllInoculos: async () => {
         const response = await api.get('/inoculos/');
         return response.data;

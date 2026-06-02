@@ -1,30 +1,60 @@
 import React from 'react';
-import { CheckmarkCircle02Icon } from '@hugeicons/core-free-icons';
+import Text from '../../../shared/components/ui/basics/Texto';
 
-const BannerIngredientes = ({ ingredientes }) => {
-    // Debug: mira qué llega realmente
-    console.log("Ingredientes recibidos:", ingredientes);
+const BannerIngredientes = ({ ingredientes, inoculo }) => {
+    if (!inoculo) return null;
 
-    // Si ingredientes no es un array, no intentes hacer .map()
-    if (!Array.isArray(ingredientes)) {
-        return <div className="p-4">Error: Los datos no tienen el formato esperado.</div>;
+    const tieneInoculoMadre = inoculo.id_inoculo_usado != null;
+    const items = [];
+    
+    if (tieneInoculoMadre) {
+        items.push({
+            nombre: `Inóculo`,
+            cantidad: inoculo.cantidad_usada,
+            unidad: ''
+        });
     }
+
+    const listaCompleta = [...ingredientes, ...items];
 
     return (
         <div className="w-full bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
-            {/* ... resto del código ... */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {ingredientes.map((ing, index) => {
-                    // Verificación de seguridad dentro del map
-                    if (!ing || typeof ing !== 'object') return null;
+            <div className="flex flex-wrap md:flex-nowrap items-center w-full gap-4">
+                <div className="px-4 py-2 min-w-max">
+                    <Text variante="option" style={{ color: '#1A1A40', fontSize: '18px' }}>
+                        Composición:
+                    </Text>
+                </div>
 
-                    return (
-                        <div key={ing.id_insumo || index} className="flex justify-between p-3 bg-gray-50 rounded-xl">
-                            <span className="font-medium text-gray-800">{ing.nombre || 'Sin nombre'}</span>
-                            <span className="text-gray-600">{ing.cantidad || 0} {ing.unidad || ''}</span>
-                        </div>
-                    );
-                })}
+                <div className="hidden md:block h-10 w-[1px] bg-gray-100" />
+                
+                {listaCompleta.length === 0 ? (
+                    <div className="px-4 py-2">
+                        <Text variante="body" style={{ color: '#666' }}>Comprado</Text>
+                    </div>
+                ) : (
+                    <div className="flex flex-wrap md:flex-nowrap items-center w-full">
+                        {listaCompleta.map((item, index) => (
+                            <div 
+                                key={index} 
+                                className="flex items-center w-full md:w-auto md:flex-1 px-4 py-2"
+                            >
+                                <div className="flex flex-col">
+                                    <Text variante="body" style={{ color: '#666', fontSize: '13px' }}>
+                                        {item.nombre}
+                                    </Text>
+                                    <Text variante="option" style={{ color: '#1A1A40', fontSize: '15px' }}>
+                                        {item.cantidad} {item.unidad}
+                                    </Text>
+                                </div>
+
+                                {index < listaCompleta.length - 1 && (
+                                    <div className="hidden md:block h-10 w-[1px] bg-gray-100 ml-auto" />
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );
