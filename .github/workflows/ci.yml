@@ -40,9 +40,9 @@ jobs:
           DB_NAME=${{ secrets.DB_NAME }}
           EOF
 
-      - name: Verify env file
+      - name: Check DB connectivity
         run: |
-          cat .env.test.local | sed 's/=.*/=***/'
+          nc -vz ${{ secrets.DB_HOST }} ${{ secrets.DB_PORT }}
         
       - name: Install root dependencies
         run: npm install
