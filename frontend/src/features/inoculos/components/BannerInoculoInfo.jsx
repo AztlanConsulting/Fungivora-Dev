@@ -18,11 +18,15 @@ const BannerInoculoInfo = ({ data }) => {
             <InfoLote icon={PackageDelivered01Icon} label="Stock Recomendado" value={`${data.stock_recomendado || 0} ${data.unidad}`} />
             
             {data.id_inoculo_usado ? (
-                <Link 
-                    to={`/inoculos/detalle/${data.id_inoculo_usado}`} 
-                    className="hover:opacity-75 transition-opacity flex items-center" 
+                <Link
+                    to={`/inoculos/detalle/${data.id_inoculo_usado}`}
+                    className="group transition-all duration-200 flex items-center rounded-xl hover:bg-green-100"
                 >
-                    <InfoLote icon={Plant01Icon} label="Inóculo" value={data.nombre_inoculo_usado} />
+                    <InfoLote
+                        icon={Plant01Icon}
+                        label="Inóculo"
+                        value={data.nombre_inoculo_usado}
+                    />
                 </Link>
             ) : (
                 <InfoLote icon={Plant01Icon} label="Inóculo" value="Comprado" />
