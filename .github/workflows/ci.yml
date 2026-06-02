@@ -29,6 +29,16 @@ jobs:
 
       - name: Create .env
         run: echo 'APP_ACCESS_KEY="db8ca260384a62e3d36b797825a0a38d1708d721bf0d8c0b"' >> .env
+
+      - name: Create .env.test.local
+        run: |
+          cat > .env.test.local <<EOF
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          EOF
         
       - name: Install root dependencies
         run: npm install
