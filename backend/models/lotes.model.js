@@ -176,10 +176,10 @@ class Lotes {
         try {
             await connection.beginTransaction();
             await connection.execute(`
-                DELETE FROM Bloques WHERE id_lote IN (SELECT id_lote FROM Lotes WHERE fecha_lote < DATE_SUB(NOW(), INTERVAL 3 MONTH))
+                DELETE FROM Bloques WHERE id_lote IN (SELECT id_lote FROM Lotes WHERE fecha_lote < DATE_SUB(NOW(), INTERVAL 2 YEAR))
             `);
             const [result] = await connection.execute(`
-                DELETE FROM Lotes WHERE fecha_lote < DATE_SUB(NOW(), INTERVAL 3 MONTH)
+                DELETE FROM Lotes WHERE fecha_lote < DATE_SUB(NOW(), INTERVAL 2 YEAR)
             `);
             await connection.commit();
             return result;
