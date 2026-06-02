@@ -8,7 +8,7 @@
 jest.mock('../../util/db', () => require('./helpers/testDb').db);
 
 const Categoria = require('../../models/categoria.model');
-const { db, cleanup, closePool } = require('./helpers/testDb');
+const { db, _cleanup, closePool } = require('./helpers/testDb');
 
 // Track inserted rows so afterEach can clean them up
 const insertedCombos = [];   // { nombre_categoria, nombre_opcion }
