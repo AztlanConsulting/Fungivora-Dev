@@ -2,6 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { MemoryRouter } from 'react-router-dom' 
 import InoculoCard from '../../../features/inoculos/components/InoculoCard'
 
 // Mock del hook para controlar el comportamiento desde afuera
@@ -22,8 +23,11 @@ vi.mock('../../../shared/components/ui/inputs/SeleccionarTexto', () => ({
     ),
 }))
 vi.mock('@hugeicons/react', () => ({
-    HugeiconsIcon: () => <span data-testid="icon" />,
+    HugeiconsIcon: ({ icon }) => (
+        <span data-testid="icon" data-icon={icon?.name || 'default'} />
+    ),
 }))
+
 vi.mock('@hugeicons/core-free-icons', () => ({
     ArrowDown01Icon: {},
     ArrowUp01Icon: {},
@@ -69,7 +73,12 @@ beforeEach(() => {
 })
 
 const renderComponente = (props = {}) =>
-    render(<InoculoCard especie={especieMock} {...props} />)
+    render(
+        <MemoryRouter>
+            <InoculoCard especie={especieMock} {...props} />
+        </MemoryRouter>
+    )
+    
 
 // Renderizado base 
 
