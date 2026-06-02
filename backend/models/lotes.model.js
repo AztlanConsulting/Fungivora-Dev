@@ -132,6 +132,18 @@ class Lotes {
         return result[0].total;
     }
 
+    static async fetch() {
+        const [filas] = await db.execute(`
+            SELECT id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase 
+            FROM Lotes 
+            WHERE fecha_lote >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+            ORDER BY fecha_lote DESC,
+                     SUBSTRING_INDEX(SUBSTRING_INDEX(codigo_fungivora, '-', 2), '-', -1) ASC,
+                     CAST(SUBSTRING_INDEX(codigo_fungivora, '-', -1) AS UNSIGNED) DESC
+        `);
+        return filas;
+    }
+
     static async fetch_all() {
         const [filas] = await db.execute(`
             SELECT id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase 
