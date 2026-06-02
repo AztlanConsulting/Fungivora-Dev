@@ -39,7 +39,8 @@ const BarraBusqueda = ({
       value={value}
       onChange={onChange}
       className="pl-12 pr-4 py-2.5 w-full" 
-      placeholderLeft="left-12" 
+      placeholderLeft="left-12"
+      maxLength={50}
     />
 
     <div

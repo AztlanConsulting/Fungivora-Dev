@@ -24,6 +24,12 @@ const InputCantidad = ({ value, onChange, min = 1, max = 15 }) => {
     if (!isNaN(num) && num >= min && num <= max) onChange(num);
   };
 
+  const prevenirCaracteresEspeciales = (e) => {
+  if (["-", "+", ".", "e", ","].includes(e.key)) {
+    e.preventDefault();
+  }
+};
+
   const estiloMedium = {
     fontSize: "clamp(12px, 4vw, 22px)",
     fontWeight: 500,
@@ -56,6 +62,7 @@ const InputCantidad = ({ value, onChange, min = 1, max = 15 }) => {
         min={min}
         max={max}
         onChange={manejarCambio}
+        onKeyDown={prevenirCaracteresEspeciales}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         className="
