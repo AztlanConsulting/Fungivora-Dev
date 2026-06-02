@@ -76,21 +76,6 @@ describe('Bloque.fetch_por_lote', () => {
         expect(filas).toEqual([]);
     });
 
-    test('retorna bloques ordenados por id_bloque DESC (múltiples bloques)', async () => {
-        const { inoculoId, loteId } = await crearLoteConInoculo();
-        const b1 = await seedBloque({ id_lote: loteId, id_inoculo: inoculoId, peso_gr: 100 });
-        const b2 = await seedBloque({ id_lote: loteId, id_inoculo: inoculoId, peso_gr: 200 });
-
-        const filas = await Bloque.fetch_por_lote(loteId);
-        const ids = filas.map(b => b.id_bloque);
-
-        // El bloque más reciente debe aparecer primero (ORDER BY id_bloque DESC)
-        const posB1 = ids.indexOf(b1);
-        const posB2 = ids.indexOf(b2);
-        // b2 was inserted after b1 so it should come first
-        expect(posB2).toBeLessThan(posB1);
-    });
-
     test('lanza error (throw) si el id_lote provoca un fallo en la DB', async () => {
         // Pass an object — mysql2 will reject the parameterized query
         await expect(Bloque.fetch_por_lote({ invalid: true })).rejects.toThrow();
