@@ -39,6 +39,10 @@ jobs:
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           DB_NAME=${{ secrets.DB_NAME }}
           EOF
+
+      - name: Verify env file
+        run: |
+          cat .env.test.local | sed 's/=.*/=***/'
         
       - name: Install root dependencies
         run: npm install
