@@ -309,11 +309,9 @@ function Lotes() {
   const totalUnidadesBloques = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad || 0), 0);
 
   return (
-    <>
-      <Titulo>{paso === 1 ? "Lotes" : "Bloques"}</Titulo>
-      <Base margen_arriba="mt-20 md:mt-20">
+    <Base margen_arriba="mt-20 md:mt-20">
       {/* Botón para cambiar del forms a la vista de tabla*/}
-      <div className="min-[1587px]:hidden flex justify-start mb-6">
+      <div className="lg:hidden flex justify-start mb-6">
         <BotonCrear
           onClick={() => setVerFormulario(!verFormulario)}
           texto={verFormulario
@@ -324,11 +322,12 @@ function Lotes() {
 
       </div>
 
-      <div className="flex flex-col min-[1587px]:flex-row gap-8 items-start relative">
+      <div className="flex flex-col lg:flex-row gap-8 items-stretch relative">
         {/* Componente de las tablas*/}
-        <div className={`w-full min-[1587px]:flex-1 min-[1587px]:min-w-0 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 md:pl-8 min-h-[500px] ${verFormulario ? "hidden" : "block"} min-[1587px]:block`}>
+        <div className={`w-full bg-white rounded-[32px] shadow-sm border p-4 md:p-8 md:pl-8 min-h-[500px] ${verFormulario ? "hidden" : "block"} lg:block`}>
           {paso === 1 ? (
             <>
+              <Titulo>Lotes</Titulo>
                 <TablaLotes
                   datos={datos}
                   loading={cargando}
@@ -342,12 +341,13 @@ function Lotes() {
             </>
           ) : (
             <div className="animate-in fade-in duration-500">
+              <Titulo>Bloques</Titulo>
               <TablaBloques
                 codigo={codigoPrevisualizacion}
                 bloques={bloquesTemporales}
                 onEliminar={eliminarBloqueDeLista}
                 estilosTipo={colores_tipo}
-                gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1fr_1.2fr_1.2fr_0.5fr]"
+                gridLayout="md:grid-cols-[0.9fr_0.6fr_0.8fr_0.7fr_0.8fr_0.5fr_0.7fr]"
                 colorBordeHeader="#F2F2FC"
               />
             </div>
@@ -355,8 +355,8 @@ function Lotes() {
         </div>
 
         {/* Componentes de formularios*/}
-        <div className="flex flex-col w-full max-w-[440px] mx-auto min-w-0 min-[1587px]:mx-0 min-[1587px]:w-[440px] min-[1587px]:shrink-0">
-          <div className={`w-full bg-white rounded-[32px] shadow-sm border p-8 ${verFormulario ? "block" : "hidden"} min-[1587px]:block`}>
+        <div className="flex flex-col lg:w-[440px]">
+          <div className={`w-full bg-white rounded-[32px] shadow-sm border p-8 ${verFormulario ? "block" : "hidden"} lg:block`}>
             {paso === 1 ? (
               <FormCrearLote
                 especiesDisponibles={especiesDisponibles}
@@ -388,7 +388,7 @@ function Lotes() {
 
           {/* Botones de registrar y cancelar*/}
           {paso === 2 && (
-            <div className={`flex flex-col md:flex-row gap-4 mt-8 items-center justify-center ${verFormulario ? "flex" : "hidden"} min-[1587px]:flex`}>
+            <div className={`flex flex-col md:flex-row gap-4 mt-8 items-center justify-center ${verFormulario ? "flex" : "hidden"} lg:flex`}>
               
               <div className="w-full md:w-auto flex justify-center">
                 <Button
@@ -460,7 +460,6 @@ function Lotes() {
         onCancel={() => setMostrarModalCancelar(false)}
       />
     </Base>
-    </>
   );
 }
 
