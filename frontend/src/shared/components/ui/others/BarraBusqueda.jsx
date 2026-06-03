@@ -29,7 +29,7 @@ const BarraBusqueda = ({
   return (
 
     <div
-      className={`relative w-full max-w-md ${className}`} 
+      className={`relative w-full ${className}`} 
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
     >
