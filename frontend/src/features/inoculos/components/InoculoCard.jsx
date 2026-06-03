@@ -49,8 +49,6 @@ const InoculoCard = ({ especie, tipoForzado, onIndividualChange }) => {
         toggleCollapse,
     } = useInoculoCard(especie.value);
 
-    const esMixto = tipoSeleccionado !== tipoForzado;
-
     const prevTipoForzado = React.useRef(tipoForzado);
 
     const handleChangeLocal = (e) => {
@@ -60,15 +58,8 @@ const InoculoCard = ({ especie, tipoForzado, onIndividualChange }) => {
     };
 
     useEffect(() => {
-        if (tipoForzado !== prevTipoForzado.current) {
-            handleTipoChange(tipoForzado);
-            prevTipoForzado.current = tipoForzado;
-        }
-    }, [tipoForzado, handleTipoChange]);
-
-    useEffect(() => {
         handleTipoChange(tipoForzado);
-    }, [tipoForzado]);
+    }, [tipoForzado, handleTipoChange]);
 
     const datosOrdenados = useMemo(() => {
         if (!datos) return [];

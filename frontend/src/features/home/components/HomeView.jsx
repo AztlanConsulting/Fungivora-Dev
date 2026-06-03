@@ -33,23 +33,6 @@ const PantallaPrincipalView = () => {
     const listas = dashboard?.listas || {};
     const lotes = dashboard?.lotes || {};
 
-    const [esAdmin] = useState(() => {
-        const token = localStorage.getItem('token');
-        if (!token) return false;
-        
-        try {
-            let tokenToParse = token;
-            if (token.startsWith('{')) {
-                const parsedTokenObj = JSON.parse(token);
-                tokenToParse = parsedTokenObj.token || parsedTokenObj.data?.token;
-            }
-            const payload = parseJwt(tokenToParse);
-            return Number(payload?.is_user_admin) === 1;
-        } catch {
-            return false;
-        }
-    });
-
     const resumen = {
         lotesActivos: cards.lotesActivos || 0,
         bloquesNoContaminados: cards.bloquesNoContaminados || 0,
