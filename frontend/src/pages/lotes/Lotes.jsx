@@ -322,9 +322,9 @@ function Lotes() {
 
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 items-stretch relative">
+      <div className="flex flex-col lg:flex-row gap-6 items-start relative max-w-7xl mx-auto px-4">
         {/* Componente de las tablas*/}
-        <div className={`w-full bg-white rounded-[32px] shadow-sm border p-4 md:p-8 md:pl-8 min-h-[500px] ${verFormulario ? "hidden" : "block"} lg:block`}>
+        <div className={`w-full lg:flex-1 bg-white rounded-[32px] shadow-sm border p-6 ${verFormulario ? "hidden" : "block"} lg:block`}>
           {paso === 1 ? (
             <>
               <Titulo>Lotes</Titulo>
@@ -356,7 +356,7 @@ function Lotes() {
 
         {/* Componentes de formularios*/}
         <div className="flex flex-col lg:w-[440px]">
-          <div className={`w-full bg-white rounded-[32px] shadow-sm border p-8 ${verFormulario ? "block" : "hidden"} lg:block`}>
+          <div className={`w-full lg:w-[440px] flex-shrink-0 bg-white rounded-[32px] shadow-sm border p-6 ${verFormulario ? "block" : "hidden"} lg:block`}>
             {paso === 1 ? (
               <FormCrearLote
                 especiesDisponibles={especiesDisponibles}

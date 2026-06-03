@@ -4,6 +4,7 @@ import { colores } from "../../../shared/components/ui/basics/Colores";
 import SelectField from "../../../shared/components/ui/inputs/SeleccionarTexto";
 import InputFecha from "../../../shared/components/ui/inputs/InputFecha";
 import Button from "../../../shared/components/ui/buttons/Botones";
+import Titulo from "../../../shared/components/ui/basics/Titulo";
 
 const FormCrearLote = ({
   especiesDisponibles,
@@ -23,6 +24,7 @@ const FormCrearLote = ({
 
   return (
     <div className="flex flex-col gap-5 w-full">
+       <Titulo>Lotes</Titulo>
       <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "22px" }}>Crear Lote</Text>
 
       <div className="flex flex-col gap-2">
