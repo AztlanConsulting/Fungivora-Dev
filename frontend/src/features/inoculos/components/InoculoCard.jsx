@@ -37,7 +37,7 @@ const formatFecha = (isoString) => {
  * Card de especie con select de tipo de inóculo y tabla colapsable de datos.
  * @param {{ especie: import('../types/inoculo.types').Especie }} props
  */
-const InoculoCard = ({ especie, tipoForzado }) => {
+const InoculoCard = ({ especie, tipoForzado, onIndividualChange }) => {
     const {
         tipoSeleccionado,
         datos,
@@ -49,7 +49,15 @@ const InoculoCard = ({ especie, tipoForzado }) => {
         toggleCollapse,
     } = useInoculoCard(especie.value);
 
+    const esMixto = tipoSeleccionado !== tipoForzado;
+
     const prevTipoForzado = React.useRef(tipoForzado);
+
+    const handleChangeLocal = (e) => {
+        const nuevoTipo = e.target.value;
+        handleTipoChange(nuevoTipo);
+        onIndividualChange(nuevoTipo);
+    };
 
     useEffect(() => {
         if (tipoForzado !== prevTipoForzado.current) {
@@ -57,6 +65,10 @@ const InoculoCard = ({ especie, tipoForzado }) => {
             prevTipoForzado.current = tipoForzado;
         }
     }, [tipoForzado, handleTipoChange]);
+
+    useEffect(() => {
+        handleTipoChange(tipoForzado);
+    }, [tipoForzado]);
 
     const datosOrdenados = useMemo(() => {
         if (!datos) return [];
@@ -127,7 +139,7 @@ const InoculoCard = ({ especie, tipoForzado }) => {
                 {!collapsed && (
                     <SelectField
                         value={tipoSeleccionado}
-                        onChange={(e) => handleTipoChange(e.target.value)}
+                        onChange={handleChangeLocal}
                         options={isMobile ? opcionesAbreviadas : TIPOS_INOCULO}
                         size={isMobile ? 'numero' : 'amplio'}
                         placeholder="Tipo"
