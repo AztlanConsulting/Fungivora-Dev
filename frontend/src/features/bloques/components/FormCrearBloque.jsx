@@ -1,12 +1,11 @@
 import React, { useMemo } from "react";
-import Titulo from "../../../shared/components/ui/basics/Titulo";
 import Text from "../../../shared/components/ui/basics/Texto";
 import { colores } from "../../../shared/components/ui/basics/Colores";
 import SelectField from "../../../shared/components/ui/inputs/SeleccionarTexto";
 import Button from "../../../shared/components/ui/buttons/Botones";
 import Input from "../../../shared/components/ui/inputs/InputTexto";
+import Titulo from "../../../shared/components/ui/basics/Titulo";
 
-// Form para poder crear un bloque, con sus inserts
 const FormCrearBloque = ({ 
   contenedores, 
   sustratos,
@@ -24,63 +23,40 @@ const FormCrearBloque = ({
     return getInoculosPorEspecie(especieSeleccionada);
   }, [especieSeleccionada, getInoculosPorEspecie]);
 
-
   const validarPeso = (valor) => {
     let limpio = valor.replace(/[^0-9.]/g, "");
-
     const partes = limpio.split(".");
-    if (partes.length > 2) {
-      limpio = partes[0] + "." + partes.slice(1).join("");
-    }
-
-    if (partes[0].length > 5) {
-      partes[0] = partes[0].slice(0, 5);
-    }
-    if (partes[1] !== undefined && partes[1].length > 2) {
-      partes[1] = partes[1].slice(0, 2);
-    }
-    
+    if (partes.length > 2) limpio = partes[0] + "." + partes.slice(1).join("");
+    if (partes[0].length > 5) partes[0] = partes[0].slice(0, 5);
+    if (partes[1] !== undefined && partes[1].length > 2) partes[1] = partes[1].slice(0, 2);
     limpio = partes[0] + (partes[1] !== undefined ? "." + partes[1] : "");
-
-    if (limpio.startsWith(".")) {
-      limpio = "0" + limpio;
-    }
-
-    return limpio;
+    return limpio.startsWith(".") ? "0" + limpio : limpio;
   };
 
-  const handleChangePeso = (e) => {
-    const valorValidado = validarPeso(e.target.value);
-    setBloqueForm({ ...bloqueForm, peso_gr: valorValidado });
-  };
+  const handleChangePeso = (e) => setBloqueForm({ ...bloqueForm, peso_gr: validarPeso(e.target.value) });
 
-  // Cambiar cantidad
   const handleChangeCantidad = (e) => {
     let valor = e.target.value.replace(/[^0-9]/g, ""); 
-
-    if (valor === "") {
-      setBloqueForm({ ...bloqueForm, cantidad: "" });
-      return;
-    }
-
-    let numero = parseInt(valor, 10);
-
-    if (numero > 100) {
-      numero = 100;
-    }
-
+    let numero = valor === "" ? "" : Math.min(parseInt(valor, 10), 100);
     setBloqueForm({ ...bloqueForm, cantidad: numero.toString() });
   };
 
+  const inputContainerClasses = "flex flex-col gap-2 w-full";
+
   return (
-    <div className="flex flex-col gap-5">
+    <form 
+      className="flex flex-col gap-5 max-w-md mx-auto w-full px-2 sm:px-0"
+      onSubmit={(e) => { e.preventDefault(); onAgregar(); }}
+    >
       <Titulo>Bloques</Titulo>
-      <div className="mb-3 flex justify-between items-center">
-        <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "22px" }}>Crear Bloques</Text>
+      <div className="text-center">
+
+        <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "22px" }}>
+          Crear Bloques
+        </Text>
       </div>
 
-      {/* Insert de Semilla */}
-      <div className="rounded-xl flex flex-col gap-2">
+      <div className={inputContainerClasses}>
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Semilla ({especieSeleccionada})</Text>
         <SelectField 
           placeholder="Selecciona el inóculo" 
@@ -91,8 +67,7 @@ const FormCrearBloque = ({
         />
       </div>
 
-      {/* Insert de tipo de sustrato */}
-      <div className="flex flex-col gap-2">
+      <div className={inputContainerClasses}>
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Sustrato</Text>
         <SelectField 
           options={sustratos} 
@@ -103,57 +78,57 @@ const FormCrearBloque = ({
         />
       </div>
 
-      {/* Insert de tamaño - contenedores*/}
-      <div className="flex flex-col gap-2">
+      <div className={inputContainerClasses}>
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Tamaño</Text>
         <SelectField options={contenedores} placeholder="Selecciona tamaño" size="forms" value={bloqueForm.contenedor} onChange={(op) => handleBloqueForm("contenedor", op)} />
       </div>
 
-      {/* Insert de peso*/}
-      <div className="flex flex-col gap-2">
-        <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Peso</Text>
+      <div className={inputContainerClasses}>
+        <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Peso (g)</Text>
         <Input
           variante="numero"
           numeroTipo="decimal"
           inputMode="decimal"
           style={{ fontStyle: 'italic' }}
-          placeholder="Ingresa el peso (g)"
+          placeholder="0.00"
           value={bloqueForm.peso_gr}
-          className="w-full"
           onChange={handleChangePeso}
         />
       </div>
 
-      {/* Insert de tipo - producción o experimental*/}
-      <div className="flex flex-col gap-2">
+      <div className={inputContainerClasses}>
         <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Tipo</Text>
-        <SelectField placeholder="Selecciona tipo" size="forms" options={[{ value: "1", label: "Producción" }, { value: "0", label: "Experimental" }]} value={bloqueForm.produccion} onChange={(op) => handleBloqueForm("produccion", op)} />
-      </div>
-
-      {/* Insert de cantidad*/}
-      <div className="flex flex-col gap-2">
-        <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Cantidad</Text>
-        <Input
-          variante="numero"
-          numeroTipo="decimal"
-          style={{ fontStyle: 'italic' }}
-          placeholder="Ingresa cantidad"
-          value={bloqueForm.cantidad}
-          onChange={handleChangeCantidad}
-          className="w-full"
+        <SelectField 
+          placeholder="Selecciona tipo" 
+          size="forms" 
+          options={[{ value: "1", label: "Producción" }, { value: "0", label: "Experimental" }]} 
+          value={bloqueForm.produccion} 
+          onChange={(op) => handleBloqueForm("produccion", op)} 
         />
       </div>
 
-      {/* Mensaje de error*/}
-      {error && <div className="text-center"><Text variante="label" style={{ color: "#E53E3E", fontWeight: "600" }}>{error}</Text></div>}
+      <div className={inputContainerClasses}>
+        <Text variante="label" style={{ color: colores.black, fontWeight: "600" }}>Cantidad</Text>
+        <Input
+          variante="numero"
+          placeholder="0"
+          value={bloqueForm.cantidad}
+          onChange={handleChangeCantidad}
+        />
+      </div>
 
-      {/* Botón para crear bloque*/}
-      <div className="flex justify-center pt-4">
-        <Button variant="cancelar" size="lg" className="w-full" onClick={onAgregar}>
+      {error && (
+        <div className="text-center p-2">
+          <Text variante="label" style={{ color: "#E53E3E", fontWeight: "600" }}>{error}</Text>
+        </div>
+      )}
+
+      <div className="flex justify-center pt-2">
+        <Button variant="primario" size="lg" className="w-full sm:max-w-[200px]" type="submit">
           Crear Bloque
         </Button>
       </div>
-    </div>
+    </form>
   );
 };
 
