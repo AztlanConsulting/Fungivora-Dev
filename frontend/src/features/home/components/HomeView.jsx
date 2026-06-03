@@ -106,15 +106,7 @@ const PantallaPrincipalView = () => {
                 <div className="flex flex-col gap-6">
                     {/* Header */}
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 border-b border-gray-100 pb-4">
-                        <Titulo>¡Bienvenid@ a Devora!</Titulo>
-                        {esAdmin && (
-                            <div className="fixed bottom-8 right-8 z-50">
-                                <BotonCrear
-                                    onClick={() => navigate('/usuarios')}
-                                    texto="Usuarios"
-                                />
-                            </div>
-                        )}
+                        <Titulo>¡Bienvenid@ a Dévora!</Titulo>
                     </div>
 
                     {/* Paneles de Listas */}
