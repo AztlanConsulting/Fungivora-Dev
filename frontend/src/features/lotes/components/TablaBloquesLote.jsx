@@ -9,7 +9,7 @@ const colorBordeDestacado = '#7F7FD5';
 
 const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) => {
 
-    const gridLayoutBloques = "md:grid-cols-[1.3fr_1fr_1fr_1fr_1fr_1.1fr_100px]";
+    const gridLayoutBloques = "min-[1200px]:grid-cols-[1.5fr_1.2fr_1fr_1fr_1.1fr_1.3fr_1fr]";
 
     const formatearPeso = (gramos) => {
         const pesoNum = parseFloat(gramos || 0);
@@ -75,19 +75,19 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
         <div className="w-full rounded-[32px] border shadow-sm p-4 md:p-6" style={{ backgroundColor: colores.blanco, borderColor: '#E0E0E0' }}>
             <div className="rounded-2xl border overflow-hidden" style={{ borderColor: '#F0F0F0' }}>
 
-                {/* Header */}
-                <div className={`hidden min-[1200px]:grid ${gridLayoutBloques} py-5 px-8 gap-4`} style={{ backgroundColor: colorHeaderTabla }}>
+                {/* Header  */}
+                <div className={`hidden min-[1200px]:grid ${gridLayoutBloques}`} style={{ backgroundColor: colorHeaderTabla }}>
                     {["Código Bloque", "Inóculo", "Sustrato", "Tamaño", "Peso", "Clasificación"].map((label) => (
-                        <div key={label} className="flex items-center justify-start h-full">
-                            <Text variante="option" style={{ fontWeight: '600' }}>{label}</Text>
+                        <div key={label} className="px-6 py-5 flex items-center justify-start min-w-0">
+                            <Text variante="option" style={{ fontWeight: '600', whiteSpace: 'nowrap' }}>{label}</Text>
                         </div>
                     ))}
-                    <div className="flex items-center justify-center h-full">
-                        <Text variante="option" style={{ fontWeight: '600' }}>Contaminado</Text>
+                    <div className="px-4 py-5 flex items-center justify-center min-w-0">
+                        <Text variante="option" style={{ fontWeight: '600', whiteSpace: 'nowrap' }}>Contaminado</Text>
                     </div>
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col gap-3 min-[1200px]:gap-0">
                     {loading ? (
                         <div className="flex justify-center items-center h-[200px] w-full">
                             <div className="flex flex-col items-center gap-2">
@@ -101,15 +101,16 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                         </div>
                     ) : (
                         bloquesOrdenados.map((bloque, index) => {
-                            const codigoInoculo = bloque.codigo_inoculo_bloque; 
+                            const codigoInoculo = bloque.codigo_inoculo_bloque;
                             const codigoVisual = bloque.codigo_visual;
+                            const esUltimo = index === bloquesOrdenados.length - 1;
 
                             return (
-                                <div key={bloque.id_bloque || index} className="relative">
-                                    {/* Vista móvil */}
-                                    <div className="block min-[1200px]:hidden p-5 flex-col gap-4 bg-white border-b border-gray-100">
-                                        <div className="flex justify-between items-start">
-                                            <div className="flex flex-col gap-1">
+                                <div key={bloque.id_bloque || index}>
+                                    {/* Vista móvil / tablet (< 1200px) */}
+                                    <div className="flex min-[1200px]:hidden flex-col gap-4 p-5 bg-white rounded-2xl border mx-1 mb-1 shadow-sm" style={{ borderColor: '#F0F0F0' }}>
+                                        <div className="flex justify-between items-start gap-3">
+                                            <div className="flex flex-col gap-1 min-w-0">
                                                 <Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text>
                                                 <Text variante="body" style={{ fontWeight: '400', fontSize: '13px', color: '#666' }}>
                                                     {codigoInoculo || 'S/N'}
@@ -117,30 +118,40 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                                             </div>
                                             {renderCheckbox(bloque.contaminado, bloque.id_bloque)}
                                         </div>
-                                        <div className="flex justify-between items-end">
-                                            <div className="flex flex-col gap-1">
+                                        <div className="flex justify-between items-end gap-3">
+                                            <div className="flex flex-col gap-1 min-w-0">
                                                 <Text variante="body" style={{ color: '#444', fontSize: '13px' }}>
-                                                    {bloque.contenedor} <span className="text-gray-500 mx-1"></span> <span className="text-gray-500 font-medium">{bloque.tipo_sustrato}</span>
+                                                    {bloque.contenedor} <span className="text-gray-400 mx-1">·</span> <span className="text-gray-500 font-medium">{bloque.tipo_sustrato}</span>
                                                 </Text>
                                                 <Text variante="body" style={{ color: '#444', fontSize: '13px', fontWeight: '500' }}>
                                                     {formatearPeso(bloque.peso_gr)}
                                                 </Text>
                                             </div>
-                                            <div>{renderEtiqueta(bloque.produccion)}</div>
+                                            <div className="shrink-0">{renderEtiqueta(bloque.produccion)}</div>
                                         </div>
                                     </div>
 
-                                    {/* Vista desktop */}
-                                    <div className={`hidden min-[1200px]:grid ${gridLayoutBloques} px-8 py-4 gap-4 items-center transition-colors hover:bg-slate-50 bg-white`}
-                                        style={{ borderBottom: index === bloquesOrdenados.length - 1 ? 'none' : '1px solid #F0F0F0' }}>
-                                        
-                                        <div className="flex items-center justify-start truncate min-w-0"><Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text></div>
-                                        <div className="flex items-center justify-start truncate min-w-0"><Text variante="body" style={{ fontWeight: '400', color: '#666', fontSize: '15px' }}>{codigoInoculo || 'S/N'}</Text></div>
-                                        <div className="flex items-center justify-start truncate min-w-0"><Text variante="body" style={{ color: '#444', fontSize: '15px' }}>{bloque.tipo_sustrato}</Text></div>
-                                        <div className="flex items-center justify-start truncate min-w-0"><Text variante="body" style={{ color: '#444' }}>{bloque.contenedor}</Text></div>
-                                        <div className="flex items-center justify-start truncate min-w-0"><Text variante="body" style={{ color: '#444' }}>{formatearPeso(bloque.peso_gr)}</Text></div>
-                                        <div className="flex items-center justify-start"><div className="truncate">{renderEtiqueta(bloque.produccion)}</div></div>
-                                        <div className="flex items-center justify-center">{renderCheckbox(bloque.contaminado, bloque.id_bloque)}</div>
+                                    {/* Vista laptop (>= 1200px) */}
+                                    <div className={`hidden min-[1200px]:grid ${gridLayoutBloques} items-center transition-colors hover:bg-slate-50 bg-white`}
+                                        style={{ borderBottom: esUltimo ? 'none' : '1px solid #F0F0F0' }}>
+
+                                        <div className="px-6 py-4 flex items-center justify-start min-w-0">
+                                            <div className="truncate w-full"><Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text></div>
+                                        </div>
+                                        <div className="px-6 py-4 flex items-center justify-start min-w-0">
+                                            <div className="truncate w-full"><Text variante="body" style={{ fontWeight: '400', color: '#666', fontSize: '15px' }}>{codigoInoculo || 'S/N'}</Text></div>
+                                        </div>
+                                        <div className="px-6 py-4 flex items-center justify-start min-w-0">
+                                            <div className="truncate w-full"><Text variante="body" style={{ color: '#444', fontSize: '15px' }}>{bloque.tipo_sustrato}</Text></div>
+                                        </div>
+                                        <div className="px-6 py-4 flex items-center justify-start min-w-0">
+                                            <div className="truncate w-full"><Text variante="body" style={{ color: '#444' }}>{bloque.contenedor}</Text></div>
+                                        </div>
+                                        <div className="px-6 py-4 flex items-center justify-start min-w-0">
+                                            <div className="truncate w-full"><Text variante="body" style={{ color: '#444' }}>{formatearPeso(bloque.peso_gr)}</Text></div>
+                                        </div>
+                                        <div className="px-6 py-4 flex items-center justify-start min-w-0">{renderEtiqueta(bloque.produccion)}</div>
+                                        <div className="px-4 py-4 flex items-center justify-center">{renderCheckbox(bloque.contaminado, bloque.id_bloque)}</div>
                                     </div>
                                 </div>
                             );
