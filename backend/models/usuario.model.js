@@ -36,11 +36,11 @@ class Usuario {
       `INSERT INTO Usuarios (nombre_usuario, correo_usuario, contrasena_usuario, estatus_usuario, is_user_admin) 
        VALUES (?, ?, ?, ?, ?)`
       , [
-        nuevoUsuario.nombre_usuario, 
-        nuevoUsuario.correo_usuario, 
-        nuevoUsuario.contrasena_usuario, 
-        nuevoUsuario.estatus_usuario || 'Activo', 
-        nuevoUsuario.is_user_admin ?? 0 
+        nuevoUsuario.nombre_usuario,
+        nuevoUsuario.correo_usuario,
+        nuevoUsuario.contrasena_usuario,
+        nuevoUsuario.estatus_usuario || 1,
+        nuevoUsuario.is_user_admin ?? 0
       ]
     );
   };
@@ -54,10 +54,10 @@ class Usuario {
   };
 
   static eliminar = async (id_usuario) => {
-      return db.execute(
-          `DELETE FROM Usuarios WHERE id_usuario = ?`,
-          [id_usuario]
-      );
+    return db.execute(
+      `DELETE FROM Usuarios WHERE id_usuario = ?`,
+      [id_usuario]
+    );
   };
 }
 

@@ -191,8 +191,8 @@ const DetalleLote = () => {
                 </button>
             )}
 
-            <Base margen_arriba="mt-16 md:mt-8">
-                <div className="p-6 flex flex-col gap-8">
+            <Base margen_arriba="mt-20 md:mt-20">
+                <div className="flex flex-col gap-8">
                     {error && (
                         <div className="text-red-500 px-2 font-medium">Error: {error}</div>
                     )}
