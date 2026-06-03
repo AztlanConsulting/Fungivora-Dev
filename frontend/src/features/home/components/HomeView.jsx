@@ -12,14 +12,6 @@ import useHome from '../hooks/useHome';
 import Button from '../../../shared/components/ui/buttons/Botones';
 import BotonCrear from '../../../shared/components/ui/buttons/BotonFlotante';
 
-const parseJwt = (token) => {
-    try {
-        return JSON.parse(atob(token.split('.')[1]));
-    } catch {
-        return null;
-    }
-};
-
 import accesoAgar from '../../../assets/images/acceso-agar.png';
 import accesoMedioLiquido from '../../../assets/images/acceso-medio-liquido.png';
 import accesoSemilla from '../../../assets/images/acceso-semilla.png';

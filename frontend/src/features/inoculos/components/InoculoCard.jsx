@@ -49,8 +49,6 @@ const InoculoCard = ({ especie, tipoForzado, onIndividualChange }) => {
         toggleCollapse,
     } = useInoculoCard(especie.value);
 
-    const prevTipoForzado = React.useRef(tipoForzado);
-
     const handleChangeLocal = (e) => {
         const nuevoTipo = e.target.value;
         handleTipoChange(nuevoTipo);
