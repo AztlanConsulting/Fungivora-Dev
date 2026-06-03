@@ -347,7 +347,7 @@ function Lotes() {
                 bloques={bloquesTemporales}
                 onEliminar={eliminarBloqueDeLista}
                 estilosTipo={colores_tipo}
-                gridLayout="md:grid-cols-[0.9fr_0.6fr_0.8fr_0.7fr_0.8fr_0.5fr_0.7fr]"
+                gridLayout="md:grid-cols-[0.9fr_0.6fr_0.8fr_0.7fr_0.8fr_0.7fr_0.7fr]"
                 colorBordeHeader="#F2F2FC"
               />
             </div>

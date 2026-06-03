@@ -4,6 +4,7 @@ import { colores } from "../../../shared/components/ui/basics/Colores";
 import SelectField from "../../../shared/components/ui/inputs/SeleccionarTexto";
 import Button from "../../../shared/components/ui/buttons/Botones";
 import Input from "../../../shared/components/ui/inputs/InputTexto";
+import Titulo from "../../../shared/components/ui/basics/Titulo";
 
 // Form para poder crear un bloque, con sus inserts
 const FormCrearBloque = ({ 
@@ -73,6 +74,7 @@ const FormCrearBloque = ({
 
   return (
     <div className="flex flex-col gap-5 w-full">
+      <Titulo>Bloques</Titulo>
       <div className="mb-3 flex justify-between items-center">
         <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "22px" }}>Crear Bloques</Text>
       </div>
