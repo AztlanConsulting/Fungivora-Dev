@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import Titulo from "../../../shared/components/ui/basics/Titulo";
 import Text from "../../../shared/components/ui/basics/Texto";
 import { colores } from "../../../shared/components/ui/basics/Colores";
 import SelectField from "../../../shared/components/ui/inputs/SeleccionarTexto";
@@ -73,8 +72,7 @@ const FormCrearBloque = ({
   };
 
   return (
-    <div className="flex flex-col gap-5">
-      <Titulo>Bloques</Titulo>
+    <div className="flex flex-col gap-5 w-full">
       <div className="mb-3 flex justify-between items-center">
         <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "22px" }}>Crear Bloques</Text>
       </div>
