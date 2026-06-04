@@ -61,7 +61,7 @@ exports.get_batches = async (req, res) => {
 
 exports.get_lotes_todos = async (req, res) => {
     try {
-        const lotes = await Lotes.fetch();
+        const lotes = await Lotes.fetch_all();
         res.status(200).json({ success: true, data: lotes });
     } catch (err) {
         console.error("Error en get_batches controller:", err);
