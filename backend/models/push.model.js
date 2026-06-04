@@ -14,7 +14,7 @@ class PushSubscription {
     static async save(id_usuario, subscription) {
         const { endpoint, keys: { p256dh, auth } } = subscription;
         return db.execute(
-            `INSERT INTO PushSubscriptions (id_usuario, endpoint, p256dh, auth)
+            `INSERT INTO SuscripcionesPush (id_usuario, endpoint, p256dh, auth)
              VALUES (?, ?, ?, ?)
              ON DUPLICATE KEY UPDATE
                p256dh     = VALUES(p256dh),
@@ -27,7 +27,7 @@ class PushSubscription {
     /** Remueve una subscripción. */
     static async delete(endpoint) {
         return db.execute(
-            'DELETE FROM PushSubscriptions WHERE endpoint = ?',
+            'DELETE FROM SuscripcionesPush WHERE endpoint = ?',
             [endpoint]
         );
     }
@@ -35,7 +35,7 @@ class PushSubscription {
     /** Devuelve todas las subscripciones activas. */
     static async fetchAll() {
         const [rows] = await db.execute(
-            'SELECT id, id_usuario, endpoint, p256dh, auth FROM PushSubscriptions'
+            'SELECT id, id_usuario, endpoint, p256dh, auth FROM SuscripcionesPush'
         );
         return rows;
     }
@@ -43,7 +43,7 @@ class PushSubscription {
     /** Subscripciones de un usuario. */
     static async fetchByUser(id_usuario) {
         const [rows] = await db.execute(
-            'SELECT id, endpoint, p256dh, auth FROM PushSubscriptions WHERE id_usuario = ?',
+            'SELECT id, endpoint, p256dh, auth FROM SuscripcionesPush WHERE id_usuario = ?',
             [id_usuario]
         );
         return rows;
