@@ -11,6 +11,7 @@ import PanelLista from './PanelLista';
 import useHome from '../hooks/useHome';
 import Button from '../../../shared/components/ui/buttons/Botones';
 import BotonCrear from '../../../shared/components/ui/buttons/BotonFlotante';
+import NotificacionesToggle from '../../../shared/components/ui/others/NotificacionesToggle';
 
 import accesoAgar from '../../../assets/images/acceso-agar.png';
 import accesoMedioLiquido from '../../../assets/images/acceso-medio-liquido.png';
@@ -74,65 +75,70 @@ const PantallaPrincipalView = () => {
             </Base>
         );
     }
-    
+
     // Render 
     return (
-            <Base margen_arriba="mt-24 md:mt-20">
-                <div className="flex flex-col gap-6">
-                    {/* Header */}
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 border-b border-gray-100 pb-4">
-                        <Titulo>¡Bienvenid@ a Dévora!</Titulo>
-                    </div>
+        <Base margen_arriba="mt-24 md:mt-20">
+            <div className="flex flex-col gap-6">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 border-b border-gray-100 pb-4">
+                    <Titulo>¡Bienvenid@ a Dévora!</Titulo>
+                </div>
 
-                    {/* Paneles de Listas */}
-                    <div className="flex flex-col md:flex-row gap-4">
-                        <PanelLista
-                            icono={<HugeiconsIcon icon={Clock01Icon} size={22} color={colores.azul} strokeWidth={2} />}
-                            titulo="Lotes por revisar"
-                            items={listas.lotesRevision || []}
-                            lotes={lotes || []}
-                            checked={checkedLotes}
-                            onToggle={toggleLote}
-                            onRevisar={handleRevisarLotes}
-                            onVerTodo={() => navigate('/lotes')}
-                            mostrarChecks={true}
-                        />
-                        <PanelLista
-                            icono={<HugeiconsIcon icon={PackageIcon} size={22} color={colores.azul} strokeWidth={2} />}
-                            titulo="Inventario bajo"
-                            items={listas.inventarioBajo || []}
-                            checked={checkedInv}
-                            onToggle={toggleInv}
-                            onVerTodo={() => navigate('/inventario')}
-                            mostrarChecks={false}
-                        />
-                    </div>
+                {/* Notificaciones */}
+                <div className="flex flex-col md:flex-row gap-4">
+                    <NotificacionesToggle />
+                </div>
 
-                    {/* Accesos Rápidos */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {RUTAS_RAPIDAS.map((item) => (
-                            <AccesoRapido key={item.label} {...item} />
-                        ))}
-                    </div>
-                    
-                    {/* Resumen general */}
-                    <div className="bg-white rounded-2xl p-6 shadow-sm">
-                        <div className="flex flex-col md:flex-row md:items-center gap-4">
-                            <div className="flex-shrink-0">
-                                <Text variante="subtitle" style={{ color: colores.azul, fontWeight: 700, fontSize: 20 }}>
-                                    Resumen general
-                                </Text>
-                            </div>
-                            <Text variante="small" style={{ color: colores.gris }}>Actividad actual</Text>
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 flex-1">
-                                <MetricaCard valor={resumen.lotesActivos} label="Lotes activos" />
-                                <MetricaCard valor={resumen.bloquesNoContaminados} label="Bloques saludables" />
-                                <MetricaCard valor={resumen.bloquesContaminados} label="Bloques contaminados" />
-                            </div>
+                {/* Paneles de Listas */}
+                <div className="flex flex-col md:flex-row gap-4">
+                    <PanelLista
+                        icono={<HugeiconsIcon icon={Clock01Icon} size={22} color={colores.azul} strokeWidth={2} />}
+                        titulo="Lotes por revisar"
+                        items={listas.lotesRevision || []}
+                        lotes={lotes || []}
+                        checked={checkedLotes}
+                        onToggle={toggleLote}
+                        onRevisar={handleRevisarLotes}
+                        onVerTodo={() => navigate('/lotes')}
+                        mostrarChecks={true}
+                    />
+                    <PanelLista
+                        icono={<HugeiconsIcon icon={PackageIcon} size={22} color={colores.azul} strokeWidth={2} />}
+                        titulo="Inventario bajo"
+                        items={listas.inventarioBajo || []}
+                        checked={checkedInv}
+                        onToggle={toggleInv}
+                        onVerTodo={() => navigate('/inventario')}
+                        mostrarChecks={false}
+                    />
+                </div>
+
+                {/* Accesos Rápidos */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {RUTAS_RAPIDAS.map((item) => (
+                        <AccesoRapido key={item.label} {...item} />
+                    ))}
+                </div>
+
+                {/* Resumen general */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <div className="flex flex-col md:flex-row md:items-center gap-4">
+                        <div className="flex-shrink-0">
+                            <Text variante="subtitle" style={{ color: colores.azul, fontWeight: 700, fontSize: 20 }}>
+                                Resumen general
+                            </Text>
+                        </div>
+                        <Text variante="small" style={{ color: colores.gris }}>Actividad actual</Text>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 flex-1">
+                            <MetricaCard valor={resumen.lotesActivos} label="Lotes activos" />
+                            <MetricaCard valor={resumen.bloquesNoContaminados} label="Bloques saludables" />
+                            <MetricaCard valor={resumen.bloquesContaminados} label="Bloques contaminados" />
                         </div>
                     </div>
                 </div>
-            </Base>
+            </div>
+        </Base>
     );
 };
 
