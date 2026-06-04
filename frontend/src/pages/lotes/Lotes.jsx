@@ -335,7 +335,7 @@ const [todosLosLotesMarcados, setTodosLosLotesMarcados] = useState(false);
 
       <div className="flex flex-col min-[1450px]:flex-row gap-8 items-start">
         {/* Componente de las tablas*/}
-      <div className={`w-full min-[1450px]:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} min-[1450px]:block min-h-[600px] md:min-h-0 md:max-h-[600px] overflow-hidden`}>
+      <div className={`w-full min-[1450px]:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} min-[1450px]:block min-h-[700px] md:min-h-0 md:max-h-[700px] overflow-hidden`}>
         {paso === 1 ? (
             <>
               <Titulo>Lotes</Titulo>

@@ -170,7 +170,7 @@ const TablaLotes = ({
       {totalItems > ITEMS_POR_PAGINA && (
         <div className="p-4 bg-white border-t flex items-center justify-between gap-2 select-none" style={{ borderColor: colorBordeHeader }}>
           <Text variante="option" style={{ color: colores.gris }}>
-            Mostrando {indiceInicial + 1} - {Math.min(indiceInicial + ITEMS_POR_PAGINA, totalItems)} de {totalItems} lotes
+            {indiceInicial + 1} - {Math.min(indiceInicial + ITEMS_POR_PAGINA, totalItems)}
           </Text>
           
           <div className="flex items-center gap-2">
