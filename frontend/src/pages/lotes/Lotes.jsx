@@ -323,21 +323,20 @@ const [todosLosLotesMarcados, setTodosLosLotesMarcados] = useState(false);
   return (
     <Base margen_arriba="mt-20 md:mt-20">
       {/* Botón para cambiar del forms a la vista de tabla*/}
-      <div className="lg:hidden flex justify-start mb-6">
+      <div className="min-[1450px]:hidden flex justify-start mb-6 px-4">
         <BotonCrear
           onClick={() => setVerFormulario(!verFormulario)}
           texto={verFormulario
               ? (paso === 1 ? "Ver Lotes" : "Ver Bloques")
               : (paso === 1 ? "Crear lote" : "Crear bloque")
           }
-      />
-
+        />
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 items-stretch relative">
+      <div className="flex flex-col min-[1450px]:flex-row gap-8 items-start">
         {/* Componente de las tablas*/}
-        <div className={`w-full bg-white rounded-[32px] shadow-sm border p-4 md:p-8 md:pl-8 min-h-[500px] ${verFormulario ? "hidden" : "block"} lg:block`}>
-          {paso === 1 ? (
+      <div className={`w-full min-[1450px]:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} min-[1450px]:block min-h-[600px] md:min-h-0 md:max-h-[600px] overflow-hidden`}>
+        {paso === 1 ? (
             <>
               <Titulo>Lotes</Titulo>
                 <TablaLotes
@@ -361,7 +360,7 @@ const [todosLosLotesMarcados, setTodosLosLotesMarcados] = useState(false);
                 bloques={bloquesTemporales}
                 onEliminar={eliminarBloqueDeLista}
                 estilosTipo={colores_tipo}
-                gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1fr_1.2fr_1.2fr_0.5fr]"
+                gridLayout="md:grid-cols-[0.9fr_0.6fr_0.8fr_0.7fr_0.8fr_0.7fr_0.7fr]"
                 colorBordeHeader="#F2F2FC"
               />
             </div>
@@ -369,9 +368,16 @@ const [todosLosLotesMarcados, setTodosLosLotesMarcados] = useState(false);
         </div>
 
         {/* Componentes de formularios*/}
-        <div className="flex flex-col lg:w-[440px]">
-          <div className={`w-full bg-white rounded-[32px] shadow-sm border p-8 ${verFormulario ? "block" : "hidden"} lg:block`}>
-            {paso === 1 ? (
+        <div className="flex flex-col lg:w-[440px] w-full justify-center">
+          <div 
+            className={`
+              w-full min-[1450px]:w-[440px] bg-white rounded-[32px] shadow-sm border p-8 
+              ${verFormulario ? "block" : "hidden"} 
+              min-[1450px]:block min-[1450px]:mt-0 
+              mx-auto 
+            `}
+          >
+              {paso === 1 ? (
               <FormCrearLote
                 especiesDisponibles={especiesDisponibles}
                 ubicaciones={ubicaciones}
@@ -401,33 +407,38 @@ const [todosLosLotesMarcados, setTodosLosLotesMarcados] = useState(false);
           </div>
 
           {/* Botones de registrar y cancelar*/}
-          {paso === 2 && (
-            <div className={`flex flex-col md:flex-row gap-4 mt-8 items-center justify-center ${verFormulario ? "flex" : "hidden"} lg:flex`}>
-              
-              <div className="w-full md:w-auto flex justify-center">
-                <Button
-                  className="w-full md:w-auto"
-                  variant="registrar"
-                  onClick={previsualizarRegistro}
-                  isOutline={true} 
-                  disabled={guardando}
-                >
-                  {guardando ? "Cargando..." : "Finalizar"}
-                </Button>
-              </div>
+            {paso === 2 && (
+              <div 
+                className={`
+                  flex flex-col md:flex-row gap-4 mt-8 items-center justify-center 
+                  ${verFormulario ? "flex" : "hidden"} 
+                  min-[1450px]:flex
+                `}
+              >
+                <div className="w-full md:w-auto flex justify-center">
+                  <Button
+                    className="w-full md:w-auto"
+                    variant="registrar"
+                    onClick={previsualizarRegistro}
+                    isOutline={true} 
+                    disabled={guardando}
+                  >
+                    {guardando ? "Cargando..." : "Finalizar"}
+                  </Button>
+                </div>
 
-              <div className="w-full md:w-auto flex justify-center"> 
-                <Button 
-                  className="w-full md:w-[150px]" 
-                  variant="eliminar" 
-                  isOutline={true} 
-                  onClick={abrirModalCancelar}
-                >
-                  Cancelar
-                </Button>
+                <div className="w-full md:w-auto flex justify-center"> 
+                  <Button 
+                    className="w-full md:w-[150px]" 
+                    variant="eliminar" 
+                    isOutline={true} 
+                    onClick={abrirModalCancelar}
+                  >
+                    Cancelar
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
       </div>
 
