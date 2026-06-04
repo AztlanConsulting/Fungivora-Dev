@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import useDetalleLote from '../hooks/useDetalleLote';
 import BannerLote from '../components/BannerLote';
 import TablaBloques from '../components/TablaBloquesLote';
@@ -16,6 +16,7 @@ const DetalleLote = () => {
     const { id_lote } = useParams();
     const { state } = useLocation();
     const [busqueda, setBusqueda] = useState("");
+    const navigate = useNavigate();
 
     const {
         bloques, setBloques, bloquesIniciales, setBloquesIniciales,
@@ -99,7 +100,6 @@ const DetalleLote = () => {
         }
     };
 
-
     const loteData = {
         fecha: state?.fecha_lote
             ? new Date(state.fecha_lote).toLocaleDateString('es-MX', {
@@ -136,6 +136,8 @@ const DetalleLote = () => {
             codigo_visual: `BC-${idBase}-${fecha}-${index + 1}`
         };
     });
+
+    
 
     const bloquesFiltrados = bloquesConCodigo.filter(b => {
         const termino = normalizarBusqueda(busqueda);
@@ -221,6 +223,7 @@ const DetalleLote = () => {
                             onToggleContaminado={handleLocalToggleContaminado}
                             codigo_lote={codigoParaTabla}
                             usarCodigoPrecalculado={true}
+                            onInoculoClick={(id) => id && navigate(`/inoculos/detalle/${id}`)}
                         />
                     </div>
                 </div>

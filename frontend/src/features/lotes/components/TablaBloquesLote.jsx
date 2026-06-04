@@ -7,7 +7,7 @@ import { colores } from '../../../shared/components/ui/basics/Colores';
 const colorHeaderTabla = '#F2F2FC';
 const colorBordeDestacado = '#7F7FD5';
 
-const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) => {
+const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, onInoculoClick }) => {
 
     const gridLayoutBloques = "min-[1200px]:grid-cols-[1.5fr_1.2fr_1fr_1fr_1.1fr_1.3fr_1fr]";
 
@@ -110,12 +110,18 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                                     {/* Vista móvil / tablet (< 1200px) */}
                                     <div className="flex min-[1200px]:hidden flex-col gap-4 p-5 bg-white rounded-2xl border mx-1 mb-1 shadow-sm" style={{ borderColor: '#F0F0F0' }}>
                                         <div className="flex justify-between items-start gap-3">
-                                            <div className="flex flex-col gap-1 min-w-0">
-                                                <Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text>
-                                                <Text variante="body" style={{ fontWeight: '400', fontSize: '13px', color: '#666' }}>
-                                                    {codigoInoculo || 'S/N'}
-                                                </Text>
-                                            </div>
+                                                <div 
+                                                    className="flex flex-col gap-1 min-w-0 cursor-pointer" 
+                                                    onClick={() => onInoculoClick(bloque.id_inoculo)} 
+                                                >
+                                                    <Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text>
+                                                    <Text 
+                                                        variante="body" 
+                                                        style={{ fontWeight: '400', fontSize: '13px', color: '#666' }}
+                                                    >
+                                                        {codigoInoculo || 'S/N'}
+                                                    </Text>
+                                                </div>
                                             {renderCheckbox(bloque.contaminado, bloque.id_bloque)}
                                         </div>
                                         <div className="flex justify-between items-end gap-3">
@@ -139,7 +145,14 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                                             <div className="truncate w-full"><Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text></div>
                                         </div>
                                         <div className="px-6 py-4 flex items-center justify-start min-w-0">
-                                            <div className="truncate w-full"><Text variante="body" style={{ fontWeight: '400', color: '#666', fontSize: '15px' }}>{codigoInoculo || 'S/N'}</Text></div>
+                                            <div 
+                                                className="truncate w-full cursor-pointer"
+                                                onClick={() => onInoculoClick(bloque.id_inoculo)}
+                                            >
+                                                <Text variante="body" style={{ fontWeight: '400', color: '#666', fontSize: '15px' }}>
+                                                    {codigoInoculo || 'S/N'}
+                                                </Text>
+                                            </div>
                                         </div>
                                         <div className="px-6 py-4 flex items-center justify-start min-w-0">
                                             <div className="truncate w-full"><Text variante="body" style={{ color: '#444', fontSize: '15px' }}>{bloque.tipo_sustrato}</Text></div>
