@@ -12,14 +12,6 @@ import useHome from '../hooks/useHome';
 import Button from '../../../shared/components/ui/buttons/Botones';
 import BotonCrear from '../../../shared/components/ui/buttons/BotonFlotante';
 
-const parseJwt = (token) => {
-    try {
-        return JSON.parse(atob(token.split('.')[1]));
-    } catch {
-        return null;
-    }
-};
-
 import accesoAgar from '../../../assets/images/acceso-agar.png';
 import accesoMedioLiquido from '../../../assets/images/acceso-medio-liquido.png';
 import accesoSemilla from '../../../assets/images/acceso-semilla.png';
@@ -32,23 +24,6 @@ const PantallaPrincipalView = () => {
     const cards = dashboard?.cards || {};
     const listas = dashboard?.listas || {};
     const lotes = dashboard?.lotes || {};
-
-    const [esAdmin] = useState(() => {
-        const token = localStorage.getItem('token');
-        if (!token) return false;
-        
-        try {
-            let tokenToParse = token;
-            if (token.startsWith('{')) {
-                const parsedTokenObj = JSON.parse(token);
-                tokenToParse = parsedTokenObj.token || parsedTokenObj.data?.token;
-            }
-            const payload = parseJwt(tokenToParse);
-            return Number(payload?.is_user_admin) === 1;
-        } catch {
-            return false;
-        }
-    });
 
     const resumen = {
         lotesActivos: cards.lotesActivos || 0,
@@ -106,15 +81,7 @@ const PantallaPrincipalView = () => {
                 <div className="flex flex-col gap-6">
                     {/* Header */}
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 border-b border-gray-100 pb-4">
-                        <Titulo>¡Bienvenid@ a Devora!</Titulo>
-                        {esAdmin && (
-                            <div className="fixed bottom-8 right-8 z-50">
-                                <BotonCrear
-                                    onClick={() => navigate('/usuarios')}
-                                    texto="Usuarios"
-                                />
-                            </div>
-                        )}
+                        <Titulo>¡Bienvenid@ a Dévora!</Titulo>
                     </div>
 
                     {/* Paneles de Listas */}

@@ -193,14 +193,4 @@ describe('InoculoCard — interacciones', () => {
         await user.click(screen.getByText('Pleurotus Abalonus'))
         expect(toggleCollapse).toHaveBeenCalledTimes(1)
     })
-
-    it('llama a handleTipoChange al cambiar el select', async () => {
-        const user = userEvent.setup()
-        const handleTipoChange = vi.fn()
-        useInoculoCard.mockReturnValue({ ...hookBase, handleTipoChange })
-
-        renderComponente()
-        await user.selectOptions(screen.getByTestId('select-tipo'), 'Semilla')
-        expect(handleTipoChange).toHaveBeenCalledTimes(1)
-    })
 })

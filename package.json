@@ -11,9 +11,9 @@
     "lint": "npm run lint --prefix frontend && npm run lint --prefix backend",
     "lint:frontend": "npm run lint --prefix frontend",
     "lint:backend": "npm run lint --prefix backend",
-    "test": "npm run test:run --prefix frontend && npm run test --prefix backend",
+    "test": "npm run test:run --prefix frontend && npm run test:unit --prefix backend && npm run test:integration --prefix backend",
     "test:frontend": "npm run test:run --prefix frontend",
-    "test:backend": "npm run test --prefix backend",
+    "test:backend": "npm run test:unit --prefix backend && npm run test:integration --prefix backend",
     "coverage": "npm run test:coverage --prefix frontend && npm run test:coverage --prefix backend",
     "prepare": "husky"
   },
