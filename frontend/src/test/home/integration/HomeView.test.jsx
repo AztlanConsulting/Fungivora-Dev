@@ -106,7 +106,7 @@ describe('Vista PantallaPrincipalView (Dashboard)', () => {
         renderWithRouter(<PantallaPrincipalView />);
 
         // Verificar el encabezado principal
-        expect(screen.getByRole('heading', { name: /¡Bienvenid@ a Devora!/i })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /¡Bienvenid@ a Dévora!/i })).toBeInTheDocument();
 
         // Verificar los dos paneles principales
         expect(screen.getByTestId('panel-lotes-por-revisar')).toBeInTheDocument();

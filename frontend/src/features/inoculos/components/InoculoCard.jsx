@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'; 
+import React, { useMemo, useEffect } from 'react'; 
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons';
 
@@ -37,7 +37,7 @@ const formatFecha = (isoString) => {
  * Card de especie con select de tipo de inóculo y tabla colapsable de datos.
  * @param {{ especie: import('../types/inoculo.types').Especie }} props
  */
-const InoculoCard = ({ especie }) => {
+const InoculoCard = ({ especie, tipoForzado, onIndividualChange }) => {
     const {
         tipoSeleccionado,
         datos,
@@ -48,6 +48,16 @@ const InoculoCard = ({ especie }) => {
         handleTipoChange,
         toggleCollapse,
     } = useInoculoCard(especie.value);
+
+    const handleChangeLocal = (e) => {
+        const nuevoTipo = e.target.value;
+        handleTipoChange(nuevoTipo);
+        onIndividualChange(nuevoTipo);
+    };
+
+    useEffect(() => {
+        handleTipoChange(tipoForzado);
+    }, [tipoForzado, handleTipoChange]);
 
     const datosOrdenados = useMemo(() => {
         if (!datos) return [];
@@ -118,7 +128,7 @@ const InoculoCard = ({ especie }) => {
                 {!collapsed && (
                     <SelectField
                         value={tipoSeleccionado}
-                        onChange={(e) => handleTipoChange(e.target.value)}
+                        onChange={handleChangeLocal}
                         options={isMobile ? opcionesAbreviadas : TIPOS_INOCULO}
                         size={isMobile ? 'numero' : 'amplio'}
                         placeholder="Tipo"

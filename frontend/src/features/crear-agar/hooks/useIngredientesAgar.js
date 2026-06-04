@@ -79,7 +79,7 @@ const useIngredientesAgar = ({
 
   // Búsquedas seguras
   const aguaInsumo = buscar("agua");
-  const agaragarInsumo = buscar("agaragar");
+  const agaragarInsumo = buscar("agar agar");
   const peptonaInsumo = buscar("peptona");
   const extractoInsumo = buscar("extracto");
 

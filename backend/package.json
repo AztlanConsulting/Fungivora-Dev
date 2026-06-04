@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "test": "jest",
-    "test:watch": "jest --watch",
+    "test:integration": "jest test/models --runInBand",
+    "test:unit": "jest --testPathIgnorePatterns=test/models",
     "test:coverage": "jest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"

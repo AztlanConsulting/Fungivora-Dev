@@ -262,10 +262,10 @@ const FormSemillas = () => {
 
               {!esComprado && <EntradaLista items={itemsComposicion} />}
                 <div className="bg-white rounded-[32px] shadow-sm border p-4 sm:p-6 md:p-8 flex flex-col gap-6">
-                  <div className="flex flex-col md:flex-row gap-6 w-full">
+                  <div className="flex flex-col md:flex-row gap-8 items-start flex-wrap"> 
 
                     {esComprado ? (
-                      <div className="flex flex-col gap-3 flex-1">
+                      <div className="flex flex-col gap-3">
                         <Text variante="medium">Cantidad disponible</Text>
                         <div className="flex items-center gap-3">
                           <Input
@@ -280,20 +280,20 @@ const FormSemillas = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="flex flex-col gap-3 w-full md:w-[160px] shrink-0">
+                      <div className="flex flex-col gap-3">
                         <Text variante="medium">Cantidad</Text>
                         <InputCantidad value={cantidad} onChange={setCantidad} />
                       </div>
                     )}
 
-                    <div className="flex flex-col gap-3 flex-1">
+                    <div className="flex flex-col gap-3">
                       <Text variante="medium">Fecha de creación</Text>
                       <InputFecha value={fecha} onChange={setFecha} />
                     </div>
 
                   </div>
 
-                  <div className="flex flex-col gap-3 w-full">
+                  <div className="flex flex-col gap-3">
                     <Text variante="medium">Notas</Text>
                     <InputNota value={nota} onChange={setNota} />
                   </div>

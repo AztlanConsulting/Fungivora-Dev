@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
 
-const loginRoutes = require('./inicio_sesion.routes');
+const loginRoutes = require('./inicio-sesion.routes');
 const inventarioRoutes = require('./inventario.routes');
 const inoculoRoutes = require('./inoculo.routes');
 const categoriaRoutes = require('./categoria.routes');
 const lotesRoutes = require('./lotes.routes');
 const bloqueRoutes = require('./bloque.routes');
 const dashboardRoutes = require('./dashboard.routes');
-const micelioRoutes = require('./micelio.routes');
+const usuarioRoutes = require('./usuario.routes');
 const pushRoutes = require('./push.routes');
+const micelioRoutes = require('./micelio.routes');
 
 // Pasar por autenticación
 const auth = require('../middleware/auth');
@@ -27,7 +28,8 @@ router.use('/categorias', categoriaRoutes);
 router.use('/lotes', lotesRoutes);
 router.use('/bloques', bloqueRoutes);
 router.use('/dashboard', dashboardRoutes);
-router.use('/micelio', micelioRoutes);
+router.use('/usuarios', usuarioRoutes);
 router.use('/push', pushRoutes);
+router.use('/micelio', micelioRoutes);
 
 module.exports = router;

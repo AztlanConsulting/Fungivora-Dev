@@ -78,12 +78,14 @@ const Login = () => {
                   <Text variante="label" style={{ color: colores.gris }}>Usuario</Text>
                 </div>
                 <Input
-                  placeholder="Escribe tu usuario..."
+                  type="text" 
+                  placeholder="Escribe tu usuario o correo..."
                   value={usuario}
                   onChange={handleUsuarioChange}
                   disabled={cargando}
                   maxLength={30}
                   className={`w-full ${autofillClasses}`}
+                  regex={/^[a-zA-Z0-9@.\-_]*$/} 
                 />
               </div>
 
@@ -101,7 +103,7 @@ const Login = () => {
                     onChange={handlePasswordChange}
                     disabled={cargando}
                     maxLength={30}
-                    className={`w-full pr-10 ${autofillClasses}`}
+                     className={`w-full pr-10 [&::-ms-reveal]:hidden [&::-ms-clear]:hidden ${autofillClasses}`}
                   />
                   <div
                     className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer select-none z-20 text-gray-500 hover:text-gray-700 h-5 w-5"

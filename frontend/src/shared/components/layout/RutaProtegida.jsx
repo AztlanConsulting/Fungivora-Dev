@@ -18,9 +18,15 @@ function RutaProtegida({ children, rolPermitido }) {
       return <Navigate to="/" replace />;
     }
 
-    if (rolPermitido === "Administrador" && !decoded?.isAdmin) {
-      return <Navigate to="/home" replace />;
+    if (rolPermitido === "Administrador") {
+      const esAdmin = Number(decoded?.is_user_admin) === 1;
+      
+      if (!esAdmin) {
+        console.warn("Acceso denegado: usuario no es administrador");
+        return <Navigate to="/home" replace />;
+      }
     }
+
   } catch {
     localStorage.removeItem("token");
     return <Navigate to="/" replace />;

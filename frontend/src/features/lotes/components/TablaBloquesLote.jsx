@@ -9,7 +9,7 @@ const colorBordeDestacado = '#7F7FD5';
 
 const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) => {
 
- const gridLayoutBloques = "md:grid-cols-[1.2fr_1fr_1fr_1fr_1fr_1fr_0.5fr]";
+    const gridLayoutBloques = "min-[1200px]:grid-cols-[1.5fr_1.2fr_1fr_1fr_1.1fr_1.3fr_1fr]";
 
     const formatearPeso = (gramos) => {
         const pesoNum = parseFloat(gramos || 0);
@@ -26,6 +26,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
         const comparacionInoculo = inoculoA.localeCompare(inoculoB);
 
         if (comparacionInoculo !== 0) return comparacionInoculo;
+        
         const comparacionProduccion = b.produccion - a.produccion;
         if (comparacionProduccion !== 0) return comparacionProduccion;
 
@@ -33,22 +34,6 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
         const sustratoB = (b.tipo_sustrato || '').toString();
         return sustratoA.localeCompare(sustratoB);
     });
-
-    const generarCodigoBloque = (codigoInoculo, indiceGlobal) => {
-        if (!codigoInoculo) return `BC-B${indiceGlobal + 1}`;
-        let base = codigoInoculo.trim();
-        const partes = base.split('-');
-        if (partes.length > 3) {
-            partes.pop();
-            base = partes.join('-');
-        }
-        if (base.toUpperCase().startsWith('LC')) {
-            base = 'BC' + base.substring(2);
-        } else if (!base.toUpperCase().startsWith('BC')) {
-            base = 'BC-' + base;
-        }
-        return `${base}-${indiceGlobal + 1}`;
-    };
 
     const renderEtiqueta = (esProduccion) => {
         const esProd = esProduccion === 1 || esProduccion === true;
@@ -90,35 +75,42 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
         <div className="w-full rounded-[32px] border shadow-sm p-4 md:p-6" style={{ backgroundColor: colores.blanco, borderColor: '#E0E0E0' }}>
             <div className="rounded-2xl border overflow-hidden" style={{ borderColor: '#F0F0F0' }}>
 
-                {/* Header */}
-                <div className={`hidden md:grid ${gridLayoutBloques} py-5 px-8 gap-4 items-center`} style={{ backgroundColor: colorHeaderTabla }}>
-                    <div><Text variante="option" style={{ fontWeight: '600' }}>Código Bloque</Text></div>
-                    <div><Text variante="option" style={{ fontWeight: '600' }}>Inóculo</Text></div>
-                    <div><Text variante="option" style={{ fontWeight: '600' }}>Sustrato</Text></div>
-                    <div><Text variante="option" style={{ fontWeight: '600' }}>Tamaño</Text></div>
-                    <div><Text variante="option" style={{ fontWeight: '600' }}>Peso</Text></div>
-                    <div><Text variante="option" style={{ fontWeight: '600' }}>Clasificación</Text></div>
-                    <div className="text-center"><Text variante="option" style={{ fontWeight: '600' }}>Contaminado</Text></div>
+                {/* Header  */}
+                <div className={`hidden min-[1200px]:grid ${gridLayoutBloques}`} style={{ backgroundColor: colorHeaderTabla }}>
+                    {["Código Bloque", "Inóculo", "Sustrato", "Tamaño", "Peso", "Clasificación"].map((label) => (
+                        <div key={label} className="px-6 py-5 flex items-center justify-start min-w-0">
+                            <Text variante="option" style={{ fontWeight: '600', whiteSpace: 'nowrap' }}>{label}</Text>
+                        </div>
+                    ))}
+                    <div className="px-4 py-5 flex items-center justify-center min-w-0">
+                        <Text variante="option" style={{ fontWeight: '600', whiteSpace: 'nowrap' }}>Contaminado</Text>
+                    </div>
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col gap-3 min-[1200px]:gap-0">
                     {loading ? (
-                        <div className="p-10 text-center"><Text variante="body">Cargando bloques...</Text></div>
+                        <div className="flex justify-center items-center h-[200px] w-full">
+                            <div className="flex flex-col items-center gap-2">
+                            <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                            <Text variante="medium">Cargando datos de bloques...</Text>
+                            </div>
+                        </div>
                     ) : bloquesOrdenados.length === 0 ? (
                         <div className="p-10 text-center bg-white">
                             <Text variante="body" style={{ color: colores.gris }}>Sin bloques registrados.</Text>
                         </div>
                     ) : (
                         bloquesOrdenados.map((bloque, index) => {
-                            const codigoInoculo = bloque.codigo_inoculo_bloque; 
-                            const codigoVisual = generarCodigoBloque(codigoInoculo, index);
+                            const codigoInoculo = bloque.codigo_inoculo_bloque;
+                            const codigoVisual = bloque.codigo_visual;
+                            const esUltimo = index === bloquesOrdenados.length - 1;
 
                             return (
-                                <div key={bloque.id_bloque || index} className="relative">
-                                    {/* Vista móvil */}
-                                    <div className="md:hidden p-5 flex flex-col gap-4 bg-white border-b border-gray-100">
-                                        <div className="flex justify-between items-start">
-                                            <div className="flex flex-col gap-1">
+                                <div key={bloque.id_bloque || index}>
+                                    {/* Vista móvil / tablet (< 1200px) */}
+                                    <div className="flex min-[1200px]:hidden flex-col gap-4 p-5 bg-white rounded-2xl border mx-1 mb-1 shadow-sm" style={{ borderColor: '#F0F0F0' }}>
+                                        <div className="flex justify-between items-start gap-3">
+                                            <div className="flex flex-col gap-1 min-w-0">
                                                 <Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text>
                                                 <Text variante="body" style={{ fontWeight: '400', fontSize: '13px', color: '#666' }}>
                                                     {codigoInoculo || 'S/N'}
@@ -126,38 +118,40 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado }) =>
                                             </div>
                                             {renderCheckbox(bloque.contaminado, bloque.id_bloque)}
                                         </div>
-                                        <div className="flex justify-between items-end">
-                                            <div className="flex flex-col gap-1">
+                                        <div className="flex justify-between items-end gap-3">
+                                            <div className="flex flex-col gap-1 min-w-0">
                                                 <Text variante="body" style={{ color: '#444', fontSize: '13px' }}>
-                                                    {bloque.contenedor} <span className="text-gray-500 mx-1"></span> <span className="text-gray-500 font-medium">{bloque.tipo_sustrato}</span>
+                                                    {bloque.contenedor} <span className="text-gray-400 mx-1">·</span> <span className="text-gray-500 font-medium">{bloque.tipo_sustrato}</span>
                                                 </Text>
                                                 <Text variante="body" style={{ color: '#444', fontSize: '13px', fontWeight: '500' }}>
                                                     {formatearPeso(bloque.peso_gr)}
                                                 </Text>
                                             </div>
-                                            <div>{renderEtiqueta(bloque.produccion)}</div>
+                                            <div className="shrink-0">{renderEtiqueta(bloque.produccion)}</div>
                                         </div>
                                     </div>
 
-                                    {/* Vista desktop */}
-                                    <div className={`hidden md:grid ${gridLayoutBloques} px-8 py-4 gap-4 items-center transition-colors hover:bg-slate-50 bg-white`}
-                                        style={{ borderBottom: index === bloquesOrdenados.length - 1 ? 'none' : '1px solid #F0F0F0' }}>
-                                        <Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text>
-                                        <Text variante="body" style={{ fontWeight: '400', color: '#666', fontSize: '15px' }}>
-                                            {codigoInoculo || 'S/N'} 
-                                        </Text>
-                                        <Text variante="body" style={{ color: '#444', fontSize: '15px' }}>
-                                            {bloque.tipo_sustrato}
-                                        </Text>
+                                    {/* Vista laptop (>= 1200px) */}
+                                    <div className={`hidden min-[1200px]:grid ${gridLayoutBloques} items-center transition-colors hover:bg-slate-50 bg-white`}
+                                        style={{ borderBottom: esUltimo ? 'none' : '1px solid #F0F0F0' }}>
 
-                                        <Text variante="body" style={{ color: '#444' }}>{bloque.contenedor}</Text>
-                                        <Text variante="body" style={{ color: '#444' }}>
-                                            {formatearPeso(bloque.peso_gr)}
-                                        </Text>
-                                        <div>{renderEtiqueta(bloque.produccion)}</div>
-                                        <div className="flex justify-center">
-                                            {renderCheckbox(bloque.contaminado, bloque.id_bloque)}
+                                        <div className="px-6 py-4 flex items-center justify-start min-w-0">
+                                            <div className="truncate w-full"><Text variante="body" style={{ fontWeight: '600' }}>{codigoVisual}</Text></div>
                                         </div>
+                                        <div className="px-6 py-4 flex items-center justify-start min-w-0">
+                                            <div className="truncate w-full"><Text variante="body" style={{ fontWeight: '400', color: '#666', fontSize: '15px' }}>{codigoInoculo || 'S/N'}</Text></div>
+                                        </div>
+                                        <div className="px-6 py-4 flex items-center justify-start min-w-0">
+                                            <div className="truncate w-full"><Text variante="body" style={{ color: '#444', fontSize: '15px' }}>{bloque.tipo_sustrato}</Text></div>
+                                        </div>
+                                        <div className="px-6 py-4 flex items-center justify-start min-w-0">
+                                            <div className="truncate w-full"><Text variante="body" style={{ color: '#444' }}>{bloque.contenedor}</Text></div>
+                                        </div>
+                                        <div className="px-6 py-4 flex items-center justify-start min-w-0">
+                                            <div className="truncate w-full"><Text variante="body" style={{ color: '#444' }}>{formatearPeso(bloque.peso_gr)}</Text></div>
+                                        </div>
+                                        <div className="px-6 py-4 flex items-center justify-start min-w-0">{renderEtiqueta(bloque.produccion)}</div>
+                                        <div className="px-4 py-4 flex items-center justify-center">{renderCheckbox(bloque.contaminado, bloque.id_bloque)}</div>
                                     </div>
                                 </div>
                             );

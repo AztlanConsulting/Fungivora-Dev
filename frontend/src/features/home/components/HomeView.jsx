@@ -9,37 +9,26 @@ import AccesoRapido from './AccesoRapido';
 import MetricaCard from './MetricaCard';
 import PanelLista from './PanelLista';
 import useHome from '../hooks/useHome';
+import Button from '../../../shared/components/ui/buttons/Botones';
+import BotonCrear from '../../../shared/components/ui/buttons/BotonFlotante';
 
 import accesoAgar from '../../../assets/images/acceso-agar.png';
 import accesoMedioLiquido from '../../../assets/images/acceso-medio-liquido.png';
 import accesoSemilla from '../../../assets/images/acceso-semilla.png';
 import accesoLote from '../../../assets/images/acceso-lote.png';
 
-/**
- * Vista principal / Dashboard de Devora.
- * Muestra lotes por revisar, inventario bajo, accesos rápidos y resumen general.
- */
 const PantallaPrincipalView = () => {
     const navigate = useNavigate();
+    const { dashboard, loading, error, revisarLotes } = useHome();
 
-    const {
-        dashboard,
-        loading,
-        error,
-        revisarLotes
-    } = useHome();
-
-    // Datos del hook
     const cards = dashboard?.cards || {};
-
     const listas = dashboard?.listas || {};
-
     const lotes = dashboard?.lotes || {};
 
     const resumen = {
-        lotesActivos: cards.lotesActivos,
-        bloquesNoContaminados: cards.bloquesNoContaminados,
-        bloquesContaminados: cards.bloquesContaminados,
+        lotesActivos: cards.lotesActivos || 0,
+        bloquesNoContaminados: cards.bloquesNoContaminados || 0,
+        bloquesContaminados: cards.bloquesContaminados || 0,
     };
 
     const RUTAS_RAPIDAS = [
@@ -49,7 +38,6 @@ const PantallaPrincipalView = () => {
         { label: 'Crear Lote', ruta: '/lotes', color: '#ffffff', acento: '#684cb6', imagen: accesoLote },
     ];
 
-    // Estado checkboxes 
     const [checkedLotes, setCheckedLotes] = useState({});
     const [checkedInv, setCheckedInv] = useState({});
 
@@ -58,16 +46,9 @@ const PantallaPrincipalView = () => {
 
     const handleRevisarLotes = async () => {
         try {
-            // Obtener ids marcados
-            const idsSeleccionados = Object.keys(checkedLotes)
-                .filter(id => checkedLotes[id]);
-            // Evitar llamada vacía
-            if (idsSeleccionados.length === 0) {
-                return;
-            }
-            // Hook
+            const idsSeleccionados = Object.keys(checkedLotes).filter(id => checkedLotes[id]);
+            if (idsSeleccionados.length === 0) return;
             await revisarLotes(idsSeleccionados);
-            // Limpiar checks
             setCheckedLotes({});
         } catch (err) {
             console.error(err);
@@ -96,23 +77,17 @@ const PantallaPrincipalView = () => {
     
     // Render 
     return (
-        <>
-            <Titulo>¡Bienvenid@ a Devora!</Titulo>
-
             <Base margen_arriba="mt-24 md:mt-20">
                 <div className="flex flex-col gap-6">
+                    {/* Header */}
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 border-b border-gray-100 pb-4">
+                        <Titulo>¡Bienvenid@ a Dévora!</Titulo>
+                    </div>
 
-                    {/* Fila 1 — Lotes por revisar + Inventario bajo */}
+                    {/* Paneles de Listas */}
                     <div className="flex flex-col md:flex-row gap-4">
                         <PanelLista
-                            icono={
-                                <HugeiconsIcon
-                                    icon={Clock01Icon}
-                                    size={22}
-                                    color={colores.azul}
-                                    strokeWidth={2}
-                                />
-                            }
+                            icono={<HugeiconsIcon icon={Clock01Icon} size={22} color={colores.azul} strokeWidth={2} />}
                             titulo="Lotes por revisar"
                             items={listas.lotesRevision || []}
                             lotes={lotes || []}
@@ -123,14 +98,7 @@ const PantallaPrincipalView = () => {
                             mostrarChecks={true}
                         />
                         <PanelLista
-                            icono={
-                                <HugeiconsIcon
-                                    icon={PackageIcon}
-                                    size={22}
-                                    color={colores.azul}
-                                    strokeWidth={2}
-                                />
-                            }
+                            icono={<HugeiconsIcon icon={PackageIcon} size={22} color={colores.azul} strokeWidth={2} />}
                             titulo="Inventario bajo"
                             items={listas.inventarioBajo || []}
                             checked={checkedInv}
@@ -140,14 +108,14 @@ const PantallaPrincipalView = () => {
                         />
                     </div>
 
-                    {/* Fila 2 — Accesos rápidos */}
+                    {/* Accesos Rápidos */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {RUTAS_RAPIDAS.map((item) => (
                             <AccesoRapido key={item.label} {...item} />
                         ))}
                     </div>
-
-                    {/* Fila 3 — Resumen general */}
+                    
+                    {/* Resumen general */}
                     <div className="bg-white rounded-2xl p-6 shadow-sm">
                         <div className="flex flex-col md:flex-row md:items-center gap-4">
                             <div className="flex-shrink-0">
@@ -155,11 +123,7 @@ const PantallaPrincipalView = () => {
                                     Resumen general
                                 </Text>
                             </div>
-
-                            <Text variante="small" style={{ color: colores.gris }}>
-                                Actividad actual
-                            </Text>
-
+                            <Text variante="small" style={{ color: colores.gris }}>Actividad actual</Text>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 flex-1">
                                 <MetricaCard valor={resumen.lotesActivos} label="Lotes activos" />
                                 <MetricaCard valor={resumen.bloquesNoContaminados} label="Bloques saludables" />
@@ -167,10 +131,8 @@ const PantallaPrincipalView = () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </Base>
-        </>
     );
 };
 
