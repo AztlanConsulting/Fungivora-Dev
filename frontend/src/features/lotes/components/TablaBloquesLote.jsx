@@ -134,7 +134,7 @@ const TablaBloques = ({ bloques = [], loading = false, onToggleContaminado, onCl
                                     </div>
 
                                     {/* Vista laptop (>= 1200px) */}
-                                    <div className={`hidden min-[1200px]:grid ${gridLayoutBloques} items-center transition-colors hover:bg-slate-50 bg-white`}
+                                    <div className={`hidden min-[1200px]:grid ${gridLayoutBloques} items-center transition-colors hover:bg-slate-50 bg-white cursor-pointer`}
                                         style={{ borderBottom: esUltimo ? 'none' : '1px solid #F0F0F0' }}
                                         onDoubleClick={() => onClickBloque?.(bloque, codigoVisual)}>
 

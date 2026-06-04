@@ -61,135 +61,118 @@ function Notas({ notas = [], cargando, error, codigo = "Sin código", onAgregar,
   };
 
   return (
-    <div className="flex h-screen w-full overflow-hidden">
+    <div className="flex flex-col h-screen w-full overflow-hidden">
 
-      {/*Notas a la izquierda*/}
-      <div
-        className={`flex-col w-full md:w-1/2 h-full border-r-2 border-gray-200 
-        ${verHistorial ? "flex" : "hidden"} md:flex relative`}
-      >
-        <Titulo>Notas de {codigo}</Titulo>
+      <Titulo>Notas de {codigo}</Titulo>
 
-        <div className="flex-1 overflow-y-auto scrollbar-thin px-4 md:px-12 py-6">
-          <Base margen_arriba="mt-16 md:mt-20">
-            <div className="flex flex-col gap-4">
+      {/* Divisor principal */}
+      <Base margen_arriba="mt-16 md:mt-20">
+        <div className="w-full h-[calc(100vh-8rem)] bg-white rounded-[32px] shadow-sm border flex flex-col overflow-hidden">
 
-              {/* Área para que en movil funcione con un botón */}
-              <div className="md:hidden w-full px-2 mt-6">
-                <div className="flex items-start">
-                  <div
-                    onClick={() => setVerHistorial(!verHistorial)} // Al darle al botón se ve el historial (notas)
-                    className={`
-                        px-4 h-8 rounded-md transition-all cursor-pointer
-                        flex items-center justify-center
-                        ${verHistorial ? "ring-4" : "ring-2"}
-                        ring-[var(--input-ring)]
-                    `}
-                    style={{
-                      "--input-ring": verHistorial ? colores.verde : colores.azul,
-                      backgroundColor: "#F9FDFF"
-                    }}
-                  >
-                    <Text variante="label">
-                      {verHistorial ? "Historial" : "Notas"}
-                    </Text>
-                  </div>
-                </div>
+          {/* Switch móvil */}
+          <div className="md:hidden px-6 pt-4 shrink-0 border-b border-gray-100 pb-4">
+            <div
+              onClick={() => setVerHistorial(!verHistorial)}
+              className={`px-4 h-8 rounded-md transition-all cursor-pointer inline-flex items-center justify-center
+                ${verHistorial ? "ring-4" : "ring-2"} ring-[var(--input-ring)]`}
+              style={{ "--input-ring": verHistorial ? colores.verde : colores.azul, backgroundColor: "#F9FDFF" }}
+            >
+              <Text variante="label">{verHistorial ? "Historial" : "Notas"}</Text>
+            </div>
+          </div>
+
+          {/* Separador de los paneles */}
+          <div className="flex flex-1 overflow-hidden">
+
+            {/* Panel izquierdo — Historial */}
+            <div
+              className={`flex-col w-full md:w-1/2 h-full border-r border-gray-100
+              ${verHistorial ? "flex" : "hidden"} md:flex`}
+            >
+              <div className="px-6 md:px-8 pt-5 pb-4 border-b border-gray-100 shrink-0">
+                <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "18px" }}>
+                  Historial
+                </Text>
               </div>
 
-              <div className="flex flex-col gap-8 items-center w-full">
+              {/* Lista con scroll */}
+              <div className="flex-1 overflow-y-auto scrollbar-thin px-6 md:px-8 py-4">
                 {cargando ? (
+                  <div className="flex items-center justify-center h-full">
                     <Text variante="body">Cargando notas...</Text>
+                  </div>
                 ) : error ? (
+                  <div className="flex items-center justify-center h-full">
                     <Text variante="body" style={{ color: "red" }}>{error}</Text>
+                  </div>
                 ) : notas.length === 0 ? (
+                  <div className="flex items-center justify-center h-full">
                     <Text variante="body" style={{ color: colores.gris }}>Sin notas registradas.</Text>
+                  </div>
                 ) : (
-                    notas.map((nota) => (
-                        <TarjetaNota
-                            key={nota.id_bitacora}
-                            fecha={formatearFecha(nota.fecha_bitacora)}
-                            preview={nota.notas_bitacora}
-                            porcentaje={nota.porc_colonizacion}
-                        />
-                    ))
+                  <div className="flex flex-col gap-4">
+                    {notas.map((nota) => (
+                      <TarjetaNota
+                        key={nota.id_bitacora}
+                        fecha={formatearFecha(nota.fecha_bitacora)}
+                        preview={nota.notas_bitacora}
+                        porcentaje={nota.porc_colonizacion}
+                      />
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
-          </Base>
-        </div>
-      </div>
 
-      {/* Área para poder introducir texto */}
-      <div
-        className={`w-full md:w-1/2 h-full bg-white relative
-        ${verHistorial ? "hidden" : "flex"} md:flex flex-col`}
-      >
-        {/* Título fijo en la parte superior */}
-        <div className="sticky top-0 left-0 w-full z-10 shrink-0">
-        <Titulo color="white">Notas de {codigo}</Titulo>
-        </div>
+            {/* Panel derecho — Nueva entrada */}
+            <div
+              className={`flex-col w-full md:w-1/2 h-full
+              ${verHistorial ? "hidden" : "flex"} md:flex`}
+            >
+              <div className="px-6 md:px-8 pt-5 pb-4 border-b border-gray-100 shrink-0">
+                <Text variante="medium" style={{ color: colores.azul, fontWeight: "700", fontSize: "18px" }}>
+                  Nueva entrada
+                </Text>
+              </div>
 
-        <div className="flex-1 overflow-y-auto scrollbar-thin px-6 md:px-12 flex flex-col">
+              {/* Formulario con scroll */}
+              <div className="flex-1 overflow-y-auto scrollbar-thin px-6 md:px-8 py-6 flex flex-col">
+                <div className="w-full max-w-sm mx-auto flex flex-col gap-6 flex-1">
+                  <div className="flex flex-col gap-4">
+                    <InputFecha value={fecha} onChange={setFecha} />
+                    <Input
+                      variante="amplio"
+                      placeholder="Escribe tu entrada larga..."
+                      value={contenido}
+                      onChange={(e) => setContenido(e.target.value)}
+                    />
+                    <Text>Porcentaje de colonización: {porcColonizacion}%</Text>
+                    <Slider
+                      value={porcColonizacion}
+                      onChange={setPorcColonizacion}
+                    />
+                  </div>
+                </div>
 
-          <div className="w-full max-w-sm mx-auto flex flex-col gap-6 px-4 md:px-0 mt-24 md:mt-40">
+                <div className="flex-1 min-h-[10px]" />
 
-            {/* Switch para móvil */}
-            <div className="md:hidden w-full mt-8">
-              <div className="flex items-start">
-                <div
-                  onClick={() => setVerHistorial(!verHistorial)}
-                  className={`px-4 h-8 rounded-md transition-all cursor-pointer flex items-center justify-center ${verHistorial ? "ring-4" : "ring-2"} ring-[var(--input-ring)]`}
-                  style={{
-                    "--input-ring": verHistorial ? colores.verde : colores.azul,
-                    backgroundColor: "#F9FDFF"
-                  }}
-                >
-                  <Text variante="label">
-                    {verHistorial ? "Historial" : "Notas"}
+                {errorForm && (
+                  <Text variante="body" style={{ color: "red", fontSize: "16px", fontWeight: "600", textAlign: "center" }}>
+                    Por favor completa los campos correctamente.
                   </Text>
+                )}
+
+                <div className="w-full flex justify-center pt-6 pb-6 shrink-0">
+                  <Button variant="agregar" onClick={handleAgregar} disabled={guardando}>
+                    {guardando ? "Guardando..." : "Agregar"}
+                  </Button>
                 </div>
               </div>
             </div>
 
-            <Text variante="medium" className="text-2xl font-bold text-gray-800">
-              Nueva entrada
-            </Text>
-
-            <div className="flex flex-col gap-4">
-              <InputFecha value={fecha} onChange={setFecha} />
-              <Input
-                variante="amplio"
-                placeholder="Escribe tu entrada larga..."
-                value={contenido}
-                onChange={(e) => setContenido(e.target.value)}
-              />
-
-              <Text> Porcentaje de colonización: {porcColonizacion}%</Text>
-              <Slider 
-                value={porcColonizacion} 
-                onChange={setPorcColonizacion}
-              />
-            </div>
           </div>
-
-          <div className="flex-1 min-h-[10px]" />
-
-          {errorForm && (
-            <Text variante="body" style={{ color: "red", fontSize: "16px", fontWeight: "600", textAlign: "center" }}>
-              Por favor completa los campos correctamente.
-            </Text>
-          )}
-
-          <div className="mt-auto w-full flex justify-center pt-10 pb-24 md:pb-12 shrink-0">
-            <Button variant="agregar" onClick={handleAgregar} disabled={guardando}>
-              {guardando ? "Guardando..." : "Agregar"}
-            </Button>
-          </div>
-
         </div>
-
-      </div>
+      </Base>
 
       <ModalAlerta
         visible={modalAlerta.visible}

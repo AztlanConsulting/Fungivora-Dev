@@ -221,7 +221,7 @@ const DetalleLote = () => {
                             loading={cargando}
                             onToggleContaminado={handleLocalToggleContaminado}
                             codigo_lote={codigoParaTabla}
-                            onClickBloque={(bloque, codigoVisual) => navigate(`/bloque/notas/${bloque.id_bloque}`, {state: { codigoVisual }})}
+                            onClickBloque={(bloque, codigoVisual) => navigate(`/lotes/bloque/notas/${bloque.id_bloque}`, {state: { codigoVisual }})}
                             usarCodigoPrecalculado={true}
                         />
                     </div>

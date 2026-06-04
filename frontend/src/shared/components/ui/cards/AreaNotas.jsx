@@ -21,7 +21,7 @@ const TarjetaNota = ({ fecha, preview, porcentaje }) => {
         {fecha}
       </Text>
 
-      <div className="w-full h-[1.8px] bg-gray-200 rounded-full"></div>
+      <div className="w-full h-[1.6px] bg-gray-200 rounded-full"></div>
 
       <div className="mt-2">
         {/* Para vizualizar la cacho de texto*/}
@@ -44,9 +44,6 @@ const TarjetaNota = ({ fecha, preview, porcentaje }) => {
           Porcentaje de colonización: {Math.round(porcentaje)}%
         </Text>
       )}
-
-      {/* Área para el icono de imagen si es necesario */}
-      <div className="h-4"></div>
     </div>
   );
 };

@@ -40,7 +40,7 @@ export default function AppRoutes() {
                 <Route path="/lotes/detalle/:id_lote" element={<Lote />} />
 
                 {/* Notas de bloque */}
-                <Route path="/bloque/notas/:id_bloque" element={<NotasBloque />} />
+                <Route path="/lotes/bloque/notas/:id_bloque" element={<NotasBloque />} />
 
                 {/* Rutas inventario */}
                 <Route path="/inventario" element={<Inventario />} />
