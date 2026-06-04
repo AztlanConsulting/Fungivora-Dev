@@ -321,7 +321,7 @@ const [todosLosLotesMarcados, setTodosLosLotesMarcados] = useState(false);
   const totalUnidadesBloques = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad || 0), 0);
 
   return (
-    <Base margen_arriba="mt-20 md:mt-20">
+    <Base margen_arriba="mt-12 md:mt-12, margen_abajo=mb-2">
       {/* Botón para cambiar del forms a la vista de tabla*/}
       <div className="min-[1450px]:hidden flex justify-start mb-6 px-4">
         <BotonCrear
@@ -335,7 +335,7 @@ const [todosLosLotesMarcados, setTodosLosLotesMarcados] = useState(false);
 
       <div className="flex flex-col min-[1450px]:flex-row gap-8 items-start">
         {/* Componente de las tablas*/}
-      <div className={`w-full min-[1450px]:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} min-[1450px]:block min-h-[700px] md:min-h-0 md:max-h-[700px] overflow-hidden`}>
+      <div className={`w-full min-[1450px]:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} min-[1450px]:block`}>
         {paso === 1 ? (
             <>
               <Titulo>Lotes</Titulo>

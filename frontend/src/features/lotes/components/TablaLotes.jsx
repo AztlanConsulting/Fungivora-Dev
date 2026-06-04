@@ -88,7 +88,7 @@ const TablaLotes = ({
       </div>
 
       {/* Cuerpo de la tabla */}
-      <div className="max-h-[605px] md:max-h-[450px] overflow-y-auto flex flex-col gap-3 md:gap-0">
+      <div className="max-h-[455px] md:max-h-[305px] overflow-y-auto flex flex-col gap-3 md:gap-0">
         {loading ? (
           <div className="flex justify-center items-center h-[200px] w-full">
             <div className="flex flex-col items-center gap-2">
