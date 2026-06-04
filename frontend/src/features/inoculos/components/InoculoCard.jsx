@@ -58,7 +58,6 @@ const InoculoCard = ({ especie, tipoForzado, onIndividualChange }) => {
         });
     };
 
-    const prevTipoForzado = React.useRef(tipoForzado);
     const handleChangeLocal = (e) => {
         const nuevoTipo = e.target.value;
         handleTipoChange(nuevoTipo);
