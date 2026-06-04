@@ -55,7 +55,7 @@ describe('DetalleInoculo — Pruebas de Integración', () => {
     })
     
     render(<MemoryRouter initialEntries={['/inoculos/detalle/1']}><DetalleInoculo /></MemoryRouter>)
-    expect(screen.getByText(/Error: Error de servidor/i)).toBeInTheDocument()
+    expect(screen.getByText(/Error de conexión/i)).toBeInTheDocument()
   })
 
   it('renderiza la información del inóculo y los banners correctamente cuando los datos cargan', () => {
