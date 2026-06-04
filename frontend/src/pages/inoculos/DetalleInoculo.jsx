@@ -20,7 +20,10 @@ const DetalleInoculo = () => {
         </div>
     );
     
-    if (error) return <div className="text-red-500 p-6">Error: {error}</div>;
+    if (error) return(
+        <div className="flex justify-center items-center h-[200px] w-full">
+            <Text variante="medium p-6" style={{ color: "red", fontWeight: '500', fontSize: '22px' }}> Error de conexión</Text>
+        </div> );
     if (!inoculo) return <div className="p-6">No se encontró el inóculo.</div>;
 
     return (
