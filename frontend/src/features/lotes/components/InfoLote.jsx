@@ -3,8 +3,15 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import Text from '../../../shared/components/ui/basics/Texto';
 import { colores } from '../../../shared/components/ui/basics/Colores';
 
-const InfoLote = ({ icon: Icon, label, value, showDivider = true }) => (
-    <div className="flex items-center gap-4 w-full md:flex-1 px-4">
+const InfoLote = ({
+    icon: Icon,
+    label,
+    value,
+    showDivider = true,
+    className = "flex items-center gap-4 w-full md:flex-1 px-4",
+    dividerClassName = "hidden md:block h-10 w-[1px] bg-gray-100 ml-auto",
+}) => (
+    <div className={className}>
         <div
             className="flex items-center justify-center min-w-[48px] h-[48px] rounded-full"
             style={{ backgroundColor: '#EBEBFF' }}
@@ -15,8 +22,8 @@ const InfoLote = ({ icon: Icon, label, value, showDivider = true }) => (
             <Text variante="body" style={{ color: '#666', fontSize: '13px' }}>{label}</Text>
             <Text variante="option" style={{ color: '#1A1A40' }}>{value}</Text>
         </div>
-        {/* El divisor solo se muestra en md (desktop) */}
-        {showDivider && <div className="hidden md:block h-10 w-[1px] bg-gray-100 ml-auto" />}
+        {/* El divisor solo se muestra en el breakpoint de escritorio */}
+        {showDivider && <div className={dividerClassName} />}
     </div>
 );
 
