@@ -4,14 +4,14 @@ class Dashboard {
     static async fetch_lotes_revision() {
         try {
             const [filas] = await db.execute(`
-                SELECT *
+                SELECT *,
+                    COALESCE(fecha_ultima_revision, fecha_lote) AS fecha_real
                 FROM Lotes
                 WHERE activo = 1
-                AND DATEDIFF(
-                    NOW(),
-                    COALESCE(fecha_ultima_revision, fecha_lote)
-                ) >= 7
-                ORDER BY fecha_lote ASC
+                AND COALESCE(fecha_ultima_revision, fecha_lote)
+                    BETWEEN NOW() - INTERVAL 30 DAY
+                        AND NOW() - INTERVAL 7 DAY
+                ORDER BY fecha_real ASC;
             `);
 
             return filas;

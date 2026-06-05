@@ -20,7 +20,7 @@ exports.fetch_dashboard = async (req, res, _next) => {
         const lotesFormateados = lotesRevision.map(lote => ({
             id: lote.id_lote,
             nombre: lote.codigo_fungivora,
-            detalle: new Date(lote.fecha_lote).toLocaleDateString('es-MX'),
+            detalle: new Date(lote.fecha_real).toLocaleDateString('es-MX'),
             ruta: `/lotes/detalle/${lote.id_lote}`
         }));
 
