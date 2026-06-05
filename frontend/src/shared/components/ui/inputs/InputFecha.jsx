@@ -5,8 +5,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Calendar03Icon } from '@hugeicons/core-free-icons';
 
-const AÑOS_ADELANTE = 80;
-
 const hoyInicial = () => {
     const hoy = new Date();
     return {
@@ -16,20 +14,30 @@ const hoyInicial = () => {
     };
 };
 
-const MAX_YEAR = new Date().getFullYear() + AÑOS_ADELANTE; 
+const limiteFechas = () => {
+    const hoy = new Date();
+    return {
+        min: new Date(hoy.getFullYear() - 1, hoy.getMonth(), hoy.getDate()),
+        max: new Date(hoy.getFullYear() + 1, hoy.getMonth(), hoy.getDate()),
+    };
+};
 
 const esFechaValida = ({ day, month, year }) => {
     if (!day || !month || !year || String(year).length < 4) return false;
     const d = Number(day);
     const m = Number(month);
     const y = Number(year);
-    if (y < 2020 || y > MAX_YEAR) return false; 
     const fecha = new Date(y, m - 1, d);
-    return (
+
+    const esReal = (
         fecha.getFullYear() === y &&
         fecha.getMonth() === m - 1 &&
         fecha.getDate() === d
     );
+    if (!esReal) return false;
+
+    const { min, max } = limiteFechas();
+    return fecha >= min && fecha <= max;
 };
 
 const InputFecha = ({ value = {}, onChange }) => {
@@ -90,8 +98,8 @@ const InputFecha = ({ value = {}, onChange }) => {
                             year: String(date.getFullYear()),
                         });
                     }}
-                    minDate={new Date(2020, 0, 1)}
-                    maxDate={new Date(new Date().getFullYear() + AÑOS_ADELANTE, 11, 31)}
+                    minDate={limiteFechas().min}
+                    maxDate={limiteFechas().max}
                     withPortal
                     popperPlacement="bottom-start"
                 />
