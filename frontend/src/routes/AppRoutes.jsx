@@ -7,6 +7,7 @@ import { MainLayout, RutaProtegida } from "../shared/components/layout";
 import CrearAgar from "../pages/inoculos/agar/CrearAgar";
 import CrearMedioLiquido from "../pages/inoculos/medioLiquido/CrearMedioLiquido";
 import CrearSemilla from "../pages/inoculos/semillas/CrearSemillas";
+import DetalleInoculo from "../pages/inoculos/DetalleInoculo";
 
 export default function AppRoutes() {
     return (
@@ -44,6 +45,8 @@ export default function AppRoutes() {
 
                 {/* Rutas biblioteca genetica */}
                 <Route path="/inoculos" element={<BibliotecaGenetica />} />
+
+                <Route path="/inoculos/detalle/:id_inoculo" element={<DetalleInoculo />} />
 
                 {/* Rutas inóculos */}
                 <Route path="/inoculos/crear/agar" element={<CrearAgar />} />

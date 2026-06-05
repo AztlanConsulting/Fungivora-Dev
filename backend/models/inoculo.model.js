@@ -1,4 +1,3 @@
-// backend/models/inoculo.model.js
 const db = require('../util/db');
 
 module.exports = class Inoculo {
@@ -150,19 +149,29 @@ module.exports = class Inoculo {
     }
 
     static async updateInsumo({ cantidad, ingredienteId }, connection) {
-        await connection.execute(`
+        const [result] = await connection.execute(`
             UPDATE Insumos
             SET cantidad = cantidad - ?
-            WHERE id_insumo = ?
-        `, [cantidad, ingredienteId]);
+            WHERE id_insumo = ? AND cantidad >= ?
+        `, [cantidad, ingredienteId, cantidad]);
+
+        if (result.affectedRows === 0) {
+            throw new Error('STOCK_INSUFICIENTE');
+        }
     }
 
     static async updateInoculo({ cantidad_disponible, id }, connection) {
-        await connection.execute(`
+        if (id == null) return;
+
+        const [result] = await connection.execute(`
             UPDATE Inoculos
             SET cantidad_disponible = cantidad_disponible - ?
-            WHERE id_inoculo = ?
-        `, [cantidad_disponible, id]);
+            WHERE id_inoculo = ? AND cantidad_disponible >= ?
+        `, [cantidad_disponible, id, cantidad_disponible]);
+
+        if (result.affectedRows === 0) {
+            throw new Error('STOCK_INSUFICIENTE');
+        }
     }
 
     static async insertLog({ ingredienteId, cantidad, fecha, tipo }, connection) {
@@ -170,5 +179,29 @@ module.exports = class Inoculo {
             INSERT INTO Logs_ins_outs (id_insumo, cantidad, fecha, tipo)
             VALUES (?, ?, ?, ?)
         `, [ingredienteId, cantidad, fecha, tipo]);
+    }
+
+    static async fetch_by_id(id_inoculo) {
+        const [rows] = await db.execute(`
+            SELECT i.*, 
+                madre.codigo_fungivora AS nombre_inoculo_usado,
+                i.id_inoculo_usado
+            FROM Inoculos i
+            LEFT JOIN Inoculos madre ON i.id_inoculo_usado = madre.id_inoculo
+            WHERE i.id_inoculo = ? 
+            LIMIT 1
+        `, [id_inoculo]);
+
+        if (rows.length === 0) return null;
+
+        const inoculo = rows[0];
+        const [ingredientes] = await db.execute(`
+            SELECT i.id_insumo, ins.nombre, i.cantidad, ins.unidad
+            FROM Ingredientes i
+            JOIN Insumos ins ON i.id_insumo = ins.id_insumo
+            WHERE i.id_inoculo_creado = ?
+        `, [id_inoculo]);
+
+        return { ...inoculo, ingredientes };
     }
 };
