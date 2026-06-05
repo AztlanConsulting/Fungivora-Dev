@@ -11,7 +11,7 @@ const InputNota = ({
   value,
   onChange,
   placeholder = "Escribe tu nota...",
-  rows = 7,
+  rows = 9,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 
