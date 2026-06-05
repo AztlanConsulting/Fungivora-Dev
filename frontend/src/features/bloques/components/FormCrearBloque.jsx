@@ -44,8 +44,8 @@ const FormCrearBloque = ({
   const inputContainerClasses = "flex flex-col gap-2 w-full";
 
   return (
-    <form 
-      className="flex flex-col gap-5 max-w-md mx-auto w-full px-2 sm:px-0"
+    <form
+      className="flex flex-col gap-5 w-full"
       onSubmit={(e) => { e.preventDefault(); onAgregar(); }}
     >
       <Titulo>Bloques</Titulo>
@@ -124,7 +124,7 @@ const FormCrearBloque = ({
       )}
 
       <div className="flex justify-center pt-2">
-        <Button variant="primario" size="lg" className="w-full sm:max-w-[200px]" type="submit">
+        <Button variant="primario" size="lg" className="w-full" type="submit">
           Crear Bloque
         </Button>
       </div>
