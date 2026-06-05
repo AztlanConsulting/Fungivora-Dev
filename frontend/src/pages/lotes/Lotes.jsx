@@ -369,13 +369,13 @@ const [todosLosLotesMarcados, setTodosLosLotesMarcados] = useState(false);
         </div>
 
         {/* Componentes de formularios*/}
-        <div className="w-full lg:w-[440px] flex flex-col items-center">
-          <div 
+        <div className="w-full min-[1450px]:w-[440px] flex flex-col items-center">
+          <div
             className={`
-              w-full min-[1450px]:w-[440px] bg-white rounded-[32px] shadow-sm border p-8
-              ${verFormulario ? "block" : "hidden"} 
-              min-[1450px]:block min-[1450px]:mt-0 
-              mx-auto 
+              w-full max-w-[440px] min-[1450px]:max-w-none min-[1450px]:w-[440px] bg-white rounded-[32px] shadow-sm border p-8
+              ${verFormulario ? "block" : "hidden"}
+              min-[1450px]:block min-[1450px]:mt-0
+              mx-auto
             `}
           >
               {paso === 1 ? (
