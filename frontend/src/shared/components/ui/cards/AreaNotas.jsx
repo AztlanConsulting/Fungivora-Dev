@@ -27,7 +27,8 @@ const TarjetaNota = ({ fecha, preview }) => {
           style={{
             color: "#666",
             lineHeight: "1.5",
-            fontSize: "inherit"
+            fontSize: "inherit",
+            wordBreak: "break-word"
           }}
         >
           {preview}
