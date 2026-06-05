@@ -62,7 +62,7 @@ const Login = () => {
 
             {/* Títulos */}
             <div className="w-full text-center mb-8 sm:mb-10">
-              <Text variante="title" style={{ color: colores.azul }}>Devora</Text>
+              <Text variante="title" style={{ color: colores.azul }}>Dévora</Text>
               <div className="mt-2">
                 <Text variante="medium" style={{ color: colores.azul }}>¡Es un gusto verte de nuevo!</Text>
               </div>
