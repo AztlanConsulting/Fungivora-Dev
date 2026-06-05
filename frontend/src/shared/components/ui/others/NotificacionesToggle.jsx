@@ -32,19 +32,20 @@ const NotificacionesToggle = () => {
         <div className="flex flex-col gap-1">
             <div
                 className="flex items-center justify-between px-5 py-3 rounded-2xl gap-6"
-                style={{ backgroundColor: '#EEF0FB' }}
+                style={{
+                    backgroundColor: '#FFFFFF',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.10), 0 0 0 0.5px rgba(0,0,0,0.06)',
+                }}
             >
-                <div className="flex items-center gap-3">
-                    <HugeiconsIcon
-                        icon={isSubscribed ? Notification01Icon : NotificationOff01Icon}
-                        size={20}
-                        color={isSubscribed ? colores.azul : colores.gris}
-                        strokeWidth={1.5}
-                    />
-                    <Text variante="label" style={{ color: `${isSubscribed ? colores.azul : colores.gris}`, fontWeight: 500 }}>
-                        Notificaciones
-                    </Text>
-                </div>
+                <Text
+                    variante="label"
+                    style={{
+                        color: isSubscribed ? colores.azul : colores.gris,
+                        fontWeight: 500,
+                    }}
+                >
+                    Notificaciones
+                </Text>
 
                 {/* Toggle */}
                 <button
@@ -60,47 +61,56 @@ const NotificacionesToggle = () => {
                                 ? 'Desactivar notificaciones push'
                                 : 'Activar notificaciones push'
                     }
-                    className="relative flex-shrink-0 transition-opacity"
+                    className="relative flex-shrink-0"
                     style={{
-                        width: 51,
-                        height: 31,
+                        width: 58,
+                        height: 34,
                         borderRadius: 999,
                         border: 'none',
                         padding: 0,
                         cursor: loading || denied ? 'not-allowed' : 'pointer',
                         opacity: loading || denied ? 0.4 : 1,
-                        backgroundColor: isSubscribed ? colores.azul : '#C7C7CC',
-                        transition: 'background-color 0.25s ease',
+                        backgroundColor: '#FFFFFF',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.13), 0 0 0 0.5px rgba(0,0,0,0.08)',
                         outline: 'none',
                     }}
                 >
                     <span
                         style={{
                             position: 'absolute',
-                            top: 2,
-                            left: isSubscribed ? 'calc(100% - 29px)' : 2,
-                            width: 27,
-                            height: 27,
+                            top: 3,
+                            left: isSubscribed ? 'calc(100% - 31px)' : 3,
+                            width: 28,
+                            height: 28,
                             borderRadius: '50%',
-                            backgroundColor: '#FFFFFF',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.25)',
-                            transition: 'left 0.25s ease',
+                            backgroundColor: isSubscribed ? colores.azul : '#C7C7CC',
+                            boxShadow: isSubscribed
+                                ? '0 2px 4px rgba(0,0,0,0.25)'
+                                : '0 2px 4px rgba(0,0,0,0.18)',
+                            transition: 'left 0.25s ease, background-color 0.25s ease',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}
                     >
-                        {loading && (
+                        {loading ? (
                             <span
                                 style={{
                                     width: 14,
                                     height: 14,
-                                    border: `2px solid ${colores.azul}`,
+                                    border: `2px solid #FFFFFF`,
                                     borderTopColor: 'transparent',
                                     borderRadius: '50%',
                                     display: 'inline-block',
                                     animation: 'spin 0.7s linear infinite',
                                 }}
+                            />
+                        ) : (
+                            <HugeiconsIcon
+                                icon={isSubscribed ? Notification01Icon : NotificationOff01Icon}
+                                size={14}
+                                color="#FFFFFF"
+                                strokeWidth={1.5}
                             />
                         )}
                     </span>

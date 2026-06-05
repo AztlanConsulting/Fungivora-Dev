@@ -86,7 +86,7 @@ const PantallaPrincipalView = () => {
                 </div>
 
                 {/* Notificaciones */}
-                <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex flex-col md:flex-row gap-4 items-right justify-end">
                     <NotificacionesToggle />
                 </div>
 
