@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import useDetalleInoculo from '../../features/inoculos/hooks/useDetalleInoculo'
 import BannerIngredientes from '../../features/inoculos/components/BannerIngredientes';
 import BannerInoculoInfo from '../../features/inoculos/components/BannerInoculoInfo';
+import NotasInoculo from '../../features/inoculos/components/NotasInoculo';
 import { Titulo } from '../../shared/components/ui';
 import { Base } from '../../shared/components/layout';
 import { Text } from '../../shared/components/ui';
@@ -37,6 +38,9 @@ const DetalleInoculo = () => {
 
                 {/* Banner 2: Ingredientes */}
                 <BannerIngredientes ingredientes={ingredientes} inoculo={inoculo} />
+
+                {/* Notas inóculo */}
+                <NotasInoculo id_inoculo={id_inoculo} />
             </div>
         </Base>
     );

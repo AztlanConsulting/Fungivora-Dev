@@ -37,4 +37,10 @@ router.post('/crear', inoculoController.post_crear_inoculo);
 // Ruta para encontrar los bloques por id de lote
 router.get('/detalle', inoculoController.get_inoculum_by_id);
 
+// Obtener notas de un inóculo
+router.get('/notas/:id_inoculo', inoculoController.get_notas_inoculo_by_id);
+
+// Registrar nueva nota en un inóculo
+router.post('/notas/crear', inoculoController.post_nota_inoculo);
+
 module.exports = router;

@@ -22,7 +22,11 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
-    await cleanup(state);
+    try {
+        await cleanup(state);
+    } catch (error) {
+        console.error("Error en cleanup:", error);
+    }
 });
 
 afterAll(async () => {

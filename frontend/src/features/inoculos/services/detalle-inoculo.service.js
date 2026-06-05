@@ -13,5 +13,17 @@ export const InoculoService = {
     getAllInoculos: async () => {
         const response = await api.get('/inoculos/');
         return response.data;
+    },
+
+    // Obtener notas de un inóculo
+    fetchNotasInoculo: async (id_inoculo) => {
+        const response = await api.get(`/inoculos/notas/${id_inoculo}`);
+        return response.data;
+    },
+
+    // Registrar una nota nueva
+    postNotaInoculo: async (datos) => {
+        const response = await api.post("/inoculos/notas/crear", datos);
+        return response.data;
     }
 };
