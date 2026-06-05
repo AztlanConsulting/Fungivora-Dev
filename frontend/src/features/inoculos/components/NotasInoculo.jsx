@@ -13,6 +13,7 @@ const NotasInoculo = ({ id_inoculo }) => {
     const [nuevaNota, setNuevaNota] = useState("");
     const [error, setError] = useState(""); 
     const [alerta, setAlerta] = useState({ visible: false, variante: 'exito', mensaje: '' });
+    const [procesando, setProcesando] = useState(false);
 
     const getFechaHoy = () => {
         const hoy = new Date();
@@ -29,7 +30,7 @@ const NotasInoculo = ({ id_inoculo }) => {
 
     const [verFormulario, setVerFormulario] = useState(false);
 
-    const handleGuardar = async () => {
+   const handleGuardar = async () => {
         setError("");
         const notaLimpia = nuevaNota.trim();
         
@@ -38,17 +39,18 @@ const NotasInoculo = ({ id_inoculo }) => {
             return;
         }
         
+        setProcesando(true); 
         const fechaISO = `${fecha.year}-${fecha.month}-${fecha.day}`;
         
         try {
             await postNota({ id_inoculo, fecha: fechaISO, notas_bitacora: notaLimpia });
-            
             setAlerta({ visible: true, variante: 'exito', mensaje: 'Nota agregada correctamente.' });
-            
             setNuevaNota("");
             setFecha(getFechaHoy());
         } catch {
             setAlerta({ visible: true, variante: 'error', mensaje: 'Error al guardar la nota. Intenta de nuevo.' });
+        } finally {
+            setProcesando(false); 
         }
     };
 
@@ -125,9 +127,9 @@ return (
                 onClick={handleGuardar} 
                 variant="registrar" 
                 className="w-full justify-center" 
-                disabled={esInvalido}
+                disabled={esInvalido || procesando} 
             >
-                Agregar
+                {procesando ? "Guardando..." : "Agregar"}
             </Button>
         </div>
     </div>
