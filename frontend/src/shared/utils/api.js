@@ -24,7 +24,7 @@ const handleResponse = async (res) => {
             }
         }
 
-        const mensaje = data?.msg || data?.error || `Error ${res.status}: ${res.statusText}`;
+        const mensaje = data?.msg || data?.error || data?.message || `Error ${res.status}: ${res.statusText}`;
         const err = new Error(mensaje);
         err.status = res.status;
         err.response = { status: res.status, data };

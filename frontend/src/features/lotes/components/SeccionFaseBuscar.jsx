@@ -3,10 +3,9 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { Tick02Icon } from '@hugeicons/core-free-icons';
 
 import Text from '../../../shared/components/ui/basics/Texto';
-import { colores } from '../../../shared/components/ui/basics/Colores';
 import { Stepper } from '../../../shared/components/ui';
+import { CustomCheckbox } from '../../../shared/components/ui/others/SeleccionarTodos';
 
-const colorBordeDestacado = '#7F7FD5';
 
 //const SeccionFaseBuscar = ({ fases, fase, setFase, busqueda, setBusqueda }) => {
 const SeccionFaseBuscar = ({
@@ -16,41 +15,7 @@ const SeccionFaseBuscar = ({
     todosContaminados,
     onToggleTodosContaminados
 }) => {
-    const renderCheckboxTodos = () => (
-        <label className="relative flex items-center gap-3 cursor-pointer">
-            <input
-                type="checkbox"
-                className="sr-only peer"
-                checked={todosContaminados}
-                onChange={() =>
-                    onToggleTodosContaminados &&
-                    onToggleTodosContaminados(!todosContaminados)
-                }
-            />
-
-            <div
-                className="w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all peer-checked:bg-white"
-                style={{
-                    borderColor: todosContaminados
-                        ? colorBordeDestacado
-                        : '#D1D1D1',
-                }}
-            >
-                {todosContaminados && (
-                    <HugeiconsIcon
-                        icon={Tick02Icon}
-                        size={16}
-                        strokeWidth={3}
-                        color={colorBordeDestacado}
-                    />
-                )}
-            </div>
-
-            <Text variante="body" style={{ fontWeight: '600', color: colores.azul }}>
-                Marcar todos <br /> como contaminados
-            </Text>
-        </label>
-    );
+   
 
     return (
         <div className="flex flex-col lg:flex-row items-center gap-6 w-full">
@@ -66,7 +31,15 @@ const SeccionFaseBuscar = ({
                     </div>
 
                     <div className="flex justify-end">
-                        {renderCheckboxTodos()}
+                         <CustomCheckbox
+                            checked={todosContaminados}
+                            onChange={onToggleTodosContaminados}
+                            label={
+                                <>
+                                    Marcar todos <br /> como contaminados
+                                </>
+                            }
+                        />
                     </div>
                 </div>
             </div>

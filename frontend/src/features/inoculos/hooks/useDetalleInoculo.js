@@ -10,8 +10,11 @@ const useDetalleInoculo = (id_inoculo) => {
 
     useEffect(() => {
         const fetchInoculoData = async () => {
-            if (!id_inoculo) return;
-            
+            if (!id_inoculo) {
+                setCargando(false);
+                return;
+            }
+
             setCargando(true);
             setError(null);
             

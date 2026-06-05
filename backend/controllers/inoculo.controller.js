@@ -137,6 +137,8 @@ exports.post_crear_inoculo = async (req, res, next) => {
             });
         }
         next(error);
+    } finally {
+        connection.release();
     }
 };
 

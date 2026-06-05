@@ -42,8 +42,11 @@ function Lotes() {
 
   const {
     datos, ubicaciones, especiesDisponibles,
-    getInoculosPorEspecie, cargando, addLote, deleteLote
+    getInoculosPorEspecie, cargando, error, addLote, deleteLote,
+    fetchLotesTodos, refresh
   } = useLotes();
+const [todosLosLotesMarcados, setTodosLosLotesMarcados] = useState(false);
+
   const [verFormulario, setVerFormulario] = useState(false);
   const [nuevaFila, setNuevaFila] = useState({ especie: "", ubicacion_lote: ""});
   const [errorValidacion, setErrorValidacion] = useState("");
@@ -58,6 +61,15 @@ function Lotes() {
   const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
 
   const location = useLocation();
+
+  const handleToggleTodosLotes = async (checked) => {
+    setTodosLosLotesMarcados(checked);
+    if (checked) {
+      await fetchLotesTodos(); // Si activa el checkbox, trae todos los lotes
+    } else {
+      await refresh(); // Si lo desactiva, vuelve a traer los lotes normales
+    }
+  };
     
   const abrirModalCancelar = useCallback(() => {
     if (bloquesTemporales.length > 0) {
@@ -309,7 +321,7 @@ function Lotes() {
   const totalUnidadesBloques = bloquesTemporales.reduce((acc, bloque) => acc + Number(bloque.cantidad || 0), 0);
 
   return (
-    <Base margen_arriba="mt-20 md:mt-20">
+    <Base margen_arriba="mt-12 md:mt-12, margen_abajo=mb-2">
       {/* Botón para cambiar del forms a la vista de tabla*/}
       <div className="min-[1450px]:hidden flex justify-start mb-6 px-4">
         <BotonCrear
@@ -323,19 +335,22 @@ function Lotes() {
 
       <div className="flex flex-col min-[1450px]:flex-row gap-8 items-start">
         {/* Componente de las tablas*/}
-      <div className={`w-full min-[1450px]:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} min-[1450px]:block min-h-[600px] md:min-h-0 md:max-h-[600px] overflow-hidden`}>
+      <div className={`w-full min-[1450px]:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} min-[1450px]:block`}>
         {paso === 1 ? (
             <>
               <Titulo>Lotes</Titulo>
                 <TablaLotes
                   datos={datos}
                   loading={cargando}
+                  error={error}
                   onEliminar={prepararEliminacion}
                   columnas={columnas}
                   onVerDetalle={(lote) => navigate(`/lotes/detalle/${lote.id_lote}`, { state: lote })}
                   obtenerEstiloFase={obtenerEstiloFase}
                   gridLayout="grid-cols-1 md:grid-cols-[1.2fr_1.1fr_1.2fr_1fr_0.5fr]"
                   colorBordeHeader="#F2F2FC"
+                  obtenerTodosLotes={todosLosLotesMarcados}
+                  onToggleTodosLotes={handleToggleTodosLotes}
                 />
             </>
           ) : (

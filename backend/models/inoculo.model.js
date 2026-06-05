@@ -149,19 +149,29 @@ module.exports = class Inoculo {
     }
 
     static async updateInsumo({ cantidad, ingredienteId }, connection) {
-        await connection.execute(`
+        const [result] = await connection.execute(`
             UPDATE Insumos
             SET cantidad = cantidad - ?
-            WHERE id_insumo = ?
-        `, [cantidad, ingredienteId]);
+            WHERE id_insumo = ? AND cantidad >= ?
+        `, [cantidad, ingredienteId, cantidad]);
+
+        if (result.affectedRows === 0) {
+            throw new Error('STOCK_INSUFICIENTE');
+        }
     }
 
     static async updateInoculo({ cantidad_disponible, id }, connection) {
-        await connection.execute(`
+        if (id == null) return;
+
+        const [result] = await connection.execute(`
             UPDATE Inoculos
             SET cantidad_disponible = cantidad_disponible - ?
-            WHERE id_inoculo = ?
-        `, [cantidad_disponible, id]);
+            WHERE id_inoculo = ? AND cantidad_disponible >= ?
+        `, [cantidad_disponible, id, cantidad_disponible]);
+
+        if (result.affectedRows === 0) {
+            throw new Error('STOCK_INSUFICIENTE');
+        }
     }
 
     static async insertLog({ ingredienteId, cantidad, fecha, tipo }, connection) {
