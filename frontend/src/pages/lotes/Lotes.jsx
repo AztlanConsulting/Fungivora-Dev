@@ -333,7 +333,7 @@ const [todosLosLotesMarcados, setTodosLosLotesMarcados] = useState(false);
         />
       </div>
 
-      <div className="flex flex-col min-[1450px]:flex-row gap-8 items-start">
+      <div className="flex flex-col min-[1450px]:flex-row gap-8 items-center min-[1450px]:items-start min-h-[60vh]">
         {/* Componente de las tablas*/}
       <div className={`w-full min-[1450px]:flex-1 bg-white rounded-[32px] shadow-sm border p-4 md:p-8 ${verFormulario ? "hidden" : "block"} min-[1450px]:block`}>
         {paso === 1 ? (
@@ -369,10 +369,10 @@ const [todosLosLotesMarcados, setTodosLosLotesMarcados] = useState(false);
         </div>
 
         {/* Componentes de formularios*/}
-        <div className="flex flex-col lg:w-[440px] w-full justify-center">
+        <div className="w-full lg:w-[440px] flex flex-col items-center">
           <div 
             className={`
-              w-full min-[1450px]:w-[440px] bg-white rounded-[32px] shadow-sm border p-8 
+              w-full min-[1450px]:w-[440px] bg-white rounded-[32px] shadow-sm border p-8
               ${verFormulario ? "block" : "hidden"} 
               min-[1450px]:block min-[1450px]:mt-0 
               mx-auto 

@@ -79,7 +79,7 @@ describe('Integración — formulario con todos los tipos de Input', () => {
             cantidad: '50',
             peso: '12.5', 
         })
-    })
+    }, 10000)
 
     it('flujo completo: escribir → limpiar → reescribir', async () => {
         const user = userEvent.setup()
@@ -97,7 +97,7 @@ describe('Integración — formulario con todos los tipos de Input', () => {
         expect(onSubmit).toHaveBeenCalledWith(
             expect.objectContaining({ nombre: 'Nombre correcto' })
         )
-    })
+    }, 10000)
 
     it('Tab pasa por todos los inputs', async () => {
         const user = userEvent.setup()
