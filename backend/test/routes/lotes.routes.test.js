@@ -37,7 +37,7 @@ describe('Lotes Routes — /api/lotes', () => {
                 { id_lote: 'uuid-1', codigo_fungivora: 'LC-PL-010126-1' },
                 { id_lote: 'uuid-2', codigo_fungivora: 'LC-PL-010126-2' }
             ];
-            Lotes.fetch_all.mockResolvedValue(mockLotes);
+            Lotes.fetch.mockResolvedValue(mockLotes);
 
             const res = await request(app)
                 .get('/api/lotes')
