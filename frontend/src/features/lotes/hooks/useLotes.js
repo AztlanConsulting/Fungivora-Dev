@@ -22,7 +22,17 @@ const useLotes = () => {
             }
         } catch (err) {
             console.error("Error en fetchLotes:", err);
-            setError("Error de conexión con el servidor");
+            if (err?.status === 403) {
+                setError("No tienes permisos para ver los lotes");
+            } else if (err?.status === 401) {
+                setError("Tu sesión ha expirado");
+            } else if (err?.status === 404) {
+                setError("No se encontraron lotes");
+            } else if (err?.status >= 500) {
+                setError("Error en el servidor. Intenta más tarde");
+            } else {
+                setError("Error de conexión con el servidor");
+            }
         } finally {
             setCargando(false);
         }
@@ -40,7 +50,17 @@ const useLotes = () => {
             }
         } catch (err) {
             console.error("Error en fetchLotes:", err);
-            setError("Error de conexión con el servidor");
+            if (err?.status === 403) {
+                setError("No tienes permisos para ver los lotes");
+            } else if (err?.status === 401) {
+                setError("Tu sesión ha expirado");
+            } else if (err?.status === 404) {
+                setError("No se encontraron lotes");
+            } else if (err?.status >= 500) {
+                setError("Error en el servidor. Intenta más tarde");
+            } else {
+                setError("Error de conexión con el servidor");
+            }
         } finally {
             setCargando(false);
         }

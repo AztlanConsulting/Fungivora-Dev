@@ -9,14 +9,15 @@ import { CustomCheckbox } from "../../../shared/components/ui/others/Seleccionar
 
 const ITEMS_POR_PAGINA = 50;
 
-const TablaLotes = ({ 
-  datos, 
-  columnas, 
-  loading, 
-  onVerDetalle, 
-  obtenerEstiloFase, 
-  gridLayout, 
-  colorBordeHeader, 
+const TablaLotes = ({
+  datos,
+  columnas,
+  loading,
+  error,
+  onVerDetalle,
+  obtenerEstiloFase,
+  gridLayout,
+  colorBordeHeader,
   onEliminar,
   obtenerTodosLotes,
   onToggleTodosLotes
@@ -95,6 +96,12 @@ const TablaLotes = ({
               <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
               <Text variante="medium">Cargando datos de lotes...</Text>
             </div>
+          </div>
+        ) : error ? (
+          <div className="text-center py-10 w-full">
+            <Text variante="medium" style={{ color: colores.rojo }}>
+              {error}
+            </Text>
           </div>
         ) : lotesPaginados.length === 0 ? (
           <div className="text-center py-10 w-full">

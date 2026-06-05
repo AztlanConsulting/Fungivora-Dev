@@ -42,7 +42,7 @@ function Lotes() {
 
   const {
     datos, ubicaciones, especiesDisponibles,
-    getInoculosPorEspecie, cargando, addLote, deleteLote,
+    getInoculosPorEspecie, cargando, error, addLote, deleteLote,
     fetchLotesTodos, refresh
   } = useLotes();
 const [todosLosLotesMarcados, setTodosLosLotesMarcados] = useState(false);
@@ -342,6 +342,7 @@ const [todosLosLotesMarcados, setTodosLosLotesMarcados] = useState(false);
                 <TablaLotes
                   datos={datos}
                   loading={cargando}
+                  error={error}
                   onEliminar={prepararEliminacion}
                   columnas={columnas}
                   onVerDetalle={(lote) => navigate(`/lotes/detalle/${lote.id_lote}`, { state: lote })}
