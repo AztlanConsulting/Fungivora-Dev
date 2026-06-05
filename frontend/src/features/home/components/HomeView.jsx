@@ -86,7 +86,7 @@ const PantallaPrincipalView = () => {
                 </div>
 
                 {/* Notificaciones */}
-                <div className="flex flex-col md:flex-row gap-4 items-right justify-end">
+                <div className="flex flex-col gap-4">
                     <NotificacionesToggle />
                 </div>
 
@@ -130,7 +130,7 @@ const PantallaPrincipalView = () => {
                             </Text>
                         </div>
                         <Text variante="small" style={{ color: colores.gris }}>Actividad actual</Text>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 flex-1">
+                        <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 flex-1">
                             <MetricaCard valor={resumen.lotesActivos} label="Lotes activos" />
                             <MetricaCard valor={resumen.bloquesNoContaminados} label="Bloques saludables" />
                             <MetricaCard valor={resumen.bloquesContaminados} label="Bloques contaminados" />
