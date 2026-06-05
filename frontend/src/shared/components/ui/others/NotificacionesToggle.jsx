@@ -31,7 +31,7 @@ const NotificacionesToggle = () => {
     return (
         <div className="flex flex-col gap-1">
             <div
-                className="flex items-center justify-between px-5 py-3 rounded-2xl gap-6 w-full"
+                className="flex items-center justify-between px-5 py-3 rounded-2xl gap-6"
                 style={{
                     backgroundColor: '#FFFFFF',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.10), 0 0 0 0.5px rgba(0,0,0,0.06)',
