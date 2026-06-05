@@ -5,6 +5,7 @@ export const colores = {
   verde: "#148F62",
   negro: "#000000",
   gris: "#555555",
+  rojo: "#C62828",
   grisClaro: "#EAEAEC",
   grisMedio: "#BFC1C7",
   azulClaro: "#777BEB",

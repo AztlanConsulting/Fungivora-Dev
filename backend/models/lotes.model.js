@@ -132,6 +132,18 @@ class Lotes {
         return result[0].total;
     }
 
+    static async fetch() {
+        const [filas] = await db.execute(`
+            SELECT id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase 
+            FROM Lotes 
+            WHERE fecha_lote >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+            ORDER BY fecha_lote DESC,
+                     SUBSTRING_INDEX(SUBSTRING_INDEX(codigo_fungivora, '-', 2), '-', -1) ASC,
+                     CAST(SUBSTRING_INDEX(codigo_fungivora, '-', -1) AS UNSIGNED) DESC
+        `);
+        return filas;
+    }
+
     static async fetch_all() {
         const [filas] = await db.execute(`
             SELECT id_lote, codigo_fungivora, fecha_lote, ubicacion_lote, activo, fase 
@@ -164,10 +176,10 @@ class Lotes {
         try {
             await connection.beginTransaction();
             await connection.execute(`
-                DELETE FROM Bloques WHERE id_lote IN (SELECT id_lote FROM Lotes WHERE fecha_lote < DATE_SUB(NOW(), INTERVAL 3 MONTH))
+                DELETE FROM Bloques WHERE id_lote IN (SELECT id_lote FROM Lotes WHERE fecha_lote < DATE_SUB(NOW(), INTERVAL 2 YEAR))
             `);
             const [result] = await connection.execute(`
-                DELETE FROM Lotes WHERE fecha_lote < DATE_SUB(NOW(), INTERVAL 3 MONTH)
+                DELETE FROM Lotes WHERE fecha_lote < DATE_SUB(NOW(), INTERVAL 2 YEAR)
             `);
             await connection.commit();
             return result;

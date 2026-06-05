@@ -26,7 +26,7 @@ describe('Lotes Controller', () => {
     describe('Obtener lotes', () => {
         it('200 - retornar todos los lotes', async () => {
             const mockLotes = [{ id_lote: '1', codigo_fungivora: 'LC-PL-101024-1' }];
-            Lotes.fetch_all.mockResolvedValue(mockLotes);
+            Lotes.fetch.mockResolvedValue(mockLotes);
 
             const req = {};
             const res = mockRes();
@@ -41,7 +41,7 @@ describe('Lotes Controller', () => {
         });
 
         it('500 - fallar si arroja error', async () => {
-            Lotes.fetch_all.mockRejectedValue(new Error('Fallo DB'));
+            Lotes.fetch.mockRejectedValue(new Error('Fallo DB'));
 
             const req = {};
             const res = mockRes();
