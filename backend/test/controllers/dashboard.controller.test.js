@@ -21,7 +21,12 @@ describe('Dashboard Controller', () => {
         
         it('200 - obtiene y formatea los datos del dashboard correctamente', async () => {
             const mockLotesRevision = [
-                { id_lote: 1, codigo_fungivora: 'LOT-001', fecha_lote: '2026-05-20' }
+                { 
+                    id_lote: 1, 
+                    codigo_fungivora: 'LOT-001', 
+                    fecha_lote: '2026-05-20', 
+                    fecha_real: '2026-05-20' 
+                }
             ];
             const mockLotesActivos = 5;
             const mockBloquesContaminados = 2;
