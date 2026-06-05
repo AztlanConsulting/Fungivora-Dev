@@ -5,6 +5,7 @@ import Button from '../../../shared/components/ui/buttons/Botones';
 import useNotasInoculo from '../hooks/useNotasInoculo';
 import TarjetaNota from '../../../shared/components/ui/cards/AreaNotas';
 import InputNota from '../../../shared/components/ui/inputs/InputNota'; 
+import BotonCrear from '../../../shared/components/ui/buttons/BotonFlotante';
 
 const NotasInoculo = ({ id_inoculo }) => {
     const { notas, cargando, postNota } = useNotasInoculo(id_inoculo);
@@ -23,6 +24,8 @@ const NotasInoculo = ({ id_inoculo }) => {
     const [fecha, setFecha] = useState(getFechaHoy());
 
     const esInvalido = !nuevaNota.trim() || !fecha.day || !fecha.month || !fecha.year;
+
+    const [verFormulario, setVerFormulario] = useState(false);
 
     const handleGuardar = async () => {
         setError("");
@@ -56,7 +59,15 @@ const NotasInoculo = ({ id_inoculo }) => {
 
 return (
     <div className="w-full h-auto min-h-[500px] md:h-[500px] bg-white p-6 md:p-8 rounded-[32px] shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 overflow-hidden">
-    <div className="flex-[2] flex flex-col h-full overflow-hidden">
+        <div className="md:hidden flex justify-center mb-4">
+            <BotonCrear 
+                variant="registrar" 
+                onClick={() => setVerFormulario(!verFormulario)}
+                className="w-full"
+                texto={verFormulario ? "Ver Notas" : "Agregar Nota"}
+            />
+        </div>
+    <div className={`flex-[2] flex flex-col h-full overflow-hidden ${verFormulario ? "hidden md:flex" : "flex"}`}>
         <div className="flex-1 overflow-y-auto scrollbar-thin pr-2 py-2 max-h-[400px] md:max-h-none">
             {cargando ? (
                 <div className="flex flex-col justify-center items-center h-full w-full gap-2">
@@ -66,7 +77,7 @@ return (
             ) : notas.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 content-start">
                     {notas.map((nota) => (
-                        <div key={nota.id_bitacora} className="h-[290px] md:h-[280px]">
+                        <div key={nota.id_bitacora} className="h-[310px] md:h-[280px]">
                             <TarjetaNota
                                 fecha={formatearFecha(nota.fecha_bitacora)}
                                 preview={nota.notas_bitacora}
@@ -82,7 +93,7 @@ return (
         </div>
     </div>
 
-        <div className="w-full md:w-1/3 flex flex-col gap-6 border-t md:border-t-0 md:border-l border-gray-100 pt-6 md:pt-0 md:pl-8 items-center">
+        <div className={`w-full md:w-1/3 flex flex-col gap-6 border-t md:border-t-0 md:border-l border-gray-100 pt-6 md:pt-0 md:pl-8 items-center ${verFormulario ? "block" : "hidden md:flex"}`}>
             <div className="flex flex-col gap-4 w-full">
                 <div className="flex flex-col gap-2">
                     <Text variante="label" style={{ color: "black"}}>Fecha</Text>
