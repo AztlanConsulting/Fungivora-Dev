@@ -198,3 +198,25 @@ exports.get_inoculum_by_id = async (req, res) => {
         res.status(500).json({ success: false, message: "Error al obtener el inóculo", error: error.message });
     }
 };
+
+exports.get_notas_inoculo_by_id = async (req, res) => {
+    try {
+        const { id_inoculo } = req.params;
+        const notas = await Inoculo.fetch_notas_inoculo_by_id(id_inoculo);
+        res.status(200).json({ success: true, data: notas });
+    } catch (err) {
+        console.error("Error en get_notas_inoculo_by_id controller: ", err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+exports.post_nota_inoculo = async (req, res) => {
+    try {
+        const { id_inoculo, fecha, notas_bitacora } = req.body;
+        await Inoculo.post_nota_inoculo(id_inoculo, fecha, notas_bitacora);
+        res.status(200).json({ success: true, message: "Nota de inóculo creada correctamente" });
+    } catch (err) {
+        console.error("Error en post_nota_inoculo:", err);
+        res.status(500).json({ success: false, message: "Error al guardar la nota" });
+    }
+};

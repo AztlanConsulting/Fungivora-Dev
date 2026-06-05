@@ -194,4 +194,35 @@ module.exports = class Inoculo {
 
         return { ...inoculo, ingredientes };
     }
+
+    // Obtiene todas las notas de la bitácora para un inóculo específico
+    static async fetch_notas_inoculo_by_id(id_inoculo) {
+        try {
+            const [filas] = await db.execute(`
+                SELECT *
+                FROM Bitacora_inoculos
+                WHERE id_inoculo = ?
+                ORDER BY fecha_bitacora DESC
+            `, [id_inoculo]);
+            return filas;
+        } catch (err) {
+            console.error("Error en fetch_notas_inoculo_by_id");
+            throw err;
+        }
+    }
+
+    // Registra una nueva nota en la bitácora del inóculo
+    static async post_nota_inoculo(id_inoculo, fecha, notas_bitacora) {
+        try {
+            const query = `
+                INSERT INTO Bitacora_inoculos (id_inoculo, fecha_bitacora, notas_bitacora)
+                VALUES (?, ?, ?)
+            `;
+            const [resultado] = await db.execute(query, [id_inoculo, fecha, notas_bitacora]);
+            return resultado;
+        } catch (err) {
+            console.error("Error en post_nota_inoculo");
+            throw err;
+        }
+    }
 };
