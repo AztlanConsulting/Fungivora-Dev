@@ -25,13 +25,11 @@ const InputNota = ({
       onBlur={() => setIsFocused(false)}
       className="w-full rounded-xl px-4 py-3 outline-none resize-none"
       style={{
-        fontStyle: "italic",
         fontSize: "clamp(12px, 1.5vw, 14px)",
         color: colores.gris,
         backgroundColor: "#FFFFFF",
         border: `2px solid ${isFocused ? colores.azul : colores.grisClaro}`,
         transition: "border-color 0.2s ease",
-        fontFamily: "inherit",
       }}
       maxLength={250}
     />

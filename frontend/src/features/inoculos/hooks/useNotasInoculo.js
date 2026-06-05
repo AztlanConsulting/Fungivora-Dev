@@ -12,14 +12,14 @@ const useNotasInoculo = (id_inoculo) => {
         try {
             setCargando(true);
             const response = await InoculoService.fetchNotasInoculo(id_inoculo);
-            setNotas(response.data || []);
+            setNotas(Array.isArray(response) ? response : (response.data || []));
         } catch (e) {
             console.error("Error cargando las notas del inóculo", e);
             setError("No se pudieron cargar las notas");
         } finally {
             setCargando(false);
         }
-    }, [id_inoculo]); 
+    }, [id_inoculo]);
 
     const postNota = async (datos) => {
         try {
