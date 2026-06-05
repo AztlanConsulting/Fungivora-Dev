@@ -86,7 +86,9 @@ const InputFecha = ({ value = {}, onChange }) => {
                             year: String(date.getFullYear()),
                         });
                     }}
-                    withPortal 
+                    minDate={new Date(2020, 0, 1)}
+                    maxDate={new Date(2100, 11, 31)}
+                    withPortal
                     popperPlacement="bottom-start"
                 />
             </div>
