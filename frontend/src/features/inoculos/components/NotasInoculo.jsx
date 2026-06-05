@@ -6,11 +6,13 @@ import useNotasInoculo from '../hooks/useNotasInoculo';
 import TarjetaNota from '../../../shared/components/ui/cards/AreaNotas';
 import InputNota from '../../../shared/components/ui/inputs/InputNota'; 
 import BotonCrear from '../../../shared/components/ui/buttons/BotonFlotante';
+import ModalAlerta from '../../../shared/components/ui/popups/ModalAlerta';
 
 const NotasInoculo = ({ id_inoculo }) => {
     const { notas, cargando, postNota } = useNotasInoculo(id_inoculo);
     const [nuevaNota, setNuevaNota] = useState("");
     const [error, setError] = useState(""); 
+    const [alerta, setAlerta] = useState({ visible: false, variante: 'exito', mensaje: '' });
 
     const getFechaHoy = () => {
         const hoy = new Date();
@@ -35,16 +37,19 @@ const NotasInoculo = ({ id_inoculo }) => {
             setError("La nota no puede estar vacía.");
             return;
         }
-        if (notaLimpia.length > 250) {
-            setError("La nota no puede exceder los 250 caracteres.");
-            return;
-        }
         
         const fechaISO = `${fecha.year}-${fecha.month}-${fecha.day}`;
-        await postNota({ id_inoculo, fecha: fechaISO, notas_bitacora: notaLimpia });
         
-        setNuevaNota("");
-        setFecha(getFechaHoy());
+        try {
+            await postNota({ id_inoculo, fecha: fechaISO, notas_bitacora: notaLimpia });
+            
+            setAlerta({ visible: true, variante: 'exito', mensaje: 'Nota agregada correctamente.' });
+            
+            setNuevaNota("");
+            setFecha(getFechaHoy());
+        } catch {
+            setAlerta({ visible: true, variante: 'error', mensaje: 'Error al guardar la nota. Intenta de nuevo.' });
+        }
     };
 
     const handleChange = (val) => {
@@ -58,6 +63,7 @@ const NotasInoculo = ({ id_inoculo }) => {
     };
 
 return (
+    <>
     <div className="w-full h-auto min-h-[500px] md:h-[500px] bg-white p-6 md:p-8 rounded-[32px] shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 overflow-hidden">
         <div className="md:hidden flex justify-center mb-4">
             <BotonCrear 
@@ -125,6 +131,13 @@ return (
             </Button>
         </div>
     </div>
+            <ModalAlerta 
+                visible={alerta.visible}
+                variante={alerta.variante}
+                mensaje={alerta.mensaje}
+                onClose={() => setAlerta({ ...alerta, visible: false })}
+            />
+    </>
 );
 };
 
