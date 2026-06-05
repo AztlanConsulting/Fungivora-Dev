@@ -64,10 +64,12 @@ const api = {
     },
 
     // Rutas DELETE
-    delete: async (endpoint) => {
+    delete: async (endpoint, body) => {
+        const hasBody = body !== undefined;
         const res = await fetch(`${BASE_URL}${endpoint}`, {
             method: 'DELETE',
-            headers: getHeaders()
+            headers: getHeaders(hasBody ? { 'Content-Type': 'application/json' } : {}),
+            ...(hasBody && { body: JSON.stringify(body) }),
         });
         return handleResponse(res);
     },

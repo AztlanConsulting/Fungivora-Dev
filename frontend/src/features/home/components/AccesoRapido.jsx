@@ -1,6 +1,8 @@
 import React from 'react';
 import { Text } from '../../../shared/components/ui';
 import { useNavigate } from 'react-router-dom';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { PlusSignCircleIcon } from '@hugeicons/core-free-icons';
 
 const AccesoRapido = ({ label, ruta, color, acento, imagen }) => {
     const navigate = useNavigate();
@@ -22,18 +24,16 @@ const AccesoRapido = ({ label, ruta, color, acento, imagen }) => {
                 />
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
                 <Text variante="body" style={{ color: acento, fontWeight: 600 }}>
                     {label}
                 </Text>
-                <div
-                    className="w-7 h-7 rounded-full flex items-center justify-center"
-                    style={{ border: `2px solid ${acento}` }}
-                >
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                        <path d="M6 2v8M2 6h8" stroke={acento} strokeWidth="1.8" strokeLinecap="round" />
-                    </svg>
-                </div>
+                <HugeiconsIcon
+                    icon={PlusSignCircleIcon}
+                    size={28}
+                    color={acento}
+                    strokeWidth={1.8}
+                />
             </div>
         </button>
     );

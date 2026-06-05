@@ -1,10 +1,16 @@
 const request = require('supertest');
-const app = require('../../app'); 
+
+jest.mock('web-push', () => ({
+    setVapidDetails: jest.fn(),
+    sendNotification: jest.fn(),
+}));
+
+const app = require('../../app');
 const Micelio = require('../../models/micelio.model');
 const jwt = require('jsonwebtoken');
 
 jest.mock('../../models/micelio.model');
-jest.mock('../../models/inventario.model'); 
+jest.mock('../../models/inventario.model');
 jest.mock('../../util/db', () => ({
     getConnection: jest.fn()
 }));
@@ -12,8 +18,8 @@ jest.mock('../../util/db', () => ({
 const db = require('../../util/db');
 
 describe('Micelio Routes', () => {
-    let tokenTest; 
-    
+    let tokenTest;
+
     beforeAll(() => {
         const SECRET = process.env.APP_ACCESS_KEY || 'test_secret_key';
         tokenTest = jwt.sign({ id: 1, usuario: 'test_user', isAdmin: true }, SECRET, { expiresIn: '1h' });
