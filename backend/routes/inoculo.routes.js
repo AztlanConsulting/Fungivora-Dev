@@ -34,4 +34,7 @@ router.get('/cantidad-ingredientes', inoculoController.get_cantidad_ingredientes
 // Crea un nuevo inóculo (agar, medio liquido o semilla) en la tabla Inoculos
 router.post('/crear', inoculoController.post_crear_inoculo);
 
+// Ruta para encontrar los bloques por id de lote
+router.get('/detalle', inoculoController.get_inoculum_by_id);
+
 module.exports = router;
