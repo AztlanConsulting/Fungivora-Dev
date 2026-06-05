@@ -28,7 +28,13 @@ jobs:
           cache: 'npm'
 
       - name: Create .env
-        run: echo 'APP_ACCESS_KEY="db8ca260384a62e3d36b797825a0a38d1708d721bf0d8c0b"' >> .env
+        run: |
+          cat > .env <<EOF
+          APP_ACCESS_KEY="db8ca260384a62e3d36b797825a0a38d1708d721bf0d8c0b"
+          VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY=${{ secrets.VAPID_PRIVATE_KEY }}
+          VAPID_EMAIL=fungivora@gmail.com
+          EOF
 
       - name: Create .env.test.local
         run: |
