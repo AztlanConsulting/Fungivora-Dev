@@ -5,6 +5,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Calendar03Icon } from '@hugeicons/core-free-icons';
 
+const AÑOS_ADELANTE = 80;
+
 const hoyInicial = () => {
     const hoy = new Date();
     return {
@@ -14,12 +16,14 @@ const hoyInicial = () => {
     };
 };
 
+const MAX_YEAR = new Date().getFullYear() + AÑOS_ADELANTE; 
+
 const esFechaValida = ({ day, month, year }) => {
     if (!day || !month || !year || String(year).length < 4) return false;
     const d = Number(day);
     const m = Number(month);
     const y = Number(year);
-    if (y < 2020 || y > 2100) return false;
+    if (y < 2020 || y > MAX_YEAR) return false; 
     const fecha = new Date(y, m - 1, d);
     return (
         fecha.getFullYear() === y &&
@@ -87,7 +91,7 @@ const InputFecha = ({ value = {}, onChange }) => {
                         });
                     }}
                     minDate={new Date(2020, 0, 1)}
-                    maxDate={new Date(2100, 11, 31)}
+                    maxDate={new Date(new Date().getFullYear() + AÑOS_ADELANTE, 11, 31)}
                     withPortal
                     popperPlacement="bottom-start"
                 />
