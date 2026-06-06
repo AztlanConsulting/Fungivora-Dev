@@ -86,7 +86,7 @@ return (
                         <Text variante="medium">Cargando...</Text>
                     </div>
                 ) : notas.length > 0 ? (
-                    <div className="grid grid-cols-1 min-[1250px]:grid-cols-2 gap-4 content-start">
+                    <div className="grid grid-cols-1 min-[1250px]:grid-cols-2 gap-10 content-start">
                         {notas.map((nota) => (
                             <div key={nota.id_bitacora} className="h-[310px]">
                                 <TarjetaNota
