@@ -41,8 +41,8 @@ const FormCrearUsuario = ({
       return;
     }
 
-    if (correo_usuario.length > 25) {
-      if (setError) setError("El correo electrónico no puede exceder los 25 caracteres.");
+    if (correo_usuario.length > 35) {
+      if (setError) setError("El correo electrónico no puede exceder los 35 caracteres.");
       return;
     }
 
@@ -106,7 +106,7 @@ const FormCrearUsuario = ({
         value={nuevoUsuario.correo_usuario || ""}
         onChange={(e) => handleChangeInput("correo_usuario", e.target.value)}
         required
-        maxLength={25}
+        maxLength={35}
       />
     </div>
 
