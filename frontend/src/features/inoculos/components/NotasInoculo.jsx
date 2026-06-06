@@ -14,6 +14,7 @@ const NotasInoculo = ({ id_inoculo }) => {
     const [error, setError] = useState(""); 
     const [alerta, setAlerta] = useState({ visible: false, variante: 'exito', mensaje: '' });
     const [procesando, setProcesando] = useState(false);
+    const [verFormulario, setVerFormulario] = useState(false);
 
     const getFechaHoy = () => {
         const hoy = new Date();
@@ -25,12 +26,9 @@ const NotasInoculo = ({ id_inoculo }) => {
     };
 
     const [fecha, setFecha] = useState(getFechaHoy());
-
     const esInvalido = !nuevaNota.trim() || !fecha.day || !fecha.month || !fecha.year;
 
-    const [verFormulario, setVerFormulario] = useState(false);
-
-   const handleGuardar = async () => {
+    const handleGuardar = async () => {
         setError("");
         const notaLimpia = nuevaNota.trim();
         
@@ -67,8 +65,10 @@ const NotasInoculo = ({ id_inoculo }) => {
 
 return (
     <>
-    <div className="w-full h-auto min-h-[500px] md:h-[500px] bg-white p-6 md:p-8 rounded-[32px] shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 overflow-hidden">
-        <div className="md:hidden flex justify-center mb-4">
+    <div className="w-full h-auto min-h-[500px] min-[1250px]:h-[500px] bg-white p-6 rounded-[32px] shadow-sm border border-gray-100 flex flex-col min-[1250px]:flex-row gap-8 overflow-hidden">
+        
+        {/* Botón toggle móvil */}
+        <div className="min-[1250px]:hidden flex justify-center mb-4">
             <BotonCrear 
                 variant="registrar" 
                 onClick={() => setVerFormulario(!verFormulario)}
@@ -76,33 +76,36 @@ return (
                 texto={verFormulario ? "Ver Notas" : "Agregar Nota"}
             />
         </div>
-    <div className={`flex-[2] flex flex-col h-full overflow-hidden ${verFormulario ? "hidden md:flex" : "flex"}`}>
-        <div className="flex-1 overflow-y-auto scrollbar-thin pr-2 py-2 max-h-[400px] md:max-h-none">
-            {cargando ? (
-                <div className="flex flex-col justify-center items-center h-full w-full gap-2">
-                    <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-                    <Text variante="medium">Cargando...</Text>
-                </div>
-            ) : notas.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 content-start">
-                    {notas.map((nota) => (
-                        <div key={nota.id_bitacora} className="h-[310px] md:h-[280px]">
-                            <TarjetaNota
-                                fecha={formatearFecha(nota.fecha_bitacora)}
-                                preview={nota.notas_bitacora}
-                            />
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <div className="flex justify-center items-center h-[200px] w-full">
-                    <Text style={{ color: "#515151" }}>No hay notas registradas.</Text>
-                </div>
-            )}
-        </div>
-    </div>
 
-        <div className={`w-full md:w-1/3 flex flex-col gap-6 border-t md:border-t-0 md:border-l border-gray-100 pt-6 md:pt-0 md:pl-8 items-center ${verFormulario ? "block" : "hidden md:flex"}`}>
+        {/* Lista de Notas */}
+        <div className={`flex-[2] flex-col h-full overflow-hidden ${verFormulario ? "hidden min-[1250px]:flex" : "flex"}`}>
+            <div className="flex-1 overflow-y-auto scrollbar-thin pr-2 py-2 max-h-[400px] min-[1250px]:max-h-none">
+                {cargando ? (
+                    <div className="flex flex-col justify-center items-center h-full w-full gap-2">
+                        <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                        <Text variante="medium">Cargando...</Text>
+                    </div>
+                ) : notas.length > 0 ? (
+                    <div className="grid grid-cols-1 min-[1250px]:grid-cols-2 gap-10 content-start">
+                        {notas.map((nota) => (
+                            <div key={nota.id_bitacora} className="h-[310px]">
+                                <TarjetaNota
+                                    fecha={formatearFecha(nota.fecha_bitacora)}
+                                    preview={nota.notas_bitacora}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="flex justify-center items-center h-[200px] w-full">
+                        <Text style={{ color: "#515151" }}>No hay notas registradas.</Text>
+                    </div>
+                )}
+            </div>
+        </div>
+
+        {/* Formulario */}
+        <div className={`w-full min-[1250px]:w-1/3 flex-col gap-6 border-t min-[1250px]:border-t-0 min-[1250px]:border-l border-gray-100 pt-6 min-[1250px]:pt-0 min-[1250px]:pl-8 items-center ${verFormulario ? "flex" : "hidden min-[1250px]:flex"}`}>
             <div className="flex flex-col gap-4 w-full">
                 <div className="flex flex-col gap-2">
                     <Text variante="label" style={{ color: "black"}}>Fecha</Text>
@@ -134,12 +137,13 @@ return (
             </Button>
         </div>
     </div>
-            <ModalAlerta 
-                visible={alerta.visible}
-                variante={alerta.variante}
-                mensaje={alerta.mensaje}
-                onClose={() => setAlerta({ ...alerta, visible: false })}
-            />
+
+    <ModalAlerta 
+        visible={alerta.visible}
+        variante={alerta.variante}
+        mensaje={alerta.mensaje}
+        onClose={() => setAlerta({ ...alerta, visible: false })}
+    />
     </>
 );
 };
