@@ -14,18 +14,30 @@ const hoyInicial = () => {
     };
 };
 
+const limiteFechas = () => {
+    const hoy = new Date();
+    return {
+        min: new Date(hoy.getFullYear() - 1, hoy.getMonth(), hoy.getDate()),
+        max: new Date(hoy.getFullYear() + 1, hoy.getMonth(), hoy.getDate()),
+    };
+};
+
 const esFechaValida = ({ day, month, year }) => {
     if (!day || !month || !year || String(year).length < 4) return false;
     const d = Number(day);
     const m = Number(month);
     const y = Number(year);
-    if (y < 2020 || y > 2100) return false;
     const fecha = new Date(y, m - 1, d);
-    return (
+
+    const esReal = (
         fecha.getFullYear() === y &&
         fecha.getMonth() === m - 1 &&
         fecha.getDate() === d
     );
+    if (!esReal) return false;
+
+    const { min, max } = limiteFechas();
+    return fecha >= min && fecha <= max;
 };
 
 const InputFecha = ({ value = {}, onChange }) => {
@@ -86,7 +98,9 @@ const InputFecha = ({ value = {}, onChange }) => {
                             year: String(date.getFullYear()),
                         });
                     }}
-                    withPortal 
+                    minDate={limiteFechas().min}
+                    maxDate={limiteFechas().max}
+                    withPortal
                     popperPlacement="bottom-start"
                 />
             </div>
