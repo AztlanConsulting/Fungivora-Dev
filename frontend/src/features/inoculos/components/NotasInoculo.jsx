@@ -40,8 +40,9 @@ const NotasInoculo = ({ id_inoculo }) => {
         }
         
         setProcesando(true); 
-        const fechaISO = `${fecha.year}-${fecha.month}-${fecha.day}`;
-        
+        const fechaObj = new Date(fecha.year, fecha.month - 1, fecha.day);
+        const fechaAjustada = new Date(fechaObj.getTime() - (fechaObj.getTimezoneOffset() * 60000));
+        const fechaISO = fechaAjustada.toISOString().split('T')[0];
         try {
             await postNota({ id_inoculo, fecha: fechaISO, notas_bitacora: notaLimpia });
             setAlerta({ visible: true, variante: 'exito', mensaje: 'Nota agregada correctamente.' });
