@@ -11,7 +11,7 @@ import Text from "../basics/Texto";
  */
 const TarjetaNota = ({ fecha, preview }) => {
   return (
-    <div className="w-full h-auto min-h-full bg-white rounded-[30px] shadow-lg p-6 border border-gray-100 flex flex-col gap-3 transition-transform hover:scale-[1.01]">
+    <div className="w-full h-full bg-white rounded-[30px] shadow-lg p-6 border border-gray-100 flex flex-col gap-3 transition-transform hover:scale-[1.01] overflow-hidden">
       
       <div className="text-[16px] md:text-[20px]">
         <Text variante="popup" as="div" style={{ color: "#333", fontWeight: 600, fontSize: "inherit" }}>
@@ -20,7 +20,7 @@ const TarjetaNota = ({ fecha, preview }) => {
       </div>
 
       <div className="w-full h-[1.5px] bg-gray-100 rounded-full"></div>
-      <div className="flex-1 text-[13px] md:text-[15px]">
+      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin pr-1 text-[13px] md:text-[15px]">
         <Text
           variante="body"
           as="p"
