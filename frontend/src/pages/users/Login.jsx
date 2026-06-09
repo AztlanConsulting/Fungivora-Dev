@@ -97,7 +97,7 @@ const Login = () => {
                 </div>
                 <div className="relative w-full">
                   <Input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? "text2" : "password"}
                     placeholder="Escribe tu contraseña..."
                     value={password}
                     onChange={handlePasswordChange}
